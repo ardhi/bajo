@@ -1,3 +1,6 @@
 module.exports = function () {
-  return { bajo: {} }
+  const bajo = {
+    log: console
+  }
+  return { bajo }
 }
