@@ -46,5 +46,5 @@ module.exports = async function (n, { names, singles, c }) {
       singles.push(n)
     }
   }
-  this.bajo.event.emit('boot', [`Read configuration: ${name}`, `${name}ReadConfig`])
+  this.bajo.event.emit('boot', [`${name}ReadConfig`, `Read configuration: %s`, 'debug', name])
 }

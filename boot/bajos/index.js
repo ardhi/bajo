@@ -25,7 +25,7 @@ module.exports = async function () {
       if (fs.existsSync(file)) {
         await require(file).call(this)
         const method = _.upperFirst(f)
-        this.bajo.event.emit('boot', [`${method}: ${name}`, `${name}${method}`])
+        this.bajo.event.emit('boot', [`${name}${method}`, `%s: %s`, 'debug', method, name])
       }
     })
   }

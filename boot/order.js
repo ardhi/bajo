@@ -27,5 +27,5 @@ module.exports = async function () {
     result.push(item)
   })
   config.bajos = _.map(_.orderBy(result, ['v']), 'k')
-  this.bajo.event.emit('boot', ['Determine boot order: core', 'bajoBootOrder'])
+  this.bajo.event.emit('boot', ['bajoBootOrder', 'Determine boot order: %s', 'debug', 'core'])
 }

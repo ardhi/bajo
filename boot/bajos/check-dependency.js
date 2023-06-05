@@ -20,5 +20,5 @@ module.exports = async function (pkg) {
         throw error(`Semver check '${pkg}' against '${d}@${odep[d]}' failed`, { code: 'BAJO_DEPENDENCY_SEMVER' })
     })
   }
-  this.bajo.event.emit('boot', [`Checking dependency: ${name}`, `${name}CheckDep`])
+  this.bajo.event.emit('boot', [`${name}CheckDep`, `Checking dependency: %s`, 'debug', name])
 }

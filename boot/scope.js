@@ -1,15 +1,24 @@
 const { EventEmitter } = require('events')
+const _ = require('lodash')
+const levels = require('../lib/logger-levels')
 const event = new EventEmitter()
-require('log-timestamp')
 
 module.exports = function () {
   const bajo = {
     event
   }
 
-  event.on('boot', data => {
-    const [msg, code] = data
-    bajo.log.trace(msg)
+  event.on('boot', params => {
+    let [code, data, msg, ...args] = params
+    if (_.isString(data)) {
+      args.unshift(msg)
+      msg = data
+    }
+    if (_.keys(levels).includes(args[0])) {
+      const [method, ...a] = args
+      if (_.isString(data)) bajo.log[method](msg, ...a)
+      else bajo.log[method](data, msg, ...a)
+    }
   })
   return { bajo }
 }
