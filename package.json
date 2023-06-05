@@ -31,6 +31,7 @@
     "log-timestamp": "^0.3.0",
     "mri": "^1.2.0",
     "outmatch": "^0.7.0",
-    "proper-lockfile": "^4.1.2"
+    "proper-lockfile": "^4.1.2",
+    "semver": "^7.5.1"
   }
 }

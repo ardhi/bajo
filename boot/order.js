@@ -1,0 +1,31 @@
+const _ = require('lodash')
+const fs = require('fs-extra')
+const getModuleDir = require('../helper/get-module-dir')
+const error = require('../helper/error')
+
+module.exports = async function () {
+  const config = this.bajo.config
+  const order = _.reduce(config.bajos, (o, k, i) => {
+    const key = _.map(k.split(':'), m => _.trim(m))
+    if (key[1] && !_.isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
+    else o[key[0]] = 10000 + i
+    return o
+  }, {})
+  const norder = {}
+  for (let n of config.bajos) {
+    n = _.map(n.split(':'), m => _.trim(m))[0]
+    const dir = n === 'app' ? (config.dir.base + '/app') : getModuleDir.handler(n)
+    if (n !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error.handler(`Package ${n} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
+    norder[n] = NaN
+    try {
+      norder[n] = Number(_.trim(await fs.readFile(`${dir}/bajo/.bootorder`, 'utf8')))
+    } catch (err) {}
+  }
+  let result = []
+  _.forOwn(order, (v, k) => {
+    const item = { k, v: _.isNaN(norder[k]) ? v : norder[k]}
+    result.push(item)
+  })
+  config.bajos = _.map(_.orderBy(result, ['v']), 'k')
+  this.bajo.event.emit('boot', ['Determine boot order: core', 'bajoBootOrder'])
+}

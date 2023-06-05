@@ -3,7 +3,28 @@ const _ = require('lodash')
 const pathResolve = require('../helper/path-resolve')
 const readConfig = require('../helper/read-config')
 const error = require('../helper/error')
+const util = require('util')
 const mri = require('mri')
+
+function logger () {
+  const levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
+  const log = {}
+  _.each(levels, l => {
+    log[l] = (...params) => {
+      const config = this.bajo.config
+      const logLevel = _.indexOf(levels, config.logLevel)
+      if (!(_.indexOf(levels, l) >= logLevel)) return
+      let [data, msg, ...args] = params
+      if (_.isString(data)) {
+        args.unshift(msg)
+        msg = data
+      }
+      args = _.without(args, undefined)
+      console.log(`${_.upperFirst(l)}: ${util.format(msg, ...args)}`)
+    }
+  })
+  return log
+}
 
 const argv = mri(process.argv.slice(2), {
   boolean: ['dev', 'print-routes', 'print-plugins', 'verbose'],
@@ -32,6 +53,8 @@ let config = {
   args: argv._,
   argv: _.omit(argv, ['_'])
 }
+config.logLevel = config.dev ? 'debug' : 'info'
+if (config.verbose) config.logLevel = 'trace'
 process.env.NODE_ENV = config.dev ? 'development' : 'production'
 
 module.exports = async function () {
@@ -50,4 +73,6 @@ module.exports = async function () {
     fs.ensureDirSync(config.dir[k])
   })
   this.bajo.config = config
+  this.bajo.log = logger.call(this)
+  this.bajo.event.emit('boot', ['Read configuration: core', 'bajoReadConfig'])
 }
