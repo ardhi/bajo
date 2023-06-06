@@ -1,6 +1,6 @@
 module.exports = {
   handler: function (input) {
-    return !(input === null || input === undefined)
+    return ![null, undefined].includes(input)
   },
-  noScope: false
+  noScope: true
 }

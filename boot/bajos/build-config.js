@@ -35,7 +35,6 @@ module.exports = async function (n, { names, singles, c }) {
   })
   cfg.dependency = cfg.dependency || []
   if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
-  this[name].config = cfg
   names.push(name)
   if (cfg.single) {
     const lockfilePath = `${config.dir.lock}/${name}.lock`
@@ -46,5 +45,6 @@ module.exports = async function (n, { names, singles, c }) {
       singles.push(n)
     }
   }
+  this[name].config = cfg
   this.bajo.event.emit('boot', [`${name}ReadConfig`, `Read configuration: %s`, 'debug', name])
 }

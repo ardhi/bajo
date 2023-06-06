@@ -8,8 +8,8 @@ const mri = require('mri')
 
 module.exports = async function () {
   const argv = mri(process.argv.slice(2), {
-    boolean: ['dev', 'print-routes', 'print-plugins', 'verbose'],
-    string: ['data-dir', 'tmp-dir'],
+    boolean: ['dev', 'verbose'],
+    string: ['data-dir', 'tmp-dir', 'trace'],
     alias: {
       d: 'data-dir',
       v: 'verbose'
@@ -28,15 +28,9 @@ module.exports = async function () {
       lock: process.env.LOCKDIR || argv['lock-dir'],
       base: pathResolve.handler(process.cwd())
     },
-    bajos: ['app'],
-    dev: process.env.DEV || argv.dev,
-    verbose: process.env.VERBOSE || argv.verbose,
     args: argv._,
-    argv: _.omit(argv, ['_'])
+    argv: _.omit(argv, ['_']),
   }
-  config.logLevel = config.dev ? 'debug' : 'info'
-  if (config.verbose) config.logLevel = 'trace'
-  process.env.NODE_ENV = config.dev ? 'development' : 'production'
 
   if (_.isEmpty(config.dir.data)) throw error.handler('No data directory provided', { code: 'BAJO_DDIR_NOT_PROVIDED' })
   config.dir.data = pathResolve.handler(config.dir.data)
@@ -46,6 +40,18 @@ module.exports = async function () {
   let resp = await readConfig.call(this, pathResolve.handler(`${config.dir.data}/config/bajo.*`))
   resp = _.omit(resp, ['dir', 'args', 'argv'])
   config = _.defaultsDeep(resp, config)
+  config.bajos = config.bajos || ['app']
+  config.dev = process.env.DEV || argv.dev || config.dev
+  config.verbose = process.env.VERBOSE || argv.verbose || config.verbose
+  process.env.NODE_ENV = config.dev ? 'development' : 'production'
+  config.log = config.log || {}
+  config.log.level = config.log.level || 'info'
+  const oldDetails = _.clone(config.log.details)
+  config.log.details = process.env.LOG_DETAILS || _.map((argv['log-details'] || '').split(','), t => _.trim(t))
+  if (_.isEmpty(config.log.details)) config.details = oldDetails
+  if (config.dev) config.log.level = 'debug'
+  if (config.verbose) config.log.level = 'trace'
+
   if (!config.bajos.includes('app')) config.bajos.push('app')
   config.bajos = _.filter(_.uniq(_.map(config.bajos, b => _.trim(b))), b => !_.isEmpty(b))
   _.forOwn(config.dir, (v, k) => {

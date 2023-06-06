@@ -3,7 +3,7 @@ const buildArgEnv = require('./build-arg-env')
 const checkDependency = require('./check-dependency')
 
 module.exports = async function () {
-  const { _, fs, getConfig, error, walkBajos } = this.bajo.helper
+  const { _, fs, getConfig, walkBajos, freeze } = this.bajo.helper
   const config = getConfig()
 
   const c = buildArgEnv.call(this)
@@ -14,6 +14,7 @@ module.exports = async function () {
   }
   _.pull(config.bajos, ...singles)
   _.each(singles, s => delete this[_.camelCase(s)])
+  freeze(this.bajo.config)
   await walkBajos(async function (n) {
     await checkDependency.call(this, n)
   })
@@ -27,6 +28,7 @@ module.exports = async function () {
         const method = _.upperFirst(f)
         this.bajo.event.emit('boot', [`${name}${method}`, `%s: %s`, 'debug', method, name])
       }
+      if (f === 'init') freeze(cfg)
     })
   }
   if (config.verbose) {

@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const _ = require('lodash')
-const levels = require('../lib/logger-levels')
+const levels = require('../helper/log-levels')
 const event = new EventEmitter()
 
 module.exports = function () {
@@ -17,6 +17,7 @@ module.exports = function () {
     if (_.keys(levels).includes(args[0])) {
       const [method, ...a] = args
       if (_.isString(data)) bajo.log[method](msg, ...a)
+      else if (bajo.config.argv.trace === false) bajo.log[method](msg, ...a)
       else bajo.log[method](data, msg, ...a)
     }
   })
