@@ -1,7 +1,6 @@
-module.exports = async function (pkg) {
+module.exports = async function (name, pkg) {
   const { _, getConfig, error, semver } = this.bajo.helper
   const config = getConfig()
-  const name = _.camelCase(pkg)
   const cfg = this[name].config
   const odep = _.reduce(cfg.dependency, (o, k) => {
     const item = _.map(k.split('@'), m => _.trim(m))

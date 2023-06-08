@@ -9,24 +9,22 @@ module.exports = async function () {
   const c = buildArgEnv.call(this)
   const names = []
   const singles = []
-  for (const n of config.bajos) {
-    await buildConfig.call(this, n, { names, singles, c })
+  for (const pkg of config.bajos) {
+    await buildConfig.call(this, pkg, { names, singles, c })
   }
   _.pull(config.bajos, ...singles)
   _.each(singles, s => delete this[_.camelCase(s)])
   freeze(this.bajo.config)
-  await walkBajos(async function (n) {
-    await checkDependency.call(this, n)
+  await walkBajos(async function ({ name, pkg }) {
+    await checkDependency.call(this, name, pkg)
   })
-  for (const f of ['init', 'run']) {
-    await walkBajos(async function (n) {
-      const name = _.camelCase(n)
-      const cfg = this[name].config
+  const methods = { init: 'Initialization', start: 'Start Services' }
+  for (const f of _.keys(methods)) {
+    await walkBajos(async function ({ name, cfg }) {
       const file = `${cfg.dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
         await require(file).call(this)
-        const method = _.upperFirst(f)
-        this.bajo.event.emit('boot', [`${name}${method}`, `%s: %s`, 'debug', method, name])
+        this.bajo.event.emit('boot', [`${name}${_.upperFirst(f)}`, `%s: %s`, 'debug', methods[f], name])
       }
       if (f === 'init') freeze(cfg)
     })
