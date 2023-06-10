@@ -1,11 +1,12 @@
 const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
 
 module.exports = async function (pkg, { names, singles, c }) {
-  const { _, fs, getConfig, getModuleDir, readConfig, isSet, lockfile, error } = this.bajo.helper
+  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error } = this.bajo.helper
   const config = getConfig()
+  const name = _.camelCase(pkg)
+  log.debug(`Read configuration: %s`, name)
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
   if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package ${pkg} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
-  const name = _.camelCase(pkg)
   let cfg = { name }
   try {
     cfg = await readConfig(`${dir}/bajo/config-${config.env}.*`)
@@ -53,6 +54,6 @@ module.exports = async function (pkg, { names, singles, c }) {
       singles.push(pkg)
     }
   }
+  if (!this[name]) this[name] = {}
   this[name].config = cfg
-  this.bajo.event.emit('boot', [`${name}ReadConfig`, `Read configuration: %s`, 'debug', name])
 }

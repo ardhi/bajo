@@ -1,5 +1,6 @@
 module.exports = async function (name, pkg) {
-  const { _, getConfig, error, semver } = this.bajo.helper
+  const { _, log, getConfig, error, semver } = this.bajo.helper
+  log.debug(`Checking dependency: %s`, name)
   const config = getConfig()
   const cfg = this[name].config
   const odep = _.reduce(cfg.dependency, (o, k) => {
@@ -19,5 +20,4 @@ module.exports = async function (name, pkg) {
         throw error(`Semver check '${pkg}' against '${d}@${odep[d]}' failed`, { code: 'BAJO_DEPENDENCY_SEMVER' })
     })
   }
-  this.bajo.event.emit('boot', [`${name}CheckDep`, `Checking dependency: %s`, 'debug', name])
 }

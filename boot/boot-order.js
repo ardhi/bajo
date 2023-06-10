@@ -4,6 +4,8 @@ const getModuleDir = require('../helper/get-module-dir')
 const error = require('../helper/error')
 
 module.exports = async function () {
+  const { log, envs } = this.bajo.helper
+  log.debug('Setup boot order')
   const config = this.bajo.config
   const order = _.reduce(config.bajos, (o, k, i) => {
     const key = _.map(k.split(':'), m => _.trim(m))
@@ -27,5 +29,5 @@ module.exports = async function () {
     result.push(item)
   })
   config.bajos = _.map(_.orderBy(result, ['v']), 'k')
-  this.bajo.event.emit('boot', ['bajoBootOrder', 'Determine boot order: %s', 'debug', 'core'])
+  log.info(`Booting in env: %s`, envs[config.env])
 }
