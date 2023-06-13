@@ -6,7 +6,7 @@ const fastGlob = require('fast-glob')
 const outmatch = require('outmatch')
 const semver = require('semver')
 const lockfile = require('proper-lockfile')
-const dateformat = require('dateformat')
+const dateFormat = require('dateformat')
 const deepFreeze = require('deep-freeze-strict')
 const callsites = require('callsites')
 const flatten = require('flat')
@@ -19,7 +19,7 @@ module.exports = async function () {
     else deepFreeze(o)
   }
   const log = logger.call(this)
-  _.extend(this.bajo.helper, { log, _, fastGlob, fs, outmatch, lockfile, semver, dateformat,
+  _.extend(this.bajo.helper, { log, _, fastGlob, fs, outmatch, lockfile, semver, dateFormat,
     freeze, callsites, flatten, unflatten })
 
   freeze(this.bajo.helper, true)

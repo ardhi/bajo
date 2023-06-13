@@ -4,6 +4,7 @@
   "description": "A framework to build a giant monstrous app rapidly",
   "main": "index.js",
   "scripts": {
+    "build-doc": "jsdoc -c .jsdoc.conf.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,5 +40,8 @@
     "proper-lockfile": "^4.1.2",
     "replaceall-shim": "^1.0.1",
     "semver": "^7.5.1"
+  },
+  "devDependencies": {
+    "clean-jsdoc-theme": "^4.2.7"
   }
 }

@@ -1,6 +1,6 @@
 const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
 
-module.exports = async function (pkg, { names, singles, c }) {
+module.exports = async function (pkg, { names, singles, argv, env }) {
   const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
@@ -38,10 +38,8 @@ module.exports = async function (pkg, { names, singles, c }) {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
     cfg = _.defaultsDeep(_.omit(altCfg, omitKeys), cfg)
   } catch (err) {}
-  // merge with args & process.env
-  _.each(_.keys(c), i => {
-    if (c[i][cfg.name]) cfg = _.defaultsDeep(_.omit(c[i][cfg.name], omitKeys), cfg)
-  })
+  const envArgv = _.defaultsDeep(_.omit(env[cfg.name] || {}, omitKeys) || {}, _.omit(argv[cfg.name] || {}, omitKeys) || {})
+  cfg = _.defaultsDeep(envArgv || {}, cfg || {})
   cfg.dependency = cfg.dependency || []
   if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
   names.push(name)
