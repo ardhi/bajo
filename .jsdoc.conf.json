@@ -11,6 +11,7 @@
       "default_theme": "dark",
       "display-module-header": true,
       "title": "Bajo Framework",
+      "homepageTitle": "Bajo Framework",
       "menu": [{
         "title": "NPM",
         "link": "https://www.npmjs.com/package/bajo"
