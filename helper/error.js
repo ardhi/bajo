@@ -11,9 +11,13 @@
  * @returns {error} Instance of Error
  */
 
-function error (msg, { code } = {}) {
+function error (msg = 'Internal server error', payload) {
   const err = new Error(msg)
-  if (code) err.code = code
+  if (payload) {
+    for (const key in payload) {
+      err[key] = payload[key]
+    }
+  }
   return err
 }
 
