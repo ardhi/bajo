@@ -1,6 +1,5 @@
 const expect = require('chai').expect
-const crypto = require('crypto')
-const getRandomNumber = require('./_lib/getRandomNumber')
+const { faker } = require('@faker-js/faker')
 const isSet = require('../helper/is-set').handler
 
 describe('helper.isSet()', function () {
@@ -21,14 +20,12 @@ describe('helper.isSet()', function () {
   })
   context('with any number as argument', function () {
     it("should return 'true'", function () {
-      const num = getRandomNumber(0, 9999)
-      expect(isSet(num)).to.equal(true)
+      expect(isSet(faker.number.float())).to.equal(true)
     })
   })
   context('with any string as argument', function () {
     it("should return 'true'", function () {
-      const text = crypto.randomBytes(20).toString('hex')
-      expect(isSet(text)).to.equal(true)
+      expect(isSet(faker.string.alphanumeric())).to.equal(true)
     })
   })
   context('with empty object as argument', function () {
