@@ -1,9 +1,13 @@
-const path = require('path')
+import path from 'path'
+import os from 'os'
 
-module.exports = {
-  handler: function (item, useSlash = true) {
+export default {
+  handler: function (item, asFileUrl) {
     item = path.resolve(item)
-    if (useSlash) item = item.replace(/\\/g, '/')
+    if (os.platform() === 'win32') {
+      item = item.replace(/\\/g, '/')
+    }
+    if (asFileUrl) item = `file://${item}`
     return item
   },
   noScope: true

@@ -1,4 +1,4 @@
-module.exports = async function (name, pkg) {
+export default async function (name, pkg) {
   const { _, log, getConfig, error, semver } = this.bajo.helper
   log.debug(`Checking dependency: %s`, name)
   const config = getConfig()

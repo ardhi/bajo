@@ -1,6 +1,6 @@
-const buildHelper = require('../../lib/build-helper')
+import buildHelper from '../../lib/build-helper.js'
 
-module.exports = async function (name, pkg) {
+export default async function (name, pkg) {
   const { _, log, freeze } = this.bajo.helper
   log.debug(`Attach helper: %s`, name)
   const dir = pkg === 'app' ? (this.bajo.config.dir.base + '/app') : this.bajo.helper.getModuleDir(pkg)

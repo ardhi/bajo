@@ -1,9 +1,9 @@
-const _ = require('lodash')
-const fs = require('fs-extra')
-const getModuleDir = require('../helper/get-module-dir')
-const error = require('../helper/error')
+import _ from 'lodash'
+import fs from 'fs-extra'
+import getModuleDir from '../helper/get-module-dir.js'
+import error from '../helper/error.js'
 
-module.exports = async function () {
+export default async function () {
   const { log, envs } = this.bajo.helper
   log.debug('Setup boot order')
   const config = this.bajo.config

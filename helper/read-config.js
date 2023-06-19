@@ -1,25 +1,27 @@
-const path = require('path')
-const pathResolve = require('./path-resolve')
-const getModuleDir = require('./get-module-dir')
-const _ = require('lodash')
-const error = require('./error')
-const fg = require('fast-glob')
-const fs = require('fs-extra')
+import path from 'path'
+import pathResolve from './path-resolve.js'
+import importModule from './import-module.js'
+import getModuleDir from './get-module-dir.js'
+import readJson from './read-json.js'
+import _ from 'lodash'
+import error from './error.js'
+import fg from 'fast-glob'
+import fs from 'fs-extra'
 
 async function defHandler (file) {
-  let mod = require(file)
+  let mod = await importModule.handler(file)
   if (_.isFunction(mod)) mod = await mod.call(this)
   return mod
 }
 
-module.exports = async function (file, { pattern, globOptions = {} } = {}) {
+export default async function (file, { pattern, globOptions = {} } = {}) {
   file = pathResolve.handler(file)
   let ext = path.extname(file)
   const fname = path.dirname(file) + '/' + path.basename(file, ext)
   ext = ext.toLowerCase()
-  if (ext === '.js') return await defHandler.call(this, file)
-  if (ext === '.json') return require(file)
-  const handlers = { '.js': defHandler, '.json': defHandler }
+  if (['.mjs', '.js'].includes(ext)) return await defHandler.call(this, file)
+  if (ext === '.json') return await readJson.handler.call(file)
+  const handlers = { '.mjs': defHandler, '.js': defHandler, '.json': readJson.handler }
   if ((this.bajo.config || {}).bajos) {
     for (const pkg of this.bajo.config.bajos) {
       let dir
@@ -30,10 +32,12 @@ module.exports = async function (file, { pattern, globOptions = {} } = {}) {
       const file = `${dir}/bajo/extend/read-config-handler.js`
       if (!fs.existsSync(file)) continue
       try {
-        let mod = require(file)
+        let mod = await importModule.handler(file)
         if (_.isFunction(mod)) mod = await mod.call(this)
         if (_.isPlainObject(mod)) _.merge(handlers, mod)
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
   if (!['', '.*'].includes(ext)) {

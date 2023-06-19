@@ -1,11 +1,12 @@
-const buildConfig = require('./build-config')
-const checkDependency = require('./check-dependency')
-const attachHelper = require('./attach-helper')
-const parseArgsArgv = require('../../lib/parse-args-argv')
-const parseEnv = require('../../lib/parse-env')
+import buildConfig from './build-config.js'
+import checkDependency from './check-dependency.js'
+import attachHelper from './attach-helper.js'
+import parseArgsArgv from '../../lib/parse-args-argv.js'
+import parseEnv from '../../lib/parse-env.js'
+import importModule from '../../helper/import-module.js'
 
-module.exports = async function () {
-  const { _, fs, log, getConfig, walkBajos, freeze, setHook } = this.bajo.helper
+export default async function () {
+  const { _, fs, log, getConfig, walkBajos, freeze, setHook, pathResolve } = this.bajo.helper
   const config = getConfig()
   const names = []
   const singles = []
@@ -32,7 +33,8 @@ module.exports = async function () {
       const file = `${cfg.dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
         await setHook(`bajo:${_.camelCase(`before ${f} ${name}`)}`)
-        await require(file).call(this)
+        const item = await importModule.handler(file)
+        await item.call(this)
         await setHook(`bajo:${_.camelCase(`after ${f} ${name}`)}`)
         log.debug(`%s: %s`, methods[f], name)
       }

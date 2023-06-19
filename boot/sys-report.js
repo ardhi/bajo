@@ -1,10 +1,10 @@
-module.exports = async function () {
+export default async function () {
   const { log } = this.bajo.helper
   log.debug('Attach system report')
   process.on('uncaughtException', (error, origin) => {
     const { getConfig } = this.bajo.helper
     const config = getConfig()
-    if (config.log.report.includes('sysreport')) log.fatal({ error, origin }, err.message)
+    if (config.log.report.includes('sysreport')) log.fatal({ error, origin }, error.message)
     setTimeout(() => {
       process.exit(1)
     }, 50)

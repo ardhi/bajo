@@ -1,7 +1,7 @@
 const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
 
-module.exports = async function (pkg, { names, singles, argv, env }) {
-  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error } = this.bajo.helper
+export default async function (pkg, { names, singles, argv, env }) {
+  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error, readJson } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
   log.debug(`Read configuration: %s`, name)
@@ -23,7 +23,8 @@ module.exports = async function (pkg, { names, singles, argv, env }) {
     }
   }
   cfg.dir = dir
-  cfg.pkg = _.pick(require(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`),
+  const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
+  cfg.pkg = _.pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
   if (cfg.name === 'app') {
     cfg.prefix = ''

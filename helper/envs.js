@@ -11,4 +11,4 @@ const envs = {
   prod: 'production'
 }
 
-module.exports = envs
+export default envs

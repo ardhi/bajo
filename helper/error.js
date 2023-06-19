@@ -21,7 +21,7 @@ function error (msg = 'Internal server error', payload) {
   return err
 }
 
-module.exports = {
+export default {
   handler: error,
   noScope: true
 }

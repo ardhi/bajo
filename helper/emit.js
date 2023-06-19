@@ -12,4 +12,4 @@ function emit (name, ...params) {
   this.bajo.event.emit(name, ...params)
 }
 
-module.exports = emit
+export default emit

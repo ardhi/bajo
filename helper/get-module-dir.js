@@ -1,7 +1,9 @@
-const path = require('path')
-const pathResolve = require('./path-resolve')
+import path from 'path'
+import pathResolve from './path-resolve.js'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
-module.exports = {
+export default {
   handler: function (name) {
     if (name === 'app') return pathResolve.handler(process.cwd())
     const pkgPath = name + '/package.json'

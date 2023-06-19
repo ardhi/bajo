@@ -2,15 +2,15 @@
  * @module boot/buildConfig
  */
 
-const fs = require('fs-extra')
-const _ = require('lodash')
-const pathResolve = require('../helper/path-resolve')
-const readConfig = require('../helper/read-config')
-const getKeyByValue = require('../helper/get-key-by-value')
-const error = require('../helper/error')
-const envs = require('../helper/envs')
-const parseArgsArgv = require('../lib/parse-args-argv')
-const parseEnv = require('../lib/parse-env')
+import fs from 'fs-extra'
+import _ from 'lodash'
+import pathResolve from '../helper/path-resolve.js'
+import readConfig from '../helper/read-config.js'
+import getKeyByValue from '../helper/get-key-by-value.js'
+import error from '../helper/error.js'
+import envs from '../helper/envs.js'
+import parseArgsArgv from '../lib/parse-args-argv.js'
+import parseEnv from '../lib/parse-env.js'
 
 /**
  * Building configuration object. Read configurtion file from app data directory, program
@@ -69,4 +69,4 @@ async function buildConfig () {
   this.bajo.config = config
 }
 
-module.exports = buildConfig
+export default buildConfig

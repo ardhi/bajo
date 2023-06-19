@@ -1,10 +1,11 @@
 async function exit (signal) {
-  const { walkBajos, fs, log } = this.bajo.helper
+  const { walkBajos, fs, log, importModule } = this.bajo.helper
   log.warn(`${signal} signal received`)
   await walkBajos(async function ({ name, cfg }) {
     const file = `${cfg.dir}/bajo/exit.js`
     if (fs.existsSync(file)) {
-      await require(file).call(this)
+      const handler = await importModule(file)
+      await handler.call(this)
       log.debug(`Service exited: '%s'`, name)
     }
   })
@@ -12,7 +13,7 @@ async function exit (signal) {
   process.exit(0)
 }
 
-module.exports = async function () {
+export default async function () {
   const { log } = this.bajo.helper
   process.on('SIGINT', async () => {
     await exit.call(this, 'SIGINT')

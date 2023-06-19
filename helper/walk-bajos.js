@@ -46,4 +46,4 @@ async function walkBajos (handler, { key = 'name' } = {}) {
   return result
 }
 
-module.exports = walkBajos
+export default walkBajos

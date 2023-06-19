@@ -1,18 +1,23 @@
-const buildHelper = require('../lib/build-helper')
-const logger = require('../lib/logger')
-const _ = require('lodash')
-const fs = require('fs-extra')
-const fastGlob = require('fast-glob')
-const outmatch = require('outmatch')
-const semver = require('semver')
-const lockfile = require('proper-lockfile')
-const dateFormat = require('dateformat')
-const deepFreeze = require('deep-freeze-strict')
-const callsites = require('callsites')
-const flatten = require('flat')
-const unflatten = require('flat').unflatten
+import buildHelper from '../lib/build-helper.js'
+import logger from '../lib/logger.js'
+import _ from 'lodash'
+import fs from 'fs-extra'
+import fastGlob from 'fast-glob'
+import outmatch from 'outmatch'
+import semver from 'semver'
+import lockfile from 'proper-lockfile'
+import dateFormat from 'dateformat'
+import deepFreeze from 'deep-freeze-strict'
+import callsites from 'callsites'
+import flatten from 'flat'
+import path from 'path'
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-module.exports = async function () {
+const { unflatten } = flatten
+
+export default async function () {
   this.bajo.helper = await buildHelper.call(this, `${__dirname}/../helper`)
   const freeze = (o, shallow) => {
     if (shallow) Object.freeze(o)

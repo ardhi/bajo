@@ -15,4 +15,4 @@ const logLevels = {
   fatal: 60
 }
 
-module.exports = logLevels
+export default logLevels

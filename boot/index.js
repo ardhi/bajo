@@ -10,13 +10,16 @@
  * @module boot
  */
 
-const buildConfig = require('./build-config')
-const bootOrder = require('./boot-order')
-const attachHelper = require('./attach-helper')
-const setupBajos = require('./bajos')
-const sysReport = require('./sys-report')
-const exitHandler = require('./exit-handler')
-require('replaceall-shim')
+import createScope from './create-scope.js'
+import buildConfig from './build-config.js'
+import attachHelper from './attach-helper.js'
+import sysReport from './sys-report.js'
+import bootOrder from './boot-order.js'
+import setupBajos from './bajos/index.js'
+import exitHandler from './exit-handler.js'
+import shim from '../lib/shim.js'
+
+shim()
 
 /**
  * The entry point to boot Bajo based application
@@ -27,14 +30,14 @@ require('replaceall-shim')
  */
 
 async function boot () {
-  const scope = require('./create-scope')()
+  const scope = createScope()
   await buildConfig.call(scope)
   await attachHelper.call(scope)
-  await sysReport.call(scope)
+  // await sysReport.call(scope)
   await bootOrder.call(scope)
   await setupBajos.call(scope)
   await exitHandler.call(scope)
   return scope
 }
 
-module.exports = boot
+export default boot

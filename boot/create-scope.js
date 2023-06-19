@@ -2,7 +2,7 @@
  * @module boot/createScope
  */
 
-const { EventEmitter } = require('events')
+import { EventEmitter } from 'events'
 const event = new EventEmitter()
 
 const bajo = {
@@ -19,4 +19,4 @@ function createScope () {
   return { bajo }
 }
 
-module.exports = createScope
+export default createScope

@@ -1,7 +1,7 @@
-const _ = require('lodash')
-const callsites = require('callsites')
-const error = require('./error').handler
-const pathResolve = require('./path-resolve').handler
+import _ from 'lodash'
+import callsites from 'callsites'
+import error from './error.js'
+import pathResolve from './path-resolve.js'
 
 /**
  * Get the right Bajo name inside your app or plugins/Bajos. If parameter ```fname```
@@ -19,8 +19,8 @@ function getBajo (fname) {
   let file
   if (fname) file = fname
   else file = callsites()[2].getFileName()
-  if (!file) throw error('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
-  file = pathResolve(file)
+  if (!file) throw error.handler('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
+  file = pathResolve.handler(file)
   let match
   _.each(config.bajos, b => {
     if (file.includes(b)) {
@@ -29,11 +29,11 @@ function getBajo (fname) {
     }
   })
   if (match) return _.camelCase(match)
-  if (!match && file.includes(pathResolve(process.cwd()))) return 'app'
+  if (!match && file.includes(pathResolve.handler(process.cwd()))) return 'app'
   return 'bajo'
 }
 
-module.exports = {
+export default {
   handler: getBajo,
   noScope: false
 }

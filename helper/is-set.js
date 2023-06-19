@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   handler: function (input) {
     return ![null, undefined].includes(input)
   },

@@ -17,7 +17,7 @@
  */
 
 async function setHook (hookName) {
-  const { _, log, fastGlob, walkBajos, getConfig } = this.bajo.helper
+  const { _, log, fastGlob, walkBajos, getConfig, importModule } = this.bajo.helper
   const config = getConfig()
   const [pkg, action] = (hookName || '').split(':')
   await walkBajos(async function ({ cfg, name }) {
@@ -27,10 +27,11 @@ async function setHook (hookName) {
     for (const f of files) {
       const actionName = _.camelCase(f.replace(dir, '').replace('.js', ''))
       if (actionName !== action) continue
-      await require(f).call(this)
+      const mod = await importModule(f)
+      await mod.call(this)
       if (config.log.report.includes('hook')) log.trace(`Run hook '${hookName}' by '${name}'`)
     }
   })
 }
 
-module.exports = setHook
+export default setHook
