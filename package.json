@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/ardhi/bajo#readme",
   "dependencies": {
-    "callsites": "^3.1.0",
+    "callsites": "^4.0.0",
     "dateformat": "^4.6.3",
     "deep-freeze-strict": "^1.1.1",
     "dotenv": "^16.1.3",
