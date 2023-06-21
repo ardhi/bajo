@@ -17,8 +17,8 @@ import pathResolve from './path-resolve.js'
 function getBajo (fname) {
   const config = this.bajo.config
   let file
-  if (fname) file = fname
-  else file = callsites()[2].getFileName()
+  if (_.isString(fname)) file = fname
+  else file = callsites()[_.isNumber(fname) ? fname : 2].getFileName()
   if (!file) throw error.handler('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
   file = pathResolve.handler(file)
   let match
