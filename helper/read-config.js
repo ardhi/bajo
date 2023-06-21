@@ -22,6 +22,7 @@ export default async function (file, { pattern, globOptions = {} } = {}) {
   if (['.mjs', '.js'].includes(ext)) return await defHandler.call(this, file)
   if (ext === '.json') return await readJson.handler.call(file)
   const handlers = { '.mjs': defHandler, '.js': defHandler, '.json': readJson.handler }
+  // todo: it should run only once!
   if ((this.bajo.config || {}).bajos) {
     for (const pkg of this.bajo.config.bajos) {
       let dir
@@ -29,7 +30,7 @@ export default async function (file, { pattern, globOptions = {} } = {}) {
         dir = getModuleDir.handler(pkg)
       } catch (err) {}
       if (!dir) continue
-      const file = `${dir}/bajo/extend/read-config-handler.js`
+      const file = `${dir}/bajo/extend/read-config.js`
       if (!fs.existsSync(file)) continue
       try {
         let mod = await importModule.handler(file)
