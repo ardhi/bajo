@@ -31,17 +31,34 @@
  * })
  */
 
-async function walkBajos (handler, { key = 'name' } = {}) {
-  const { _, getConfig } = this.bajo.helper
+async function walkBajos (handler, { key = 'name', glob } = {}) {
+  const { _, getConfig, fastGlob, getBajo } = this.bajo.helper
   const config = getConfig()
   const result = {}
+  const bajo = getBajo(4)
   for (const pkg of config.bajos) {
     const name = _.camelCase(pkg)
     const cfg = getConfig(name)
-    const r = await handler.call(this, { name, pkg, cfg })
-    if (r === false) break
-    else if (r === undefined) continue
-    else result[cfg[key]] = r
+    let r
+    if (glob) {
+      if (_.isString(glob)) glob = { pattern: glob }
+      const files = await fastGlob(`${cfg.dir}/${bajo}/${glob.pattern}`, glob.options)
+      // console.log(`${cfg.dir}/${bajo}/${glob.pattern}`)
+      for (const f of files) {
+        const resp = await handler.call(this, { name, pkg, cfg, file: f })
+        if (resp === false) break
+        else if (resp === undefined) continue
+        else {
+          result[cfg[key]] = result[cfg[key]] || {}
+          result[cfg[key]][f] = resp
+        }
+      }
+    } else {
+      r = await handler.call(this, { name, pkg, cfg })
+      if (r === false) break
+      else if (r === undefined) continue
+      else result[cfg[key]] = r
+    }
   }
   return result
 }
