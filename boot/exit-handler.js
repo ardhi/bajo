@@ -22,5 +22,5 @@ export default async function () {
   process.on('SIGTERM', async () => {
     await exit.call(this, 'SIGTERM')
   })
-  log.debug('Exit handler')
+  log.debug('Exit handlings')
 }

@@ -1,6 +1,6 @@
-export default async function (name, pkg) {
+async function runner (name, pkg) {
   const { _, log, getConfig, error, semver } = this.bajo.helper
-  log.debug(`Checking dependency: %s`, name)
+  log.trace(`Checking dependency: %s`, name)
   const config = getConfig()
   const cfg = this[name].config
   const odep = _.reduce(cfg.dependency, (o, k) => {
@@ -21,3 +21,14 @@ export default async function (name, pkg) {
     })
   }
 }
+
+async function checkDependency () {
+  const { log, walkBajos, setHook } = this.bajo.helper
+  log.debug('Checking dependencies')
+  await walkBajos(async function ({ name, pkg }) {
+    await runner.call(this, name, pkg)
+  })
+  await setHook('bajo:afterCheckDeps')
+}
+
+export default checkDependency

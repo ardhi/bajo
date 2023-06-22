@@ -29,5 +29,5 @@ export default async function () {
     result.push(item)
   })
   config.bajos = _.map(_.orderBy(result, ['v']), 'k')
-  log.info(`Booting in env: %s`, envs[config.env])
+  log.info(`Run in '%s' environment`, envs[config.env])
 }

@@ -43,9 +43,8 @@ async function walkBajos (handler, { key = 'name', glob } = {}) {
     if (glob) {
       if (_.isString(glob)) glob = { pattern: glob }
       const files = await fastGlob(`${cfg.dir}/${bajo}/${glob.pattern}`, glob.options)
-      // console.log(`${cfg.dir}/${bajo}/${glob.pattern}`)
       for (const f of files) {
-        const resp = await handler.call(this, { name, pkg, cfg, file: f })
+        const resp = await handler.call(this, { name, pkg, cfg, file: f, dir: `${cfg.dir}/${bajo}` })
         if (resp === false) break
         else if (resp === undefined) continue
         else {

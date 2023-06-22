@@ -9,8 +9,23 @@ import readConfig from '../helper/read-config.js'
 import getKeyByValue from '../helper/get-key-by-value.js'
 import error from '../helper/error.js'
 import envs from '../helper/envs.js'
+import defaultsDeep from '../helper/defaults-deep.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
+
+const defConfig = {
+  dir: {},
+  log: {
+    level: 'info',
+    dateFormat: `UTC:yyyy-mm-dd'T'HH:MM:ss.l'Z'`,
+    report: []
+  },
+  bajos: ['app'],
+  env: 'dev',
+  event: {
+    maxListeners: 20
+  }
+}
 
 /**
  * Building configuration object. Read configurtion file from app data directory, program
@@ -33,39 +48,31 @@ import parseEnv from '../lib/parse-env.js'
 async function buildConfig () {
   const { args, argv } = parseArgsArgv()
   const env = parseEnv()
-  let defConfig = {
-    dir: {},
-    log: {
-      level: 'info',
-      dateFormat: `UTC:yyyy-mm-dd'T'HH:MM:ss.l'Z'`,
-      report: ['sysreport', 'helper', 'hook'],
-      details: []
-    },
-    bajos: ['app'],
-    env: 'dev'
-  }
-  defConfig = _.defaultsDeep(env.root, argv.root, defConfig)
-  if (!defConfig.dir.data) throw error.handler('No data directory provided', { code: 'BAJO_DATA_DIR_NOT_PROVIDED' })
-  defConfig.dir.data = pathResolve.handler(defConfig.dir.data)
-  _.set(defConfig, 'dir.base', pathResolve.handler(process.cwd()))
+  const envArgv = defaultsDeep.handler({}, env.root, argv.root)
+  // directories
+  if (!envArgv.dir.data) throw error.handler('No data directory provided', { code: 'BAJO_DATA_DIR_NOT_PROVIDED' })
+  envArgv.dir.data = pathResolve.handler(envArgv.dir.data)
+  _.set(envArgv, 'dir.base', pathResolve.handler(process.cwd()))
   _.each(['tmp', 'lock'], k => {
-    if (!defConfig.dir[k]) defConfig.dir[k] = `${defConfig.dir.data}/${k}`
-    fs.ensureDirSync(defConfig.dir[k])
+    if (!envArgv.dir[k]) envArgv.dir[k] = `${envArgv.dir.data}/${k}`
+    fs.ensureDirSync(envArgv.dir[k])
   })
-  fs.ensureDirSync(defConfig.dir.data + '/config')
-  const resp = _.omit(await readConfig.call(this, `${defConfig.dir.data}/config/bajo.*`), ['dir'])
-  const config = _.defaultsDeep(resp, defConfig)
+  fs.ensureDirSync(envArgv.dir.data + '/config')
+  // config merging
+  const resp = _.omit(await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`), ['dir'])
+  const config = defaultsDeep.handler({}, envArgv, resp, defConfig)
+  // force init
   config.args = args
   config.env = config.env.toLowerCase()
   if (_.values(envs).includes(config.env)) config.env = getKeyByValue.handler(envs, config.env)
   if (!_.keys(envs).includes(config.env)) config.env = 'dev'
   process.env.NODE_ENV = envs[config.env]
-  if (_.isString(config.log.details)) config.log.details = _.map((argv.root['log-details'] || '').split(','), t => _.trim(t))
   if (config.env === 'dev') config.log.level = 'debug'
   if (config.verbose) config.log.level = 'trace'
-
+  // sanitize bajos
   if (!config.bajos.includes('app')) config.bajos.push('app')
   config.bajos = _.filter(_.uniq(_.map(config.bajos, b => _.trim(b))), b => !_.isEmpty(b))
+  this.bajo.event.setMaxListeners(config.event.maxListeners)
   this.bajo.config = config
 }
 

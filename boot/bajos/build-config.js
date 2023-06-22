@@ -1,10 +1,10 @@
 const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
 
-export default async function (pkg, { names, singles, argv, env }) {
-  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error, readJson } = this.bajo.helper
+async function runner (pkg, { names, singles, argv, env }) {
+  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
-  log.debug(`Read configuration: %s`, name)
+  log.trace(`Read configuration: %s`, name)
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
   if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package ${pkg} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
   let cfg = { name }
@@ -37,10 +37,10 @@ export default async function (pkg, { names, singles, argv, env }) {
   // merge with config from datadir
   try {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
-    cfg = _.defaultsDeep(_.omit(altCfg, omitKeys), cfg)
+    cfg = defaultsDeep({}, _.omit(altCfg, omitKeys), cfg)
   } catch (err) {}
-  const envArgv = _.defaultsDeep(_.omit(env[cfg.name] || {}, omitKeys) || {}, _.omit(argv[cfg.name] || {}, omitKeys) || {})
-  cfg = _.defaultsDeep(envArgv || {}, cfg || {})
+  const envArgv = defaultsDeep({}, _.omit(env[cfg.name] || {}, omitKeys) || {}, _.omit(argv[cfg.name] || {}, omitKeys) || {})
+  cfg = defaultsDeep({}, envArgv || {}, cfg || {})
   cfg.dependency = cfg.dependency || []
   if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
   names.push(name)
@@ -55,4 +55,15 @@ export default async function (pkg, { names, singles, argv, env }) {
   }
   if (!this[name]) this[name] = {}
   this[name].config = cfg
+}
+
+export default async function ({ names, singles, argv, env }) {
+  const { _, log, freeze } = this.bajo.helper
+  log.debug('Read configurations')
+  for (const pkg of this.bajo.config.bajos) {
+    await runner.call(this, pkg, { names, singles, argv, env })
+  }
+  _.pull(this.bajo.config.bajos, ...singles)
+  _.each(singles, s => delete this[_.camelCase(s)])
+  freeze(this.bajo.config)
 }
