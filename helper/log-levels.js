@@ -12,7 +12,8 @@ const logLevels = {
   info: 30,
   warn: 40,
   error: 50,
-  fatal: 60
+  fatal: 60,
+  silent: 99
 }
 
 export default logLevels

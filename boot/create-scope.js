@@ -7,7 +7,7 @@ import _ from 'lodash'
 import readJson from '../helper/read-json.js'
 import importModule from '../helper/import-module.js'
 
-const event = new EventEmitter()
+const emitter = new EventEmitter()
 
 async function defHandler (file) {
   let mod = await importModule.handler(file)
@@ -15,10 +15,15 @@ async function defHandler (file) {
   return mod
 }
 
-const configHandlers = { '.js': defHandler, '.mjs': defHandler, '.json': readJson.handler }
+const configHandlers = [
+  { ext: '.js', handler: defHandler },
+  { ext: '.mjs', handler: defHandler },
+  { ext: '.json', handler: readJson.handler }
+]
 
 const bajo = {
-  event,
+  runAt: new Date(),
+  emitter,
   configHandlers
 }
 

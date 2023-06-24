@@ -15,7 +15,7 @@ import buildConfig from './build-config.js'
 import attachHelper from './attach-helper.js'
 import sysReport from './sys-report.js'
 import bootOrder from './boot-order.js'
-import setupBajos from './bajos/index.js'
+import bootBajos from './bajos/index.js'
 import exitHandler from './exit-handler.js'
 import shim from '../lib/shim.js'
 
@@ -35,8 +35,13 @@ async function boot () {
   await attachHelper.call(scope)
   // await sysReport.call(scope)
   await bootOrder.call(scope)
-  await setupBajos.call(scope)
+  await bootBajos.call(scope)
   await exitHandler.call(scope)
+  // complete
+  const { runHook, log } = scope.bajo.helper
+  await runHook('bajo:bootComplete')
+  const elapsed = (new Date() - scope.bajo.runAt).toLocaleString()
+  log.info('Boot process completed in %sms', elapsed)
   return scope
 }
 

@@ -1,6 +1,6 @@
 const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
 
-async function runner (pkg, { names, singles, argv, env }) {
+async function runner (pkg, { singles, argv, env }) {
   const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
@@ -43,7 +43,6 @@ async function runner (pkg, { names, singles, argv, env }) {
   cfg = defaultsDeep({}, envArgv || {}, cfg || {})
   cfg.dependency = cfg.dependency || []
   if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
-  names.push(name)
   if (cfg.single) {
     const lockfilePath = `${config.dir.lock}/${name}.lock`
     const file = `${cfg.dir}/package.json`
@@ -57,11 +56,11 @@ async function runner (pkg, { names, singles, argv, env }) {
   this[name].config = cfg
 }
 
-export default async function ({ names, singles, argv, env }) {
+export default async function ({ singles, argv, env }) {
   const { _, log, freeze } = this.bajo.helper
   log.debug('Read configurations')
   for (const pkg of this.bajo.config.bajos) {
-    await runner.call(this, pkg, { names, singles, argv, env })
+    await runner.call(this, pkg, { singles, argv, env })
   }
   _.pull(this.bajo.config.bajos, ...singles)
   _.each(singles, s => delete this[_.camelCase(s)])

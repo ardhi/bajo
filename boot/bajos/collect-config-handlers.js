@@ -1,4 +1,4 @@
-async function configHandlersCollector (pkg) {
+async function collectConfigHandlers (pkg) {
   const { _, fs, getModuleDir, importModule, log } = this.bajo.helper
   for (const pkg of this.bajo.config.bajos) {
     let dir
@@ -11,11 +11,12 @@ async function configHandlersCollector (pkg) {
     try {
       let mod = await importModule(file)
       if (_.isFunction(mod)) mod = await mod.call(this)
-      if (_.isPlainObject(mod)) _.merge(this.bajo.configHandlers, mod)
+      if (_.isPlainObject(mod)) mod = [mod]
+      this.bajo.configHandlers.concat(mod)
     } catch (err) {}
   }
-  const exts = _.keys(this.bajo.configHandlers)
+  const exts = _.map(this.bajo.configHandlers, 'ext')
   log.trace('Config handlers: %s', exts.join(', '))
 }
 
-export default configHandlersCollector
+export default collectConfigHandlers

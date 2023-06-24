@@ -9,7 +9,7 @@
  */
 
 function emit (name, ...params) {
-  this.bajo.event.emit(name, ...params)
+  this.bajo.emitter.emit(name, ...params)
 }
 
 export default emit

@@ -23,12 +23,11 @@ async function runner (name, pkg) {
 }
 
 async function checkDependency () {
-  const { log, walkBajos, setHook } = this.bajo.helper
+  const { log, walkBajos, runHook } = this.bajo.helper
   log.debug('Checking dependencies')
   await walkBajos(async function ({ name, pkg }) {
     await runner.call(this, name, pkg)
   })
-  await setHook('bajo:afterCheckDeps')
 }
 
 export default checkDependency

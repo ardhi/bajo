@@ -16,13 +16,12 @@ import parseEnv from '../lib/parse-env.js'
 const defConfig = {
   dir: {},
   log: {
-    level: 'info',
     dateFormat: `UTC:yyyy-mm-dd'T'HH:MM:ss.l'Z'`,
     report: []
   },
   bajos: ['app'],
   env: 'dev',
-  event: {
+  emitter: {
     maxListeners: 20
   }
 }
@@ -67,12 +66,11 @@ async function buildConfig () {
   if (_.values(envs).includes(config.env)) config.env = getKeyByValue.handler(envs, config.env)
   if (!_.keys(envs).includes(config.env)) config.env = 'dev'
   process.env.NODE_ENV = envs[config.env]
-  if (config.env === 'dev') config.log.level = 'debug'
-  if (config.verbose) config.log.level = 'trace'
+  if (!config.log.level) config.log.level = config.env === 'dev' ? 'debug' : 'info'
   // sanitize bajos
   if (!config.bajos.includes('app')) config.bajos.push('app')
   config.bajos = _.filter(_.uniq(_.map(config.bajos, b => _.trim(b))), b => !_.isEmpty(b))
-  this.bajo.event.setMaxListeners(config.event.maxListeners)
+  this.bajo.emitter.setMaxListeners(config.emitter.maxListeners)
   this.bajo.config = config
 }
 
