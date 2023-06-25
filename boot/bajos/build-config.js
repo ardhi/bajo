@@ -26,14 +26,8 @@ async function runner (pkg, { singles, argv, env }) {
   const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
   cfg.pkg = _.pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
-  if (cfg.name === 'app') {
-    cfg.prefix = ''
-    cfg.alias = 'app'
-  } else {
-    if (!isSet(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
-    if (!isSet(cfg.prefix)) cfg.prefix = _.kebabCase(cfg.alias)
-  }
-  if (cfg.prefix[0] === '/') cfg.prefix = cfg.prefix.slice(1)
+  if (cfg.name === 'app') cfg.alias = 'app'
+  else if (!isSet(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
   // merge with config from datadir
   try {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
