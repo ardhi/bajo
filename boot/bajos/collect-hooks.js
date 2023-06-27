@@ -1,7 +1,5 @@
-import buildModuleCollector from '../../lib/build-module-collector.js'
-
 export default async function () {
-  const { _, walkBajos, log, runHook, isLogInRange } = this.bajo.helper
+  const { _, walkBajos, log, runHook, isLogInRange, importModule } = this.bajo.helper
   this.bajo.hooks = this.bajo.hooks || []
   log.debug('Collect hooks')
   // collects
@@ -12,7 +10,7 @@ export default async function () {
       path = ns
       ns = name
     }
-    const mod = await buildModuleCollector.call(this, file)
+    const mod = await importModule(file, { forCollector: true })
     if (!mod) return undefined
     _.merge(mod, { ns, path })
     this.bajo.hooks.push(mod)

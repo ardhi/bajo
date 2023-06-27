@@ -8,11 +8,11 @@ async function run ({ singles }) {
     await walkBajos(async function ({ name, cfg }) {
       const file = `${cfg.dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
+        log.debug(`%s: %s`, _.upperFirst(f), name)
         await runHook(`bajo:${_.camelCase(`before ${f} ${name}`)}`)
         const item = await importModule(file)
         await item.call(this)
         await runHook(`bajo:${_.camelCase(`after ${f} ${name}`)}`)
-        log.debug(`%s: %s`, _.upperFirst(f), name)
       }
       if (f === 'init') freeze(cfg)
     })

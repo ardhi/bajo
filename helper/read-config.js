@@ -11,7 +11,7 @@ export default async function (file, { pattern, globOptions = {} } = {}) {
   const fname = path.dirname(file) + '/' + path.basename(file, ext)
   ext = ext.toLowerCase()
   if (['.mjs', '.js'].includes(ext)) return await defHandler.call(this, file)
-  if (ext === '.json') return await readJson.handler.call(file)
+  if (ext === '.json') return await readJson.handler(file)
   if (!['', '.*'].includes(ext)) {
     const item = _.find(this.bajo.configHandlers, { ext })
     if (!item) throw error.handler(`Can\'t parse '${f}'`, { code: 'BAJO_CONFIG_NO_PARSER' })

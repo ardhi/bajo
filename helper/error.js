@@ -1,3 +1,5 @@
+import util from 'util'
+
 /**
  * It's a shortcut to create an instance of Error with message and optional parameter
  * in a single line
@@ -11,8 +13,9 @@
  * @returns {error} Instance of Error
  */
 
-function error (msg = 'Internal server error', payload) {
-  const err = new Error(msg)
+function error (msg = 'Internal server error', ...args) {
+  const payload = args.pop()
+  const err = new Error(util.format(msg, ...args))
   if (payload) {
     for (const key in payload) {
       err[key] = payload[key]

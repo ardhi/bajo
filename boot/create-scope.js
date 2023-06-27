@@ -2,15 +2,12 @@
  * @module boot/createScope
  */
 
-import { EventEmitter } from 'events'
 import _ from 'lodash'
 import readJson from '../helper/read-json.js'
 import importModule from '../helper/import-module.js'
 
-const emitter = new EventEmitter()
-
 async function defHandler (file) {
-  let mod = await importModule.handler(file)
+  let mod = await importModule(file)
   if (_.isFunction(mod)) mod = await mod.call(this)
   return mod
 }
@@ -23,7 +20,6 @@ const configHandlers = [
 
 const bajo = {
   runAt: new Date(),
-  emitter,
   configHandlers
 }
 

@@ -16,14 +16,11 @@ import parseEnv from '../lib/parse-env.js'
 const defConfig = {
   dir: {},
   log: {
-    dateFormat: `UTC:yyyy-mm-dd'T'HH:MM:ss.l'Z'`,
+    dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
     report: []
   },
   bajos: ['app'],
-  env: 'dev',
-  emitter: {
-    maxListeners: 20
-  }
+  env: 'dev'
 }
 
 /**
@@ -70,7 +67,6 @@ async function buildConfig () {
   // sanitize bajos
   if (!config.bajos.includes('app')) config.bajos.push('app')
   config.bajos = _.filter(_.uniq(_.map(config.bajos, b => _.trim(b))), b => !_.isEmpty(b))
-  this.bajo.emitter.setMaxListeners(config.emitter.maxListeners)
   this.bajo.config = config
 }
 

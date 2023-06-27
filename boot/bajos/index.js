@@ -1,7 +1,6 @@
 import buildConfig from './build-config.js'
 import checkDependency from './check-dependency.js'
 import attachHelper from './attach-helper.js'
-import collectEvents from './collect-events.js'
 import collectHooks from './collect-hooks.js'
 import run from './run.js'
 import collectConfigHandlers from './collect-config-handlers.js'
@@ -20,7 +19,6 @@ async function bootBajos () {
   await collectExitHandlers.call(this)
   await attachHelper.call(this)
   await collectHooks.call(this)
-  await collectEvents.call(this)
   await run.call(this, { singles })
 }
 

@@ -6,12 +6,16 @@ import fastGlob from 'fast-glob'
 import outmatch from 'outmatch'
 import semver from 'semver'
 import lockfile from 'proper-lockfile'
-import dateFormat from 'dateformat'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc.js'
 import deepFreeze from 'deep-freeze-strict'
 import callsites from 'callsites'
 import flatten from 'flat'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import * as nanoid from 'nanoid'
+
+dayjs.extend(utc)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const { unflatten } = flatten
@@ -22,9 +26,9 @@ export default async function () {
     if (shallow) Object.freeze(o)
     else deepFreeze(o)
   }
-  const log = logger.call(this)
-  _.extend(this.bajo.helper, { log, _, fastGlob, fs, outmatch, lockfile, semver, dateFormat,
-    freeze, callsites, flatten, unflatten })
+  _.extend(this.bajo.helper, { _, fastGlob, fs, outmatch, lockfile, semver, dayjs,
+    freeze, callsites, flatten, unflatten, nanoid })
+  this.bajo.helper.log = logger.call(this)
 
   freeze(this.bajo.helper, true)
 }

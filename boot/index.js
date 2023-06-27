@@ -13,7 +13,6 @@
 import createScope from './create-scope.js'
 import buildConfig from './build-config.js'
 import attachHelper from './attach-helper.js'
-import sysReport from './sys-report.js'
 import bootOrder from './boot-order.js'
 import bootBajos from './bajos/index.js'
 import exitHandler from './exit-handler.js'
@@ -33,10 +32,9 @@ async function boot () {
   const scope = createScope()
   await buildConfig.call(scope)
   await attachHelper.call(scope)
-  // await sysReport.call(scope)
+  await exitHandler.call(scope)
   await bootOrder.call(scope)
   await bootBajos.call(scope)
-  await exitHandler.call(scope)
   // complete
   const { runHook, log } = scope.bajo.helper
   await runHook('bajo:bootComplete')
