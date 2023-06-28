@@ -8,7 +8,6 @@ import _ from 'lodash'
 import pathResolve from '../helper/path-resolve.js'
 import readConfig from '../helper/read-config.js'
 import getKeyByValue from '../helper/get-key-by-value.js'
-import error from '../helper/error.js'
 import envs from '../helper/envs.js'
 import defaultsDeep from '../helper/defaults-deep.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
@@ -42,12 +41,12 @@ const defConfig = {
  * @returns {Object} config
  */
 
-async function buildConfig () {
+async function buildConfig (cwd) {
   const { args, argv } = parseArgsArgv()
   const env = parseEnv()
   const envArgv = defaultsDeep.handler({}, env.root, argv.root)
   // directories
-  _.set(envArgv, 'dir.base', pathResolve.handler(process.cwd()))
+  _.set(envArgv, 'dir.base', pathResolve.handler(cwd))
   if (!_.get(envArgv, 'dir.data')) _.set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
   envArgv.dir.data = pathResolve.handler(envArgv.dir.data)
   if (!envArgv.dir.tmp) {

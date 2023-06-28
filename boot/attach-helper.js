@@ -12,6 +12,7 @@ import deepFreeze from 'deep-freeze-strict'
 import callsites from 'callsites'
 import flatten from 'flat'
 import path from 'path'
+import globalModulesPath from 'global-modules-path'
 import { fileURLToPath } from 'url'
 import * as nanoid from 'nanoid'
 
@@ -27,7 +28,7 @@ export default async function () {
     else deepFreeze(o)
   }
   _.extend(this.bajo.helper, { _, fastGlob, fs, outmatch, lockfile, semver, dayjs,
-    freeze, callsites, flatten, unflatten, nanoid })
+    freeze, callsites, flatten, unflatten, nanoid, globalModulesPath })
   this.bajo.helper.log = logger.call(this)
 
   freeze(this.bajo.helper, true)

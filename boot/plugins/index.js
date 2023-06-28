@@ -12,7 +12,6 @@ async function bootBajos () {
   const singles = []
   const { argv } = parseArgsArgv() || {}
   const env = parseEnv() || {}
-
   await collectConfigHandlers.call(this)
   await buildConfig.call(this, { singles, argv, env })
   await checkDependency.call(this)
