@@ -2,6 +2,7 @@
  * @module boot/buildConfig
  */
 
+import os from 'os'
 import fs from 'fs-extra'
 import _ from 'lodash'
 import pathResolve from '../helper/path-resolve.js'
@@ -19,7 +20,7 @@ const defConfig = {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
     report: []
   },
-  bajos: ['app'],
+  plugins: ['app'],
   env: 'dev'
 }
 
@@ -46,16 +47,15 @@ async function buildConfig () {
   const env = parseEnv()
   const envArgv = defaultsDeep.handler({}, env.root, argv.root)
   // directories
-  if (!envArgv.dir.data) throw error.handler('No data directory provided', { code: 'BAJO_DATA_DIR_NOT_PROVIDED' })
-  envArgv.dir.data = pathResolve.handler(envArgv.dir.data)
   _.set(envArgv, 'dir.base', pathResolve.handler(process.cwd()))
-  _.each(['tmp', 'lock'], k => {
-    if (!envArgv.dir[k]) envArgv.dir[k] = `${envArgv.dir.data}/${k}`
-    fs.ensureDirSync(envArgv.dir[k])
-  })
-  fs.ensureDirSync(envArgv.dir.data + '/config')
+  if (!_.get(envArgv, 'dir.data')) _.set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
+  envArgv.dir.data = pathResolve.handler(envArgv.dir.data)
+  if (!envArgv.dir.tmp) {
+    envArgv.dir.tmp = pathResolve.handler(os.tmpdir()) + '/bajo'
+    fs.ensureDirSync(envArgv.dir.tmp)
+  }
   // config merging
-  const resp = _.omit(await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`), ['dir'])
+  const resp = _.omit(await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true }), ['dir'])
   const config = defaultsDeep.handler({}, envArgv, resp, defConfig)
   // force init
   config.args = args
@@ -64,9 +64,9 @@ async function buildConfig () {
   if (!_.keys(envs).includes(config.env)) config.env = 'dev'
   process.env.NODE_ENV = envs[config.env]
   if (!config.log.level) config.log.level = config.env === 'dev' ? 'debug' : 'info'
-  // sanitize bajos
-  if (!config.bajos.includes('app')) config.bajos.push('app')
-  config.bajos = _.filter(_.uniq(_.map(config.bajos, b => _.trim(b))), b => !_.isEmpty(b))
+  // sanitize plugins
+  if (fs.existsSync(`${config.dir.base}/app/bajo`) && !config.plugins.includes('app')) config.plugins.push('app')
+  config.plugins = _.filter(_.uniq(_.map(config.plugins, b => _.trim(b))), b => !_.isEmpty(b))
   this.bajo.config = config
 }
 

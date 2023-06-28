@@ -9,9 +9,9 @@ async function runner (name, pkg) {
 }
 
 async function attachHelper () {
-  const { log, walkBajos } = this.bajo.helper
+  const { log, eachPlugins } = this.bajo.helper
   log.debug('Attach helpers')
-  await walkBajos(async function ({ name, pkg }) {
+  await eachPlugins(async function ({ name, pkg }) {
     await runner.call(this, name, pkg)
   })
 }

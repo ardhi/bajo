@@ -38,7 +38,9 @@ async function runner (pkg, { singles, argv, env }) {
   cfg.dependency = cfg.dependency || []
   if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
   if (cfg.single) {
-    const lockfilePath = `${config.dir.lock}/${name}.lock`
+    const lockfileDir = `${config.dir.tmp}/lock`
+    const lockfilePath = `${lockfileDir}/${name}.lock`
+    fs.ensureDirSync(lockfileDir)
     const file = `${cfg.dir}/package.json`
     try {
       await lockfile.lock(file, { lockfilePath })
@@ -53,10 +55,10 @@ async function runner (pkg, { singles, argv, env }) {
 export default async function ({ singles, argv, env }) {
   const { _, log, freeze } = this.bajo.helper
   log.debug('Read configurations')
-  for (const pkg of this.bajo.config.bajos) {
+  for (const pkg of this.bajo.config.plugins) {
     await runner.call(this, pkg, { singles, argv, env })
   }
-  _.pull(this.bajo.config.bajos, ...singles)
+  _.pull(this.bajo.config.plugins, ...singles)
   _.each(singles, s => delete this[_.camelCase(s)])
   freeze(this.bajo.config)
 }

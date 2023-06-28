@@ -10,7 +10,7 @@ async function runner (name, pkg) {
   }, {})
   const deps = _.keys(odep)
   if (deps.length > 0) {
-    if (_.intersection(config.bajos, deps).length !== deps.length)
+    if (_.intersection(config.plugins, deps).length !== deps.length)
       throw error(`Dependency for '${pkg}' unfulfilled: ${deps.join(', ')}`, { code: 'BAJO_DEPENDENCY' })
     _.each(deps, d => {
       if (!odep[d]) return
@@ -23,9 +23,9 @@ async function runner (name, pkg) {
 }
 
 async function checkDependency () {
-  const { log, walkBajos, runHook } = this.bajo.helper
+  const { log, eachPlugins, runHook } = this.bajo.helper
   log.debug('Checking dependencies')
-  await walkBajos(async function ({ name, pkg }) {
+  await eachPlugins(async function ({ name, pkg }) {
     await runner.call(this, name, pkg)
   })
 }

@@ -1,5 +1,5 @@
 /**
- * @module helper/walkBajos
+ * @module helper/eachPlugins
  */
 
 /**
@@ -15,28 +15,28 @@
  */
 
 /**
- * Walk through all bajos and execute the callback handler
+ * Walk through all plugins and execute the callback handler
  *
  * @instance
  * @async
- * @param {function} handlerFn - [The callback]{@link module:helper/walkBajos~handlerFn}
+ * @param {function} handlerFn - [The callback]{@link module:helper/eachPlugins~handlerFn}
  * @param {Object} [options] - Optional parameter
  * @param {string} [options.key=name] - Key of Bajo's config object that will be used as the key of returned object
  * @returns {Object} Results from callback execution through all Bajos
  *
  * @example
- * const { walkBajos } = this.bajo.helper
- * await walkBajos(async function ({ name }) => {
+ * const { eachPlugins } = this.bajo.helper
+ * await eachPlugins(async function ({ name }) => {
  *   console.log(name)
  * })
  */
 
-async function walkBajos (handler, { key = 'name', glob } = {}) {
+async function eachPlugins (handler, { key = 'name', glob } = {}) {
   const { _, getConfig, fastGlob, getBajo } = this.bajo.helper
   const config = getConfig()
   const result = {}
   const bajo = getBajo(4)
-  for (const pkg of config.bajos) {
+  for (const pkg of config.plugins) {
     const name = _.camelCase(pkg)
     const cfg = getConfig(name)
     let r
@@ -62,4 +62,4 @@ async function walkBajos (handler, { key = 'name', glob } = {}) {
   return result
 }
 
-export default walkBajos
+export default eachPlugins

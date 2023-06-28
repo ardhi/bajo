@@ -22,7 +22,7 @@ function getBajo (fname) {
   if (!file) throw error.handler('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
   file = pathResolve.handler(file)
   let match
-  _.each(config.bajos, b => {
+  _.each(config.plugins, b => {
     if (file.includes(b)) {
       match = b
       return false

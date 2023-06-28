@@ -1,8 +1,8 @@
 async function collectExitHandlers (pkg) {
-  const { _, fs, importModule, log, walkBajos } = this.bajo.helper
+  const { _, fs, importModule, log, eachPlugins } = this.bajo.helper
   this.bajo.exitHandler = this.bajo.exitHandler || {}
   const names = []
-  await walkBajos(async function ({ name, cfg }) {
+  await eachPlugins(async function ({ name, cfg }) {
     const file = `${cfg.dir}/bajo/exit.js`
     if (!fs.existsSync(file)) return undefined
     try {

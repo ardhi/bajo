@@ -7,14 +7,14 @@ export default async function () {
   const { log, envs } = this.bajo.helper
   log.debug('Setup boot order')
   const config = this.bajo.config
-  const order = _.reduce(config.bajos, (o, k, i) => {
+  const order = _.reduce(config.plugins, (o, k, i) => {
     const key = _.map(k.split(':'), m => _.trim(m))
     if (key[1] && !_.isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
     else o[key[0]] = 10000 + i
     return o
   }, {})
   const norder = {}
-  for (let n of config.bajos) {
+  for (let n of config.plugins) {
     n = _.map(n.split(':'), m => _.trim(m))[0]
     const dir = n === 'app' ? (config.dir.base + '/app') : getModuleDir.handler(n)
     if (n !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error.handler(`Package ${n} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
@@ -28,6 +28,6 @@ export default async function () {
     const item = { k, v: _.isNaN(norder[k]) ? v : norder[k]}
     result.push(item)
   })
-  config.bajos = _.map(_.orderBy(result, ['v']), 'k')
+  config.plugins = _.map(_.orderBy(result, ['v']), 'k')
   log.info(`Run in '%s' environment`, envs[config.env])
 }

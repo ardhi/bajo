@@ -5,7 +5,7 @@
  * 3. Attaching helpers
  * 4. Attaching system report
  * 5. Determine boot orders
- * 6. Register Bajos/plugins
+ * 6. Register plugins
  * 7. Attaching exit handlers
  * @module boot
  */
@@ -14,7 +14,7 @@ import createScope from './create-scope.js'
 import buildConfig from './build-config.js'
 import attachHelper from './attach-helper.js'
 import bootOrder from './boot-order.js'
-import bootBajos from './bajos/index.js'
+import bootPlugins from './plugins/index.js'
 import exitHandler from './exit-handler.js'
 import shim from '../lib/shim.js'
 
@@ -34,7 +34,7 @@ async function boot () {
   await attachHelper.call(scope)
   await exitHandler.call(scope)
   await bootOrder.call(scope)
-  await bootBajos.call(scope)
+  await bootPlugins.call(scope)
   // complete
   const { runHook, log } = scope.bajo.helper
   await runHook('bajo:bootComplete')

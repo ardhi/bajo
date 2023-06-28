@@ -1,9 +1,9 @@
 export default async function () {
-  const { _, walkBajos, log, runHook, isLogInRange, importModule } = this.bajo.helper
+  const { _, eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
   this.bajo.hooks = this.bajo.hooks || []
   log.debug('Collect hooks')
   // collects
-  await walkBajos(async function ({ name, dir, file }) {
+  await eachPlugins(async function ({ name, dir, file }) {
     let [$, hookName] = (file.slice(dir.length + 1) || '').split('/')
     let [ns, path] = _.map(hookName.replace('.js', '').split('@'), e => _.camelCase(e))
     if (!path) {
@@ -18,7 +18,7 @@ export default async function () {
   await runHook('bajo:afterCollectHooks')
   // for log trace purpose only
   if (!isLogInRange('trace')) return
-  await walkBajos(async function ({ name }) {
+  await eachPlugins(async function ({ name }) {
     let hooks = _.filter(this.bajo.hooks, { ns: name })
     if (hooks.length === 0) return undefined
     const items = _.groupBy(hooks, 'path')

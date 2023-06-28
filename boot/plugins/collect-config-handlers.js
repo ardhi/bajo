@@ -1,6 +1,6 @@
 async function collectConfigHandlers (pkg) {
   const { _, fs, getModuleDir, importModule, log } = this.bajo.helper
-  for (const pkg of this.bajo.config.bajos) {
+  for (const pkg of this.bajo.config.plugins) {
     let dir
     try {
       dir = getModuleDir(pkg)

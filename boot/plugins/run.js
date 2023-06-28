@@ -1,11 +1,11 @@
 const methods = ['init', 'start']
 
 async function run ({ singles }) {
-  const { _, runHook, log, walkBajos, fs, importModule, freeze, getConfig } = this.bajo.helper
+  const { _, runHook, log, eachPlugins, fs, importModule, freeze, getConfig } = this.bajo.helper
   const config = getConfig()
   for (const f of methods) {
-    await runHook(`bajo:${_.camelCase(`before ${f} all bajos`)}`)
-    await walkBajos(async function ({ name, cfg }) {
+    await runHook(`bajo:${_.camelCase(`before ${f} all plugins`)}`)
+    await eachPlugins(async function ({ name, cfg }) {
       const file = `${cfg.dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
         log.debug(`%s: %s`, _.upperFirst(f), name)
@@ -16,11 +16,11 @@ async function run ({ singles }) {
       }
       if (f === 'init') freeze(cfg)
     })
-    await runHook(`bajo:${_.camelCase(`after ${f} all bajos`)}`)
+    await runHook(`bajo:${_.camelCase(`after ${f} all plugins`)}`)
   }
-  log.debug(`Loaded: ${_.map(config.bajos, b => _.camelCase(b)).join(', ')}`)
+  log.debug(`Loaded plugins: ${_.map(config.plugins, b => _.camelCase(b)).join(', ')}`)
   if (singles.length > 0) {
-    log.warn(`Unloaded single marked bajo: ${_.map(singles, s => _.camelCase(s)).join(', ')}`)
+    log.warn(`Unloaded 'single' plugins: ${_.map(singles, s => _.camelCase(s)).join(', ')}`)
   }
 }
 
