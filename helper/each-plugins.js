@@ -32,10 +32,10 @@
  */
 
 async function eachPlugins (handler, { key = 'name', glob } = {}) {
-  const { _, getConfig, fastGlob, getBajo } = this.bajo.helper
+  const { _, getConfig, fastGlob, getPluginName } = this.bajo.helper
   const config = getConfig()
   const result = {}
-  const bajo = getBajo(4)
+  const bajo = getPluginName(4)
   for (const pkg of config.plugins) {
     const name = _.camelCase(pkg)
     const cfg = getConfig(name)

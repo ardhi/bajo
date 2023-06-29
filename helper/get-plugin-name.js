@@ -14,7 +14,7 @@ import pathResolve from './path-resolve.js'
  * @returns {string} Bajo name
  */
 
-function getBajo (fname) {
+function getPluginName (fname) {
   const config = this.bajo.config
   let file
   if (_.isString(fname)) file = fname
@@ -23,17 +23,21 @@ function getBajo (fname) {
   file = pathResolve.handler(file)
   let match
   _.each(config.plugins, b => {
+    if (file.includes('/bajo/boot/')) {
+      match = 'bajo'
+      return false
+    }
     if (file.includes(b)) {
       match = b
       return false
     }
   })
   if (match) return _.camelCase(match)
-  if (!match && file.includes(pathResolve.handler(process.cwd()))) return 'app'
+  // if (file.includes(pathResolve.handler(process.cwd()))) return 'app'
   return 'bajo'
 }
 
 export default {
-  handler: getBajo,
+  handler: getPluginName,
   noScope: false
 }
