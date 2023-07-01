@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import fs from 'fs-extra'
-import getModuleDir from '../helper/get-module-dir.js'
-import error from '../helper/error.js'
+import getModuleDir from './helper/get-module-dir.js'
+import error from './helper/error.js'
 
 export default async function () {
   const { log, envs } = this.bajo.helper

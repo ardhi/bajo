@@ -1,7 +1,11 @@
-const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'single', 'level']
+import _ from 'lodash'
+import fs from 'fs-extra'
+import lockfile from 'proper-lockfile'
+
+const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'level']
 
 async function runner (pkg, { singles, argv, env }) {
-  const { _, fs, log, getConfig, getModuleDir, readConfig, isSet, lockfile, error, readJson, defaultsDeep } = this.bajo.helper
+  const { log, getConfig, getModuleDir, readConfig, isSet, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
   log.trace(`Read configuration: %s`, name)
@@ -53,7 +57,7 @@ async function runner (pkg, { singles, argv, env }) {
 }
 
 export default async function ({ singles, argv, env }) {
-  const { _, log, freeze } = this.bajo.helper
+  const { log, freeze } = this.bajo.helper
   log.debug('Read configurations')
   for (const pkg of this.bajo.config.plugins) {
     await runner.call(this, pkg, { singles, argv, env })

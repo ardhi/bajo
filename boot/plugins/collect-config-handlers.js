@@ -1,5 +1,8 @@
+import _ from 'lodash'
+import fs from 'fs-extra'
+
 async function collectConfigHandlers (pkg) {
-  const { _, fs, getModuleDir, importModule, log } = this.bajo.helper
+  const { getModuleDir, importModule, log } = this.bajo.helper
   for (const pkg of this.bajo.config.plugins) {
     let dir
     try {

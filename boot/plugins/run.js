@@ -1,7 +1,10 @@
+import _ from 'lodash'
+import fs from 'fs-extra'
+
 const methods = ['init', 'start']
 
 async function run ({ singles }) {
-  const { _, runHook, log, eachPlugins, fs, importModule, freeze, getConfig } = this.bajo.helper
+  const { runHook, log, eachPlugins, importModule, freeze, getConfig } = this.bajo.helper
   const config = getConfig()
   for (const f of methods) {
     await runHook(`bajo:${_.camelCase(`before ${f} all plugins`)}`)

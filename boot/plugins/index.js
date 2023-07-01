@@ -5,8 +5,8 @@ import collectHooks from './collect-hooks.js'
 import run from './run.js'
 import collectConfigHandlers from './collect-config-handlers.js'
 import collectExitHandlers from './collect-exit-handlers.js'
-import parseArgsArgv from '../../lib/parse-args-argv.js'
-import parseEnv from '../../lib/parse-env.js'
+import parseArgsArgv from '../lib/parse-args-argv.js'
+import parseEnv from '../lib/parse-env.js'
 
 async function bootBajos () {
   const singles = []

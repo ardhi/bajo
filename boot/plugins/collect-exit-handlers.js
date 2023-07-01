@@ -1,5 +1,8 @@
+import _ from 'lodash'
+import fs from 'fs-extra'
+
 async function collectExitHandlers (pkg) {
-  const { _, fs, importModule, log, eachPlugins } = this.bajo.helper
+  const { importModule, log, eachPlugins } = this.bajo.helper
   this.bajo.exitHandler = this.bajo.exitHandler || {}
   const names = []
   await eachPlugins(async function ({ name, cfg }) {

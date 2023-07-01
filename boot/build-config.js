@@ -5,13 +5,13 @@
 import os from 'os'
 import fs from 'fs-extra'
 import _ from 'lodash'
-import pathResolve from '../helper/path-resolve.js'
-import readConfig from '../helper/read-config.js'
-import getKeyByValue from '../helper/get-key-by-value.js'
-import envs from '../helper/envs.js'
-import defaultsDeep from '../helper/defaults-deep.js'
-import parseArgsArgv from '../lib/parse-args-argv.js'
-import parseEnv from '../lib/parse-env.js'
+import pathResolve from './helper/path-resolve.js'
+import readConfig from './helper/read-config.js'
+import getKeyByValue from './helper/get-key-by-value.js'
+import envs from './helper/envs.js'
+import defaultsDeep from './helper/defaults-deep.js'
+import parseArgsArgv from './lib/parse-args-argv.js'
+import parseEnv from './lib/parse-env.js'
 
 const defConfig = {
   dir: {},

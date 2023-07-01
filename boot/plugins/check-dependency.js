@@ -1,5 +1,8 @@
+import _ from 'lodash'
+import semver from 'semver'
+
 async function runner (name, pkg) {
-  const { _, log, getConfig, error, semver } = this.bajo.helper
+  const { log, getConfig, error } = this.bajo.helper
   log.trace(`Checking dependency: %s`, name)
   const config = getConfig()
   const cfg = this[name].config

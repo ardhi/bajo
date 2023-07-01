@@ -1,5 +1,7 @@
-export default async function () {
-  const { _, eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
+import _ from 'lodash'
+
+async function collectHooks () {
+  const { eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
   this.bajo.hooks = this.bajo.hooks || []
   log.debug('Collect hooks')
   // collects
@@ -27,3 +29,5 @@ export default async function () {
     }
   })
 }
+
+export default collectHooks

@@ -3,8 +3,8 @@
  */
 
 import _ from 'lodash'
-import readJson from '../helper/read-json.js'
-import importModule from '../helper/import-module.js'
+import readJson from './helper/read-json.js'
+import importModule from './helper/import-module.js'
 
 async function defHandler (file) {
   let mod = await importModule(file)
