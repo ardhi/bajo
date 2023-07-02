@@ -17,17 +17,18 @@ const createApp = {
       describe: `Template to use. Omit it for interactive session. Type: 'bajo project tpl app' for list`,
       type: 'string'
     })
-    yargs.epilog(epilog)
     yargs.option('check-remote', {
       describe: 'Check npm repository for package existence',
       type: 'boolean'
     })
+    yargs.epilog(epilog)
   },
   async handler (argv) {
     const cwd = await dirNameCheck(argv)
     const type = 'app'
+    const session = {}
     if (argv.tpl) await withTpl({ argv, cwd, type })
-    else await interactive({ argv, cwd, type })
+    else await interactive({ argv, cwd, type, session })
   }
 }
 

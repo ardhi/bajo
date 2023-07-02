@@ -6,16 +6,18 @@ async function copyRootFiles ({ pkg, cwd, tplDir, files }) {
   const spinner = ora('Copy project files').start()
   await delay(1000)
   for (const f of files) {
+    let [src, dest] = f.split(':')
+    if (!dest) dest = src
     try {
-      fs.copySync(`${tplDir}/${f}`, `${cwd}/${f}`)
+      fs.copySync(`${tplDir}/${src}`, `${cwd}/${dest}`)
     } catch (err) {
       try {
-        fs.copySync(`${tplDir}/../../root/${f}`, `${cwd}/${f}`)
+        fs.copySync(`${tplDir}/../../root/${src}`, `${cwd}/${dest}`)
       } catch (err) {}
     }
   }
   try {
-    fs.copySync(`${tplDir}/../../license/${pkg.license}`, `${cwd}/LICENSE`)
+    fs.copySync(`${tplDir}/../../license/${pkg.license}`, `${cwd}/LICENSE.md`)
   } catch (err) {}
   spinner.succeed()
 }

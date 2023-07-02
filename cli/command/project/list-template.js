@@ -3,9 +3,9 @@ import path from 'path'
 import fs from 'fs-extra'
 import epilog from '../../lib/epilog.js'
 
-const createApp = {
-  command: 'tpl <type>',
-  aliases: ['t'],
+const listTemplate = {
+  command: 'list-template <type>',
+  aliases: ['lt'],
   describe: `List project templates`,
   builder (yargs) {
     yargs.positional('type', {
@@ -28,4 +28,4 @@ const createApp = {
   }
 }
 
-export default createApp
+export default listTemplate

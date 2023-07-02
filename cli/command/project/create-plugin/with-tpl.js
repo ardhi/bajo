@@ -23,7 +23,7 @@ async function withTpl({ argv, cwd, type }) {
   pkg.packageManager = 'npm@9.1.3'
   await ensureDir(cwd)
   await writePackageJson({ argv, cwd, pkg })
-  await copyRootFiles({ pkg, cwd, tplDir, files: ['.env', '.gitignore', 'README.md', 'index.js'] })
+  await copyRootFiles({ pkg, cwd, tplDir, files: ['.env', '.gitignore', 'README.md'] })
   await copySkel({ cwd, tplDir })
   await installPackages()
   ora(`Done!`).succeed()

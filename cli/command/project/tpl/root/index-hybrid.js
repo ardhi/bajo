@@ -11,3 +11,4 @@ if (!bajo) {
   bajo = await import(bootFile)
 }
 const scope = await bajo.default()
+// do whatever necessary to scope

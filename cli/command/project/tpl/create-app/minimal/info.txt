@@ -1,0 +1,1 @@
+Minimal template, contain only what's necessary

@@ -1,34 +1,36 @@
 import { input } from '@inquirer/prompts'
-import select, { Separator } from '@inquirer/select'
 import semver from 'semver'
 import _ from 'lodash'
-import ora from 'ora'
 import boxen from 'boxen'
 
-async function buildPackageJson ({ argv, cwd, isNewDir }) {
+async function buildPackageJson ({ argv, session }) {
   const pkg = { name: argv.name, type: 'module' }
   pkg.version = await input({
     message: 'Version',
-    default: '0.0.1',
+    default: _.get(session, 'pkg.version', '0.0.1'),
     validate (text) {
       return semver.clean(text) ? true : 'Invalid version'
     }
   })
   pkg.description = await input({
-    message: 'Description'
+    message: 'Description',
+    default: _.get(session, 'pkg.description')
   })
   const repo = await input({
-    message: 'Git Repository'
+    message: 'Git Repository',
+    default: _.get(session, 'pkg.repository.url')
   })
   const keywords = await input({
-    message: 'Keywords'
+    message: 'Keywords',
+    default: _.get(session, 'pkg.keywords', []).join(' ')
   })
   pkg.author = await input({
-    message: 'Author'
+    message: 'Author',
+    default: _.get(session, 'pkg.author')
   })
   pkg.license = await input({
     message: 'License',
-    default: 'MIT'
+    default: _.get(session, 'pkg.license', 'MIT')
   })
   pkg.repository = {
     type: 'git',
@@ -36,25 +38,7 @@ async function buildPackageJson ({ argv, cwd, isNewDir }) {
   }
   pkg.keywords = _.without(_.map((keywords || '').replaceAll(',', ' ').split(' '), k => _.trim(k)), '', undefined, null)
   console.log(boxen(JSON.stringify(pkg, null, 2), { title: 'package.json', padding: 1, borderStyle: 'round' }))
-  const answer = await select({
-    message: 'Continue?',
-    choices: [
-      { value: 'y', name: 'Yes, continue' },
-      { value: 'n', name: 'No, abort' },
-      new Separator(),
-      { value: 'e', name: 'Back to edit' }
-    ]
-  })
-  switch (answer) {
-    case 'e':
-      await buildPackageJson({ argv, cwd, isNewDir })
-      break
-    case 'y':
-      return pkg
-    case 'n':
-      ora('Aborted').fail()
-      process.exit()
-  }
+  return pkg
 }
 
 export default buildPackageJson

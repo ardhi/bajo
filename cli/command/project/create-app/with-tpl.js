@@ -24,7 +24,7 @@ async function withTpl({ argv, cwd, type }) {
   pkg.dependencies['global-modules-path'] = '^3.0.0'
   await ensureDir(cwd)
   await writePackageJson({ argv, cwd, pkg })
-  await copyRootFiles({ pkg, cwd, tplDir, files: ['.env', '.gitignore', 'README.md'] })
+  await copyRootFiles({ pkg, cwd, tplDir, files: ['.env', '.gitignore', 'README.md', 'index-hybrid.js:index.js'] })
   await copySkel({ cwd, tplDir })
   await installPackages()
   ora(`Done!`).succeed()

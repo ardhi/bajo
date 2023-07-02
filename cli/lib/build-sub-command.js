@@ -14,7 +14,9 @@ function buildSubCommand ({ command, aliases, describe, commands, handler, examp
     aliases,
     describe,
     builder (yargs) {
-      if (commands) _.map(commands, cmd => yargs.command(cmd))
+      if (commands) _.map(commands, cmd => {
+        yargs.command(cmd)
+      })
       yargs.epilog(epilog)
       if (example) yargs.example(example)
     },

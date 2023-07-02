@@ -39,8 +39,8 @@ async function runner (pkg, { singles, argv, env }) {
   } catch (err) {}
   const envArgv = defaultsDeep({}, _.omit(env[cfg.name] || {}, omitKeys) || {}, _.omit(argv[cfg.name] || {}, omitKeys) || {})
   cfg = defaultsDeep({}, envArgv || {}, cfg || {})
-  cfg.dependency = cfg.dependency || []
-  if (_.isString(cfg.dependency)) cfg.dependency = [cfg.dependency]
+  cfg.dependencies = cfg.dependencies || []
+  if (_.isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
   if (cfg.single) {
     const lockfileDir = `${config.dir.tmp}/lock`
     const lockfilePath = `${lockfileDir}/${name}.lock`

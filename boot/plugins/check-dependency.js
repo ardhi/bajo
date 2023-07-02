@@ -6,7 +6,7 @@ async function runner (name, pkg) {
   log.trace(`Checking dependency: %s`, name)
   const config = getConfig()
   const cfg = this[name].config
-  const odep = _.reduce(cfg.dependency, (o, k) => {
+  const odep = _.reduce(cfg.dependencies, (o, k) => {
     const item = _.map(k.split('@'), m => _.trim(m))
     o[item[0]] = item[1]
     return o

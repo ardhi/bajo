@@ -9,8 +9,8 @@ import fetch from 'node-fetch'
 
 const npmUrl = 'https://registry.npmjs.com'
 
-async function dirNameCheck (argv) {
-  let cwd = pathResolve.handler(process.cwd())
+async function dirNameCheck (argv, cwd) {
+  if (!cwd) cwd = pathResolve.handler(process.cwd())
   if (argv.name === '.\\') argv.name = './'
   if (['.', './'].includes(argv.name)) {
     argv.name = path.basename(cwd)
