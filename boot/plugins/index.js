@@ -10,15 +10,15 @@ import parseEnv from '../lib/parse-env.js'
 
 async function bootBajos () {
   const singles = []
-  const { argv } = parseArgsArgv() || {}
+  const { argv } = await parseArgsArgv({ useParser: true }) || {}
   const env = parseEnv() || {}
   await collectConfigHandlers.call(this)
   await buildConfig.call(this, { singles, argv, env })
   await checkDependency.call(this)
-  await collectExitHandlers.call(this)
   await attachHelper.call(this)
   await collectHooks.call(this)
   await run.call(this, { singles })
+  await collectExitHandlers.call(this)
 }
 
 export default bootBajos

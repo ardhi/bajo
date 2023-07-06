@@ -1,6 +1,5 @@
-export default {
-  handler: function (input) {
-    return ![null, undefined].includes(input)
-  },
-  noScope: true
+const isSet = (input) => {
+  return ![null, undefined].includes(input)
 }
+
+export default isSet

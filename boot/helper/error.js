@@ -14,7 +14,7 @@ import _ from 'lodash'
  * @returns {error} Instance of Error
  */
 
-function error (msg = 'Internal server error', ...args) {
+const error = (msg = 'Internal server error', ...args) => {
   let payload = _.last(args)
   let kill = null
   if (_.isString(payload) && payload.startsWith('>') && payload.endsWith('<')) {
@@ -36,7 +36,4 @@ function error (msg = 'Internal server error', ...args) {
   return err
 }
 
-export default {
-  handler: error,
-  noScope: true
-}
+export default error

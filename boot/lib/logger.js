@@ -49,7 +49,7 @@ export default function logger () {
         data = null
       }
       args = _.without(args, undefined)
-      const pkg = getPluginName.handler.call(this)
+      const pkg = getPluginName.call(this)
       msg = `[${pkg}] ${msg}`
       let text
       const dt = new Date()

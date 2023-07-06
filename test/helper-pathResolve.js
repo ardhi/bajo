@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const pathResolve = require('../helper/path-resolve').handler
+const pathResolve = require('../helper/path-resolve')
 
 describe('helper.pathResolve()', function () {
   context('without argument', function () {

@@ -1,7 +1,0 @@
-{
-  "env": "dev",
-  "log": {
-    "level": "debug"
-  },
-  "plugins": []
-}

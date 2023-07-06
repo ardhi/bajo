@@ -31,7 +31,7 @@ const wrapAsyncFn = function (name, handler, bind) {
 }
 
 export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
-  dir = pathResolve.handler(dir)
+  dir = pathResolve(dir)
   exclude = _.map(exclude, e => `${dir}/${e}`)
   let files = await fastGlob(`${dir}/**/*.js`)
   files = _.without(files, ...exclude)
@@ -46,17 +46,7 @@ export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
       if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this, fnName, mod, true)
       else mod = wrapFn.call(this, fnName, mod, true)
     } else if (_.isPlainObject(mod)) {
-      if (_.isFunction(mod.handler)) {
-        const fn = mod.handler
-        if (mod.noScope) {
-          if (fn.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this, fnName, fn, false)
-          else mod = wrapFn.call(this, fnName, fn, false)
-        } else {
-          if (fn.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this, fnName, fn, true)
-          else mod = wrapFn.call(this, fnName, fn, true)
-        }
-        // mod = mod.noScope ? mod.handler : mod.handler.bind(this)
-      } else if (_.isFunction(mod.class)) mod = new mod.class(this)
+      if (_.isFunction(mod.class)) mod = new mod.class(this)
     }
     helper[name] = mod
   }

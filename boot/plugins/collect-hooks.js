@@ -16,7 +16,7 @@ async function collectHooks () {
     if (!mod) return undefined
     _.merge(mod, { ns, path })
     this.bajo.hooks.push(mod)
-  }, { glob: 'hook/**/*.js' })
+  }, { glob: 'hook/**/*.js', insideBajo: true })
   await runHook('bajo:afterCollectHooks')
   // for log trace purpose only
   if (!isLogInRange('trace')) return

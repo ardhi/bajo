@@ -1,6 +1,6 @@
 const expect = require('chai').expect
 const { faker } = require('@faker-js/faker')
-const isSet = require('../helper/is-set').handler
+const isSet = require('../helper/is-set')
 
 describe('helper.isSet()', function () {
   context('without argument', function () {

@@ -19,8 +19,8 @@ function getPluginName (fname) {
   let file
   if (_.isString(fname)) file = fname
   else file = callsites()[_.isNumber(fname) ? fname : 2].getFileName()
-  if (!file) throw error.handler('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
-  file = pathResolve.handler(file)
+  if (!file) throw error('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
+  file = pathResolve(file)
   let match
   _.each(config.plugins, b => {
     if (file.includes('/bajo/boot/')) {
@@ -33,11 +33,8 @@ function getPluginName (fname) {
     }
   })
   if (match) return _.camelCase(match)
-  // if (file.includes(pathResolve.handler(process.cwd()))) return 'app'
+  // if (file.includes(pathResolve(process.cwd()))) return 'app'
   return 'bajo'
 }
 
-export default {
-  handler: getPluginName,
-  noScope: false
-}
+export default getPluginName

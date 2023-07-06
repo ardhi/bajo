@@ -16,8 +16,8 @@ export default async function () {
   const norder = {}
   for (let n of config.plugins) {
     n = _.map(n.split(':'), m => _.trim(m))[0]
-    const dir = n === 'app' ? (config.dir.base + '/app') : getModuleDir.handler(n)
-    if (n !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error.handler(`Package ${n} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
+    const dir = n === 'app' ? (config.dir.base + '/app') : getModuleDir(n)
+    if (n !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package ${n} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
     norder[n] = NaN
     try {
       norder[n] = Number(_.trim(await fs.readFile(`${dir}/bajo/.bootorder`, 'utf8')))

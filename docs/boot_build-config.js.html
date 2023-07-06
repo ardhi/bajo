@@ -47,9 +47,9 @@ async function buildConfig () {
     env: 'dev'
   }
   defConfig = _.defaultsDeep(env.root, argv.root, defConfig)
-  if (!defConfig.dir.data) throw error.handler('No data directory provided', { code: 'BAJO_DATA_DIR_NOT_PROVIDED' })
-  defConfig.dir.data = pathResolve.handler(defConfig.dir.data)
-  _.set(defConfig, 'dir.base', pathResolve.handler(process.cwd()))
+  if (!defConfig.dir.data) throw error('No data directory provided', { code: 'BAJO_DATA_DIR_NOT_PROVIDED' })
+  defConfig.dir.data = pathResolve(defConfig.dir.data)
+  _.set(defConfig, 'dir.base', pathResolve(process.cwd()))
   _.each(['tmp', 'lock'], k => {
     if (!defConfig.dir[k]) defConfig.dir[k] = `${defConfig.dir.data}/${k}`
     fs.ensureDirSync(defConfig.dir[k])

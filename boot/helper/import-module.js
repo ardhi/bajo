@@ -3,7 +3,7 @@ import _ from 'lodash'
 import error from './error.js'
 
 async function load (file, asDefaultImport = true) {
-  const imported = await import(pathResolve.handler(file, true))
+  const imported = await import(pathResolve(file, true))
   if (asDefaultImport) return imported.default
   return imported
 }

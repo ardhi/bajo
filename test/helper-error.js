@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const error = require('../helper/error').handler
+const error = require('../helper/error')
 const { faker } = require('@faker-js/faker')
 
 describe('helper.error()', function () {

@@ -13,7 +13,7 @@ const parse = (data, delimiter) => {
   })
 }
 
-export default function (delimiter = '_', splitter = '__') {
+export default function ({ delimiter = '_', splitter = '__' } = {}) {
   let env
   try {
     env = dotEnv.config()

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import fastGlob from 'fast-glob'
+import bootBajos from '../plugins/index.js'
 
 /**
  * @module helper/eachPlugins
@@ -34,20 +35,20 @@ import fastGlob from 'fast-glob'
  * })
  */
 
-async function eachPlugins (handler, { key = 'name', glob } = {}) {
+async function eachPlugins (handler, { key = 'name', glob, insideBajo } = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
   const config = getConfig()
   const result = {}
-  const bajo = getPluginName(4)
   for (const pkg of config.plugins) {
     const name = _.camelCase(pkg)
     const cfg = getConfig(name)
     let r
     if (glob) {
       if (_.isString(glob)) glob = { pattern: glob }
-      const files = await fastGlob(`${cfg.dir}/${bajo}/${glob.pattern}`, glob.options)
+      const base = insideBajo ? `${cfg.dir}/bajo` : cfg.dir
+      const files = await fastGlob(`${base}/${glob.pattern}`, glob.options)
       for (const f of files) {
-        const resp = await handler.call(this, { name, pkg, cfg, file: f, dir: `${cfg.dir}/${bajo}` })
+        const resp = await handler.call(this, { name, pkg, cfg, file: f, dir: base })
         if (resp === false) break
         else if (resp === undefined) continue
         else {

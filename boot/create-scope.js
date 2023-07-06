@@ -15,7 +15,7 @@ async function defHandler (file) {
 const configHandlers = [
   { ext: '.js', handler: defHandler },
   { ext: '.mjs', handler: defHandler },
-  { ext: '.json', handler: readJson.handler }
+  { ext: '.json', handler: readJson }
 ]
 
 const bajo = {

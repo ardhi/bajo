@@ -11,8 +11,11 @@ async function exit (signal) {
   process.exit(0)
 }
 
-export default async function () {
-  const { log } = this.bajo.helper
+async function exitHandler () {
+  const { log, getConfig } = this.bajo.helper
+  const config = getConfig()
+  if (!config.run.exitHandler) return
+
   log.debug('Exit handlings')
 
   process.on('SIGINT', async () => {
@@ -53,5 +56,6 @@ export default async function () {
     const { getConfig } = this.bajo.helper
     log.error(warning.message)
   })
-
 }
+
+export default exitHandler

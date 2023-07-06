@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { customAlphabet } from 'nanoid'
 
-export default function ({ pattern, length = 21, returnInstance } = {}) {
+const generateId = ({ pattern, length = 21, returnInstance } = {}) => {
   let opts = {}
   if (_.isPlainObject(pattern)) {
     opts = _.cloneDeep(pattern)
@@ -16,3 +16,5 @@ export default function ({ pattern, length = 21, returnInstance } = {}) {
   const nid = customAlphabet(pattern, length)
   return returnInstance ? nid : nid()
 }
+
+export default generateId
