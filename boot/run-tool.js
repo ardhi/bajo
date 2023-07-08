@@ -3,54 +3,52 @@ import _ from 'lodash'
 
 const tools = []
 
-function find (name, ora) {
+function find (name) {
+  const { print } = this.bajo.helper
   const [ns, path] = name.split(':')
   const tool = _.find(tools, { ns, path })
-  if (!tool) {
-    ora(`Sidetool '${name}' not found nor loaded. Aborted!`).fail()
-    process.exit(1)
-  }
+  if (!tool) print.fatal(`Sidetool '${name}' not found nor loaded. Aborted!`)
   return tool
 }
 
-async function run (name, ora) {
-  const tool = find(name, ora)
-  let text = `Run '${tool.ns}:${tool.path}'`
-  if (tool.description) text += ` - ${tool.description}`
-  ora(text).succeed()
-  await tool.handler.call(this)
+async function run (opts) {
+  const { importModule, print } = this.bajo.helper
+  const { name } = opts
+  const tool = find.call(this, name)
+  print.info(`Run '${tool.ns}:${tool.path}'`)
+  const mod = await importModule(tool.file)
+  const handler = mod.handler || mod
+  await handler.call(this, opts)
 }
 
 async function runTool () {
-  const { getConfig, log, eachPlugins, importPackage, importModule } = this.bajo.helper
-  const ora = await importPackage('ora::bajo-cli')
+  const { getConfig, log, eachPlugins, importPackage, importModule, print } = this.bajo.helper
   const config = getConfig()
   if (!config.run.tool) return
   log.debug(`Run tool`)
+  print.info('Side tool is running...')
   async function checkCli ({ file, name, pkg }) {
-    let mod = await importModule(file)
-    if (_.isFunction(mod)) mod = { handler: mod }
-    _.merge(mod, { ns: name, path: _.camelCase(path.basename(file, '.js')) })
-    tools.push(mod)
+    const mod = await importModule(file)
+    tools.push({ ns: name, path: _.camelCase(path.basename(file, '.js')), file })
   }
   await eachPlugins(checkCli, { glob: 'bajoCli/tool/*.js' })
-  if (tools.length === 0) {
-    ora('No tool loaded. Aborted!').fail()
-    return
-  }
-  let answer = config.run.tool
+  if (tools.length === 0) print.fatal('No tool loaded. Aborted!')
+  let name = config.run.tool
+  let fromList = false
   if (!_.isString(config.run.tool)) {
     const select = await importPackage('@inquirer/select::bajo-cli')
-    answer = await select({
+    name = await select({
       message: 'Which one you would like to run?',
       choices: _.map(tools, t => {
         const value = `${t.ns}:${t.path}`
-        const name = t.description ? `${value} - ${t.description}` : value
-        return { value, name }
+        const desc = t.description ? `${value} - ${t.description}` : value
+        return { value, name: desc }
       })
     })
+    fromList = true
   }
-  await run.call(this, answer, ora)
+  const opts = { name, fromList }
+  await run.call(this, opts)
 }
 
 export default runTool

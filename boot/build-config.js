@@ -5,6 +5,7 @@
 import os from 'os'
 import fs from 'fs-extra'
 import _ from 'lodash'
+import omitDeep from 'omit-deep'
 import pathResolve from './helper/path-resolve.js'
 import readConfig from './helper/read-config.js'
 import getKeyByValue from './helper/get-key-by-value.js'
@@ -13,7 +14,9 @@ import defaultsDeep from './helper/defaults-deep.js'
 import parseArgsArgv from './lib/parse-args-argv.js'
 import parseEnv from './lib/parse-env.js'
 import error from './helper/error.js'
-import importPackage from './helper/import-package.js'
+
+const configPick = ['log', 'plugins', 'env', 'run']
+const configOmit = ['run.tool']
 
 const defConfig = {
   dir: {},
@@ -58,7 +61,7 @@ async function buildConfig (cwd) {
   const env = parseEnv()
   const envArgv = defaultsDeep({}, env.root, argv.root)
   // directories
-  _.set(envArgv, 'dir.base', pathResolve(cwd))
+  _.set(envArgv, 'dir.base', cwd)
   if (!_.get(envArgv, 'dir.data')) _.set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
   envArgv.dir.data = pathResolve(envArgv.dir.data)
   if (!envArgv.dir.tmp) {
@@ -66,7 +69,8 @@ async function buildConfig (cwd) {
     fs.ensureDirSync(envArgv.dir.tmp)
   }
   // config merging
-  const resp = _.omit(await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true }), ['dir'])
+  let resp = await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true })
+  resp = omitDeep(_.pick(resp, configPick), configOmit)
   const config = defaultsDeep({}, envArgv, resp, defConfig)
   // force init
   config.args = args
@@ -79,11 +83,11 @@ async function buildConfig (cwd) {
   config.plugins = _.without(config.plugins, 'app')
   if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
   config.plugins = _.filter(_.uniq(_.map(config.plugins, b => _.trim(b))), b => !_.isEmpty(b))
+  if (config.silent) config.log.level = 'silent'
   if (config.run.tool) {
     if (!config.plugins.includes('bajo-cli')) throw error(`Running tool require to have 'bajo-cli'`)
     if (!config.log.tool) config.log.level = 'silent'
-    const ora = await importPackage('ora::bajo-cli')
-    ora('Running tool').succeed()
+    config.run.exitHandler = false
   }
   this.bajo.config = config
 }

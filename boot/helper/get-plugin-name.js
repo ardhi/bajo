@@ -33,7 +33,6 @@ function getPluginName (fname) {
     }
   })
   if (match) return _.camelCase(match)
-  // if (file.includes(pathResolve(process.cwd()))) return 'app'
   return 'bajo'
 }
 

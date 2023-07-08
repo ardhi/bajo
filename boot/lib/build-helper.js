@@ -36,7 +36,6 @@ export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
   let files = await fastGlob(`${dir}/**/*.js`)
   files = _.without(files, ...exclude)
   const helper = {}
-  const me = this
   for (const f of files) {
     const base = f.replace(dir, '').replace('.js', '')
     const name = _.camelCase(base)
@@ -47,6 +46,11 @@ export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
       else mod = wrapFn.call(this, fnName, mod, true)
     } else if (_.isPlainObject(mod)) {
       if (_.isFunction(mod.class)) mod = new mod.class(this)
+      else {
+        _.forOwn(mod, (v, k) => {
+          if (_.isFunction(v)) mod[k] = v.bind(this)
+        })
+      }
     }
     helper[name] = mod
   }

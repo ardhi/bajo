@@ -40,6 +40,8 @@
     "lodash": "^4.17.21",
     "nanoid": "^4.0.2",
     "node-fetch": "^3.3.1",
+    "omit-deep": "^0.3.0",
+    "ora": "^6.3.1",
     "outmatch": "^0.7.0",
     "proper-lockfile": "^4.1.2",
     "semver": "^7.5.1",

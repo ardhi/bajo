@@ -13,12 +13,10 @@ import callsites from 'callsites'
 import flatten from 'flat'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import * as nanoid from 'nanoid'
 
 dayjs.extend(utc)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const { unflatten } = flatten
 
 export default async function () {
   this.bajo.helper = await buildHelper.call(this, `${__dirname}/helper`)

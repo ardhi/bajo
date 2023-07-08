@@ -32,7 +32,7 @@ export default function logger () {
   const format = 'YYYY-MM-DDTHH:MM:ss.SSS[Z]'
   const log = {}
   const self = this
-  log.child = function () {
+  log.child = () => {
     if (!config.log.logger) config.log.logger = 'bajoLogger'
     if (self[config.log.logger] && self[config.log.logger].logger) return self[config.log.logger].logger.child()
     return self

@@ -19,6 +19,8 @@ import exitHandler from './exit-handler.js'
 import runTool from './run-tool.js'
 import shim from './lib/shim.js'
 import _ from 'lodash'
+import path from 'path'
+import pathResolve from './helper/path-resolve.js'
 
 shim()
 
@@ -30,18 +32,21 @@ shim()
  * @returns {Object} scope
  */
 
-async function boot (cwd = process.cwd()) {
+async function boot (cwd) {
+  if (!cwd) cwd = path.dirname(process.argv[1])
   const last = _.last(process.argv)
   if (last.startsWith('--cwd')) {
     const parts = last.split('=')
     cwd = parts[1]
   }
+  cwd = pathResolve(cwd)
+  process.env.BAJOCWD = cwd
   const scope = createScope()
   await buildConfig.call(scope, cwd)
   await attachHelper.call(scope)
   await bootOrder.call(scope)
   await bootPlugins.call(scope)
-  await exitHandler.call(scope)
+  if (scope.bajo.config.run.exitHandler) await exitHandler.call(scope)
   // boot complete
   const { runHook, log } = scope.bajo.helper
   await runHook('bajo:bootComplete')
