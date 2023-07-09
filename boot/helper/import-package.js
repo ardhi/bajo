@@ -47,7 +47,8 @@ const importPackage = async (...pkg) => {
     result[name] = mod
   }
   if (pkg.length === 1) return result[_.keys(result)[0]]
-  return result
+  if (opts.asObject) return result
+  return _.values(result)
 }
 
 export default importPackage

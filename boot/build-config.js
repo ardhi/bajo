@@ -15,8 +15,8 @@ import parseArgsArgv from './lib/parse-args-argv.js'
 import parseEnv from './lib/parse-env.js'
 import error from './helper/error.js'
 
-const configPick = ['log', 'plugins', 'env', 'run']
-const configOmit = ['run.tool']
+const configFilePick = ['log', 'plugins', 'env', 'run']
+const configFileOmit = ['tool', 'spawn', 'cwd']
 
 const defConfig = {
   dir: {},
@@ -27,10 +27,8 @@ const defConfig = {
   },
   plugins: ['app'],
   env: 'dev',
-  run: {
-    tool: false,
-    exitHandler: true
-  }
+  tool: false,
+  exitHandler: true
 }
 
 /**
@@ -70,7 +68,7 @@ async function buildConfig (cwd) {
   }
   // config merging
   let resp = await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true })
-  resp = omitDeep(_.pick(resp, configPick), configOmit)
+  resp = omitDeep(_.pick(resp, configFilePick), configFileOmit)
   const config = defaultsDeep({}, envArgv, resp, defConfig)
   // force init
   config.args = args
@@ -84,10 +82,10 @@ async function buildConfig (cwd) {
   if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
   config.plugins = _.filter(_.uniq(_.map(config.plugins, b => _.trim(b))), b => !_.isEmpty(b))
   if (config.silent) config.log.level = 'silent'
-  if (config.run.tool) {
+  if (config.tool) {
     if (!config.plugins.includes('bajo-cli')) throw error(`Running tool require to have 'bajo-cli'`)
     if (!config.log.tool) config.log.level = 'silent'
-    config.run.exitHandler = false
+    config.exitHandler = false
   }
   this.bajo.config = config
 }

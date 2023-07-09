@@ -46,7 +46,7 @@ async function boot (cwd) {
   await attachHelper.call(scope)
   await bootOrder.call(scope)
   await bootPlugins.call(scope)
-  if (scope.bajo.config.run.exitHandler) await exitHandler.call(scope)
+  await exitHandler.call(scope)
   // boot complete
   const { runHook, log } = scope.bajo.helper
   await runHook('bajo:bootComplete')

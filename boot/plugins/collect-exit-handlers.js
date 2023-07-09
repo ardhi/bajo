@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 async function collectExitHandlers (pkg) {
   const { importModule, log, eachPlugins, getConfig } = this.bajo.helper
   const config = getConfig()
-  if (!config.run.exitHandler) return
+  if (!config.exitHandler) return
   this.bajo.exitHandler = this.bajo.exitHandler || {}
   const names = []
   await eachPlugins(async function ({ name, cfg }) {

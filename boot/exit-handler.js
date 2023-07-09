@@ -14,7 +14,7 @@ async function exit (signal) {
 async function exitHandler () {
   const { log, getConfig } = this.bajo.helper
   const config = getConfig()
-  if (!config.run.exitHandler) return
+  if (!config.exitHandler) return
 
   log.debug('Exit handlings')
 
