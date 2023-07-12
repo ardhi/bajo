@@ -6,9 +6,7 @@ import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../helper/import-module.js'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import url from 'url'
-
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+import __ from '../helper/__.js'
 
 const { unflatten } = flat
 
@@ -34,7 +32,7 @@ const parseWithYargs = async () => {
     const mod = await importModule(parser)
     return await mod(yargs)
   }
-  const pkg = fs.readJSONSync(`${__dirname}/../../package.json`)
+  const pkg = fs.readJSONSync(`${__(import.meta).dir}/../../package.json`)
   let name = `node ${pkg.main}`
   if (pkg.bin) name = path.basename(pkg.bin, '.js')
   const cli = yargs(process.argv.slice(2))
@@ -48,6 +46,7 @@ const parseWithYargs = async () => {
     })
     .version().alias('version', 'v')
     .help().alias('help', 'h')
+    .alias('tool', 't')
     if (pkg.homepage) cli.epilog(`For more information please visit ${pkg.homepage}`)
   return cli.argv
 }

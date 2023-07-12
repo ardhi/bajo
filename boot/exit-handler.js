@@ -1,7 +1,7 @@
 async function exit (signal) {
   const { eachPlugins, log } = this.bajo.helper
   log.warn(`${signal} signal received`)
-  await eachPlugins(async function ({ name, cfg }) {
+  await eachPlugins(async function ({ name }) {
     const handler = this.bajo.exitHandler[name]
     if (!handler) return undefined
     await handler.call(this)

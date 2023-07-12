@@ -8,8 +8,8 @@ async function run ({ singles }) {
   if (!_.get(config, 'tool')) methods.push('start')
   for (const f of methods) {
     await runHook(`bajo:${_.camelCase(`before ${f} all plugins`)}`)
-    await eachPlugins(async function ({ name, cfg }) {
-      const file = `${cfg.dir}/bajo/${f}.js`
+    await eachPlugins(async function ({ name, dir }) {
+      const file = `${dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
         log.debug(`%s: %s`, _.upperFirst(f), name)
         await runHook(`bajo:${_.camelCase(`before ${f} ${name}`)}`)
@@ -17,7 +17,7 @@ async function run ({ singles }) {
         await item.call(this)
         await runHook(`bajo:${_.camelCase(`after ${f} ${name}`)}`)
       }
-      if (f === 'init') freeze(cfg)
+      if (f === 'init') freeze(this[name].config)
     })
     await runHook(`bajo:${_.camelCase(`after ${f} all plugins`)}`)
   }

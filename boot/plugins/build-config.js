@@ -1,11 +1,10 @@
 import _ from 'lodash'
 import fs from 'fs-extra'
 import lockfile from 'proper-lockfile'
-
-const omitKeys = ['name', 'dir', 'module', 'alias', 'pkg', 'plugin', 'init', 'dependency', 'level']
+import omittedPluginKeys from '../lib/omitted-plugin-keys'
 
 async function runner (pkg, { singles, argv, env }) {
-  const { log, getConfig, getModuleDir, readConfig, isSet, error, readJson, defaultsDeep } = this.bajo.helper
+  const { log, getConfig, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = _.camelCase(pkg)
   log.trace(`Read configuration: %s`, name)
@@ -31,13 +30,13 @@ async function runner (pkg, { singles, argv, env }) {
   cfg.pkg = _.pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
   if (cfg.name === 'app') cfg.alias = 'app'
-  else if (!isSet(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
+  else if (!_.isString(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
   // merge with config from datadir
   try {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
-    cfg = defaultsDeep({}, _.omit(altCfg, omitKeys), cfg)
+    cfg = defaultsDeep({}, _.omit(altCfg, omittedPluginKeys), cfg)
   } catch (err) {}
-  const envArgv = defaultsDeep({}, _.omit(env[cfg.name] || {}, omitKeys) || {}, _.omit(argv[cfg.name] || {}, omitKeys) || {})
+  const envArgv = defaultsDeep({}, _.omit(env[cfg.name] || {}, omittedPluginKeys) || {}, _.omit(argv[cfg.name] || {}, omittedPluginKeys) || {})
   cfg = defaultsDeep({}, envArgv || {}, cfg || {})
   cfg.dependencies = cfg.dependencies || []
   if (_.isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]

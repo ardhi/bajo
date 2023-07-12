@@ -1,5 +1,5 @@
 import ora from 'ora'
-import util from 'util'
+import Sprintf from 'sprintf-js'
 import _ from 'lodash'
 import defaultsDeep from './defaults-deep.js'
 
@@ -12,7 +12,7 @@ function prep (args, skipSilent) {
   if (config.silent && !skipSilent) return { opts }
   let msg = args.shift()
   if (_.isString(msg)) msg = { text: msg }
-  msg.text = util.format(msg.text, ...args)
+  msg.text = Sprintf.sprintf(msg.text, ...args)
   return { msg, opts }
 }
 
@@ -55,11 +55,14 @@ const print = {
     else console.error(msg.text)
     process.exit(0)
   },
-  ora: function (msg, forceShown) {
+  ora: function (msg, ...args) {
     const { getConfig } = this.bajo.helper
     const config = getConfig()
     if (_.isString(msg)) msg = { text: msg }
-    if (config.silent && !forceShown) msg.isSilent = true
+    let opts = {}
+    if (_.isPlainObject(_.last(args))) opts = args.pop()
+    if (config.silent && !opts.forceShown) msg.isSilent = true
+    msg.text = Sprintf.sprintf(msg.text, ...args)
     const instance = ora(msg)
     return instance
   }

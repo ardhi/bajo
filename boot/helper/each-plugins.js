@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import fastGlob from 'fast-glob'
-import bootBajos from '../plugins/index.js'
+import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
 /**
  * @module helper/eachPlugins
@@ -13,7 +13,7 @@ import bootBajos from '../plugins/index.js'
  * @async
  * @param {Object} argument - Provides information about current Bajo
  * @param {string} argument.name - Bajo's name
- * @param {string} argument.pkg - Bajo's package name
+ * @param {string} argument.pkgName - Bajo's package name
  * @param {Object} argument.cfg - Bajo's config object
  * @returns {Object|boolean|undefined}
  */
@@ -35,32 +35,35 @@ import bootBajos from '../plugins/index.js'
  * })
  */
 
-async function eachPlugins (handler, { key = 'name', glob, insideBajo } = {}) {
+async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
   const config = getConfig()
   const result = {}
-  for (const pkg of config.plugins) {
-    const name = _.camelCase(pkg)
-    const cfg = getConfig(name)
+  ns = ns || getPluginName(4)
+  for (const pkgName of config.plugins) {
+    const name = _.camelCase(pkgName)
+    let cfg = getConfig(name, { full: true })
+    const { alias, dir, dependencies } = cfg
+    cfg = _.omit(cfg, omittedPluginKeys)
     let r
     if (glob) {
       if (_.isString(glob)) glob = { pattern: glob }
-      const base = insideBajo ? `${cfg.dir}/bajo` : cfg.dir
+      const base = `${dir}/${ns}`
       const files = await fastGlob(`${base}/${glob.pattern}`, glob.options)
       for (const f of files) {
-        const resp = await handler.call(this, { name, pkg, cfg, file: f, dir: base })
+        const resp = await handler.call(this, { name, pkgName, cfg, alias, file: f, dir: base, dependencies })
         if (resp === false) break
         else if (resp === undefined) continue
         else {
-          result[cfg[key]] = result[cfg[key]] || {}
-          result[cfg[key]][f] = resp
+          result[name] = result[name] || {}
+          result[name][f] = resp
         }
       }
     } else {
-      r = await handler.call(this, { name, pkg, cfg })
+      r = await handler.call(this, { name, pkgName, cfg, dir, alias, dependencies })
       if (r === false) break
       else if (r === undefined) continue
-      else result[cfg[key]] = r
+      else result[name] = r
     }
   }
   return result

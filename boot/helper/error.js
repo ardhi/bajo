@@ -1,4 +1,4 @@
-import util from 'util'
+import Sprintf from 'sprintf-js'
 import _ from 'lodash'
 
 /**
@@ -22,7 +22,7 @@ const error = (msg = 'Internal server error', ...args) => {
     args.pop()
     payload = args.pop()
   } else if (_.isPlainObject(payload)) payload = args.pop()
-  const err = new Error(util.format(msg, ...args))
+  const err = new Error(Sprintf.sprintf(msg, ...args))
   if (payload) {
     for (const key in payload) {
       err[key] = payload[key]

@@ -1,5 +1,6 @@
 import buildConfig from './build-config.js'
 import checkDependency from './check-dependency.js'
+import checkClash from './check-clash.js'
 import attachHelper from './attach-helper.js'
 import collectHooks from './collect-hooks.js'
 import run from './run.js'
@@ -14,6 +15,7 @@ async function bootBajos () {
   const env = parseEnv() || {}
   await collectConfigHandlers.call(this)
   await buildConfig.call(this, { singles, argv, env })
+  await checkClash.call(this)
   await checkDependency.call(this)
   await attachHelper.call(this)
   await collectHooks.call(this)

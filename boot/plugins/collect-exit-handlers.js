@@ -1,14 +1,14 @@
 import _ from 'lodash'
 import fs from 'fs-extra'
 
-async function collectExitHandlers (pkg) {
+async function collectExitHandlers () {
   const { importModule, log, eachPlugins, getConfig } = this.bajo.helper
   const config = getConfig()
   if (!config.exitHandler) return
   this.bajo.exitHandler = this.bajo.exitHandler || {}
   const names = []
-  await eachPlugins(async function ({ name, cfg }) {
-    const file = `${cfg.dir}/bajo/exit.js`
+  await eachPlugins(async function ({ name, dir }) {
+    const file = `${dir}/bajo/exit.js`
     if (!fs.existsSync(file)) return undefined
     try {
       let mod = await importModule(file)

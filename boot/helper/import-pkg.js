@@ -18,14 +18,14 @@ import defaultsDeep from './defaults-deep.js'
  *
  * Example:
  * ```
- * const imported = await importPackage('ora::bajo-cli')
- * const multiple = await importPackage('ora::bajo-cli', 'lodash:_:bajo')
+ * const imported = await importPkg('ora::bajo-cli')
+ * const multiple = await importPkg('ora::bajo-cli', 'lodash:_:bajo')
  *
  * @param  {...string} pkg
  * @returns
  */
 
-const importPackage = async (...pkg) => {
+const importPkg = async (...pkg) => {
   const result = {}
   let opts = { returnDefault: true }
   if (_.isPlainObject(_.last(pkg))) {
@@ -51,4 +51,4 @@ const importPackage = async (...pkg) => {
   return _.values(result)
 }
 
-export default importPackage
+export default importPkg

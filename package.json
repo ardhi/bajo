@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/ardhi/bajo#readme",
   "dependencies": {
-    "@inquirer/prompts": "^2.2.0",
     "callsites": "^4.0.0",
     "dayjs": "^1.11.8",
     "deep-freeze-strict": "^1.1.1",
@@ -45,6 +44,7 @@
     "outmatch": "^0.7.0",
     "proper-lockfile": "^4.1.2",
     "semver": "^7.5.1",
+    "sprintf-js": "^1.1.2",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

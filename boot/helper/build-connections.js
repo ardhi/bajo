@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
-async function buildConnections (bajoName, handler, dupChecks) {
+async function buildConnections (name, handler, dupChecks) {
   const { getConfig } = this.bajo.helper
-  const config = getConfig(bajoName)
+  const config = getConfig(name)
   if (!config.connections) return
   if (!_.isArray(config.connections)) config.connections = [config.connections]
   for (let c of config.connections) {
