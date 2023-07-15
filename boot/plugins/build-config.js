@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import fs from 'fs-extra'
 import lockfile from 'proper-lockfile'
-import omittedPluginKeys from '../lib/omitted-plugin-keys'
+import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
 async function runner (pkg, { singles, argv, env }) {
   const { log, getConfig, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
@@ -9,7 +9,7 @@ async function runner (pkg, { singles, argv, env }) {
   const name = _.camelCase(pkg)
   log.trace(`Read configuration: %s`, name)
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
-  if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package ${pkg} isn\'t a valid Bajo package`, { code: 'BAJO_INVALID_PACKAGE' })
+  if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package '%s' isn't a valid Bajo package`, pkg, { code: 'BAJO_INVALID_PACKAGE' })
   let cfg = { name }
   try {
     cfg = await readConfig(`${dir}/bajo/config-${config.env}.*`)

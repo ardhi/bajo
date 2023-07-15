@@ -1,12 +1,13 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 async function saveAsDownload (file, obj, bajo) {
   const config = this.bajo.config
-  let dir = `${config.dir.data}/download${bajo ? `/${bajo}` : ''}`
+  const fname = `${config.dir.data}/download${bajo ? `/${bajo}` : ''}${file}`
+  const dir = path.dirname(fname)
   await fs.ensureDir(dir)
-  file = `${dir}${file}`
-  await fs.writeFile(file, obj, 'utf8')
-  return file
+  await fs.writeFile(fname, obj, 'utf8')
+  return fname
 }
 
 export default saveAsDownload

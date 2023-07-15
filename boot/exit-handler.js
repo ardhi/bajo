@@ -1,6 +1,6 @@
 async function exit (signal) {
   const { eachPlugins, log } = this.bajo.helper
-  log.warn(`${signal} signal received`)
+  log.warn(`'%s' signal received`, signal)
   await eachPlugins(async function ({ name }) {
     const handler = this.bajo.exitHandler[name]
     if (!handler) return undefined
@@ -29,7 +29,7 @@ async function exitHandler () {
   process.on('uncaughtException', (error, origin) => {
     const { getConfig } = this.bajo.helper
     const config = getConfig()
-    if (config.log.report.includes('sys:uncaughtException')) log.fatal({ origin }, error.message)
+    if (config.log.report.includes('sys:uncaughtException')) log.fatal({ origin }, '%s', error.message)
     setTimeout(() => {
       console.error(error)
       process.exit(1)
@@ -49,12 +49,12 @@ async function exitHandler () {
     parts.pop()
     parts.pop()
     file = parts.join(':')
-    log.error({ file, line, column }, reason.message)
+    log.error({ file, line, column }, '%s', reason.message)
   })
 
   process.on('warning', warning => {
     const { getConfig } = this.bajo.helper
-    log.error(warning.message)
+    log.error('%s', warning.message)
   })
 }
 

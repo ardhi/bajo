@@ -12,7 +12,7 @@ async function buildConnections (name, handler, dupChecks) {
   _.each(dupChecks, item => {
     const items = _.map(config.connections, item)
     const uItems = _.uniq(items)
-    if (items.length !== uItems.length) throw error(`One or more connections shared the same ${item}`, { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
+    if (items.length !== uItems.length) throw error(`One or more connections shared the same '%s'`, item, { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
   })
 }
 

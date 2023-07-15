@@ -7,7 +7,7 @@
  *
  */
 
-import Sprintf from 'sprintf-js'
+import print from '../helper/print.js'
 import os from 'os'
 import _ from 'lodash'
 // import pretty from 'prettyjson'
@@ -50,16 +50,17 @@ export default function logger () {
       }
       args = _.without(args, undefined)
       const pkg = getPluginName.call(this)
-      msg = `[${pkg}] ${msg}`
+      args.unshift(pkg)
+      msg = `[%s] ${msg}`
       let text
       const dt = new Date()
       if (config.env === 'prod') {
         const json = { level: levels[l], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
         if (!_.isEmpty(data)) _.merge(json, data)
-        _.merge(json, { msg: Sprintf.sprintf(msg, ...args) })
+        _.merge(json, { msg: print.format.call(this, msg, ...args) })
         text = JSON.stringify(json)
       } else {
-        text = `[${dayjs(dt).utc(true).format(format)}] ${_.upperFirst(l)}: ${Sprintf.sprintf(msg, ...args)}`
+        text = `[${dayjs(dt).utc(true).format(format)}] ${_.upperFirst(l)}: ${print.format.call(this, msg, ...args)}`
         // if (!_.isEmpty(data)) text += '\n  ' + (pretty.render(data, prettyOpts).split('\n').join('\n  '))
         if (!_.isEmpty(data)) text += '\n' + JSON.stringify(data)
       }

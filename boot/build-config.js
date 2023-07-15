@@ -83,7 +83,7 @@ async function buildConfig (cwd) {
   config.plugins = _.filter(_.uniq(_.map(config.plugins, b => _.trim(b))), b => !_.isEmpty(b))
   if (config.silent) config.log.level = 'silent'
   if (config.tool) {
-    if (!config.plugins.includes('bajo-cli')) throw error(`Running tool require to have 'bajo-cli'`)
+    if (!config.plugins.includes('bajo-cli')) throw error(`Sidetool needs to have 'bajo-cli' package loaded first`)
     if (!config.log.tool) config.log.level = 'silent'
     config.exitHandler = false
   }

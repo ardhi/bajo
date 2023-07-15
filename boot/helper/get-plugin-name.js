@@ -19,7 +19,7 @@ function getPluginName (fname) {
   let file
   if (_.isString(fname)) file = fname
   else file = callsites()[_.isNumber(fname) ? fname : 2].getFileName()
-  if (!file) throw error('Can\'t resolve bajo name, sorry!', { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
+  if (!file) throw error(`Can't resolve bajo named '%s', sorry!`, fname, { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
   file = pathResolve(file)
   let match
   _.each(config.plugins, b => {

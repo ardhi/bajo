@@ -6,25 +6,25 @@ async function runTool () {
   const config = getConfig()
   if (!config.tool) return
   log.debug(`Run tool`)
-  print.info('Side tool is running...')
+  print.info('Sidetool is running...')
 
   await eachPlugins(async function checkCli ({ file, name, alias }) {
     tools.push({ ns: name, file, nsAlias: alias })
-  }, { glob: 'bajoCli/tool.js' })
+  }, { glob: 'tool.js', ns: 'bajoCli' })
   if (tools.length === 0) print.fatal('No tool loaded. Aborted!')
   let name = config.tool
   let toc = false
   if (!_.isString(config.tool)) {
     const select = await importPkg('@inquirer/select::bajo-cli')
     name = await select({
-      message: 'Please select tool provider:',
+      message: print.format('Please select tool provider:'),
       choices: _.map(tools, t => ({ value: t.ns }))
     })
     toc = true
   }
   const [ns, path, ...params] = name.split(':')
   const tool = _.find(tools, t => (t.ns === ns || t.nsAlias === ns))
-  if (!tool) print.fatal(`Sidetool '${name}' not found. Aborted!`)
+  if (!tool) print.fatal(`Sidetool '%s' not found. Aborted!`, name)
   const opts = { ns, toc, path, params, args: config.args }
   const mod = await importModule(tool.file)
   const handler = mod.handler || mod

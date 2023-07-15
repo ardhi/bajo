@@ -43,7 +43,7 @@ async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
   for (const pkgName of config.plugins) {
     const name = _.camelCase(pkgName)
     let cfg = getConfig(name, { full: true })
-    const { alias, dir, dependencies } = cfg
+    let { alias, dir, dependencies } = cfg
     cfg = _.omit(cfg, omittedPluginKeys)
     let r
     if (glob) {

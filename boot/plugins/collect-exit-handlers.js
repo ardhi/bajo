@@ -2,7 +2,7 @@ import _ from 'lodash'
 import fs from 'fs-extra'
 
 async function collectExitHandlers () {
-  const { importModule, log, eachPlugins, getConfig } = this.bajo.helper
+  const { importModule, log, eachPlugins, getConfig, print } = this.bajo.helper
   const config = getConfig()
   if (!config.exitHandler) return
   this.bajo.exitHandler = this.bajo.exitHandler || {}
@@ -17,7 +17,7 @@ async function collectExitHandlers () {
     } catch (err) {
     }
   })
-  log.trace('Exit handlers: %s', names.length === 0 ? 'none' : names.join(', '))
+  log.trace('Exit handlers: %s', names.length === 0 ? print.format('none') : names.join(', '))
 }
 
 export default collectExitHandlers

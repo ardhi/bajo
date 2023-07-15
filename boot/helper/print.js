@@ -1,70 +1,84 @@
-import ora from 'ora'
+import bora from '../lib/bora.js'
 import Sprintf from 'sprintf-js'
 import _ from 'lodash'
 import defaultsDeep from './defaults-deep.js'
+import getPluginName from './get-plugin-name.js'
 
-function prep (args, skipSilent) {
-  const { getConfig } = this.bajo.helper
-  const config = getConfig()
-  let opts = { type: 'ora', exit: false }
+const { sprintf } = Sprintf
+
+function prep (args) {
+  let opts = { type: 'bora', exit: false, skipSilent: false }
   const last = _.last(args)
   if (_.isPlainObject(last)) opts = defaultsDeep(args.pop(), opts)
-  if (config.silent && !skipSilent) return { opts }
-  let msg = args.shift()
-  if (_.isString(msg)) msg = { text: msg }
-  msg.text = Sprintf.sprintf(msg.text, ...args)
-  return { msg, opts }
+  let [ns, msg, ...params] = args
+  if (ns === 'bajo') ns = 'bajoI18N'
+  opts.ns = ns
+  return { ns, msg, params, opts }
+}
+
+function format (...args) {
+  const { ns, msg, params } = prep(args)
+  if (!msg) return ''
+  const i18n = _.get(this, 'bajoI18N.instance')
+  if (i18n) return i18n.t(msg, { ns, postProcess: 'sprintf', sprintf: params })
+  return sprintf(msg, ...params)
 }
 
 const print = {
+  format: function (...args) {
+    const [msg, ...params] = args
+    const ns = getPluginName.call(this, 2)
+    return format.call(this, ns, msg, ...params)
+  },
   fail: function (...args) {
-    const { opts, msg } = prep.call(this, args)
+    args.unshift(getPluginName.call(this, 2))
+    const { ns, opts, msg, params } = prep(args)
     if (msg) {
-      if (opts.type === 'ora') ora(msg).fail()
-      else console.error(msg.text)
+      if (opts.type === 'bora') bora.call(this, ns, opts).fail(msg, ...params)
+      else console.error(format.call(this, ns, msg, ...params))
     }
     if (opts.exit) process.exit(1)
   },
   succeed: function (...args) {
-    const { opts, msg } = prep.call(this, args)
+    args.unshift(getPluginName.call(this, 2))
+    const { ns, opts, msg, params } = prep(args)
     if (msg) {
-      if (opts.type === 'ora') ora(msg).succeed()
-      else console.log(msg.text)
+      if (opts.type === 'bora') bora.call(this, ns, opts).succeed(msg, ...params)
+      else console.log(format.call(this, ns, msg, ...params))
     }
     if (opts.exit) process.exit(0)
   },
   warn: function (...args) {
-    const { opts, msg } = prep.call(this, args)
+    args.unshift(getPluginName.call(this, 2))
+    const { ns, opts, msg, params } = prep(args)
     if (msg) {
-      if (opts.type === 'ora') ora(msg).warn()
-      else console.log(msg.text)
+      if (opts.type === 'bora') bora.call(this, ns, opts).warn(msg, ...params)
+      else console.log(format.call(this, ns, msg, ...params))
     }
     if (opts.exit) process.exit(0)
   },
   info: function (...args) {
-    const { opts, msg } = prep.call(this, args)
+    args.unshift(getPluginName.call(this, 2))
+    const { ns, opts, msg, params } = prep(args)
     if (msg) {
-      if (opts.type === 'ora') ora(msg).info()
-      else console.log(msg.text)
+      if (opts.type === 'bora') bora.call(this, ns, opts).info(msg, ...params)
+      else console.log(format.call(this, ns, msg, ...params))
     }
     if (opts.exit) process.exit(0)
   },
   fatal: function (...args) {
-    const { opts, msg } = prep.call(this, args, true)
-    if (opts.type === 'ora') ora(msg).fail()
-    else console.error(msg.text)
+    args.unshift(getPluginName.call(this, 2))
+    const { ns, opts, msg, params } = prep(args)
+    if (msg) {
+      if (opts.type === 'bora') bora.call(this, ns, opts).fatal(msg, ...params)
+      else console.error(format.call(this, ns, msg, ...params))
+    }
     process.exit(0)
   },
-  ora: function (msg, ...args) {
-    const { getConfig } = this.bajo.helper
-    const config = getConfig()
-    if (_.isString(msg)) msg = { text: msg }
-    let opts = {}
-    if (_.isPlainObject(_.last(args))) opts = args.pop()
-    if (config.silent && !opts.forceShown) msg.isSilent = true
-    msg.text = Sprintf.sprintf(msg.text, ...args)
-    const instance = ora(msg)
-    return instance
+  bora: function (...args) {
+    let ns = getPluginName.call(this, 2)
+    if (ns === 'bajo') ns = 'bajoI18N'
+    return bora.call(this, ns, ...args)
   }
 }
 
