@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isPlainObject, map, last, isEmpty, has, keys, values, trim, get } from 'lodash-es'
 import os from 'os'
 import getModuleDir from './get-module-dir.js'
 import pathResolve from './path-resolve.js'
@@ -28,27 +28,27 @@ import defaultsDeep from './defaults-deep.js'
 const importPkg = async (...pkg) => {
   const result = {}
   let opts = { returnDefault: true }
-  if (_.isPlainObject(_.last(pkg))) {
+  if (isPlainObject(last(pkg))) {
     opts = defaultsDeep(pkg.pop(), opts)
   }
   for (const p of pkg) {
-    const parts = _.map(p.split(':'), i => _.trim(i))
+    const parts = map(p.split(':'), i => trim(i))
     let [orgName, name, ns] = parts
     if (parts.length === 1) name = orgName
-    if (_.isEmpty(name)) name = orgName
+    if (isEmpty(name)) name = orgName
     const dir = getModuleDir(orgName, ns)
     const pkg = readJson(`${dir}/package.json`)
-    const mainFile = pathResolve(dir, os.platform() === 'win32') + '/' + (pkg.main || _.get(pkg, 'exports.default', 'index.js'))
+    const mainFile = pathResolve(dir, os.platform() === 'win32') + '/' + (pkg.main || get(pkg, 'exports.default', 'index.js'))
     let mod = await import(mainFile)
-    if (opts.returnDefault && _.has(mod, 'default')) {
+    if (opts.returnDefault && has(mod, 'default')) {
       mod = mod.default
-      if (opts.returnDefault && _.has(mod, 'default')) mod = mod.default
+      if (opts.returnDefault && has(mod, 'default')) mod = mod.default
     }
     result[name] = mod
   }
-  if (pkg.length === 1) return result[_.keys(result)[0]]
+  if (pkg.length === 1) return result[keys(result)[0]]
   if (opts.asObject) return result
-  return _.values(result)
+  return values(result)
 }
 
 export default importPkg

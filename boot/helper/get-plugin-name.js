@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isString, isNumber, each, camelCase } from 'lodash-es'
 import callsites from 'callsites'
 import error from './error.js'
 import pathResolve from './path-resolve.js'
@@ -17,12 +17,12 @@ import pathResolve from './path-resolve.js'
 function getPluginName (fname) {
   const config = this.bajo.config
   let file
-  if (_.isString(fname)) file = fname
-  else file = callsites()[_.isNumber(fname) ? fname : 2].getFileName()
+  if (isString(fname)) file = fname
+  else file = callsites()[isNumber(fname) ? fname : 2].getFileName()
   if (!file) throw error(`Can't resolve bajo named '%s', sorry!`, fname, { code: 'BAJO_UNABLE_TO_RESOLVE_BAJO_NAME' })
   file = pathResolve(file)
   let match
-  _.each(config.plugins, b => {
+  each(config.plugins, b => {
     if (file.includes('/bajo/boot/')) {
       match = 'bajo'
       return false
@@ -32,7 +32,7 @@ function getPluginName (fname) {
       return false
     }
   })
-  if (match) return _.camelCase(match)
+  if (match) return camelCase(match)
   return 'bajo'
 }
 

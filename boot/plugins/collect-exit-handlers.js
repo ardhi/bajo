@@ -17,7 +17,7 @@ async function collectExitHandlers () {
     } catch (err) {
     }
   })
-  log.trace('Exit handlers: %s', names.length === 0 ? print.format('none') : names.join(', '))
+  log.trace('Exit handlers: %s', names.length === 0 ? print.__('none') : names.join(', '))
 }
 
 export default collectExitHandlers

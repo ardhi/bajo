@@ -6,7 +6,7 @@ import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../helper/import-module.js'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import __ from '../helper/__.js'
+import currentLoc from '../helper/current-loc.js'
 
 const { unflatten } = flat
 
@@ -32,7 +32,7 @@ const parseWithYargs = async () => {
     const mod = await importModule(parser)
     return await mod(yargs)
   }
-  const pkg = fs.readJSONSync(`${__(import.meta).dir}/../../package.json`)
+  const pkg = fs.readJSONSync(`${currentLoc(import.meta).dir}/../../package.json`)
   let name = `node ${pkg.main}`
   if (pkg.bin) name = path.basename(pkg.bin, '.js')
   const cli = yargs(process.argv.slice(2))

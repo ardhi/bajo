@@ -4,7 +4,7 @@
 
 import os from 'os'
 import fs from 'fs-extra'
-import _ from 'lodash'
+import { get, set, pick, values, keys, uniq, without, filter, map, isEmpty, trim } from 'lodash-es'
 import omitDeep from 'omit-deep'
 import pathResolve from './helper/path-resolve.js'
 import readConfig from './helper/read-config.js'
@@ -59,8 +59,8 @@ async function buildConfig (cwd) {
   const env = parseEnv()
   const envArgv = defaultsDeep({}, env.root, argv.root)
   // directories
-  _.set(envArgv, 'dir.base', cwd)
-  if (!_.get(envArgv, 'dir.data')) _.set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
+  set(envArgv, 'dir.base', cwd)
+  if (!get(envArgv, 'dir.data')) set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
   envArgv.dir.data = pathResolve(envArgv.dir.data)
   if (!envArgv.dir.tmp) {
     envArgv.dir.tmp = pathResolve(os.tmpdir()) + '/bajo'
@@ -68,19 +68,19 @@ async function buildConfig (cwd) {
   }
   // config merging
   let resp = await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true })
-  resp = omitDeep(_.pick(resp, configFilePick), configFileOmit)
+  resp = omitDeep(pick(resp, configFilePick), configFileOmit)
   const config = defaultsDeep({}, envArgv, resp, defConfig)
   // force init
   config.args = args
   config.env = config.env.toLowerCase()
-  if (_.values(envs).includes(config.env)) config.env = getKeyByValue(envs, config.env)
-  if (!_.keys(envs).includes(config.env)) config.env = 'dev'
+  if (values(envs).includes(config.env)) config.env = getKeyByValue(envs, config.env)
+  if (!keys(envs).includes(config.env)) config.env = 'dev'
   process.env.NODE_ENV = envs[config.env]
   if (!config.log.level) config.log.level = config.env === 'dev' ? 'debug' : 'info'
   // sanitize plugins
-  config.plugins = _.without(config.plugins, 'app')
+  config.plugins = without(config.plugins, 'app')
   if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
-  config.plugins = _.filter(_.uniq(_.map(config.plugins, b => _.trim(b))), b => !_.isEmpty(b))
+  config.plugins = filter(uniq(map(config.plugins, b => trim(b))), b => !isEmpty(b))
   if (config.silent) config.log.level = 'silent'
   if (config.tool) {
     if (!config.plugins.includes('bajo-cli')) throw error(`Sidetool needs to have 'bajo-cli' package loaded first`)

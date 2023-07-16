@@ -2,13 +2,13 @@
  * @module boot/createScope
  */
 
-import _ from 'lodash'
+import { isFunction } from 'lodash-es'
 import readJson from './helper/read-json.js'
 import importModule from './helper/import-module.js'
 
 async function defHandler (file) {
   let mod = await importModule(file)
-  if (_.isFunction(mod)) mod = await mod.call(this)
+  if (isFunction(mod)) mod = await mod.call(this)
   return mod
 }
 

@@ -1,15 +1,15 @@
 import Sprintf from 'sprintf-js'
 import ora from 'ora'
-import _ from 'lodash'
+import { last, isPlainObject, get, isString } from 'lodash-es'
 
 const { sprintf } = Sprintf
 
 class Bora {
   constructor (ns, ...args) {
     this.ns = ns
-    const last = _.last(args)
+    const l = last(args)
     let opts = {}
-    if (_.isPlainObject(last)) opts = args.pop()
+    if (isPlainObject(l)) opts = args.pop()
     this.opts = opts
     this.ora = ora(this.opts)
     this.args = args
@@ -27,10 +27,12 @@ class Bora {
   }
 
   setText (text, ...args) {
-    if (_.isString(text)) {
-      const i18n = _.get(this, 'scope.bajoI18N.instance')
-      if (i18n) text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
-      else text = sprintf(text, ...args)
+    if (isString(text)) {
+      const i18n = get(this, 'scope.bajoI18N.instance')
+      if (i18n) {
+        if (isPlainObject(args[0])) text = i18n.t(text, args[0])
+        else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
+      } else text = sprintf(text, ...args)
       this.ora.text = text
     }
     return this

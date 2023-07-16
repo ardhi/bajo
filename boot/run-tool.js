@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isString, map, find } from 'lodash-es'
 const tools = []
 
 async function runTool () {
@@ -14,16 +14,16 @@ async function runTool () {
   if (tools.length === 0) print.fatal('No tool loaded. Aborted!')
   let name = config.tool
   let toc = false
-  if (!_.isString(config.tool)) {
+  if (!isString(config.tool)) {
     const select = await importPkg('@inquirer/select::bajo-cli')
     name = await select({
-      message: print.format('Please select tool provider:'),
-      choices: _.map(tools, t => ({ value: t.ns }))
+      message: print.__('Please select tool provider:'),
+      choices: map(tools, t => ({ value: t.ns }))
     })
     toc = true
   }
   const [ns, path, ...params] = name.split(':')
-  const tool = _.find(tools, t => (t.ns === ns || t.nsAlias === ns))
+  const tool = find(tools, t => (t.ns === ns || t.nsAlias === ns))
   if (!tool) print.fatal(`Sidetool '%s' not found. Aborted!`, name)
   const opts = { ns, toc, path, params, args: config.args }
   const mod = await importModule(tool.file)

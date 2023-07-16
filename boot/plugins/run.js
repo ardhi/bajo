@@ -11,7 +11,7 @@ async function run ({ singles }) {
     await eachPlugins(async function ({ name, dir }) {
       const file = `${dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
-        log.debug(`%s: %s`, print.format(_.upperFirst(f)), name)
+        log.debug(`%s: %s`, print.__(_.upperFirst(f)), name)
         await runHook(`bajo:${_.camelCase(`before ${f} ${name}`)}`)
         const item = await importModule(file)
         await item.call(this)

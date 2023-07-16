@@ -1,10 +1,10 @@
 import logLevels from './log-levels.js'
-import _ from 'lodash'
+import { keys, indexOf } from 'lodash-es'
 
 function isLogInRange (level) {
-  const levels = _.keys(logLevels)
-  const logLevel = _.indexOf(levels, this.bajo.config.log.level)
-  return _.indexOf(levels, level) >= logLevel
+  const levels = keys(logLevels)
+  const logLevel = indexOf(levels, this.bajo.config.log.level)
+  return indexOf(levels, level) >= logLevel
 }
 
 

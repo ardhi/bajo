@@ -1,10 +1,10 @@
-import _ from 'lodash'
+import { cloneDeep, isPlainObject } from 'lodash-es'
 import { customAlphabet } from 'nanoid'
 
 const generateId = ({ pattern, length = 21, returnInstance } = {}) => {
   let opts = {}
-  if (_.isPlainObject(pattern)) {
-    opts = _.cloneDeep(pattern)
+  if (isPlainObject(pattern)) {
+    opts = cloneDeep(pattern)
     returnInstance = opts.returnInstance
     length = opts.length
     pattern = opts.pattern

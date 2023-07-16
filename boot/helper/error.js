@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { last, isString, isPlainObject, isEmpty } from 'lodash-es'
 import print from './print.js'
 
 /**
@@ -15,14 +15,14 @@ import print from './print.js'
  */
 
 function error (msg = 'Internal server error', ...args) {
-  let payload = _.last(args)
+  let payload = last(args)
   let kill = null
-  if (_.isString(payload) && payload.startsWith('>') && payload.endsWith('<')) {
+  if (isString(payload) && payload.startsWith('>') && payload.endsWith('<')) {
     kill = payload.slice(1, payload.length - 1)
     args.pop()
     payload = args.pop()
-  } else if (_.isPlainObject(payload)) payload = args.pop()
-  const err = new Error(print.format.call(this, msg, ...args))
+  } else if (isPlainObject(payload)) payload = args.pop()
+  const err = new Error(print.__.call(this, msg, ...args))
   if (payload) {
     for (const key in payload) {
       err[key] = payload[key]
@@ -30,7 +30,7 @@ function error (msg = 'Internal server error', ...args) {
   }
   if (kill !== null) {
     console.error(err.message)
-    if (!_.isEmpty(kill)) console.error(print.format.call(this, kill))
+    if (!isEmpty(kill)) console.error(print.__.call(this, kill))
     process.exit(1)
   }
   return err
