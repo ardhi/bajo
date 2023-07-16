@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isFunction, isPlainObject, map } from 'lodash-es'
 import fs from 'fs-extra'
 
 async function collectConfigHandlers (pkg) {
@@ -13,12 +13,12 @@ async function collectConfigHandlers (pkg) {
     if (!fs.existsSync(file)) continue
     try {
       let mod = await importModule(file)
-      if (_.isFunction(mod)) mod = await mod.call(this)
-      if (_.isPlainObject(mod)) mod = [mod]
+      if (isFunction(mod)) mod = await mod.call(this)
+      if (isPlainObject(mod)) mod = [mod]
       this.bajo.configHandlers.concat(mod)
     } catch (err) {}
   }
-  const exts = _.map(this.bajo.configHandlers, 'ext')
+  const exts = map(this.bajo.configHandlers, 'ext')
   log.trace('Config handlers: %s', exts.join(', '))
 }
 

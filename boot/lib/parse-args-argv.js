@@ -4,7 +4,7 @@ import flat from 'flat'
 import isSet from '../helper/is-set.js'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../helper/import-module.js'
-import _ from 'lodash'
+import { find, each, set, camelCase, forOwn } from 'lodash-es'
 import fs from 'fs-extra'
 import currentLoc from '../helper/current-loc.js'
 
@@ -52,7 +52,7 @@ const parseWithYargs = async () => {
 }
 
 async function parseArgsArgv ({ delimiter = '-', splitter = '--', useParser } = {}) {
-  if (!isSet(useParser)) useParser = _.find(process.argv, a => a.startsWith('--spawn'))
+  if (!isSet(useParser)) useParser = find(process.argv, a => a.startsWith('--spawn'))
   let argv = useParser ? await parseWithParser() : await parseWithYargs()
   const args = argv._
   delete argv._
@@ -60,13 +60,13 @@ async function parseArgsArgv ({ delimiter = '-', splitter = '--', useParser } = 
   argv = dotenvParseVariables(argv)
 
   const all = { root: {} }
-  _.each(argv, (v, k) => {
+  each(argv, (v, k) => {
     const parts = k.split(splitter)
     if (!parts[1]) all.root[parts[0]] = v
-    else _.set(all, `${_.camelCase(parts[0])}.${parts[1]}`, v)
+    else set(all, `${camelCase(parts[0])}.${parts[1]}`, v)
   })
   const result = {}
-  _.forOwn(all, (v, k) => {
+  forOwn(all, (v, k) => {
     result[k] = parseItem(v, delimiter)
   })
   return { args, argv: result }

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { map, camelCase, merge, filter, groupBy } from 'lodash-es'
 
 async function collectHooks () {
   const { eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
@@ -7,23 +7,23 @@ async function collectHooks () {
   // collects
   await eachPlugins(async function ({ name, dir, file }) {
     let [$, hookName] = (file.slice(dir.length + 1) || '').split('/')
-    let [ns, path] = _.map(hookName.replace('.js', '').split('@'), e => _.camelCase(e))
+    let [ns, path] = map(hookName.replace('.js', '').split('@'), e => camelCase(e))
     if (!path) {
       path = ns
       ns = name
     }
     const mod = await importModule(file, { forCollector: true })
     if (!mod) return undefined
-    _.merge(mod, { ns, path })
+    merge(mod, { ns, path })
     this.bajo.hooks.push(mod)
   }, { glob: 'hook/**/*.js', insideBajo: true })
   await runHook('bajo:afterCollectHooks')
   // for log trace purpose only
   if (!isLogInRange('trace')) return
   await eachPlugins(async function ({ name }) {
-    let hooks = _.filter(this.bajo.hooks, { ns: name })
+    let hooks = filter(this.bajo.hooks, { ns: name })
     if (hooks.length === 0) return undefined
-    const items = _.groupBy(hooks, 'path')
+    const items = groupBy(hooks, 'path')
     for (const hook of hooks) {
       log.trace('Collect hook: %s:%s (%d)', hook.ns, hook.path, items[hook.path].length)
     }

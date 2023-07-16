@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import {} from 'lodash-es'
 import fs from 'fs-extra'
 
 async function collectExitHandlers () {

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { filter, isEmpty, orderBy } from 'lodash-es'
 
 /**
  * @module helper/runHook
@@ -22,10 +22,10 @@ async function runHook (hookName, ...args) {
   const { log, getConfig } = this.bajo.helper
   const config = getConfig()
   const [ns, path] = (hookName || '').split(':')
-  let fns = _.filter(this.bajo.hooks, { ns, path })
-  if (_.isEmpty(fns)) return
+  let fns = filter(this.bajo.hooks, { ns, path })
+  if (isEmpty(fns)) return
   const id = `hook:${ns}:${path}`
-  fns = _.orderBy(fns, ['level'])
+  fns = orderBy(fns, ['level'])
   for (const fn of fns) {
     if (config.log.report.includes(id)) {
       log.trace({ args }, `Call hook '%s'`, id)
