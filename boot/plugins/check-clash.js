@@ -7,9 +7,9 @@ async function checkAlias () {
   const refs = []
   await eachPlugins(async function ({ name, pkgName, alias }) {
     let item = find(refs, { name })
-    if (item) throw error(`Plugin name clash: '%s (%s)' with '%s (%s)'`, name, pkgName, item.name, item.pkgName, { code: 'BAJO_NAME_CLASH' })
+    if (item) throw error('Plugin name clash: \'%s (%s)\' with \'%s (%s)\'', name, pkgName, item.name, item.pkgName, { code: 'BAJO_NAME_CLASH' })
     item = find(refs, { alias })
-    if (item) throw error(`Plugin alias clash: '%s (%s)' with '%s (%s)'`, alias, pkgName, item.alias, item.pkgName, { code: 'BAJO_ALIAS_CLASH' })
+    if (item) throw error('Plugin alias clash: \'%s (%s)\' with \'%s (%s)\'', alias, pkgName, item.alias, item.pkgName, { code: 'BAJO_ALIAS_CLASH' })
     refs.push({ name, alias, pkgName })
   })
   this.bajo.pluginRefs = refs

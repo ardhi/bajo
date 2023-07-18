@@ -28,7 +28,7 @@ async function runHook (hookName, ...args) {
   fns = orderBy(fns, ['level'])
   for (const fn of fns) {
     if (config.log.report.includes(id)) {
-      log.trace({ args }, `Call hook '%s'`, id)
+      log.trace({ args }, 'Call hook \'%s\'', id)
     }
     await fn.handler.call(this, ...args)
   }

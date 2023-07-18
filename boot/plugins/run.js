@@ -11,7 +11,7 @@ async function run ({ singles }) {
     await eachPlugins(async function ({ name, dir }) {
       const file = `${dir}/bajo/${f}.js`
       if (fs.existsSync(file)) {
-        log.debug(`%s: %s`, print.__(upperFirst(f)), name)
+        log.debug('%s: %s', print.__(upperFirst(f)), name)
         await runHook(`bajo:${camelCase(`before ${f} ${name}`)}`)
         const item = await importModule(file)
         await item.call(this)
@@ -21,9 +21,9 @@ async function run ({ singles }) {
     })
     await runHook(`bajo:${camelCase(`after ${f} all plugins`)}`)
   }
-  log.debug(`Loaded plugins: %s`, map(config.plugins, b => camelCase(b)).join(', '))
+  log.debug('Loaded plugins: %s', map(config.plugins, b => camelCase(b)).join(', '))
   if (singles.length > 0) {
-    log.warn(`Unloaded 'single' plugins: %s`, map(singles, s => camelCase(s)).join(', '))
+    log.warn('Unloaded \'single\' plugins: %s', map(singles, s => camelCase(s)).join(', '))
   }
 }
 

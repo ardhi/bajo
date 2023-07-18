@@ -11,7 +11,7 @@ async function collectExitHandlers () {
     const file = `${dir}/bajo/exit.js`
     if (!fs.existsSync(file)) return undefined
     try {
-      let mod = await importModule(file)
+      const mod = await importModule(file)
       this.bajo.exitHandler[name] = mod
       names.push(name)
     } catch (err) {

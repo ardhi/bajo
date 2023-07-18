@@ -1,11 +1,11 @@
 async function exit (signal) {
   const { eachPlugins, log } = this.bajo.helper
-  log.warn(`'%s' signal received`, signal)
+  log.warn('\'%s\' signal received', signal)
   await eachPlugins(async function ({ name }) {
     const handler = this.bajo.exitHandler[name]
     if (!handler) return undefined
     await handler.call(this)
-    log.debug(`Exited: %s`, name)
+    log.debug('Exited: %s', name)
   })
   log.debug('Program shutdown')
   process.exit(0)
@@ -53,7 +53,6 @@ async function exitHandler () {
   })
 
   process.on('warning', warning => {
-    const { getConfig } = this.bajo.helper
     log.error('%s', warning.message)
   })
 }

@@ -33,8 +33,14 @@ const importPkg = async (...pkg) => {
   }
   for (const p of pkg) {
     const parts = map(p.split(':'), i => trim(i))
-    let [orgName, name, ns] = parts
-    if (parts.length === 1) name = orgName
+    let [ns, orgName, name] = parts
+    if (parts.length === 1) {
+      orgName = ns
+      ns = 'bajo'
+      name = orgName
+    } else if (parts.length === 2) {
+      name = orgName
+    }
     if (isEmpty(name)) name = orgName
     const dir = getModuleDir(orgName, ns)
     const pkg = readJson(`${dir}/package.json`)

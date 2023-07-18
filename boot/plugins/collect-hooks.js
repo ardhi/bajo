@@ -6,7 +6,7 @@ async function collectHooks () {
   log.debug('Collect hooks')
   // collects
   await eachPlugins(async function ({ name, dir, file }) {
-    let [$, hookName] = (file.slice(dir.length + 1) || '').split('/')
+    const hookName = (file.slice(dir.length + 1) || '').split('/')[1]
     let [ns, path] = map(hookName.replace('.js', '').split('@'), e => camelCase(e))
     if (!path) {
       path = ns
@@ -21,7 +21,7 @@ async function collectHooks () {
   // for log trace purpose only
   if (!isLogInRange('trace')) return
   await eachPlugins(async function ({ name }) {
-    let hooks = filter(this.bajo.hooks, { ns: name })
+    const hooks = filter(this.bajo.hooks, { ns: name })
     if (hooks.length === 0) return undefined
     const items = groupBy(hooks, 'path')
     for (const hook of hooks) {

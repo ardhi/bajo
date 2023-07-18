@@ -51,23 +51,26 @@ export default function logger () {
       args = without(args, undefined)
       const pkg = getPluginName.call(this)
       args.unshift(pkg)
-      msg = `[%s] ${msg}`
-      let text
-      const dt = new Date()
-      if (config.env === 'prod') {
-        const json = { level: levels[l], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
-        if (!isEmpty(data)) merge(json, data)
-        merge(json, { msg: print.__.call(this, msg, ...args) })
-        text = JSON.stringify(json)
-      } else {
-        text = `[${dayjs(dt).utc(true).format(format)}] ${upperFirst(l)}: ${print.__.call(this, msg, ...args)}`
-        // if (!isEmpty(data)) text += '\n  ' + (pretty.render(data, prettyOpts).split('\n').join('\n  '))
-        if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
-      }
+      msg = print.__(`[%s] ${msg}`, ...args)
       const bajoLog = config.log.logger || 'bajoLogger'
+      // console.log(l, msg, args)
       if (this[bajoLog] && this[bajoLog].logger) {
         this[bajoLog].logger[l](data, msg, ...args)
-      } else console.log(text)
+      } else {
+        let text
+        const dt = new Date()
+        if (config.env === 'prod') {
+          const json = { level: levels[l], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
+          if (!isEmpty(data)) merge(json, data)
+          merge(json, { msg })
+          text = JSON.stringify(json)
+        } else {
+          text = `[${dayjs(dt).utc(true).format(format)}] ${upperFirst(l)}: ${msg}`
+          // if (!isEmpty(data)) text += '\n  ' + (pretty.render(data, prettyOpts).split('\n').join('\n  '))
+          if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
+        }
+        console.log(text)
+      }
     }
   })
   return log

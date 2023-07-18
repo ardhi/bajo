@@ -7,5 +7,4 @@ function isLogInRange (level) {
   return indexOf(levels, level) >= logLevel
 }
 
-
 export default isLogInRange

@@ -17,6 +17,7 @@ export default async function () {
   this.bajo.helper.log = logger.call(this)
   this.bajo.helper.freeze(this.bajo.helper, true)
   // last cleanup
-  if (!fs.existsSync(this.bajo.config.dir.data))
-    this.bajo.helper.log.warn(`Data directory '%s' is not set yet!`, this.bajo.config.dir.data)
+  if (!fs.existsSync(this.bajo.config.dir.data)) {
+    this.bajo.helper.log.warn('Data directory \'%s\' is not set yet!', this.bajo.config.dir.data)
+  }
 }

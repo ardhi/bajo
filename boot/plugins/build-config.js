@@ -7,9 +7,9 @@ async function runner (pkg, { singles, argv, env }) {
   const { log, getConfig, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = camelCase(pkg)
-  log.trace(`Read configuration: %s`, name)
+  log.trace('Read configuration: %s', name)
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
-  if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error(`Package '%s' isn't a valid Bajo package`, pkg, { code: 'BAJO_INVALID_PACKAGE' })
+  if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
   let cfg = { name }
   try {
     cfg = await readConfig(`${dir}/bajo/config-${config.env}.*`)
@@ -55,7 +55,7 @@ async function runner (pkg, { singles, argv, env }) {
   this[name].config = cfg
 }
 
-export default async function ({ singles, argv, env }) {
+async function buildConfig ({ singles, argv, env }) {
   const { log, freeze } = this.bajo.helper
   log.debug('Read configurations')
   for (const pkg of this.bajo.config.plugins) {
@@ -65,3 +65,5 @@ export default async function ({ singles, argv, env }) {
   each(singles, s => delete this[camelCase(s)])
   freeze(this.bajo.config)
 }
+
+export default buildConfig

@@ -25,6 +25,7 @@ const defConfig = {
     report: [],
     tool: false
   },
+  lang: Intl.DateTimeFormat().resolvedOptions().lang,
   plugins: ['app'],
   env: 'dev',
   tool: false,
@@ -77,13 +78,13 @@ async function buildConfig (cwd) {
   if (!keys(envs).includes(config.env)) config.env = 'dev'
   process.env.NODE_ENV = envs[config.env]
   if (!config.log.level) config.log.level = config.env === 'dev' ? 'debug' : 'info'
+  if (config.silent) config.log.level = 'silent'
   // sanitize plugins
   config.plugins = without(config.plugins, 'app')
   if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
   config.plugins = filter(uniq(map(config.plugins, b => trim(b))), b => !isEmpty(b))
-  if (config.silent) config.log.level = 'silent'
   if (config.tool) {
-    if (!config.plugins.includes('bajo-cli')) throw error(`Sidetool needs to have 'bajo-cli' package loaded first`)
+    if (!config.plugins.includes('bajo-cli')) throw error('Sidetool needs to have \'bajo-cli\' package loaded first')
     if (!config.log.tool) config.log.level = 'silent'
     config.exitHandler = false
   }

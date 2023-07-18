@@ -11,7 +11,7 @@ function stackInfo (name, ...args) {
   const info = callsites()[2]
   const file = info.getFileName()
   const line = info.getLineNumber()
-  log.trace({ line, file, args }, `Call helper: %s()`, name)
+  log.trace({ line, file, args }, 'Call helper: %s()', name)
 }
 
 const wrapFn = function (name, handler, bind) {

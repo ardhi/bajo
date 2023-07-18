@@ -2,7 +2,7 @@ import { mergeWith, isArray } from 'lodash-es'
 // taken from https://github.com/nodeutils/defaults-deep/blob/master/lib/index.js
 
 const defaultsDeep = (...args) => {
-  var output = {}
+  const output = {}
   args.reverse().forEach(function (item) {
     mergeWith(output, item, function (objectValue, sourceValue) {
       return isArray(sourceValue) ? sourceValue : undefined

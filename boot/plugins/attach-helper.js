@@ -6,7 +6,7 @@ async function runner (name, pkgName) {
   const dir = pkgName === 'app' ? (this.bajo.config.dir.base + '/app') : this.bajo.helper.getModuleDir(pkgName)
   this[name].helper = await buildHelper.call(this, `${dir}/bajo/helper`, { pkgName: name })
   freeze(this[name].helper, true)
-  log.trace(`Attach helper: %s (%d)`, name, keys(this[name].helper).length)
+  log.trace('Attach helper: %s (%d)', name, keys(this[name].helper).length)
 }
 
 async function attachHelper () {

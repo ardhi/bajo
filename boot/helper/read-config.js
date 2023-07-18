@@ -10,7 +10,10 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
   let ext = path.extname(file)
   const fname = path.dirname(file) + '/' + path.basename(file, ext)
   ext = ext.toLowerCase()
-  if (['.mjs', '.js'].includes(ext)) return await defHandler.call(this, file)
+  if (['.mjs', '.js'].includes(ext)) {
+    const { handler } = find(this.bajo.configHandlers, { ext })
+    return await handler.call(this, file)
+  }
   if (ext === '.json') return await readJson(file)
   if (!['', '.*'].includes(ext)) {
     const item = find(this.bajo.configHandlers, { ext })
