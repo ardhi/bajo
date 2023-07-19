@@ -33,6 +33,7 @@ const print = {
     const pkg = getPluginName.call(this, 3)
     return format.call(this, pkg, msg, ...params)
   },
+  _format: format,
   fail: function (...args) {
     args.unshift(getPluginName.call(this, 3))
     const { ns, opts, msg, params } = prep(args)

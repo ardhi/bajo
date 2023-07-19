@@ -8,11 +8,11 @@ async function load (file, asDefaultImport = true) {
   return imported
 }
 
-async function importModule (file, { asDefaultImport, forCollector } = {}) {
+async function importModule (file, { asDefaultImport, asHandler } = {}) {
   let mod = await load(file, asDefaultImport)
-  if (!forCollector) return mod
+  if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
-  if (!isPlainObject(mod)) throw error(`File '%s' is NOT a module for collector`, file, { code: 'BAJO_INVALID_MODULE_FOR_COLLECTOR' })
+  if (!isPlainObject(mod)) throw error('File \'%s\' is NOT a module for collection', file, { code: 'BAJO_INVALID_MODULE_FOR_COLLECTOR' })
   if (mod.handler.constructor.name !== 'AsyncFunction') {
     const oldHandler = mod.handler
     mod.handler = async function (...args) {

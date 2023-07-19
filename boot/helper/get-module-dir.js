@@ -4,7 +4,7 @@ import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 
 const getModuleDir = (pkgName, base) => {
-  if (pkgName === 'app') return process.env.BAJOCWD
+  if (base === 'app') base = process.env.BAJOCWD
   let pkgPath = pkgName + '/package.json'
   if (base) pkgPath = `${base}/node_modules/${pkgPath}`
   const paths = require.resolve.paths(pkgPath)

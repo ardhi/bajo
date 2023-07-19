@@ -1,5 +1,6 @@
 import { last, isPlainObject } from 'lodash-es'
 import print from './print.js'
+import getPluginName from './get-plugin-name.js'
 
 /**
  * It's a shortcut to create an instance of Error with message and optional parameter
@@ -18,18 +19,24 @@ Error.stackTraceLimit = 15
 
 function error (msg = 'Internal server error', ...args) {
   let payload = last(args)
-  if (isPlainObject(payload)) payload = args.pop()
-  const message = print.__.call(this, msg, ...args)
+  let ns
+  if (isPlainObject(payload)) {
+    payload = args.pop()
+    ns = payload.ns
+  }
+  if (!ns) ns = getPluginName.call(this, 3)
+  const message = print._format.call(this, ns, msg, ...args)
   let err
-  if (payload && payload.class) err = payload.class(message)
+  if (isPlainObject(payload) && payload.class) err = payload.class(message)
   else err = Error(message)
   const stacks = err.stack.split('\n')
   stacks.splice(1, 1) // this file
   if (stacks[1].includes('/helper/fatal.js')) stacks.splice(1, 1) // if it goes to fatal.js
   stacks.splice(1, 1) // for buildHelper.js
   err.stack = stacks.join('\n')
-  if (payload) {
+  if (isPlainObject(payload)) {
     delete payload.class
+    delete payload.ns
     for (const key in payload) {
       err[key] = payload[key]
     }

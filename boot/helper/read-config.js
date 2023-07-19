@@ -18,7 +18,7 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
   if (!['', '.*'].includes(ext)) {
     const item = find(this.bajo.configHandlers, { ext })
     if (!item) {
-      if (!ignoreError) throw error(`Can't parse '%s'`, f, { code: 'BAJO_CONFIG_NO_PARSER' })
+      if (!ignoreError) throw error.call(this, 'Can\'t parse \'%s\'', file, { code: 'BAJO_CONFIG_NO_PARSER' })
       return {}
     }
     return item.handler.call(this, file)
@@ -26,7 +26,7 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
   const item = pattern || `${fname}.{${map(map(this.bajo.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
   const files = await fg(item, globOptions)
   if (files.length === 0) {
-    if (!ignoreError) throw error('No config file found', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
+    if (!ignoreError) throw error.call(this, 'No config file found', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
     return {}
   }
   let config = {}
@@ -34,7 +34,7 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
     const ext = path.extname(f).toLowerCase()
     const item = find(this.bajo.configHandlers, { ext })
     if (!item) {
-      if (!ignoreError) throw error(`Can't parse '%s'`, f, { code: 'BAJO_CONFIG_NO_PARSER' })
+      if (!ignoreError) throw error.call(this, 'Can\'t parse \'%s\'', f, { code: 'BAJO_CONFIG_NO_PARSER' })
       continue
     }
     config = await item.handler.call(this, f)

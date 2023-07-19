@@ -40,9 +40,9 @@ async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
   const config = getConfig()
   const result = {}
   ns = ns || getPluginName(4)
-  for (const pkgName of config.plugins) {
-    const name = camelCase(pkgName)
-    let cfg = getConfig(name, { full: true })
+  for (const pkg of config.plugins) {
+    const plugin = camelCase(pkg)
+    let cfg = getConfig(plugin, { full: true })
     const { alias, dir, dependencies } = cfg
     cfg = omit(cfg, omittedPluginKeys)
     let r
@@ -51,19 +51,19 @@ async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
       const base = `${dir}/${ns}`
       const files = await fastGlob(`${base}/${glob.pattern}`, glob.options)
       for (const f of files) {
-        const resp = await handler.call(this, { name, pkgName, cfg, alias, file: f, dir: base, dependencies })
+        const resp = await handler.call(this, { plugin, pkg, cfg, alias, file: f, dir: base, dependencies })
         if (resp === false) break
         else if (resp === undefined) continue
         else {
-          result[name] = result[name] || {}
-          result[name][f] = resp
+          result[plugin] = result[plugin] || {}
+          result[plugin][f] = resp
         }
       }
     } else {
-      r = await handler.call(this, { name, pkgName, cfg, dir, alias, dependencies })
+      r = await handler.call(this, { plugin, pkg, cfg, dir, alias, dependencies })
       if (r === false) break
       else if (r === undefined) continue
-      else result[name] = r
+      else result[plugin] = r
     }
   }
   return result

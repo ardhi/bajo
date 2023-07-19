@@ -8,8 +8,8 @@ async function runTool () {
   log.debug('Run tool')
   print.info('Sidetool is running...')
 
-  await eachPlugins(async function checkCli ({ file, name, alias }) {
-    tools.push({ ns: name, file, nsAlias: alias })
+  await eachPlugins(async function checkCli ({ file, plugin, alias }) {
+    tools.push({ ns: plugin, file, nsAlias: alias })
   }, { glob: 'tool.js', ns: 'bajoCli' })
   if (tools.length === 0) print.fatal('No tool loaded. Aborted!')
   let name = config.tool
