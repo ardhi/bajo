@@ -30,12 +30,12 @@ function format (...args) {
 const print = {
   __: function (...args) {
     const [msg, ...params] = args
-    const pkg = getPluginName.call(this, 3)
+    const pkg = getPluginName.call(this, 2)
     return format.call(this, pkg, msg, ...params)
   },
   _format: format,
   fail: function (...args) {
-    args.unshift(getPluginName.call(this, 3))
+    args.unshift(getPluginName.call(this, 2))
     const { ns, opts, msg, params } = prep(args)
     if (msg) {
       if (opts.type === 'bora') bora.call(this, ns, opts).fail(msg, ...params)
@@ -44,7 +44,7 @@ const print = {
     if (opts.exit) process.exit(1)
   },
   succeed: function (...args) {
-    args.unshift(getPluginName.call(this, 3))
+    args.unshift(getPluginName.call(this, 2))
     const { ns, opts, msg, params } = prep(args)
     if (msg) {
       if (opts.type === 'bora') bora.call(this, ns, opts).succeed(msg, ...params)
@@ -53,7 +53,7 @@ const print = {
     if (opts.exit) process.exit(0)
   },
   warn: function (...args) {
-    args.unshift(getPluginName.call(this, 3))
+    args.unshift(getPluginName.call(this, 2))
     const { ns, opts, msg, params } = prep(args)
     if (msg) {
       if (opts.type === 'bora') bora.call(this, ns, opts).warn(msg, ...params)
@@ -62,7 +62,7 @@ const print = {
     if (opts.exit) process.exit(0)
   },
   info: function (...args) {
-    args.unshift(getPluginName.call(this, 3))
+    args.unshift(getPluginName.call(this, 2))
     const { ns, opts, msg, params } = prep(args)
     if (msg) {
       if (opts.type === 'bora') bora.call(this, ns, opts).info(msg, ...params)
@@ -71,7 +71,7 @@ const print = {
     if (opts.exit) process.exit(0)
   },
   fatal: function (...args) {
-    args.unshift(getPluginName.call(this, 3))
+    args.unshift(getPluginName.call(this, 2))
     const { ns, opts, msg, params } = prep(args)
     if (msg) {
       if (opts.type === 'bora') bora.call(this, ns, opts).fatal(msg, ...params)
@@ -80,7 +80,7 @@ const print = {
     process.exit(0)
   },
   bora: function (...args) {
-    let ns = getPluginName.call(this, 3)
+    let ns = getPluginName.call(this, 2)
     if (ns === 'bajo') ns = 'bajoI18N'
     return bora.call(this, ns, ...args)
   }

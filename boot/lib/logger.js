@@ -50,10 +50,8 @@ export default function logger () {
       }
       args = without(args, undefined)
       const pkg = getPluginName.call(this)
-      args.unshift(pkg)
-      msg = print.__(`[%s] ${msg}`, ...args)
+      msg = print._format(pkg, `[%s] ${msg}`, pkg, ...args)
       const bajoLog = config.log.logger || 'bajoLogger'
-      // console.log(l, msg, args)
       if (this[bajoLog] && this[bajoLog].logger) {
         this[bajoLog].logger[l](data, msg, ...args)
       } else {
