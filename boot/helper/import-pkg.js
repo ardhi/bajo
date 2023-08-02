@@ -5,6 +5,7 @@ import pathResolve from './path-resolve.js'
 import readJson from './read-json.js'
 import defaultsDeep from './defaults-deep.js'
 import path from 'path'
+import fs from 'fs-extra'
 
 /**
  * Load/import a package dynamically. You can import package one-by-one or multiple
@@ -45,8 +46,12 @@ const importPkg = async (...pkg) => {
     if (isEmpty(name)) name = orgName
     const dir = getModuleDir(orgName, ns)
     const pkg = readJson(`${dir}/package.json`)
-    let mainFile = pathResolve(dir, os.platform() === 'win32') + '/' + (pkg.main || get(pkg, 'exports.default', 'index.js'))
-    if (isEmpty(path.extname(mainFile))) mainFile += '.js'
+    const mainFileOrg = dir + '/' + (pkg.main || get(pkg, 'exports.default', 'index.js'))
+    let mainFile = pathResolve(mainFileOrg, os.platform() === 'win32')
+    if (isEmpty(path.extname(mainFile))) {
+      if (fs.existsSync(`${mainFileOrg}/index.js`)) mainFile += '/index.js'
+      else mainFile += '.js'
+    }
     let mod = await import(mainFile)
     if (opts.returnDefault && has(mod, 'default')) {
       mod = mod.default
