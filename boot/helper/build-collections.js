@@ -1,4 +1,4 @@
-import { map, uniq, isArray, each } from 'lodash-es'
+import { map, uniq, isArray, each, pullAt } from 'lodash-es'
 
 async function buildCollections ({ name, handler, dupChecks, container = 'connections' } = {}) {
   const { getConfig, getPluginName, fatal } = this.bajo.helper
@@ -6,11 +6,16 @@ async function buildCollections ({ name, handler, dupChecks, container = 'connec
   const options = getConfig(name, { full: true })
   if (!options[container]) return []
   if (!isArray(options[container])) options[container] = [options[container]]
+  options[container] = options[container] || []
+  const deleted = []
   for (const index in options[container]) {
     const item = options[container][index]
     const result = await handler.call(this, { item, index, options })
     if (result) options[container][index] = result
+    else if (result === false) deleted.push(index)
   }
+  if (deleted.length > 0) pullAt(options[container], deleted)
+
   // check for duplicity
   each(dupChecks, item => {
     const items = map(options[container], item)

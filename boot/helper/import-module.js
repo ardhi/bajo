@@ -13,7 +13,7 @@ async function importModule (file, { asDefaultImport, asHandler } = {}) {
   if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
   if (!isPlainObject(mod)) throw error('File \'%s\' is NOT a module for collection', file, { code: 'BAJO_INVALID_MODULE_FOR_COLLECTOR' })
-  if (mod.handler.constructor.name !== 'AsyncFunction') {
+  if (mod.forceAsync && mod.handler.constructor.name !== 'AsyncFunction') {
     const oldHandler = mod.handler
     mod.handler = async function (...args) {
       oldHandler.call(this, ...args)
