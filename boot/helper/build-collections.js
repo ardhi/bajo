@@ -1,4 +1,4 @@
-import { map, uniq, isArray, each, pullAt } from 'lodash-es'
+import { filter, isArray, each, pullAt } from 'lodash-es'
 
 async function buildCollections ({ name, handler, dupChecks, container = 'connections' } = {}) {
   const { getConfig, getPluginName, fatal } = this.bajo.helper
@@ -17,11 +17,21 @@ async function buildCollections ({ name, handler, dupChecks, container = 'connec
   if (deleted.length > 0) pullAt(options[container], deleted)
 
   // check for duplicity
+  each(options[container], c => {
+    const checker = {}
+    each(dupChecks, d => {
+      checker[d] = c[d]
+    })
+    const match = filter(options[container], checker)
+    if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, dupChecks.join(', '), { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
+  })
+  /*
   each(dupChecks, item => {
     const items = map(options[container], item)
     const uItems = uniq(items)
     if (items.length !== uItems.length) fatal('One or more %s shared the same \'%s\'', container, item, { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
   })
+  */
   return options[container]
 }
 
