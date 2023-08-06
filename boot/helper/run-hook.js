@@ -19,19 +19,28 @@ import { filter, isEmpty, orderBy } from 'lodash-es'
  */
 
 async function runHook (hookName, ...args) {
-  const { log, getConfig } = this.bajo.helper
-  const config = getConfig()
+  const { log } = this.bajo.helper
+  log.trace('Run hook: %s', hookName)
   const [ns, path] = (hookName || '').split(':')
   let fns = filter(this.bajo.hooks, { ns, path })
   if (isEmpty(fns)) return
-  const id = `hook:${ns}:${path}`
   fns = orderBy(fns, ['level'])
-  for (const fn of fns) {
+  const results = []
+  for (const i in fns) {
+    const fn = fns[i]
+    /*
     if (config.log.report.includes(id)) {
-      log.trace({ args }, 'Call hook \'%s\'', id)
+      log.trace({ args }, 'Call hook: %s', id)
     }
-    await fn.handler.call(this, ...args)
+    */
+    const res = await fn.handler.call(this, ...args)
+    results.push({
+      hook: hookName,
+      tag: fn.tag,
+      resp: res
+    })
   }
+  return results
 }
 
 export default runHook

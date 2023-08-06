@@ -1,12 +1,13 @@
-import { filter, isArray, each, pullAt } from 'lodash-es'
+import { filter, isArray, each, pullAt, camelCase } from 'lodash-es'
 
 async function buildCollections ({ name, handler, dupChecks, container = 'connections' } = {}) {
-  const { getConfig, getPluginName, fatal } = this.bajo.helper
+  const { getConfig, getPluginName, fatal, runHook } = this.bajo.helper
   if (!name) name = getPluginName(4)
   const options = getConfig(name, { full: true })
   if (!options[container]) return []
   if (!isArray(options[container])) options[container] = [options[container]]
   options[container] = options[container] || []
+  await runHook(`${name}:${camelCase(`before build ${container}`)}`)
   const deleted = []
   for (const index in options[container]) {
     const item = options[container][index]
@@ -32,6 +33,7 @@ async function buildCollections ({ name, handler, dupChecks, container = 'connec
     if (items.length !== uItems.length) fatal('One or more %s shared the same \'%s\'', container, item, { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
   })
   */
+  await runHook(`${name}:${camelCase(`after build ${container}`)}`)
   return options[container]
 }
 
