@@ -3,6 +3,26 @@ import fs from 'fs-extra'
 import lockfile from 'proper-lockfile'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
+export async function readAllConfigs (base, name) {
+  const { readConfig, getConfig } = this.bajo.helper
+  const config = getConfig()
+  let cfg = {}
+  try {
+    cfg = await readConfig(`${base}-${config.env}.*`)
+  } catch (err) {
+    if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
+    if (['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) {
+      try {
+        cfg = await readConfig(`${base}.*`)
+      } catch (err) {
+        if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
+      }
+    }
+  }
+  cfg.name = name
+  return cfg
+}
+
 async function runner (pkg, { singles, argv, env }) {
   const { log, getConfig, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
@@ -10,21 +30,7 @@ async function runner (pkg, { singles, argv, env }) {
   log.trace('Read configuration: %s', name)
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
   if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
-  let cfg = { name }
-  try {
-    cfg = await readConfig(`${dir}/bajo/config-${config.env}.*`)
-    cfg.name = name
-  } catch (err) {
-    if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
-    if (['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) {
-      try {
-        cfg = await readConfig(`${dir}/bajo/config.*`)
-        cfg.name = name
-      } catch (err) {
-        if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
-      }
-    }
-  }
+  let cfg = await readAllConfigs.call(this, `${dir}/bajo/config`, name)
   cfg.dir = dir
   const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
   cfg.pkg = pick(pkgJson,
