@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/ardhi/bajo#readme",
   "dependencies": {
+    "add-filename-increment": "^1.0.0",
     "callsites": "^4.0.0",
     "dayjs": "^1.11.8",
     "deep-freeze-strict": "^1.1.1",

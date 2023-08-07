@@ -1,14 +1,17 @@
 import fs from 'fs-extra'
 import path from 'path'
+import { trim } from 'lodash-es'
+import increment from 'add-filename-increment'
 
-async function saveAsDownload (file, obj, bajo, printSaved = true) {
-  const { print } = this.bajo.helper
+async function saveAsDownload (file, obj, printSaved = true) {
+  const { print, getPluginName, pathResolve } = this.bajo.helper
   const config = this.bajo.config
-  const fname = `${config.dir.data}/download${bajo ? `/${bajo}` : ''}${file}`
+  const plugin = getPluginName(4)
+  const fname = pathResolve(increment(`${config.dir.data}/plugins/${plugin}/${trim(file, '/')}`, { fs: true }))
   const dir = path.dirname(fname)
-  await fs.ensureDir(dir)
+  if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
   await fs.writeFile(fname, obj, 'utf8')
-  if (printSaved) print.bora('Saved as \'%s\'', fname, { skipSilence: true }).succeed()
+  if (printSaved) print.bora('Saved as \'%s\'', path.resolve(fname), { skipSilence: true }).succeed()
   return fname
 }
 
