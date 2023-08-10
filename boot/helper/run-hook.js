@@ -19,8 +19,8 @@ import { filter, isEmpty, orderBy } from 'lodash-es'
  */
 
 async function runHook (hookName, ...args) {
-  const { log } = this.bajo.helper
-  log.trace('Run hook: %s', hookName)
+  // const { log } = this.bajo.helper
+  // log.trace('Run hook: %s', hookName)
   const [ns, path] = (hookName || '').split(':')
   let fns = filter(this.bajo.hooks, { ns, path })
   if (isEmpty(fns)) return

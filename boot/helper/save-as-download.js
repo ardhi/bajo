@@ -4,10 +4,10 @@ import { trim } from 'lodash-es'
 import increment from 'add-filename-increment'
 
 async function saveAsDownload (file, obj, printSaved = true) {
-  const { print, getPluginName, pathResolve } = this.bajo.helper
+  const { print, getPluginName, resolvePath } = this.bajo.helper
   const config = this.bajo.config
   const plugin = getPluginName(4)
-  const fname = pathResolve(increment(`${config.dir.data}/plugins/${plugin}/${trim(file, '/')}`, { fs: true }))
+  const fname = resolvePath(increment(`${config.dir.data}/plugins/${plugin}/${trim(file, '/')}`, { fs: true }))
   const dir = path.dirname(fname)
   if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
   await fs.writeFile(fname, obj, 'utf8')

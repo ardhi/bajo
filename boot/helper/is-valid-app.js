@@ -1,9 +1,9 @@
 import fs from 'fs-extra'
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 
 const isValidApp = (dir) => {
   if (!dir) dir = process.env.BAJOCWD
-  dir = pathResolve(dir)
+  dir = resolvePath(dir)
   const hasAppDir = fs.existsSync(`${dir}/app/bajo`)
   const hasPackageJson = fs.existsSync(`${dir}/package.json`)
   return hasAppDir && hasPackageJson

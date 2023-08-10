@@ -1,9 +1,9 @@
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 import { isFunction, isPlainObject } from 'lodash-es'
 import error from './error.js'
 
 async function load (file, asDefaultImport = true) {
-  const imported = await import(pathResolve(file, true))
+  const imported = await import(resolvePath(file, true))
   if (asDefaultImport) return imported.default
   return imported
 }
@@ -12,7 +12,7 @@ async function importModule (file, { asDefaultImport, asHandler } = {}) {
   let mod = await load(file, asDefaultImport)
   if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
-  if (!isPlainObject(mod)) throw error('File \'%s\' is NOT a handler module', file)
+  if (!isPlainObject(mod)) throw error.call(this, 'File \'%s\' is NOT a handler module', file)
   if (mod.forceAsync && mod.handler.constructor.name !== 'AsyncFunction') {
     const oldHandler = mod.handler
     mod.handler = async function (...args) {

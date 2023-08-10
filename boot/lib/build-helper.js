@@ -1,6 +1,6 @@
 import fastGlob from 'fast-glob'
 import { map, without, camelCase, isFunction, isPlainObject, forOwn } from 'lodash-es'
-import pathResolve from '../helper/path-resolve.js'
+import resolvePath from '../helper/resolve-path.js'
 import importModule from '../helper/import-module.js'
 
 function stackInfo (name, ...args) {
@@ -31,7 +31,7 @@ const wrapAsyncFn = function (name, handler, bind) {
 }
 
 export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
-  dir = pathResolve(dir)
+  dir = resolvePath(dir)
   exclude = map(exclude, e => `${dir}/${e}`)
   let files = await fastGlob(`${dir}/**/*.js`)
   files = without(files, ...exclude)

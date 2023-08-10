@@ -1,7 +1,7 @@
 import { isPlainObject, map, last, isEmpty, has, keys, values, trim, get } from 'lodash-es'
 import os from 'os'
 import getModuleDir from './get-module-dir.js'
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 import readJson from './read-json.js'
 import defaultsDeep from './defaults-deep.js'
 import path from 'path'
@@ -47,7 +47,7 @@ const importPkg = async (...pkg) => {
     const dir = getModuleDir(orgName, ns)
     const pkg = readJson(`${dir}/package.json`)
     const mainFileOrg = dir + '/' + (pkg.main || get(pkg, 'exports.default', 'index.js'))
-    let mainFile = pathResolve(mainFileOrg, os.platform() === 'win32')
+    let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
     if (isEmpty(path.extname(mainFile))) {
       if (fs.existsSync(`${mainFileOrg}/index.js`)) mainFile += '/index.js'
       else mainFile += '.js'

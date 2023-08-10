@@ -1,12 +1,12 @@
 import path from 'path'
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 import readJson from './read-json.js'
 import { find, map, isEmpty } from 'lodash-es'
 import error from './error.js'
 import fg from 'fast-glob'
 
-async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}) {
-  file = pathResolve(file)
+async function readConfig (file, { pattern, globOptions = {}, ignoreError, defValue = {} } = {}) {
+  file = resolvePath(file)
   let ext = path.extname(file)
   const fname = path.dirname(file) + '/' + path.basename(file, ext)
   ext = ext.toLowerCase()
@@ -19,7 +19,7 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
     const item = find(this.bajo.configHandlers, { ext })
     if (!item) {
       if (!ignoreError) throw error.call(this, 'Can\'t parse \'%s\'', file, { code: 'BAJO_CONFIG_NO_PARSER' })
-      return {}
+      return defValue
     }
     return item.handler.call(this, file)
   }
@@ -27,9 +27,9 @@ async function readConfig (file, { pattern, globOptions = {}, ignoreError } = {}
   const files = await fg(item, globOptions)
   if (files.length === 0) {
     if (!ignoreError) throw error.call(this, 'No config file found', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
-    return {}
+    return defValue
   }
-  let config = {}
+  let config = defValue
   for (const f of files) {
     const ext = path.extname(f).toLowerCase()
     const item = find(this.bajo.configHandlers, { ext })

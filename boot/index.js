@@ -20,7 +20,7 @@ import runTool from './run-tool.js'
 import shim from './lib/shim.js'
 import { last } from 'lodash-es'
 import path from 'path'
-import pathResolve from './helper/path-resolve.js'
+import resolvePath from './helper/resolve-path.js'
 
 shim()
 
@@ -39,7 +39,7 @@ async function boot (cwd) {
     const parts = l.split('=')
     cwd = parts[1]
   }
-  cwd = pathResolve(cwd)
+  cwd = resolvePath(cwd)
   process.env.BAJOCWD = cwd
   const scope = createScope()
   await buildConfig.call(scope, cwd)

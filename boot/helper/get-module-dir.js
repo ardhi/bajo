@@ -1,5 +1,5 @@
 import path from 'path'
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 
@@ -15,7 +15,7 @@ const getModuleDir = (pkgName, base) => {
   } catch (err) {
     return null
   }
-  const dir = pathResolve(path.dirname(resolved))
+  const dir = resolvePath(path.dirname(resolved))
   return dir
 }
 

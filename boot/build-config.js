@@ -6,7 +6,7 @@ import os from 'os'
 import fs from 'fs-extra'
 import { get, set, pick, values, keys, uniq, without, filter, map, isEmpty, trim } from 'lodash-es'
 import omitDeep from 'omit-deep'
-import pathResolve from './helper/path-resolve.js'
+import resolvePath from './helper/resolve-path.js'
 import readConfig from './helper/read-config.js'
 import getKeyByValue from './helper/get-key-by-value.js'
 import envs from './helper/envs.js'
@@ -62,9 +62,9 @@ async function buildConfig (cwd) {
   // directories
   set(envArgv, 'dir.base', cwd)
   if (!get(envArgv, 'dir.data')) set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
-  envArgv.dir.data = pathResolve(envArgv.dir.data)
+  envArgv.dir.data = resolvePath(envArgv.dir.data)
   if (!envArgv.dir.tmp) {
-    envArgv.dir.tmp = pathResolve(os.tmpdir()) + '/bajo'
+    envArgv.dir.tmp = resolvePath(os.tmpdir()) + '/bajo'
     fs.ensureDirSync(envArgv.dir.tmp)
   }
   // config merging

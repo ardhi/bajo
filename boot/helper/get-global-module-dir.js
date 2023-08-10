@@ -1,5 +1,5 @@
 import globalModulesPath from 'global-modules-path'
-import pathResolve from './path-resolve.js'
+import resolvePath from './resolve-path.js'
 import error from './error.js'
 import { dropRight } from 'lodash-es'
 import fs from 'fs-extra'
@@ -12,7 +12,7 @@ const getGlobalModuleDir = (pkgName, silent = true) => {
       if (silent) return
       throw error(`Can't locate npm global module directory`, { code: 'BAJO_CANT_LOCATE_NPM_GLOBAL_DIR' })
     }
-    nodeModulesDir = dropRight(pathResolve(npmPath).split('/'), 1).join('/')
+    nodeModulesDir = dropRight(resolvePath(npmPath).split('/'), 1).join('/')
     process.env.BAJO_GLOBAL_MODULE_DIR = nodeModulesDir
   }
   if (!pkgName) return nodeModulesDir

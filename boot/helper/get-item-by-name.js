@@ -1,14 +1,14 @@
 import path from 'path'
 
 async function getItemByName (name) {
-  const { pathResolve, getConfig, readConfig, error } = this.bajo.helper
+  const { resolvePath, getConfig, readConfig, error } = this.bajo.helper
   const config = getConfig()
   const [type, ...paths] = name.split(':')
   let result
   switch (type) {
     case 'config': {
       let file = paths.join(':')
-      if (!path.isAbsolute(file)) file = pathResolve(`${config.dir.data}/config/${file}`)
+      if (!path.isAbsolute(file)) file = resolvePath(`${config.dir.data}/config/${file}`)
       result = await readConfig(file)
       break
     }
