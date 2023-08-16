@@ -42,9 +42,9 @@ async function runner (pkg, { singles, argv, env }) {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
     cfg = defaultsDeep({}, omit(altCfg, omittedPluginKeys), cfg)
   } catch (err) {}
-  const envArgv = defaultsDeep({}, omit(env[cfg.name] || {}, omittedPluginKeys) || {}, omit(argv[cfg.name] || {}, omittedPluginKeys) || {})
-  cfg = defaultsDeep({}, envArgv || {}, cfg || {})
-  cfg.dependencies = cfg.dependencies || []
+  const envArgv = defaultsDeep({}, omit(env[cfg.name] ?? {}, omittedPluginKeys) ?? {}, omit(argv[cfg.name] ?? {}, omittedPluginKeys) ?? {})
+  cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
+  cfg.dependencies = cfg.dependencies ?? []
   if (isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
   if (cfg.single) {
     const lockfileDir = `${config.dir.tmp}/lock`

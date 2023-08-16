@@ -2,11 +2,11 @@ import { map, camelCase, merge, filter, groupBy } from 'lodash-es'
 
 async function collectHooks () {
   const { eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
-  this.bajo.hooks = this.bajo.hooks || []
+  this.bajo.hooks = this.bajo.hooks ?? []
   log.debug('Collect hooks')
   // collects
   await eachPlugins(async function ({ plugin, dir, file }) {
-    const hookName = (file.slice(dir.length + 1) || '').split('/')[1]
+    const hookName = (file.slice(dir.length + 1) ?? '').split('/')[1]
     let [ns, path] = map(hookName.replace('.js', '').split('@'), e => camelCase(e))
     if (!path) {
       path = ns

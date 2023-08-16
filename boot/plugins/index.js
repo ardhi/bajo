@@ -12,8 +12,8 @@ import parseEnv from '../lib/parse-env.js'
 
 async function bootBajos () {
   const singles = []
-  const { argv } = await parseArgsArgv({ useParser: true }) || {}
-  const env = parseEnv() || {}
+  const { argv } = await parseArgsArgv({ useParser: true }) ?? {}
+  const env = parseEnv() ?? {}
   await collectConfigHandlers.call(this)
   await buildConfig.call(this, { singles, argv, env })
   await extendConfig.call(this)

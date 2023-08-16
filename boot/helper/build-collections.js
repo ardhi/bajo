@@ -6,7 +6,7 @@ async function buildCollections ({ name, handler, dupChecks, container = 'connec
   const options = getConfig(name, { full: true })
   if (!options[container]) return []
   if (!isArray(options[container])) options[container] = [options[container]]
-  options[container] = options[container] || []
+  options[container] = options[container] ?? []
   await runHook(`${name}:${camelCase(`before build ${container}`)}`)
   const deleted = []
   for (const index in options[container]) {

@@ -46,7 +46,7 @@ const importPkg = async (...pkg) => {
     if (isEmpty(name)) name = orgName
     const dir = getModuleDir(orgName, ns)
     const pkg = readJson(`${dir}/package.json`)
-    const mainFileOrg = dir + '/' + (pkg.main || get(pkg, 'exports.default', 'index.js'))
+    const mainFileOrg = dir + '/' + (pkg.main ?? get(pkg, 'exports.default', 'index.js'))
     let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
     if (isEmpty(path.extname(mainFile))) {
       if (fs.existsSync(`${mainFileOrg}/index.js`)) mainFile += '/index.js'

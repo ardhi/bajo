@@ -27,7 +27,7 @@ async function runTool () {
   if (!tool) print.fatal('Sidetool \'%s\' not found. Aborted!', name)
   const opts = { ns, toc, path, params, args: config.args }
   const mod = await importModule(tool.file)
-  const handler = mod.handler || mod
+  const handler = mod.handler ?? mod
   await handler.call(this, opts)
 }
 

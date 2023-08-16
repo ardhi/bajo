@@ -40,7 +40,7 @@ async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
   const config = getConfig()
   const result = {}
-  ns = ns || getPluginName(4)
+  ns = ns ?? getPluginName(4)
   for (const pkg of config.plugins) {
     const plugin = camelCase(pkg)
     let cfg = getConfig(plugin, { full: true })
@@ -77,7 +77,7 @@ async function eachPlugins (handler, { key = 'name', glob, ns } = {}) {
         if (resp === false) break
         else if (resp === undefined) continue
         else {
-          result[plugin] = result[plugin] || {}
+          result[plugin] = result[plugin] ?? {}
           result[plugin][f] = resp
         }
       }

@@ -7,7 +7,7 @@ function getConfig (name, { full, clone } = {}) {
     const cfg = clone ? cloneDeep(this[name].config) : this[name].config
     return full ? cfg : omit(cfg, omittedPluginKeys)
   }
-  const ref = find(this.bajo.pluginRefs || [], { alias: name })
+  const ref = find(this.bajo.pluginRefs ?? [], { alias: name })
   if (ref) {
     const cfg = clone ? cloneDeep(this[ref.name].config) : this[ref.name].config
     return full ? cfg : omit(cfg, omittedPluginKeys)
