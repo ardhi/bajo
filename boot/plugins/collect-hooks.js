@@ -1,4 +1,4 @@
-import { map, camelCase, merge, filter, groupBy } from 'lodash-es'
+import { map, camelCase, merge, forOwn, groupBy } from 'lodash-es'
 
 async function collectHooks () {
   const { eachPlugins, log, runHook, isLogInRange, importModule, pascalCase } = this.bajo.helper
@@ -22,13 +22,12 @@ async function collectHooks () {
   await runHook('bajo:afterCollectHooks')
   // for log trace purpose only
   if (!isLogInRange('trace')) return
-  await eachPlugins(async function ({ plugin }) {
-    const hooks = filter(this.bajo.hooks, h => h.ns.startsWith(plugin))
-    if (hooks.length === 0) return undefined
-    const items = groupBy(hooks, 'path')
-    for (const hook of hooks) {
-      log.trace('Collect hook: %s:%s (%d)', hook.ns, hook.path, items[hook.path].length)
-    }
+  const items = groupBy(this.bajo.hooks, 'ns')
+  forOwn(items, (v, k) => {
+    const hooks = groupBy(v, 'path')
+    forOwn(hooks, (v1, k1) => {
+      log.trace('Collect hook: %s:%s (%d)', k, k1, v1.length)
+    })
   })
 }
 
