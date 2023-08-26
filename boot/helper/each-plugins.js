@@ -1,4 +1,4 @@
-import { camelCase, isString, omit, isPlainObject, last, trim } from 'lodash-es'
+import { camelCase, isString, omit, last, trim } from 'lodash-es'
 import fastGlob from 'fast-glob'
 import path from 'path'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
@@ -15,14 +15,12 @@ async function _eachPlugins (handler, { key = 'name', glob, ns } = {}) {
     let r
     if (glob) {
       const base = `${dir}/${ns}`
-      let pattern
-      let opts
-      if (isPlainObject(glob) && glob.pattern) pattern = glob.pattern
-      else {
-        if (isString(glob)) pattern = [glob]
-        for (const i in pattern) {
-          pattern[i] = `${base}/${pattern[i]}`
-        }
+      let opts = isString(glob) ? { pattern: [glob] } : glob
+      let pattern = opts.pattern ?? []
+      if (isString(pattern)) pattern = [pattern]
+      opts = omit(opts, ['pattern'])
+      for (const i in pattern) {
+        pattern[i] = `${base}/${pattern[i]}`
       }
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
