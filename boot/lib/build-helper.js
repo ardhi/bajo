@@ -45,8 +45,7 @@ export default async function (dir, { pkg = 'bajo', exclude = [] } = {}) {
       if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this, fnName, mod, true)
       else mod = wrapFn.call(this, fnName, mod, true)
     } else if (isPlainObject(mod)) {
-      if (isFunction(mod.class)) mod = new mod.class(this)
-      else {
+      if (!mod.exec) { // mod.exec offer unbind, nacked function people can band to anything else later
         forOwn(mod, (v, k) => {
           if (isFunction(v)) mod[k] = v.bind(this)
         })
