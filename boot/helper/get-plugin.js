@@ -1,6 +1,13 @@
+import { find } from 'lodash-es'
+
 async function getPlugin (name) {
   const { error } = this.bajo.helper
-  if (!this[name]) throw error('\'%s\' is not loaded', name)
+  if (!this[name]) {
+    // alias?
+    const ref = find(this.bajo.pluginRefs ?? [], { alias: name })
+    if (!ref) throw error('\'%s\' is not loaded', name)
+    name = ref.name
+  }
   return this[name]
 }
 

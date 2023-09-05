@@ -1,9 +1,11 @@
-import { words, upperFirst, map, isFunction } from 'lodash-es'
+import { words, upperFirst, map, isFunction, concat, uniq } from 'lodash-es'
 
-function titleize (text, { transformer, ignores } = {}) {
+const defIgnores = ['or', 'and', 'of', 'with']
+
+function titleize (text, { transformer, ignores = [] } = {}) {
   return map(words(text), t => {
     if (isFunction(transformer)) return transformer.call(this, t)
-    ignores = ignores ?? ['or', 'and', 'of', 'with']
+    ignores = uniq(concat(ignores, defIgnores))
     if (ignores.includes(t)) return t
     return upperFirst(t)
   }).join(' ')
