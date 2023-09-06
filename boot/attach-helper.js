@@ -23,4 +23,7 @@ export default async function () {
   if (!fs.existsSync(this.bajo.config.dir.data)) {
     this.bajo.helper.log.warn('Data directory \'%s\' is not set yet!', this.bajo.config.dir.data)
   }
+  if (this.bajo.config.env === 'dev') {
+    this.dump = this.bajo.helper.dump
+  }
 }
