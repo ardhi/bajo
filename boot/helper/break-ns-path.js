@@ -5,7 +5,7 @@ function breakNsPath (name) {
   let [ns, path] = name.split(':')
   if (isEmpty(path)) {
     path = ns
-    ns = 'app'
+    ns = null
   }
   if (path.startsWith('.')) throw error('Path \'%s\' must be an absolute path', path)
   if (!this[ns]) ns = (getPlugin(ns) || {}).name
