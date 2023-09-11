@@ -1,6 +1,6 @@
 import bora from '../lib/bora.js'
 import Sprintf from 'sprintf-js'
-import { last, isPlainObject, get } from 'lodash-es'
+import { last, isPlainObject, get, merge } from 'lodash-es'
 import defaultsDeep from './defaults-deep.js'
 import getPluginName from './get-plugin-name.js'
 
@@ -21,7 +21,7 @@ function format (...args) {
   if (!msg) return ''
   const i18n = get(this, 'bajoI18N.instance')
   if (i18n) {
-    if (isPlainObject(params[0])) return i18n.t(msg, params[0])
+    if (isPlainObject(params[0])) return i18n.t(msg, merge({}, params[0] ?? {}, { ns }))
     return i18n.t(msg, { ns, pkg: opts.pkg, postProcess: 'sprintf', sprintf: params })
   }
   return sprintf(msg, ...params)

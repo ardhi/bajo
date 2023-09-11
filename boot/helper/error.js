@@ -1,4 +1,4 @@
-import { last, isPlainObject } from 'lodash-es'
+import { last, isPlainObject, each, isArray } from 'lodash-es'
 import print from './print.js'
 import getPluginName from './get-plugin-name.js'
 
@@ -38,7 +38,15 @@ function error (msg = 'Internal server error', ...args) {
     delete payload.class
     delete payload.ns
     for (const key in payload) {
-      err[key] = payload[key]
+      const value = payload[key]
+      if (key === 'details' && isArray(value)) {
+        each(value, (v, i) => {
+          const field = print._format.call(this, ns, `field.${v.field}`)
+          if (isPlainObject(v)) value[i].error = print._format.call(this, ns, v.error, field)
+          else value[i] = print._format.call(this, ns, v)
+        })
+      }
+      err[key] = value
     }
   }
   return err

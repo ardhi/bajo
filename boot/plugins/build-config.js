@@ -2,6 +2,7 @@ import { camelCase, pick, isString, omit, pull, each } from 'lodash-es'
 import fs from 'fs-extra'
 import lockfile from 'proper-lockfile'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
+import titleize from '../helper/titleize.js'
 
 export async function readAllConfigs (base, name) {
   const { readConfig, getConfig } = this.bajo.helper
@@ -37,6 +38,7 @@ async function runner (pkg, { singles, argv, env }) {
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
   if (cfg.name === 'app') cfg.alias = 'app'
   else if (!isString(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
+  cfg.title = cfg.title ?? titleize.call(this, cfg.alias)
   // merge with config from datadir
   try {
     const altCfg = await readConfig(`${config.dir.data}/config/${cfg.name}.*`)
