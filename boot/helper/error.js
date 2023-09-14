@@ -1,4 +1,4 @@
-import { last, isPlainObject, each, isArray } from 'lodash-es'
+import { last, isPlainObject, each, isArray, get } from 'lodash-es'
 import print from './print.js'
 import getPluginName from './get-plugin-name.js'
 
@@ -25,6 +25,7 @@ function error (msg = 'Internal server error', ...args) {
     ns = payload.ns
   }
   if (!ns) ns = getPluginName.call(this, 3)
+  const orgMsg = msg
   const message = print._format.call(this, ns, msg, ...args)
   let err
   if (isPlainObject(payload) && payload.class) err = payload.class(message)
@@ -39,11 +40,13 @@ function error (msg = 'Internal server error', ...args) {
     delete payload.ns
     for (const key in payload) {
       const value = payload[key]
-      if (key === 'details' && isArray(value)) {
+      if (key === 'details' && isArray(value) && orgMsg === 'Validation Error') {
         each(value, (v, i) => {
-          const field = print._format.call(this, ns, `field.${v.field}`)
-          if (isPlainObject(v)) value[i].error = print._format.call(this, ns, v.error, field)
-          else value[i] = print._format.call(this, ns, v)
+          v.context.message = v.message
+          value[i] = {
+            field: get(v, 'context.key'),
+            error: print._format.call(this, ns, `validation.${v.type}`, v.context, {})
+          }
         })
       }
       err[key] = value
