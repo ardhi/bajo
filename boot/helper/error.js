@@ -17,6 +17,17 @@ import getPluginName from './get-plugin-name.js'
 
 Error.stackTraceLimit = 15
 
+function formatErrorDetails (value, ns) {
+  each(value, (v, i) => {
+    v.context.message = v.message
+    if (v.type === 'any.only') v.context.ref = `field.${get(v, 'context.valids.0.key')}`
+    value[i] = {
+      field: get(v, 'context.key'),
+      error: print._format.call(this, ns, `validation.${v.type}`, v.context, {})
+    }
+  })
+}
+
 function error (msg = 'Internal server error', ...args) {
   let payload = last(args)
   let ns
@@ -41,13 +52,7 @@ function error (msg = 'Internal server error', ...args) {
     for (const key in payload) {
       const value = payload[key]
       if (key === 'details' && isArray(value) && orgMsg === 'Validation Error') {
-        each(value, (v, i) => {
-          v.context.message = v.message
-          value[i] = {
-            field: get(v, 'context.key'),
-            error: print._format.call(this, ns, `validation.${v.type}`, v.context, {})
-          }
-        })
+        formatErrorDetails.call(this, value, ns)
       }
       err[key] = value
     }
