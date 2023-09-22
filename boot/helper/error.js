@@ -19,6 +19,7 @@ Error.stackTraceLimit = 15
 
 function formatErrorDetails (value, ns) {
   each(value, (v, i) => {
+    if (!v.context) return undefined
     v.context.message = v.message
     if (v.type === 'any.only') v.context.ref = `field.${get(v, 'context.valids.0.key')}`
     value[i] = {
