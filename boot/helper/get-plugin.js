@@ -1,6 +1,6 @@
 import { find } from 'lodash-es'
 
-async function getPlugin (name) {
+function getPlugin (name) {
   const { error } = this.bajo.helper
   if (!this[name]) {
     // alias?
