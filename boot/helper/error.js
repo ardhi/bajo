@@ -19,9 +19,12 @@ Error.stackTraceLimit = 15
 
 function formatErrorDetails (value, ns) {
   each(value, (v, i) => {
-    if (!v.context) return undefined
+    if (!v.context) {
+      v.error = print._format.call(this, ns, v.error, {})
+      return undefined
+    }
     v.context.message = v.message
-    if (v.type === 'any.only') v.context.ref = `field.${get(v, 'context.valids.0.key')}`
+    if (v.type === 'any.only') v.context.ref = print._format.call(this, ns, `field.${get(v, 'context.valids.0.key')}`, {})
     value[i] = {
       field: get(v, 'context.key'),
       error: print._format.call(this, ns, `validation.${v.type}`, v.context, {})

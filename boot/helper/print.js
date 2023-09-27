@@ -29,6 +29,7 @@ function format (...args) {
           .replace(/^is /, '')
         return upperFirst(message)
       }
+      if (msg === 'field.username') console.log(ctx)
       return i18n.t(msg, ctx)
     }
     return i18n.t(msg, { ns, pkg: opts.pkg, postProcess: 'sprintf', sprintf: params })

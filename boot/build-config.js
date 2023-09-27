@@ -25,7 +25,7 @@ const defConfig = {
     report: [],
     tool: false
   },
-  lang: Intl.DateTimeFormat().resolvedOptions().lang,
+  lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
   plugins: ['app'],
   env: 'dev',
   tool: false,
