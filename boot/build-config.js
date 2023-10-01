@@ -14,9 +14,10 @@ import defaultsDeep from './helper/defaults-deep.js'
 import parseArgsArgv from './lib/parse-args-argv.js'
 import parseEnv from './lib/parse-env.js'
 import error from './helper/error.js'
+import currentLoc from './helper/current-loc.js'
 
 const configFilePick = ['log', 'plugins', 'env', 'run']
-const configFileOmit = ['tool', 'spawn', 'cwd']
+const configFileOmit = ['tool', 'spawn', 'cwd', 'name', 'alias']
 
 const defConfig = {
   dir: {},
@@ -59,8 +60,11 @@ async function buildConfig (cwd) {
   const { args, argv } = await parseArgsArgv()
   const env = parseEnv()
   const envArgv = defaultsDeep({}, env.root, argv.root)
+  envArgv.name = 'bajo'
+  envArgv.alias = 'bajo'
   // directories
   set(envArgv, 'dir.base', cwd)
+  set(envArgv, 'dir.pkg', resolvePath(currentLoc(import.meta).dir + '/..'))
   if (!get(envArgv, 'dir.data')) set(envArgv, 'dir.data', `${envArgv.dir.base}/data`)
   envArgv.dir.data = resolvePath(envArgv.dir.data)
   if (!envArgv.dir.tmp) {

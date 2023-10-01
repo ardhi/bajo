@@ -3,14 +3,17 @@ import fastGlob from 'fast-glob'
 import path from 'path'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
-async function _eachPlugins (handler, { key = 'name', glob, ns } = {}) {
+async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) {
   const { getConfig } = this.bajo.helper
   const config = getConfig()
   const result = {}
-  for (const pkg of config.plugins) {
+  const plugins = [...config.plugins]
+  if (useBajo) plugins.unshift('bajo')
+  for (const pkg of plugins) {
     const plugin = camelCase(pkg)
     let cfg = getConfig(plugin, { full: true })
-    const { alias, dir, dependencies } = cfg
+    const { alias, dependencies } = cfg
+    const dir = cfg.dir.pkg
     cfg = omit(cfg, omittedPluginKeys)
     let r
     if (glob) {
@@ -75,16 +78,16 @@ async function _eachPlugins (handler, { key = 'name', glob, ns } = {}) {
  * })
  */
 
-async function eachPlugins (handler, { key = 'name', glob, ns, extend, extendHandler } = {}) {
+async function eachPlugins (handler, { key = 'name', glob, ns, extend, extendHandler, useBajo } = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
   if (!extendHandler) extendHandler = handler
   ns = ns ?? getPluginName(4)
-  const result = await _eachPlugins.call(this, handler, { key, glob, ns })
+  const result = await _eachPlugins.call(this, handler, { key, glob, ns, useBajo })
   if (extend && isString(glob)) {
     let nsExtend = ns
     if (isString(extend)) nsExtend += '/' + trim(extend, '/')
     const cfg = getConfig('app', { full: true })
-    const ext = `${cfg.dir}/${nsExtend}/extend/*`
+    const ext = `${cfg.dir.pkg}/${nsExtend}/extend/*`
     const exts = await fastGlob(ext, { onlyDirectories: true })
     for (const e of exts) {
       const plugin = path.basename(e)

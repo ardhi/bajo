@@ -32,7 +32,9 @@ async function runner (pkg, { singles, argv, env }) {
   const dir = pkg === 'app' ? (config.dir.base + '/app') : getModuleDir(pkg)
   if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
   let cfg = await readAllConfigs.call(this, `${dir}/bajo/config`, name)
-  cfg.dir = dir
+  cfg.dir = {
+    pkg: dir
+  }
   const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
   cfg.pkg = pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
@@ -52,7 +54,7 @@ async function runner (pkg, { singles, argv, env }) {
     const lockfileDir = `${config.dir.tmp}/lock`
     const lockfilePath = `${lockfileDir}/${name}.lock`
     fs.ensureDirSync(lockfileDir)
-    const file = `${cfg.dir}/package.json`
+    const file = `${dir}/package.json`
     try {
       await lockfile.lock(file, { lockfilePath })
     } catch (err) {
