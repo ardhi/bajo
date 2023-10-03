@@ -1,7 +1,8 @@
 import { isEmpty, isPlainObject, cloneDeep, omit, find } from 'lodash-es'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
-function getConfig (name, { full, clone } = {}) {
+function getConfig (name, options = {}) {
+  const { full, clone } = options
   if (name === 'bajo' || isEmpty(name)) return this.bajo.config
   if (this[name] && isPlainObject(this[name].config) && this[name].config.name === name) {
     const cfg = clone ? cloneDeep(this[name].config) : this[name].config

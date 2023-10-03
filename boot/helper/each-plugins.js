@@ -78,8 +78,9 @@ async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) 
  * })
  */
 
-async function eachPlugins (handler, { key = 'name', glob, ns, extend, extendHandler, useBajo } = {}) {
+async function eachPlugins (handler, options = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
+  let { key = 'name', glob, ns, extend, extendHandler, useBajo } = options
   if (!extendHandler) extendHandler = handler
   ns = ns ?? getPluginName(4)
   const result = await _eachPlugins.call(this, handler, { key, glob, ns, useBajo })

@@ -1,7 +1,8 @@
 import { cloneDeep, isPlainObject } from 'lodash-es'
 import { customAlphabet } from 'nanoid'
 
-const generateId = ({ pattern, length = 21, returnInstance } = {}) => {
+const generateId = (options = {}) => {
+  let { pattern, length = 21, returnInstance } = options
   let opts = {}
   if (isPlainObject(pattern)) {
     opts = cloneDeep(pattern)
@@ -10,8 +11,8 @@ const generateId = ({ pattern, length = 21, returnInstance } = {}) => {
     pattern = opts.pattern
   }
   pattern = pattern ?? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  if (opts.lowerCase) pattern = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  else if (opts.upperCase) pattern = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  if (opts.lowerCase) pattern = pattern.toLowerCase()
+  else if (opts.upperCase) pattern = pattern.toUpperCase()
   const nid = customAlphabet(pattern, length)
   return returnInstance ? nid : nid()
 }
