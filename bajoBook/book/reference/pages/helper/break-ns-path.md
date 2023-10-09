@@ -2,7 +2,7 @@
 title: function breakNsPath()
 ---
 
-Bajo uses this common format ```<ns>:<path>``` everywhere to describe a path (variable, function name, etc) belongs to what namespace/plugin. This function helps you to get the right **ns** and **path** pair by validating the namespace.
+Bajo uses this common format ```<ns>:<path>``` everywhere to describe a path (variable, function name, etc) belongs to what namespace/plugin. This function helps you to get the right **ns** and **path** pair by validating named namespace.
 
 ###### Parameters:
 

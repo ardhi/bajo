@@ -1,8 +1,141 @@
 {
-  "title": "reference",
-  "author": "Ardhi Lukianto <ardhi@lukianto.com>",
-  "meta": {
-    "coverImage": "open-book-icon-symbol-yellow-background-education-bookstore-concept-3d-rendering.jpg",
-    "coverImageAttr": "<a href=\"https://www.freepik.com/free-photo/open-book-icon-symbol-yellow-background-education-bookstore-concept-3d-rendering_24803422.htm\">Image by mamewmy</a> on Freepik"
+  "book": {
+    "title": "Framework Reference",
+    "author": "Ardhi Lukianto <ardhi@lukianto.com>",
+    "meta": {
+      "coverImage": "concept-leadership-business-with-paper-boats.jpg",
+      "coverImageAttr": "<a href=\"https://www.freepik.com/free-photo/concept-leadership-business-with-paper-boats_40312961.htm#page=2&query=paper%20boat&position=45&from_view=search&track=ais\">Image by atlascompany</a> on Freepik"
+    }
+  },
+  "pages": {
+    "helper": {
+      "level": "1"
+    },
+    "helper/break-ns-path": {
+      "level": "1.1"
+    },
+    "helper/build-collections": {
+      "level": "1.2"
+    },
+    "helper/call-helper-or-handler": {
+      "level": "1.3"
+    },
+    "helper/current-loc": {
+      "level": "1.4"
+    },
+    "helper/dayjs": {
+      "level": "1.5"
+    },
+    "helper/defaults-deep": {
+      "level": "1.6"
+    },
+    "helper/dump": {
+      "level": "1.7"
+    },
+    "helper/each-plugins": {
+      "level": "1.8"
+    },
+    "helper/envs": {
+      "level": "1.9"
+    },
+    "helper/error": {
+      "level": "1.10"
+    },
+    "helper/fatal": {
+      "level": "1.11"
+    },
+    "helper/freeze": {
+      "level": "1.12"
+    },
+    "helper/generate-id": {
+      "level": "1.13"
+    },
+    "helper/get-config": {
+      "level": "1.14"
+    },
+    "helper/get-global-module-dir": {
+      "level": "1.15"
+    },
+    "helper/get-helper": {
+      "level": "1.16"
+    },
+    "helper/get-item-by-name": {
+      "level": "1.17"
+    },
+    "helper/get-key-by-value": {
+      "level": "1.18"
+    },
+    "helper/get-module-dir": {
+      "level": "1.19"
+    },
+    "helper/get-plugin": {
+      "level": "1.20"
+    },
+    "helper/get-plugin-data-dir": {
+      "level": "1.21"
+    },
+    "helper/get-plugin-name": {
+      "level": "1.22"
+    },
+    "helper/import-module": {
+      "level": "1.23"
+    },
+    "helper/import-pkg": {
+      "level": "1.24"
+    },
+    "helper/is-empty-dir": {
+      "level": "1.25"
+    },
+    "helper/is-log-in-range": {
+      "level": "1.26"
+    },
+    "helper/is-set": {
+      "level": "1.27"
+    },
+    "helper/is-valid-app": {
+      "level": "1.28"
+    },
+    "helper/is-valid-plugin": {
+      "level": "1.29"
+    },
+    "helper/log": {
+      "level": "1.30"
+    },
+    "helper/log-levels": {
+      "level": "1.31"
+    },
+    "helper/paginate": {
+      "level": "1.32"
+    },
+    "helper/pascal-case": {
+      "level": "1.33"
+    },
+    "helper/print": {
+      "level": "1.34"
+    },
+    "helper/read-config": {
+      "level": "1.35"
+    },
+    "helper/read-json": {
+      "level": "1.36"
+    },
+    "helper/resolve-path": {
+      "level": "1.37"
+    },
+    "helper/resolve-tpl-path": {
+      "level": "1.38"
+    },
+    "helper/run-hook": {
+      "level": "1.39"
+    },
+    "helper/save-as-download": {
+      "level": "1.40"
+    },
+    "helper/titleize": {
+      "level": "1.41"
+    },
+    "helper/white-space": {
+      "level": "1.42"
+    }
   }
 }
