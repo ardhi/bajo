@@ -1,12 +1,25 @@
 {
   "book": {
-    "title": "Framework Documentation",
+    "title": "User Guides",
+    "subTitle": "Bajo Framework",
+    "description": "Getting started for new user, the basics and advanced topics",
     "author": "Ardhi Lukianto <ardhi@lukianto.com>",
     "meta": {
-      "coverImage": "open-book-icon-symbol-yellow-background-education-bookstore-concept-3d-rendering.jpg",
-      "coverImageAttr": "<a href=\"https://www.freepik.com/free-photo/open-book-icon-symbol-yellow-background-education-bookstore-concept-3d-rendering_24803422.htm#query=open%20book&position=31&from_view=keyword&track=ais\">Image by mamewmy</a> on Freepik"
+      "coverImage": "How-to-Make-a-Paper-Boat-564x400@2x.jpg"
     }
   },
   "pages": {
+    "guides": {
+      "level": "1"
+    },
+    "guides/definition": {
+      "level": "1.1"
+    },
+    "guides/intro": {
+      "level": "1.2"
+    },
+    "guides/setup": {
+      "level": "1.3"
+    }
   }
 }
