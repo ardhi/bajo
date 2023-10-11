@@ -1,10 +1,13 @@
 {
   "book": {
-    "title": "User Guides",
-    "subTitle": "Bajo Framework",
+    "title": "Bajo Framework - User Guides",
     "description": "Getting started for new user, the basics and advanced topics",
     "author": "Ardhi Lukianto <ardhi@lukianto.com>",
     "meta": {
+      "externalLink": {
+        "Github": "https://github.com/ardhi/bajo",
+        "NPM": "https://www.npmjs.com/package/bajo"
+      },
       "coverImage": "How-to-Make-a-Paper-Boat-564x400@2x.jpg"
     }
   },
