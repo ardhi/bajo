@@ -38,8 +38,10 @@ async function runner (pkg, { singles, argv, env }) {
   const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
   cfg.pkg = pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
-  if (cfg.name === 'app') cfg.alias = 'app'
-  else if (!isString(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
+  if (cfg.name === 'app') {
+    cfg.alias = 'app'
+    cfg.title = 'Application'
+  } else if (!isString(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
   cfg.title = cfg.title ?? titleize.call(this, cfg.alias)
   // merge with config from datadir
   try {
