@@ -1,7 +1,7 @@
 import { map, camelCase, merge, forOwn, groupBy } from 'lodash-es'
 
 async function collectHooks () {
-  const { eachPlugins, log, runHook, isLogInRange, importModule, pascalCase } = this.bajo.helper
+  const { eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
   this.bajo.hooks = this.bajo.hooks ?? []
   log.debug('Collect hooks')
   // collects
@@ -13,7 +13,7 @@ async function collectHooks () {
       ns = plugin
     }
     path = camelCase(path)
-    ns = map(ns.split('.'), (n, i) => i === 1 ? pascalCase(n) : camelCase(n)).join('.')
+    ns = map(ns.split('.'), (n, i) => i === 1 ? n : camelCase(n)).join('.')
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
     merge(mod, { ns, path })
