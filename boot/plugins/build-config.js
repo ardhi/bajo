@@ -33,7 +33,8 @@ async function runner (pkg, { singles, argv, env }) {
   if (pkg !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
   let cfg = await readAllConfigs.call(this, `${dir}/bajo/config`, name)
   cfg.dir = {
-    pkg: dir
+    pkg: dir,
+    data: `${config.dir.data}/plugins/${name}`
   }
   const pkgJson = await readJson(`${dir + (pkg === 'app' ? '/..' : '')}/package.json`)
   cfg.pkg = pick(pkgJson,

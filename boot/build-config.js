@@ -85,7 +85,8 @@ async function buildConfig (cwd) {
   if (config.silent) config.log.level = 'silent'
   // sanitize plugins
   config.plugins = without(config.plugins, 'app')
-  if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
+  // if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
+  config.plugins.push('app')
   config.plugins = filter(uniq(map(config.plugins, b => trim(b))), b => !isEmpty(b))
   if (config.tool) {
     if (!config.plugins.includes('bajo-cli')) throw error('Sidetool needs to have \'bajo-cli\' package loaded first')

@@ -18,6 +18,11 @@ export default async function () {
   }
   this.bajo.helper.log = logger.call(this)
   this.bajo.helper.dayjs = dayjs
+  this.bajo.helper.setImmediate = function () {
+    return new Promise((resolve) => {
+      setImmediate(() => resolve())
+    })
+  }
   this.bajo.helper.freeze(this.bajo.helper, true)
   // last cleanup
   if (!fs.existsSync(this.bajo.config.dir.data)) {
