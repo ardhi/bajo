@@ -4,7 +4,9 @@ async function exit (signal) {
   await eachPlugins(async function ({ plugin }) {
     const handler = this.bajo.exitHandler[plugin]
     if (!handler) return undefined
-    await handler.call(this)
+    try {
+      await handler.call(this)
+    } catch (err) {}
     log.debug('Exited: %s', plugin)
   })
   log.debug('Program shutdown')

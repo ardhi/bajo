@@ -16,7 +16,7 @@ import parseEnv from './lib/parse-env.js'
 import error from './helper/error.js'
 import currentLoc from './helper/current-loc.js'
 
-const configFilePick = ['log', 'plugins', 'env', 'run']
+const configFilePick = ['log', 'plugins', 'env', 'run', 'exitHandler']
 const configFileOmit = ['tool', 'spawn', 'cwd', 'name', 'alias']
 
 const defConfig = {

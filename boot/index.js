@@ -19,7 +19,6 @@ import exitHandler from './exit-handler.js'
 import runTool from './run-tool.js'
 import shim from './lib/shim.js'
 import { last } from 'lodash-es'
-import path from 'path'
 import resolvePath from './helper/resolve-path.js'
 
 shim()
@@ -33,7 +32,7 @@ shim()
  */
 
 async function boot (cwd) {
-  if (!cwd) cwd = path.dirname(process.argv[1])
+  if (!cwd) cwd = process.cwd()
   const l = last(process.argv)
   if (l.startsWith('--cwd')) {
     const parts = l.split('=')
