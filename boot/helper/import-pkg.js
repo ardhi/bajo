@@ -29,7 +29,7 @@ import fs from 'fs-extra'
 
 const importPkg = async (...pkg) => {
   const result = {}
-  let opts = { returnDefault: true }
+  let opts = { returnDefault: true, thrownNotFound: false }
   if (isPlainObject(last(pkg))) {
     opts = defaultsDeep(pkg.pop(), opts)
   }
@@ -45,7 +45,7 @@ const importPkg = async (...pkg) => {
     }
     if (isEmpty(name)) name = orgName
     const dir = getModuleDir(orgName, ns)
-    const pkg = readJson(`${dir}/package.json`)
+    const pkg = readJson(`${dir}/package.json`, opts.thrownNotFound)
     const mainFileOrg = dir + '/' + (pkg.main ?? get(pkg, 'exports.default', 'index.js'))
     let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
     if (isEmpty(path.extname(mainFile))) {
