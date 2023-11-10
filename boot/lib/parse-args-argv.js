@@ -6,6 +6,7 @@ import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../helper/import-module.js'
 import { find, each, set, camelCase, forOwn } from 'lodash-es'
 import fs from 'fs-extra'
+import path from 'path'
 import currentLoc from '../helper/current-loc.js'
 
 const { unflatten } = flat
@@ -14,7 +15,7 @@ const parseItem = (data, delimiter) => {
   return unflatten(data, {
     delimiter,
     safe: true,
-    overwrite: true,
+    overwrite: true
   })
 }
 
@@ -28,10 +29,8 @@ const parseWithParser = async () => {
 
 const parseWithYargs = async () => {
   const parser = './app/bajo/argv-parser.js'
-  if (fs.existsSync(parser)) {
-    const mod = await importModule(parser)
-    return await mod(yargs)
-  }
+  const mod = await importModule(parser)
+  if (mod) return await mod(yargs)
   const pkg = fs.readJSONSync(`${currentLoc(import.meta).dir}/../../package.json`)
   let name = `node ${pkg.main}`
   if (pkg.bin) name = path.basename(pkg.bin, '.js')
@@ -47,7 +46,7 @@ const parseWithYargs = async () => {
     .version().alias('version', 'v')
     .help().alias('help', 'h')
     .alias('tool', 't')
-    if (pkg.homepage) cli.epilog(`For more information please visit ${pkg.homepage}`)
+  if (pkg.homepage) cli.epilog(`For more information please visit ${pkg.homepage}`)
   return cli.argv
 }
 

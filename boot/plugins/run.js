@@ -1,5 +1,4 @@
 import { get, camelCase, upperFirst, map } from 'lodash-es'
-import fs from 'fs-extra'
 
 async function run ({ singles }) {
   const { runHook, log, eachPlugins, importModule, freeze, getConfig, print } = this.bajo.helper
@@ -10,12 +9,12 @@ async function run ({ singles }) {
     await runHook(`bajo:${camelCase(`before ${f} all plugins`)}`)
     await eachPlugins(async function ({ plugin, dir }) {
       const file = `${dir}/bajo/${f}.js`
-      if (fs.existsSync(file)) {
+      const mod = await importModule(file)
+      if (mod) {
         log.debug('%s: %s', print.__(upperFirst(f)), plugin)
         await runHook(`bajo:${camelCase(`before ${f} ${plugin}`)}`)
-        const item = await importModule(file)
         const params = f === 'start' ? ['all', true] : []
-        await item.call(this, ...params)
+        await mod.call(this, ...params)
         await runHook(`bajo:${camelCase(`after ${f} ${plugin}`)}`)
       }
       if (f === 'init') freeze(this[plugin].config)
