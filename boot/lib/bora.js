@@ -13,11 +13,13 @@ class Bora {
     this.opts = opts
     this.ora = ora(this.opts)
     this.args = args
+    this.startTime = null
   }
 
   setScope (scope) {
     this.scope = scope
-    const { getConfig } = this.scope.bajo.helper
+    const { getConfig, dayjs } = this.scope.bajo.helper
+    this.startTime = dayjs()
     const config = getConfig()
     let silent = !!config.silent
     if (this.opts.skipSilent) silent = false
@@ -27,12 +29,15 @@ class Bora {
   }
 
   setText (text, ...args) {
+    const { dayjs, secToHms } = this.scope.bajo.helper
     if (isString(text)) {
       const i18n = get(this, 'scope.bajoI18N.instance')
       if (i18n) {
         if (isPlainObject(args[0])) text = i18n.t(text, args[0])
         else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
       } else text = sprintf(text, ...args)
+      const elapsed = dayjs().diff(this.startTime, 'second')
+      if (this.opts.showCounter) text = `[${secToHms(elapsed)}] ${text}`
       this.ora.text = text
     }
     return this
