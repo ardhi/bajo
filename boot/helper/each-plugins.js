@@ -23,7 +23,7 @@ async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) 
       if (isString(pattern)) pattern = [pattern]
       opts = omit(opts, ['pattern'])
       for (const i in pattern) {
-        pattern[i] = `${base}/${pattern[i]}`
+        if (!path.isAbsolute(pattern[i])) pattern[i] = `${base}/${pattern[i]}`
       }
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
