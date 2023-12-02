@@ -20,6 +20,7 @@ function format (...args) {
   const { ns, msg, params, opts } = prep(args)
   if (!msg) return ''
   const i18n = get(this, 'bajoI18N.instance')
+  const dayjs = get(this, 'bajo.helper')
   if (i18n) {
     if (isPlainObject(params[0])) {
       const ctx = merge({}, params[0] ?? {}, { ns })
@@ -34,7 +35,9 @@ function format (...args) {
     }
     return i18n.t(msg, { ns, pkg: opts.pkg, postProcess: 'sprintf', sprintf: params })
   }
-  return sprintf(msg, ...params)
+  let text = sprintf(msg, ...params)
+  if (opts.showDatetime && dayjs) text = `[${dayjs().toISOString()}] ${text}`
+  return text
 }
 
 const print = {
