@@ -36,9 +36,14 @@ class Bora {
         if (isPlainObject(args[0])) text = i18n.t(text, args[0])
         else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
       } else text = sprintf(text, ...args)
+      let opts = last(args)
+      if (!isPlainObject(opts)) opts = {}
       const elapsed = dayjs().diff(this.startTime, 'second')
-      if (this.opts.showCounter) text = `[${secToHms(elapsed)}] ${text}`
-      this.ora.text = text
+      const texts = []
+      if (this.opts.showDatetime || opts.showDatetime) texts.push('[' + dayjs().toISOString() + ']')
+      if (this.opts.showCounter || opts.showCounter) texts.push('[' + secToHms(elapsed) + ']')
+      texts.push(text)
+      this.ora.text = texts.join(' ')
     }
     return this
   }
