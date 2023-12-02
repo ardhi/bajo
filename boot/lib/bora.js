@@ -29,7 +29,7 @@ class Bora {
   }
 
   setText (text, ...args) {
-    const { dayjs, secToHms } = this.scope.bajo.helper
+    const { dayjs } = this.scope.bajo.helper
     if (isString(text)) {
       const i18n = get(this, 'scope.bajoI18N.instance')
       if (i18n) {
@@ -38,14 +38,20 @@ class Bora {
       } else text = sprintf(text, ...args)
       let opts = last(args)
       if (!isPlainObject(opts)) opts = {}
-      const elapsed = dayjs().diff(this.startTime, 'second')
       const texts = []
       if (this.opts.showDatetime || opts.showDatetime) texts.push('[' + dayjs().toISOString() + ']')
-      if (this.opts.showCounter || opts.showCounter) texts.push('[' + secToHms(elapsed) + ']')
+      if (this.opts.showCounter || opts.showCounter) texts.push('[' + this.getElapsed() + ']')
       texts.push(text)
       this.ora.text = texts.join(' ')
     }
     return this
+  }
+
+  getElapsed (unit = 'hms') {
+    const { dayjs, secToHms } = this.scope.bajo.helper
+    const u = unit === 'hms' ? 'second' : unit
+    const elapsed = dayjs().diff(this.startTime, u)
+    return unit === 'hms' ? secToHms(elapsed) : elapsed
   }
 
   start (text, ...args) {
