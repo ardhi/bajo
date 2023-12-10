@@ -90,7 +90,7 @@ const print = {
       if (opts.type === 'bora') bora.call(this, ns, opts).fatal(msg, ...params)
       else console.error(format.call(this, ns, msg, ...params))
     }
-    process.exit(0)
+    process.exit(1)
   },
   bora: function (...args) {
     let ns = getPluginName.call(this, 2)

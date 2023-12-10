@@ -80,6 +80,7 @@ async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) 
 
 async function eachPlugins (handler, options = {}) {
   const { getConfig, getPluginName } = this.bajo.helper
+  if (typeof options === 'string') options = { glob: options }
   let { key = 'name', glob, ns, extend, extendHandler, useBajo } = options
   if (!extendHandler) extendHandler = handler
   ns = ns ?? getPluginName(4)

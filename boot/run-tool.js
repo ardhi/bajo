@@ -4,14 +4,14 @@ const tools = []
 async function runTool () {
   const { getConfig, log, eachPlugins, importPkg, importModule, print } = this.bajo.helper
   const config = getConfig()
-  if (!config.tool) return
-  log.debug('Run tool')
-  print.info('Sidetool is running...')
-
   await eachPlugins(async function checkCli ({ file, plugin, alias }) {
     tools.push({ ns: plugin, file, nsAlias: alias })
   }, { glob: 'tool.js', ns: 'bajoCli' })
-  if (tools.length === 0) print.fatal('No tool loaded. Aborted!')
+  this.bajo.tools = tools
+  if (!config.tool) return
+  log.debug('Run tool')
+  print.info('Sidetool is running...')
+  if (tools.length === 0) print.fatal('No tool found. Aborted!')
   let name = config.tool
   let toc = false
   if (!isString(config.tool)) {
