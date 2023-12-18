@@ -1,5 +1,6 @@
 import buildHelper from './lib/build-helper.js'
 import logger from './lib/logger.js'
+import print from './lib/print.js'
 import fs from 'fs-extra'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
@@ -16,6 +17,7 @@ export default async function () {
     if (shallow) Object.freeze(o)
     else deepFreeze(o)
   }
+  this.bajo.helper.print = print.call(this)
   this.bajo.helper.log = logger.call(this)
   this.bajo.helper.dayjs = dayjs
   this.bajo.helper.setImmediate = function () {

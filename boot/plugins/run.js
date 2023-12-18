@@ -1,4 +1,4 @@
-import { get, camelCase, upperFirst, map } from 'lodash-es'
+import { set, get, camelCase, upperFirst, map } from 'lodash-es'
 
 async function run ({ singles }) {
   const { runHook, log, eachPlugins, importModule, freeze, getConfig, print } = this.bajo.helper
@@ -18,6 +18,7 @@ async function run ({ singles }) {
         await runHook(`bajo:${camelCase(`after ${f} ${plugin}`)}`)
       }
       if (f === 'init') freeze(this[plugin].config)
+      set(this, `${plugin}.state.${f}`, true)
     })
     await runHook(`bajo:${camelCase(`after ${f} all plugins`)}`)
   }
