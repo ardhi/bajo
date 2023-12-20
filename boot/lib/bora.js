@@ -7,10 +7,10 @@ const { sprintf } = Sprintf
 class Bora {
   constructor (ns, ...args) {
     this.ns = ns
-    const l = last(args)
     let opts = {}
-    if (isPlainObject(l)) opts = args.pop()
+    if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
     this.opts = opts
+    this.opts.isSilent = !!this.opts.isSilent
     this.ora = ora(this.opts)
     this.args = args
     this.startTime = null
@@ -21,9 +21,7 @@ class Bora {
     const { getConfig, dayjs } = this.scope.bajo.helper
     this.startTime = dayjs()
     const config = getConfig()
-    let silent = !!config.silent
-    if (this.opts.skipSilent) silent = false
-    this.ora.isSilent = silent
+    this.ora.isSilent = !!config.silent || this.opts.isSilent
     const [text, ...params] = this.args
     this.setText(text, ...params)
   }
@@ -36,13 +34,15 @@ class Bora {
         if (isPlainObject(args[0])) text = i18n.t(text, args[0])
         else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
       } else text = sprintf(text, ...args)
+      this.ora.text = text
       let opts = last(args)
-      if (!isPlainObject(opts)) opts = {}
+      const prefixes = []
       const texts = []
-      if (this.opts.showDatetime || opts.showDatetime) texts.push('[' + dayjs().toISOString() + ']')
+      if (!isPlainObject(opts)) opts = {}
+      if (this.opts.showDatetime || opts.showDatetime) prefixes.push('[' + dayjs().toISOString() + ']')
       if (this.opts.showCounter || opts.showCounter) texts.push('[' + this.getElapsed() + ']')
-      texts.push(text)
-      this.ora.text = texts.join(' ')
+      if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
+      if (texts.length > 0) this.ora.text = texts.join(' ') + ' ' + text
     }
     return this
   }
