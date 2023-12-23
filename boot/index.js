@@ -49,8 +49,8 @@ async function boot (cwd) {
   // boot complete
   const { runHook, log } = scope.bajo.helper
   await runHook('bajo:bootComplete')
-  const elapsed = (new Date() - scope.bajo.runAt).toLocaleString()
-  log.info('Boot process completed in %sms', elapsed)
+  const elapsed = new Date() - scope.bajo.runAt
+  log.info('Boot process completed in %s', scope.bajo.helper.secToHms(elapsed, true))
   // run tool
   await runTool.call(scope)
   return scope

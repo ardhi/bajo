@@ -1,82 +1,141 @@
-import bora from './bora.js'
 import Sprintf from 'sprintf-js'
-import { isPlainObject, get, isEmpty } from 'lodash-es'
+import ora from 'ora'
+import { isPlainObject, get } from 'lodash-es'
 import defaultsDeep from '../helper/defaults-deep.js'
-import getPluginName from '../helper/get-plugin-name.js'
 
 const { sprintf } = Sprintf
 
-class Print {
-  constructor (scope) {
-    this.scope = scope
+export class Print {
+  constructor (opts = {}) {
+    this.opts = opts
+    this.startTime = null
   }
 
-  _prep (params) {
-    const [msg, ...args] = params
+  setOpts (args = []) {
+    const { getConfig } = this.scope.bajo.helper
+    const config = getConfig()
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
-    opts = defaultsDeep(opts, { type: 'bora', exit: false, skipSilent: false })
-    this.opts = opts
-    this.opts.ns = this.opts.ns ?? ['bajoI18N']
-    this.opts.pkg = this.opts.pkg ?? getPluginName.call(this.scope, 2)
-    this.args = args
-    this.msg = msg
+    this.opts.isLog = !config.tool
+    if (this.opts.isLog) this.opts.isEnabled = false
+    this.opts.isSilent = !!(config.silent || this.opts.isSilent)
+    this.opts = defaultsDeep(opts, this.opts)
   }
 
-  formatMsg (params) {
-    this._prep(params)
-    if (isEmpty(this.msg)) return ''
-    const transHandler = get(this, 'scope.bajo.transHandler')
-    const dayjs = get(this, 'scope.bajo.helper')
-    if (transHandler) this.msg = transHandler.call(this, { msg: this.msg, params: this.args, options: this.opts })
-    else this.msg = sprintf(this.msg, ...this.args)
-    if (this.opts.showDatetime && dayjs) this.msg = `[${dayjs().toISOString()}] ${this.msg}`
-    return this.msg
+  setScope (scope) {
+    this.scope = scope
+    const { dayjs } = this.scope.bajo.helper
+    this.startTime = dayjs()
+    this.setOpts()
+    this.ora = ora(this.opts)
   }
 
-  __ (...params) {
-    return this.formatMsg(params)
+  setText (text, ...args) {
+    // const { dayjs } = this.scope.bajo.helper
+    text = this.__(text, ...args)
+    this.setOpts(args)
+    const prefixes = []
+    const texts = []
+    // if (this.opts.showDatetime) prefixes.push('[' + dayjs().toISOString() + ']')
+    if (this.opts.showCounter) texts.push('[' + this.getElapsed() + ']')
+    if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
+    if (texts.length > 0) text = texts.join(' ') + ' ' + text
+    if (this.opts.isLog) this.info(text, ...args)
+    else this.ora.text = text
+    return this
   }
 
-  output (params, boraMethod = 'succeed', logMethod = 'info', consoleMethod = 'log') {
-    this.formatMsg(params)
-    if (isEmpty(this.msg)) return ''
-    switch (this.opts.type) {
-      case 'bora': bora.call(this.scope, this.opts.ns, this.opts)[boraMethod](this.msg, ...this.args); break
-      case 'log': this.scope.bajo.helper.log[logMethod](this.msg, ...this.args, this.opts); break
-      default: console[consoleMethod](this.msg)
+  __ (text, ...args) {
+    if (text) {
+      const i18n = get(this, 'scope.bajoI18N.instance')
+      if (i18n) {
+        if (isPlainObject(args[0])) text = i18n.t(text, args[0])
+        else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
+      } else text = sprintf(text, ...args)
     }
-    if (this.opts.exit) process.exit()
+    return text
   }
 
-  fail (...params) {
-    this.output(params, 'fail', 'error', 'error')
+  getElapsed (unit = 'hms') {
+    const { dayjs, secToHms } = this.scope.bajo.helper
+    const u = unit === 'hms' ? 'second' : unit
+    const elapsed = dayjs().diff(this.startTime, u)
+    return unit === 'hms' ? secToHms(elapsed) : elapsed
   }
 
-  succeed (...params) {
-    this.output(params, 'succeed', 'info')
+  start (text, ...args) {
+    this.setOpts(args)
+    if (this.opts.isLog) {
+      this.ora.start()
+      this.info(text, ...args)
+      return this
+    }
+    this.setText(text, ...args)
+    this.ora.start()
+    return this
   }
 
-  warn (...params) {
-    this.output(params, 'warn', 'warn')
+  stop () {
+    this.ora.stop()
+    return this
   }
 
-  info (...params) {
-    this.output(params, 'info')
+  succeed (text, ...args) {
+    const { log } = this.scope.bajo.helper
+    if (this.opts.isLog) return log.info(text, ...args)
+    this.setText(text, ...args)
+    this.ora.succeed()
+    return this
   }
 
-  fatal (...params) {
-    this.output(params, 'fatal', 'error', 'error')
+  fail (text, ...args) {
+    const { log } = this.scope.bajo.helper
+    if (this.opts.isLog) return log.error(text, ...args)
+    this.setText(text, ...args)
+    this.ora.fail()
+    return this
+  }
+
+  warn (text, ...args) {
+    const { log } = this.scope.bajo.helper
+    if (this.opts.isLog) return log.warn(text, ...args)
+    this.setText(text, ...args)
+    this.ora.warn()
+    return this
+  }
+
+  info (text, ...args) {
+    const { log } = this.scope.bajo.helper
+    if (this.opts.isLog) return log.info(text, ...args)
+    this.setText(text, ...args)
+    this.ora.info()
+    return this
+  }
+
+  clear () {
+    this.ora.clear()
+    return this
+  }
+
+  render () {
+    this.ora.render()
+    return this
+  }
+
+  fatal (text, ...args) {
+    const { log } = this.scope.bajo.helper
+    if (this.opts.isLog) {
+      log.fatal(text, ...args)
+      process.exit(1)
+    }
+    this.setText(text, ...args)
+    this.ora.fail()
     process.exit(1)
-  }
-
-  bora (...params) {
-    let ns = getPluginName.call(this.scope, 2)
-    if (ns === 'bajo') ns = 'bajoI18N'
-    return bora.call(this.scope, ns, ...params)
   }
 }
 
-export default function () {
-  return new Print(this)
+export default function (options) {
+  const print = new Print(options)
+  print.setScope(this)
+  return print
 }

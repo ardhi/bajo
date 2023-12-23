@@ -10,7 +10,7 @@ async function saveAsDownload (file, obj, printSaved = true) {
   const dir = path.dirname(fname)
   if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
   await fs.writeFile(fname, obj, 'utf8')
-  if (printSaved) print.bora('Saved as \'%s\'', path.resolve(fname), { skipSilence: true }).succeed()
+  if (printSaved) print.succeed('Saved as \'%s\'', path.resolve(fname), { skipSilence: true })
   return fname
 }
 
