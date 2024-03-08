@@ -3,15 +3,17 @@ import { isFunction, isPlainObject } from 'lodash-es'
 import error from './error.js'
 import fs from 'fs-extra'
 
-async function load (file, asDefaultImport = true) {
-  const imported = await import(resolvePath(file, true))
+async function load (file, asDefaultImport = true, noCache = false) {
+  file = resolvePath(file, true)
+  if (noCache) file += `?_=${Date.now()}`
+  const imported = await import(file)
   if (asDefaultImport) return imported.default
   return imported
 }
 
-async function importModule (file, { asDefaultImport, asHandler } = {}) {
+async function importModule (file, { asDefaultImport, asHandler, noCache } = {}) {
   if (!fs.existsSync(file)) return
-  let mod = await load(file, asDefaultImport)
+  let mod = await load(file, asDefaultImport, noCache)
   if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
   if (!isPlainObject(mod)) throw error.call(this, 'File \'%s\' is NOT a handler module', file)

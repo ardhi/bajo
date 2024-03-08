@@ -1,0 +1,13 @@
+import isSet from './is-set.js'
+
+function pick (obj, items, excludeUnset) {
+  const result = {}
+  items.forEach(item => {
+    const [k, nk] = item.split(':')
+    if (excludeUnset && !isSet(obj[k])) return undefined
+    result[nk ?? k] = obj[k]
+  })
+  return result
+}
+
+export default pick

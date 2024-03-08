@@ -29,7 +29,7 @@ import fs from 'fs-extra'
 
 async function importPkg (...pkg) {
   const result = {}
-  let opts = { returnDefault: true, thrownNotFound: false }
+  let opts = { returnDefault: true, thrownNotFound: false, noCache: false }
   if (isPlainObject(last(pkg))) {
     opts = defaultsDeep(pkg.pop(), opts)
   }
@@ -52,6 +52,7 @@ async function importPkg (...pkg) {
       if (fs.existsSync(`${mainFileOrg}/index.js`)) mainFile += '/index.js'
       else mainFile += '.js'
     }
+    if (opts.noCache) mainFile += `?_=${Date.now()}`
     let mod = await import(mainFile)
     if (opts.returnDefault && has(mod, 'default')) {
       mod = mod.default

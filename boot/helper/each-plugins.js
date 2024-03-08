@@ -27,6 +27,7 @@ async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) 
       }
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
+        if (path.basename(f)[0] === '_') continue
         const resp = await handler.call(this, { plugin, pkg, cfg, alias, file: f, dir: base, dependencies })
         if (resp === false) break
         else if (resp === undefined) continue

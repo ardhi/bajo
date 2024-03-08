@@ -42,7 +42,8 @@ function error (msg = 'Internal server error', ...args) {
   }
   if (!ns) ns = getPluginName.call(this, 3)
   const orgMsg = msg
-  const message = print.__(msg, ...args, { ns })
+  args.push({ ns })
+  const message = print.__(msg, ...args)
   let err
   if (isPlainObject(payload) && payload.class) err = payload.class(message)
   else err = Error(message)
