@@ -1,8 +1,9 @@
-import { filter, isArray, each, pullAt, camelCase } from 'lodash-es'
+import { filter, isArray, each, pullAt, camelCase, has, find, set } from 'lodash-es'
 
 async function buildCollections (options = {}) {
-  const { getConfig, getPluginName, fatal, runHook } = this.bajo.helper
-  let { plugin, handler, dupChecks = [], container = 'connections' } = options
+  const { getConfig, getPluginName, fatal, runHook, error } = this.bajo.helper
+  let { plugin, handler, dupChecks = [], container = 'connections', useDefaultName } = options
+  useDefaultName = useDefaultName ?? true
   if (!plugin) plugin = getPluginName(4)
   const cfg = getConfig(plugin, { full: true })
   if (!cfg[container]) return []
@@ -12,6 +13,12 @@ async function buildCollections (options = {}) {
   const deleted = []
   for (const index in cfg[container]) {
     const item = cfg[container][index]
+    if (useDefaultName) {
+      if (!has(item, 'name')) {
+        if (find(cfg[container], { name: 'default' })) throw error('Connection \'default\' already exists')
+        else item.name = 'default'
+      }
+    }
     const result = await handler.call(this, { item, index, cfg })
     if (result) cfg[container][index] = result
     else if (result === false) deleted.push(index)
@@ -20,12 +27,11 @@ async function buildCollections (options = {}) {
 
   // check for duplicity
   each(cfg[container], c => {
-    const checker = {}
     each(dupChecks, d => {
-      checker[d] = c[d]
+      const checker = set({}, d, c[d])
+      const match = filter(cfg[container], checker)
+      if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, dupChecks.join(', '))
     })
-    const match = filter(cfg[container], checker)
-    if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, dupChecks.join(', '), { code: 'BAJOMQTT_CONNECTION_NOT_UNIQUE' })
   })
   await runHook(`${plugin}:${camelCase(`after build ${container}`)}`)
   return cfg[container]
