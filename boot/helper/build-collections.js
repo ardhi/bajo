@@ -1,4 +1,4 @@
-import { filter, isArray, each, pullAt, camelCase, has, find, set } from 'lodash-es'
+import { filter, isArray, each, pullAt, camelCase, has, find, set, cloneDeep } from 'lodash-es'
 
 async function buildCollections (options = {}) {
   const { getConfig, getPluginName, fatal, runHook, error } = this.bajo.helper
@@ -34,7 +34,7 @@ async function buildCollections (options = {}) {
     })
   })
   await runHook(`${plugin}:${camelCase(`after build ${container}`)}`)
-  return cfg[container]
+  return cloneDeep(cfg[container])
 }
 
 export default buildCollections
