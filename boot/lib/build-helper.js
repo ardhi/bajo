@@ -1,7 +1,9 @@
 import fastGlob from 'fast-glob'
+import path from 'path'
 import { camelCase, isFunction, isPlainObject, forOwn } from 'lodash-es'
 import resolvePath from '../helper/resolve-path.js'
 import importModule from '../helper/import-module.js'
+import readJson from '../helper/read-json.js'
 
 function stackInfo (name, ...args) {
   const { log, callsites } = this.bajo.helper
@@ -32,13 +34,16 @@ const wrapAsyncFn = function (name, handler, bind) {
 
 export default async function (dir, pkg = 'bajo') {
   dir = resolvePath(dir)
-  const files = await fastGlob([`!${dir}/**/_*.js`, `${dir}/**/*.js`])
+  const files = await fastGlob([`!${dir}/**/_*.{js,json}`, `${dir}/**/*.{js,json}`])
   const helper = {}
   for (const f of files) {
-    const base = f.replace(dir, '').replace('.js', '')
+    const ext = path.extname(f)
+    const base = f.replace(dir, '').replace(ext, '')
     const name = camelCase(base)
     const fnName = pkg + '.' + name
-    let mod = await importModule(f)
+    let mod
+    if (ext === '.json') mod = readJson(f)
+    else mod = await importModule(f)
     if (isFunction(mod)) {
       if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this, fnName, mod, true)
       else mod = wrapFn.call(this, fnName, mod, true)
