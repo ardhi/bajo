@@ -82,7 +82,7 @@ export class Print {
 
   succeed (text, ...args) {
     const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.info(text, ...args)
+    if (this.opts.isLog) return log.debug(text, ...args)
     this.setText(text, ...args)
     this.ora.succeed()
     return this
@@ -106,7 +106,7 @@ export class Print {
 
   info (text, ...args) {
     const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.info(text, ...args)
+    if (this.opts.isLog) return log.debug(text, ...args)
     this.setText(text, ...args)
     this.ora.info()
     return this
@@ -124,10 +124,7 @@ export class Print {
 
   fatal (text, ...args) {
     const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) {
-      log.fatal(text, ...args)
-      process.exit(1)
-    }
+    if (this.opts.isLog) return log.fatal(text, ...args)
     this.setText(text, ...args)
     this.ora.fail()
     process.exit(1)
