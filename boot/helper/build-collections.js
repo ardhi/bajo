@@ -5,6 +5,7 @@ async function buildCollections (options = {}) {
   let { plugin, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!plugin) plugin = getPluginName(4)
+  const config = getConfig()
   const cfg = getConfig(plugin, { full: true })
   if (!cfg[container]) return []
   if (!isArray(cfg[container])) cfg[container] = [cfg[container]]
@@ -22,6 +23,7 @@ async function buildCollections (options = {}) {
     const result = await handler.call(this, { item, index, cfg })
     if (result) cfg[container][index] = result
     else if (result === false) deleted.push(index)
+    if (config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
   }
   if (deleted.length > 0) pullAt(cfg[container], deleted)
 
