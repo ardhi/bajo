@@ -19,7 +19,7 @@ class Log {
     this.scope = scope
     this.config = scope.bajo.config
     this.bajoLog = this.config.log.logger ?? 'bajoLogger'
-    this.format = 'YYYY-MM-DDTHH:MM:ss.SSS[Z]'
+    this.format = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
   }
 
   isExtLogger () {
