@@ -7,7 +7,7 @@ function fatal (...args) {
   const [msg, ...params] = args
   const err = error(msg, ...params)
   console.error(err)
-  process.exit(1)
+  process.kill(process.pid, 'SIGINT')
 }
 
 export default fatal

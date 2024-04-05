@@ -127,7 +127,7 @@ export class Print {
     if (this.opts.isLog) return log.fatal(text, ...args)
     this.setText(text, ...args)
     this.ora.fail()
-    process.exit(1)
+    process.kill(process.pid, 'SIGINT')
   }
 }
 
