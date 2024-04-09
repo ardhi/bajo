@@ -1,4 +1,4 @@
-import { last, isPlainObject, each, isArray, get } from 'lodash-es'
+import { last, isPlainObject, each, isArray, get, isEmpty, merge } from 'lodash-es'
 import getPluginName from './get-plugin-name.js'
 
 /**
@@ -18,6 +18,7 @@ Error.stackTraceLimit = 15
 
 function formatErrorDetails (value, ns) {
   const { print } = this.bajo.helper
+  const result = {}
   each(value, (v, i) => {
     if (!v.context) {
       v.error = print.__(v.error, { ns })
@@ -25,11 +26,15 @@ function formatErrorDetails (value, ns) {
     }
     v.context.message = v.message
     if (v.type === 'any.only') v.context.ref = print.__(`field.${get(v, 'context.valids.0.key')}`, { ns })
+    const field = get(v, 'context.key')
+    const val = get(v, 'context.value')
     value[i] = {
-      field: get(v, 'context.key'),
+      field,
       error: print.__(`validation.${v.type}`, v.context, { ns })
     }
+    result[field] = val
   })
+  return result
 }
 
 function error (msg = 'Internal server error', ...args) {
@@ -55,13 +60,16 @@ function error (msg = 'Internal server error', ...args) {
   if (isPlainObject(payload)) {
     delete payload.class
     delete payload.ns
+    const values = {}
     for (const key in payload) {
       const value = payload[key]
       if (key === 'details' && isArray(value) && orgMsg === 'Validation Error') {
-        formatErrorDetails.call(this, value, ns)
+        const result = formatErrorDetails.call(this, value, ns)
+        if (result) merge(values, result)
       }
       err[key] = value
     }
+    if (!isEmpty(values)) err.values = values
   }
   return err
 }

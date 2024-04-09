@@ -31,12 +31,12 @@ export class Print {
   }
 
   setText (text, ...args) {
-    // const { dayjs } = this.scope.bajo.helper
+    const { dayjs } = this.scope.bajo.helper
     text = this.__(text, ...args)
     this.setOpts(args)
     const prefixes = []
     const texts = []
-    // if (this.opts.showDatetime) prefixes.push('[' + dayjs().toISOString() + ']')
+    if (this.opts.showDatetime) prefixes.push('[' + dayjs().toISOString() + ']')
     if (this.opts.showCounter) texts.push('[' + this.getElapsed() + ']')
     if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
     if (texts.length > 0) text = texts.join(' ') + ' ' + text

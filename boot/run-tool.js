@@ -1,4 +1,5 @@
 import { isString, map, find } from 'lodash-es'
+import Path from 'path'
 const tools = []
 
 async function runTool () {
@@ -27,8 +28,14 @@ async function runTool () {
   if (!tool) print.fatal('Sidetool \'%s\' not found. Aborted!', name)
   const opts = { ns, toc, path, params, args: config.args }
   const mod = await importModule(tool.file)
-  const handler = mod.handler ?? mod
-  await handler.call(this, opts)
+  if (mod === 'defCliHandler' && this.bajoCli) {
+    const { runToolMethod } = this.bajoCli.helper
+    const dir = `${Path.dirname(tool.file)}/tool`
+    await runToolMethod({ path, args: config.args, dir })
+  } else {
+    const handler = mod.handler ?? mod
+    await handler.call(this, opts)
+  }
 }
 
 export default runTool
