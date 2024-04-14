@@ -4,6 +4,8 @@ import ms from 'ms'
 import dayjs from '../lib/dayjs.js'
 import isSet from './is-set.js'
 
+const statics = ['*']
+
 function parseDur (val) {
   return isNumber(val) ? val : ms(val)
 }
@@ -22,11 +24,17 @@ function parseObject (obj, silent = true, parseValue = false) {
     else if (isArray(v)) {
       v.forEach((i, idx) => {
         if (isPlainObject(i)) obj[k][idx] = parseObject(i)
+        else if (statics.includes(i)) obj[k][idx] = i
         else if (parseValue) obj[k][idx] = dotenvParseVariables(set({}, 'item', obj[k][idx]), { assignToProcessEnv: false }).item
+        if (isArray(obj[k][idx])) obj[k][idx] = obj[k][idx].map(item => typeof item === 'string' ? item.trim() : item)
       })
     } else if (isSet(v)) {
       try {
-        if (parseValue) obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
+        if (statics.includes(v)) obj[k] = v
+        else if (parseValue) {
+          obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
+          if (isArray(obj[k])) obj[k] = obj[k].map(item => typeof item === 'string' ? item.trim() : item)
+        }
         if (k.slice(-3) === 'Dur') obj[k] = parseDur(v)
         if (k.slice(-2) === 'Dt') obj[k] = parseDt(v)
       } catch (err) {

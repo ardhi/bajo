@@ -30,9 +30,9 @@ function formatErrorDetails (value, ns) {
     const val = get(v, 'context.value')
     value[i] = {
       field,
-      error: print.__(`validation.${v.type}`, v.context, { ns })
+      error: print.__(`validation.${v.type}`, v.context, { ns }),
+      value: val
     }
-    result[field] = val
   })
   return result
 }
