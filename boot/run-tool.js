@@ -16,7 +16,7 @@ async function runTool () {
   let name = config.tool
   let toc = false
   if (!isString(config.tool)) {
-    const select = await importPkg('bajo-cli:@inquirer/select')
+    const select = await importPkg('bajoCli:@inquirer/select')
     name = await select({
       message: print.__('Please select tool provider:'),
       choices: map(tools, t => ({ value: t.ns }))

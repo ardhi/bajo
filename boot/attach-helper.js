@@ -1,10 +1,12 @@
 import buildHelper from './lib/build-helper.js'
 import logger from './lib/logger.js'
 import print from './lib/print.js'
-import fs from 'fs-extra'
 import deepFreeze from 'deep-freeze-strict'
 import currentLoc from './helper/current-loc.js'
 import dayjs from './lib/dayjs.js'
+import fs from 'fs-extra'
+import fastGlob from 'fast-glob'
+import { sprintf } from 'sprintf-js'
 
 export default async function () {
   this.bajo.helper = await buildHelper.call(this, `${currentLoc(import.meta).dir}/helper`)
@@ -20,8 +22,13 @@ export default async function () {
       setImmediate(() => resolve())
     })
   }
-  this.bajo.helper.freeze(this.bajo.helper, true)
+  // commonly used libraries
+  this.bajo.helper._ = await import('lodash-es')
+  this.bajo.helper.fs = fs
+  this.bajo.helper.fastGlob = fastGlob
+  this.bajo.helper.sprintf = sprintf
   // last cleanup
+  this.bajo.helper.freeze(this.bajo.helper, true)
   if (!fs.existsSync(this.bajo.config.dir.data)) {
     this.bajo.helper.log.warn('Data directory \'%s\' is not set yet!', this.bajo.config.dir.data)
   }
