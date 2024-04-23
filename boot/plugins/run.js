@@ -13,8 +13,7 @@ async function run ({ singles }) {
       if (mod) {
         log.debug('%s: %s', print.__(upperFirst(f)), plugin)
         await runHook(`bajo:${camelCase(`before ${f} ${plugin}`)}`)
-        const params = f === 'start' ? ['all', true] : []
-        await mod.call(this, ...params)
+        await mod.call(this)
         await runHook(`bajo:${camelCase(`after ${f} ${plugin}`)}`)
       }
       if (f === 'init') freeze(this[plugin].config)
