@@ -1,6 +1,6 @@
 import { set, get, camelCase, upperFirst, map } from 'lodash-es'
 
-async function run ({ singles }) {
+async function run () {
   const { runHook, log, eachPlugins, importModule, freeze, getConfig, print } = this.bajo.helper
   const config = getConfig()
   const methods = ['init']
@@ -22,9 +22,6 @@ async function run ({ singles }) {
     await runHook(`bajo:${camelCase(`after ${f} all plugins`)}`)
   }
   log.debug('Loaded plugins: %s', map(config.plugins, b => camelCase(b)).join(', '))
-  if (singles.length > 0) {
-    log.warn('Unloaded \'single\' plugins: %s', map(singles, s => camelCase(s)).join(', '))
-  }
 }
 
 export default run

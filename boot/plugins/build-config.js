@@ -1,6 +1,5 @@
-import { camelCase, pick, isString, omit, pull, each } from 'lodash-es'
+import { camelCase, pick, isString, omit } from 'lodash-es'
 import fs from 'fs-extra'
-import lockfile from 'proper-lockfile'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import titleize from '../helper/titleize.js'
 
@@ -24,7 +23,7 @@ export async function readAllConfigs (base, name) {
   return cfg
 }
 
-async function runner (pkg, { singles, argv, env }) {
+async function runner (pkg, { argv, env }) {
   const { log, getConfig, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
   const config = getConfig()
   const name = camelCase(pkg)
@@ -53,29 +52,16 @@ async function runner (pkg, { singles, argv, env }) {
   cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
   cfg.dependencies = cfg.dependencies ?? []
   if (isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
-  if (cfg.single) {
-    const lockfileDir = `${config.dir.tmp}/lock`
-    const lockfilePath = `${lockfileDir}/${name}.lock`
-    fs.ensureDirSync(lockfileDir)
-    const file = `${dir}/package.json`
-    try {
-      await lockfile.lock(file, { lockfilePath })
-    } catch (err) {
-      singles.push(pkg)
-    }
-  }
   if (!this[name]) this[name] = {}
   this[name].config = cfg
 }
 
-async function buildConfig ({ singles, argv, env }) {
+async function buildConfig ({ argv, env }) {
   const { log, freeze } = this.bajo.helper
   log.debug('Read configurations')
   for (const pkg of this.bajo.config.plugins) {
-    await runner.call(this, pkg, { singles, argv, env })
+    await runner.call(this, pkg, { argv, env })
   }
-  pull(this.bajo.config.plugins, ...singles)
-  each(singles, s => delete this[camelCase(s)])
   freeze(this.bajo.config)
 }
 

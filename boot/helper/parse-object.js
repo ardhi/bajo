@@ -1,4 +1,4 @@
-import { isPlainObject, isArray, isNumber, set } from 'lodash-es'
+import { isPlainObject, isArray, isNumber, set, cloneDeep } from 'lodash-es'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
 import dayjs from '../lib/dayjs.js'
@@ -16,7 +16,8 @@ function parseDt (val) {
   return dt.toDate()
 }
 
-function parseObject (obj, silent = true, parseValue = false) {
+function parseObject (input, silent = true, parseValue = false) {
+  const obj = cloneDeep(input)
   const keys = Object.keys(obj)
   keys.forEach(k => {
     const v = obj[k]

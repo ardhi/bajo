@@ -7,6 +7,7 @@ import dayjs from './lib/dayjs.js'
 import fs from 'fs-extra'
 import fastGlob from 'fast-glob'
 import { sprintf } from 'sprintf-js'
+import outmatch from 'outmatch'
 
 export default async function () {
   this.bajo.helper = await buildHelper.call(this, `${currentLoc(import.meta).dir}/helper`)
@@ -27,6 +28,7 @@ export default async function () {
   this.bajo.helper.fs = fs
   this.bajo.helper.fastGlob = fastGlob
   this.bajo.helper.sprintf = sprintf
+  this.bajo.helper.outmatch = outmatch
   // last cleanup
   this.bajo.helper.freeze(this.bajo.helper, true)
   if (!fs.existsSync(this.bajo.config.dir.data)) {
