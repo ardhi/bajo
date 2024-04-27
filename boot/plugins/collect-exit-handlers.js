@@ -7,8 +7,7 @@ async function collectExitHandlers () {
   this.bajo.exitHandler = this.bajo.exitHandler ?? {}
   const names = []
   await eachPlugins(async function ({ plugin, dir }) {
-    const file = `${dir}/bajo/exit.js`
-    const mod = await importModule(file)
+    const mod = await importModule(`${dir}/bajo/exit.js`)
     if (!mod) return undefined
     this.bajo.exitHandler[plugin] = mod
     names.push(plugin)

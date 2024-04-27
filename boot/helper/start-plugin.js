@@ -1,7 +1,6 @@
 async function startPlugin (name, ...args) {
-  const { getConfig, importModule } = this.bajo.helper
-  const cfg = getConfig(name, { full: true })
-  const start = await importModule(`${cfg.dir.pkg}/bajo/start.js`)
+  const { importModule } = this.bajo.helper
+  const start = await importModule(`${name}:/bajo/start.js`)
   await start.call(this, ...args)
 }
 

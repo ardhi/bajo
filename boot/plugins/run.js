@@ -8,8 +8,7 @@ async function run () {
   for (const f of methods) {
     await runHook(`bajo:${camelCase(`before ${f} all plugins`)}`)
     await eachPlugins(async function ({ plugin, dir }) {
-      const file = `${dir}/bajo/${f}.js`
-      const mod = await importModule(file)
+      const mod = await importModule(`${dir}/bajo/${f}.js`)
       if (mod) {
         log.debug('%s: %s', print.__(upperFirst(f)), plugin)
         await runHook(`bajo:${camelCase(`before ${f} ${plugin}`)}`)
