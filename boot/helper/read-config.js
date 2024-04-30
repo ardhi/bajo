@@ -1,5 +1,6 @@
 import path from 'path'
 import resolvePath from './resolve-path.js'
+import getPluginFile from './get-plugin-file.js'
 import readJson from './read-json.js'
 import parseObject from './parse-object.js'
 import { find, map, isEmpty } from 'lodash-es'
@@ -7,7 +8,7 @@ import error from './error.js'
 import fg from 'fast-glob'
 
 async function readConfig (file, { pattern, globOptions = {}, ignoreError, defValue = {} } = {}) {
-  file = resolvePath(file)
+  file = resolvePath(getPluginFile.call(this, file))
   let ext = path.extname(file)
   const fname = path.dirname(file) + '/' + path.basename(file, ext)
   ext = ext.toLowerCase()

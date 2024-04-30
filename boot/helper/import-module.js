@@ -1,5 +1,6 @@
 import resolvePath from './resolve-path.js'
-import { isFunction, isPlainObject, get } from 'lodash-es'
+import getPluginFile from './get-plugin-file.js'
+import { isFunction, isPlainObject } from 'lodash-es'
 import error from './error.js'
 import fs from 'fs-extra'
 
@@ -12,13 +13,7 @@ async function load (file, asDefaultImport = true, noCache = true) {
 }
 
 async function importModule (file, { asDefaultImport, asHandler, noCache } = {}) {
-  if (file.includes(':')) {
-    const [plugin, path] = file.split(':')
-    if (plugin.length > 1) {
-      const dir = get(this[plugin], 'config.dir.pkg')
-      file = `${dir}${path}`
-    }
-  }
+  file = getPluginFile.call(this, file)
   if (!fs.existsSync(file)) return
   let mod = await load(file, asDefaultImport, noCache)
   if (!asHandler) return mod
