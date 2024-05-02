@@ -1,7 +1,7 @@
 import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDeep } from 'lodash-es'
 
 async function buildCollections (options = {}) {
-  const { getConfig, getPluginName, fatal, runHook, error } = this.bajo.helper
+  const { getConfig, getPluginName, fatal, runHook, error, join } = this.bajo.helper
   let { plugin, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!plugin) plugin = getPluginName(4)
@@ -32,7 +32,7 @@ async function buildCollections (options = {}) {
     each(dupChecks, d => {
       const checker = set({}, d, c[d])
       const match = filter(data, checker)
-      if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, dupChecks.join(', '))
+      if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, join(dupChecks))
     })
   })
   await runHook(`${plugin}:${camelCase(`after build ${container}`)}`)

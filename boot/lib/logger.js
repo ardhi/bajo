@@ -58,7 +58,6 @@ class Log {
         text = JSON.stringify(json)
       } else {
         text = `[${dayjs(dt).utc(true).format(this.format)}] ${upperFirst(level)}: ${msg}`
-        // if (!isEmpty(data)) text += '\n  ' + (pretty.render(data, prettyOpts).split('\n').join('\n  '))
         if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
       }
       console.log(text)

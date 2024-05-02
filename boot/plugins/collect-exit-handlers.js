@@ -1,7 +1,7 @@
 import {} from 'lodash-es'
 
 async function collectExitHandlers () {
-  const { importModule, log, eachPlugins, getConfig, print } = this.bajo.helper
+  const { importModule, log, eachPlugins, getConfig, print, join } = this.bajo.helper
   const config = getConfig()
   if (!config.exitHandler) return
   this.bajo.exitHandler = this.bajo.exitHandler ?? {}
@@ -12,7 +12,7 @@ async function collectExitHandlers () {
     this.bajo.exitHandler[plugin] = mod
     names.push(plugin)
   })
-  log.trace('Exit handlers: %s', names.length === 0 ? print.__('none') : names.join(', '))
+  log.trace('Exit handlers: %s', names.length === 0 ? print.__('none') : join(names))
 }
 
 export default collectExitHandlers

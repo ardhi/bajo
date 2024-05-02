@@ -2,7 +2,7 @@ import { reduce, map, trim, keys, intersection, each, camelCase, get } from 'lod
 import semver from 'semver'
 
 async function runner ({ plugin, pkg, dependencies }) {
-  const { log, getConfig, error } = this.bajo.helper
+  const { log, getConfig, error, join } = this.bajo.helper
   log.trace('Checking dependencies: %s', plugin)
   const config = getConfig()
   const odep = reduce(dependencies, (o, k) => {
@@ -13,7 +13,7 @@ async function runner ({ plugin, pkg, dependencies }) {
   const deps = keys(odep)
   if (deps.length > 0) {
     if (intersection(config.plugins, deps).length !== deps.length) {
-      throw error('Dependency for \'%s\' unfulfilled: %s', pkg, deps.join(', '), { code: 'BAJO_DEPENDENCY' })
+      throw error('Dependency for \'%s\' unfulfilled: %s', pkg, join(deps), { code: 'BAJO_DEPENDENCY' })
     }
     each(deps, d => {
       if (!odep[d]) return
