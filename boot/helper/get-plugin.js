@@ -6,7 +6,7 @@ function getPlugin (name) {
     // alias?
     const ref = find(this.bajo.pluginRefs ?? [], { alias: name })
     if (!ref) throw error('\'%s\' is not loaded', name)
-    name = ref.name
+    name = ref.plugin
   }
   return this[name]
 }

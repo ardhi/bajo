@@ -1,15 +1,18 @@
-import { isEmpty } from 'lodash-es'
+import { isEmpty, find } from 'lodash-es'
 
-function breakNsPath (item = '') {
-  const { error, getPlugin } = this.bajo.helper
+function breakNsPath (item = '', defaultNs = 'bajo') {
+  const { error } = this.bajo.helper
   let [ns, ...path] = item.split(':')
   path = path.join(':')
   if (isEmpty(path)) {
     path = ns
-    ns = null
+    ns = defaultNs
   }
-  // if (path.startsWith('.')) throw error('Path \'%s\' must be an absolute path', path)
-  if (!this[ns]) ns = (getPlugin(ns) || {}).name
+  if (ns.length === 1) return [ns, path].join(':') // windows fs
+  if (!this[ns]) {
+    const ref = find(this.bajo.pluginRefs ?? [], { alias: ns })
+    if (ref) ns = ref.plugin
+  }
   if (!this[ns]) throw error('Unknown plugin \'%s\' or plugin isn\'t loaded yet', ns)
   return [ns, path]
 }

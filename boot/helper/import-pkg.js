@@ -4,6 +4,7 @@ import getModuleDir from './get-module-dir.js'
 import resolvePath from './resolve-path.js'
 import readJson from './read-json.js'
 import defaultsDeep from './defaults-deep.js'
+import breakNsPath from './break-ns-path.js'
 import path from 'path'
 import fs from 'fs-extra'
 
@@ -14,11 +15,7 @@ async function importPkg (...pkgs) {
     opts = defaultsDeep(pkgs.pop(), opts)
   }
   for (const pkg of pkgs) {
-    let [plugin, name] = pkg.split(':').map(item => item.trim())
-    if (!name) {
-      name = plugin
-      plugin = 'bajo'
-    }
+    const [plugin, name] = breakNsPath.call(this, pkg)
     const dir = getModuleDir.call(this, name, plugin)
     const p = readJson(`${dir}/package.json`, opts.thrownNotFound)
     const mainFileOrg = dir + '/' + (p.main ?? get(p, 'exports.default', 'index.js'))
