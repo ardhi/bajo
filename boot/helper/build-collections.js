@@ -16,7 +16,7 @@ async function buildCollections (options = {}) {
     const item = data[index]
     if (useDefaultName) {
       if (!has(item, 'name')) {
-        if (find(data, { name: 'default' })) throw error('Connection \'default\' already exists')
+        if (find(data, { name: 'default' })) throw error('Collection \'default\' already exists')
         else item.name = 'default'
       }
     }
