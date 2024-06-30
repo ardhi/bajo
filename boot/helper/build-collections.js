@@ -14,6 +14,7 @@ async function buildCollections (options = {}) {
   const deleted = []
   for (const index in data) {
     const item = data[index]
+    if (config.tool && item.skipOnTool) continue
     if (useDefaultName) {
       if (!has(item, 'name')) {
         if (find(data, { name: 'default' })) throw error('Collection \'default\' already exists')
