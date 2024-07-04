@@ -2,12 +2,10 @@ import { trim } from 'lodash-es'
 import fs from 'fs-extra'
 
 function resolveTplPath (name, baseTpl, extTpl = '') {
-  const { getConfig, breakNsPath } = this.bajo.helper
+  const { breakNsPath } = this.app.bajo.helper
   const [ns, path] = breakNsPath(name)
-  const cfgNs = getConfig(ns, { full: true })
-  const cfgApp = getConfig('app', { full: true })
-  let file = `${cfgNs.dir.pkg}/${baseTpl}/${trim(path, '/')}${extTpl}`
-  const override = `${cfgApp.dir.pkg}/${baseTpl}/override/${ns}/${trim(path, '/')}${extTpl}`
+  let file = `${this.app[ns].config.dir.pkg}/${baseTpl}/${trim(path, '/')}${extTpl}`
+  const override = `${this.app.main.config.dir.pkg}/${baseTpl}/override/${ns}/${trim(path, '/')}${extTpl}`
   if (fs.existsSync(override)) file = override
   return file
 }

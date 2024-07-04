@@ -1,23 +1,9 @@
 import { last, isPlainObject, each, isArray, get, isEmpty, merge } from 'lodash-es'
-import getPluginName from './get-plugin-name.js'
-
-/**
- * It's a shortcut to create an instance of Error with message and optional parameter
- * in a single line
- *
- * @memberof helper
- * @type Object
- * @instance
- * @param {string} msg - String that will be used as error message
- * @param {options} [options] - Optional parameter
- * @param {string} [options.code] - Error code
- * @returns {error} Instance of Error
- */
 
 Error.stackTraceLimit = 15
 
 function formatErrorDetails (value, ns) {
-  const { print } = this.bajo.helper
+  const { print } = this.app.bajo.helper
   const result = {}
   each(value, (v, i) => {
     if (!v.context) {
@@ -38,14 +24,14 @@ function formatErrorDetails (value, ns) {
 }
 
 function error (msg = 'Internal server error', ...args) {
-  const { print } = this.bajo.helper
+  const { print } = this.app.bajo.helper
   let payload = last(args)
   let ns
   if (isPlainObject(payload)) {
     payload = args.pop()
     ns = payload.ns
   }
-  if (!ns) ns = getPluginName.call(this, 3)
+  if (!ns) ns = this.name
   const orgMsg = msg
   args.push({ ns })
   const message = print.__(msg, ...args)

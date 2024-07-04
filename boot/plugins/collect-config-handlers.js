@@ -1,7 +1,7 @@
 import { isFunction, isPlainObject, map } from 'lodash-es'
 
 async function collectConfigHandlers (pkg) {
-  const { getModuleDir, importModule, log, join } = this.bajo.helper
+  const { getModuleDir, importModule, join } = this.bajo.helper
   for (const pkg of this.bajo.config.plugins) {
     let dir
     try {
@@ -16,7 +16,7 @@ async function collectConfigHandlers (pkg) {
     this.bajo.configHandlers.concat(mod)
   }
   const exts = map(this.bajo.configHandlers, 'ext')
-  log.trace('Config handlers: %s', join(exts))
+  this.bajo.log.trace('Config handlers: %s', join(exts))
 }
 
 export default collectConfigHandlers

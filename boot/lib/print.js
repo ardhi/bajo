@@ -12,12 +12,9 @@ export class Print {
   }
 
   setOpts (args = []) {
-    const { getConfig } = this.scope.bajo.helper
-    const config = getConfig()
+    const config = this.scope.bajo.config
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
-    this.opts.isLog = !config.tool
-    if (this.opts.isLog) this.opts.isEnabled = false
     this.opts.isSilent = !!(config.silent || this.opts.isSilent)
     this.opts = defaultsDeep(opts, this.opts)
   }
@@ -40,8 +37,7 @@ export class Print {
     if (this.opts.showCounter) texts.push('[' + this.getElapsed() + ']')
     if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
     if (texts.length > 0) text = texts.join(' ') + ' ' + text
-    if (this.opts.isLog) this.info(text, ...args)
-    else this.ora.text = text
+    this.ora.text = text
     return this
   }
 
@@ -65,11 +61,6 @@ export class Print {
 
   start (text, ...args) {
     this.setOpts(args)
-    if (this.opts.isLog) {
-      this.ora.start()
-      this.info(text, ...args)
-      return this
-    }
     this.setText(text, ...args)
     this.ora.start()
     return this
@@ -81,32 +72,24 @@ export class Print {
   }
 
   succeed (text, ...args) {
-    const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.debug(text, ...args)
     this.setText(text, ...args)
     this.ora.succeed()
     return this
   }
 
   fail (text, ...args) {
-    const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.error(text, ...args)
     this.setText(text, ...args)
     this.ora.fail()
     return this
   }
 
   warn (text, ...args) {
-    const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.warn(text, ...args)
     this.setText(text, ...args)
     this.ora.warn()
     return this
   }
 
   info (text, ...args) {
-    const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.debug(text, ...args)
     this.setText(text, ...args)
     this.ora.info()
     return this
@@ -123,8 +106,6 @@ export class Print {
   }
 
   fatal (text, ...args) {
-    const { log } = this.scope.bajo.helper
-    if (this.opts.isLog) return log.fatal(text, ...args)
     this.setText(text, ...args)
     this.ora.fail()
     process.kill(process.pid, 'SIGINT')

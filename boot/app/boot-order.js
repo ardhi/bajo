@@ -1,10 +1,10 @@
 import { reduce, map, isNaN, trim, forOwn, orderBy } from 'lodash-es'
 import fs from 'fs-extra'
-import getModuleDir from './helper/get-module-dir.js'
+import getModuleDir from '../helper/get-module-dir.js'
 
 async function bootOrder () {
-  const { log, envs, error } = this.bajo.helper
-  log.debug('Setup boot order')
+  const { envs, error } = this.bajo.helper
+  this.bajo.log.debug('Setup boot order')
   const config = this.bajo.config
   const order = reduce(config.plugins, (o, k, i) => {
     const key = map(k.split(':'), m => trim(m))
@@ -15,8 +15,8 @@ async function bootOrder () {
   const norder = {}
   for (let n of config.plugins) {
     n = map(n.split(':'), m => trim(m))[0]
-    const dir = n === 'app' ? (config.dir.base + '/app') : getModuleDir(n)
-    if (n !== 'app' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' not found or isn\'t a valid Bajo package', n)
+    const dir = n === 'main' ? (config.dir.base + '/main') : getModuleDir(n)
+    if (n !== 'main' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' not found or isn\'t a valid Bajo package', n)
     norder[n] = NaN
     try {
       norder[n] = Number(trim(await fs.readFile(`${dir}/bajo/.bootorder`, 'utf8')))
@@ -28,7 +28,7 @@ async function bootOrder () {
     result.push(item)
   })
   config.plugins = map(orderBy(result, ['v']), 'k')
-  log.info('Run in \'%s\' environment', envs[config.env])
+  this.bajo.log.info('Run in \'%s\' environment', envs[config.env])
 }
 
 export default bootOrder

@@ -19,9 +19,9 @@ function findDeep (item, paths) {
 }
 
 function getModuleDir (pkgName, base) {
-  if (pkgName === 'app') return resolvePath(process.env.BAJOCWD)
-  if (base === 'app') base = process.env.BAJOCWD
-  else if (this && this[base]) base = get(this[base], 'config.pkg.name')
+  if (pkgName === 'main') return resolvePath(process.env.BAJOCWD)
+  if (base === 'main') base = process.env.BAJOCWD
+  else if (this && this.app && this.app[base]) base = get(this.app[base], 'config.pkg.name')
   const pkgPath = pkgName + '/package.json'
   const paths = require.resolve.paths(pkgPath)
   const gdir = getGlobalModuleDir()

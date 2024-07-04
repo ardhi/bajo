@@ -1,20 +1,16 @@
-/**
- * @module boot/buildConfig
- */
-
 import os from 'os'
 import fs from 'fs-extra'
 import { get, set, pick, values, keys, uniq, without, filter, map, isEmpty, trim } from 'lodash-es'
 import omitDeep from 'omit-deep'
-import resolvePath from './helper/resolve-path.js'
-import readConfig from './helper/read-config.js'
-import getKeyByValue from './helper/get-key-by-value.js'
-import envs from './helper/envs.js'
-import defaultsDeep from './helper/defaults-deep.js'
-import parseArgsArgv from './lib/parse-args-argv.js'
-import parseEnv from './lib/parse-env.js'
-import error from './helper/error.js'
-import currentLoc from './helper/current-loc.js'
+import resolvePath from '../helper/resolve-path.js'
+import readConfig from '../helper/read-config.js'
+import getKeyByValue from '../helper/get-key-by-value.js'
+import envs from '../helper/envs.js'
+import defaultsDeep from '../helper/defaults-deep.js'
+import parseArgsArgv from '../lib/parse-args-argv.js'
+import parseEnv from '../lib/parse-env.js'
+import error from '../helper/error.js'
+import currentLoc from '../helper/current-loc.js'
 
 const configFilePick = ['log', 'plugins', 'env', 'run', 'exitHandler']
 const configFileOmit = ['tool', 'spawn', 'cwd', 'name', 'alias']
@@ -27,34 +23,11 @@ const defConfig = {
     tool: false
   },
   lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
-  plugins: ['app'],
+  plugins: ['main'],
   env: 'dev',
   tool: false,
   exitHandler: true
 }
-
-/**
- * Building configuration object. Read configurtion file from app data directory, program
- * arguments and envoronment variables with following priority: ```Env > Args > Config file >
- * defaults config```
- *
- * If data directory is provided and doesn't exist yet, it will be automatically created.
- *
- * Config file must be located in: ```<data dir>/config/bajo.<format>```, and support either
- * ```.json``` or ```.js``` format. JS format must be a nodejs module that wrap an async
- * function and return an object
- *
- * If app run tool, by default log is in silent. To activate, set log.tool to true
- *
- * By default, if 'app' is a bajo app, it is always the last plugins to boot. To overide this
- * behavior, you should configure it at plugin level (i.e. using .bootorder file)
- *
- * @instance
- * @async
- * @throws Will throw if data directory is not provided
- *
- * @returns {Object} config
- */
 
 async function buildConfig (cwd) {
   const { args, argv } = await parseArgsArgv()
@@ -72,7 +45,7 @@ async function buildConfig (cwd) {
     fs.ensureDirSync(envArgv.dir.tmp)
   }
   // config merging
-  let resp = await readConfig.call(this, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true })
+  let resp = await readConfig.call(this.bajo, `${envArgv.dir.data}/config/bajo.*`, { ignoreError: true })
   resp = omitDeep(pick(resp, configFilePick), configFileOmit)
   const config = defaultsDeep({}, envArgv, resp, defConfig)
   // force init
@@ -84,9 +57,8 @@ async function buildConfig (cwd) {
   if (!config.log.level) config.log.level = config.env === 'dev' ? 'debug' : 'info'
   if (config.silent) config.log.level = 'silent'
   // sanitize plugins
-  config.plugins = without(config.plugins, 'app')
-  // if (fs.existsSync(`${config.dir.base}/app/bajo`)) config.plugins.push('app')
-  config.plugins.push('app')
+  config.plugins = without(config.plugins, 'main')
+  config.plugins.push('main')
   config.plugins = filter(uniq(map(config.plugins, b => trim(b))), b => !isEmpty(b))
   if (config.tool) {
     if (!config.plugins.includes('bajo-cli')) throw error('Sidetool needs to have \'bajo-cli\' package loaded first')
@@ -94,6 +66,7 @@ async function buildConfig (cwd) {
     config.exitHandler = false
   }
   this.bajo.config = config
+  this.bajo.log.init()
 }
 
 export default buildConfig

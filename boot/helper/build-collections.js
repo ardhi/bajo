@@ -1,12 +1,11 @@
 import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDeep } from 'lodash-es'
 
 async function buildCollections (options = {}) {
-  const { getConfig, getPluginName, fatal, runHook, error, join } = this.bajo.helper
+  const { fatal, runHook, error, join } = this.app.bajo.helper
   let { plugin, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
-  if (!plugin) plugin = getPluginName(4)
-  const config = getConfig()
-  const cfg = getConfig(plugin, { full: true })
+  if (!plugin) plugin = this.name
+  const cfg = this.app[plugin].config
   let data = get(cfg, container)
   if (!data) return []
   if (!isArray(data)) data = [data]
@@ -23,7 +22,7 @@ async function buildCollections (options = {}) {
     const result = await handler.call(this, { item, index, cfg })
     if (result) data[index] = result
     else if (result === false) deleted.push(index)
-    if (config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+    if (this.app.bajo.config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
   }
   if (deleted.length > 0) pullAt(data, deleted)
 

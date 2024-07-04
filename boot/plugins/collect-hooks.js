@@ -1,9 +1,9 @@
 import { map, camelCase, merge, forOwn, groupBy } from 'lodash-es'
 
 async function collectHooks () {
-  const { eachPlugins, log, runHook, isLogInRange, importModule } = this.bajo.helper
+  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo.helper
   this.bajo.hooks = this.bajo.hooks ?? []
-  log.debug('Collect hooks')
+  this.bajo.log.debug('Collect hooks')
   // collects
   await eachPlugins(async function ({ plugin, dir, file }) {
     const hookName = (file.slice(dir.length + 1) ?? '').split('/')[1]
@@ -26,7 +26,7 @@ async function collectHooks () {
   forOwn(items, (v, k) => {
     const hooks = groupBy(v, 'path')
     forOwn(hooks, (v1, k1) => {
-      log.trace('Collect hook: %s:%s (%d)', k, k1, v1.length)
+      this.bajo.log.trace('Collect hook: %s:%s (%d)', k, k1, v1.length)
     })
   })
 }

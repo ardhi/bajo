@@ -3,7 +3,7 @@ import { keys, indexOf } from 'lodash-es'
 
 function isLogInRange (level) {
   const levels = keys(logLevels)
-  const logLevel = indexOf(levels, this.bajo.config.log.level)
+  const logLevel = indexOf(levels, this.app.bajo.config.log.level)
   return indexOf(levels, level) >= logLevel
 }
 
