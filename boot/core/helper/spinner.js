@@ -1,4 +1,4 @@
-import { Print } from '../lib/print.js'
+import { Print } from '../../lib/print.js'
 
 function spinner (options) {
   const print = new Print(options)

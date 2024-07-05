@@ -1,7 +1,7 @@
 import { camelCase, isString, omit, trim } from 'lodash-es'
 import fastGlob from 'fast-glob'
 import path from 'path'
-import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
+import omittedPluginKeys from '../../lib/omitted-plugin-keys.js'
 
 async function _eachPlugins (handler, { key = 'name', glob, ns, useBajo } = {}) {
   const result = {}

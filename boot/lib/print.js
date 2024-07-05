@@ -1,7 +1,7 @@
 import Sprintf from 'sprintf-js'
 import ora from 'ora'
 import { isPlainObject, get } from 'lodash-es'
-import defaultsDeep from '../helper/defaults-deep.js'
+import defaultsDeep from '../core/helper/defaults-deep.js'
 
 const { sprintf } = Sprintf
 

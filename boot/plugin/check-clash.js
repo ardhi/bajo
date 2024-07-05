@@ -1,5 +1,5 @@
 import { find } from 'lodash-es'
-import error from '../helper/error.js'
+import error from '../core/helper/error.js'
 
 async function checkAlias () {
   const { eachPlugins } = this.bajo.helper

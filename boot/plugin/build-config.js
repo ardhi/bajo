@@ -1,7 +1,7 @@
 import { camelCase, pick, isString, omit } from 'lodash-es'
 import fs from 'fs-extra'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
-import titleize from '../helper/titleize.js'
+import titleize from '../core/helper/titleize.js'
 
 export async function readAllConfigs (base, name) {
   const { readConfig } = this.bajo.helper

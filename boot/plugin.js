@@ -1,6 +1,6 @@
 import { get, isEmpty, cloneDeep, omit } from 'lodash-es'
-import omittedPluginKeys from './omitted-plugin-keys.js'
-import Log from './log.js'
+import omittedPluginKeys from './lib/omitted-plugin-keys.js'
+import Log from './lib/log.js'
 
 class Plugin {
   constructor (name, app) {

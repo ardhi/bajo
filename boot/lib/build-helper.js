@@ -2,9 +2,9 @@ import fastGlob from 'fast-glob'
 import path from 'path'
 import { camelCase, isFunction, isPlainObject, forOwn } from 'lodash-es'
 import Helper from './helper.js'
-import resolvePath from '../helper/resolve-path.js'
-import importModule from '../helper/import-module.js'
-import readJson from '../helper/read-json.js'
+import resolvePath from '../core/helper/resolve-path.js'
+import importModule from '../core/helper/import-module.js'
+import readJson from '../core/helper/read-json.js'
 
 const wrapFn = function (name, handler, bind) {
   return (...args) => {

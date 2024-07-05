@@ -1,7 +1,7 @@
 import buildHelper from '../lib/build-helper.js'
 import print from '../lib/print.js'
 import deepFreeze from 'deep-freeze-strict'
-import currentLoc from '../helper/current-loc.js'
+import currentLoc from './helper/current-loc.js'
 import dayjs from '../lib/dayjs.js'
 import fs from 'fs-extra'
 import fastGlob from 'fast-glob'
@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js'
 import outmatch from 'outmatch'
 
 export default async function () {
-  this.bajo.helper = await buildHelper.call(this, `${currentLoc(import.meta).dir}/../helper`)
+  this.bajo.helper = await buildHelper.call(this, `${currentLoc(import.meta).dir}/helper`)
   this.bajo.helper.freeze = (o, shallow) => {
     if (shallow) Object.freeze(o)
     else deepFreeze(o)
