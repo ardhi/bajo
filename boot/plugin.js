@@ -6,7 +6,6 @@ class Plugin {
   constructor (name, app) {
     this.name = name
     this.app = app
-    this.helper = {}
     this.config = {}
     this.log = new Log(this)
   }

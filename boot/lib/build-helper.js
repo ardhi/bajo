@@ -23,7 +23,7 @@ const wrapAsyncFn = function (handler, bind) {
 export default async function (dir, pkg = 'bajo') {
   dir = resolvePath(dir)
   const files = await fastGlob([`!${dir}/**/_*.{js,json}`, `${dir}/**/*.{js,json}`])
-  const helper = new Helper()
+  const helper = new Helper(this)
   for (const f of files) {
     const ext = path.extname(f)
     const base = f.replace(dir, '').replace(ext, '')
@@ -36,7 +36,7 @@ export default async function (dir, pkg = 'bajo') {
       if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(scope, mod, true)
       else mod = wrapFn.call(scope, mod, true)
     } else if (isPlainObject(mod)) {
-      if (!mod.exec) { // mod.exec offer unbind, nacked function people can band to anything else later
+      if (!mod.exec) { // mod.exec offer unbind, nacked function people can bind to anything else later
         forOwn(mod, (v, k) => {
           if (isFunction(v)) mod[k] = v.bind(scope)
         })
