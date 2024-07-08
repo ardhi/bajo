@@ -1,6 +1,6 @@
-import { isFunction, isPlainObject, map } from 'lodash-es'
+import { isFunction, isPlainObject, map, camelCase } from 'lodash-es'
 
-async function collectConfigHandlers (pkg) {
+async function collectConfigHandlers () {
   const { getModuleDir, importModule, join } = this.bajo.helper
   for (const pkg of this.bajo.config.plugins) {
     let dir
@@ -11,7 +11,8 @@ async function collectConfigHandlers (pkg) {
     const file = `${dir}/bajo/extend/read-config.js`
     let mod = await importModule(file)
     if (!mod) continue
-    if (isFunction(mod)) mod = await mod.call(this)
+    const scope = this[camelCase(pkg)]
+    if (isFunction(mod)) mod = await mod.call(scope)
     if (isPlainObject(mod)) mod = [mod]
     this.bajo.configHandlers.concat(mod)
   }

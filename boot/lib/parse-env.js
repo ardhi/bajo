@@ -1,8 +1,7 @@
 import dotenvParseVariables from 'dotenv-parse-variables'
-import flat from 'flat'
+import { unflatten } from 'flat'
 import dotEnv from 'dotenv'
 import { each, set, camelCase, forOwn } from 'lodash-es'
-const { unflatten } = flat
 
 const parse = (data, delimiter) => {
   return unflatten(data, {

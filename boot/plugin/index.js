@@ -1,5 +1,5 @@
 import buildConfig from './build-config.js'
-import extendConfig from './extend-config.js'
+// import extendConfig from './extend-config.js'
 import checkDependency from './check-dependency.js'
 import checkClash from './check-clash.js'
 import attachHelper from './attach-helper.js'
@@ -22,7 +22,7 @@ async function bootBajos () {
   }
   await collectConfigHandlers.call(this)
   await buildConfig.call(this, { argv, env })
-  await extendConfig.call(this)
+  // await extendConfig.call(this)
   await checkClash.call(this)
   await checkDependency.call(this)
   await attachHelper.call(this)

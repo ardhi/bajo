@@ -1,25 +1,27 @@
 import { set, get, camelCase, upperFirst, map } from 'lodash-es'
 
 async function run () {
-  const { runHook, eachPlugins, importModule, freeze, print, join } = this.bajo.helper
-  const methods = ['init']
-  if (!get(this.bajo.config, 'tool')) methods.push('start')
-  for (const f of methods) {
+  const me = this
+  const { runHook, eachPlugins, importModule, freeze, print, join } = me.bajo.helper
+  const methods = ['init:Initialize']
+  if (!get(me.bajo.config, 'tool')) methods.push('start:Starts')
+  for (const method of methods) {
+    const [f, info] = method.split(':')
     await runHook(`bajo:${camelCase(`before ${f} all plugins`)}`)
-    await eachPlugins(async function ({ plugin, dir }) {
+    await eachPlugins(async function ({ ns, dir }) {
       const mod = await importModule(`${dir}/bajo/${f}.js`)
       if (mod) {
-        this.app.bajo.log.debug('%s: %s', print.__(upperFirst(f)), plugin)
-        await runHook(`bajo:${camelCase(`before ${f} ${plugin}`)}`)
-        await mod.call(this.app[plugin])
-        await runHook(`bajo:${camelCase(`after ${f} ${plugin}`)}`)
+        this.log.debug('%s', print.__(info))
+        await runHook(`bajo:${camelCase(`before ${f} ${ns}`)}`)
+        await mod.call(this)
+        await runHook(`bajo:${camelCase(`after ${f} ${ns}`)}`)
       }
-      if (f === 'init') freeze(this.app[plugin].config)
-      set(this, `app.${plugin}.state.${f}`, true)
+      if (f === 'init') freeze(this.config)
+      set(me, `app.${ns}.state.${f}`, true)
     })
     await runHook(`bajo:${camelCase(`after ${f} all plugins`)}`)
   }
-  this.bajo.log.debug('Loaded plugins: %s', join(map(this.bajo.config.plugins, b => camelCase(b))))
+  me.bajo.log.debug('Loaded plugins: %s', join(map(me.bajo.config.plugins, b => camelCase(b))))
 }
 
 export default run

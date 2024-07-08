@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import titleize from '../core/helper/titleize.js'
 
-export async function readAllConfigs (base, name) {
+export async function readAllConfigs (base, ns) {
   const { readConfig } = this.bajo.helper
   let cfg = {}
   try {
@@ -18,29 +18,29 @@ export async function readAllConfigs (base, name) {
       }
     }
   }
-  cfg.name = name
+  cfg.name = ns
   return cfg
 }
 
 async function runner (pkg, { argv, env }) {
   const { getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
-  const name = camelCase(pkg)
-  this.bajo.log.trace('Read configuration: %s', name)
-  const dir = pkg === 'main' ? (this.bajo.config.dir.base + '/main') : getModuleDir(pkg)
-  if (pkg !== 'main' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
-  let cfg = await readAllConfigs.call(this, `${dir}/bajo/config`, name)
+  const ns = camelCase(pkg)
+  this.bajo.log.trace('Read configuration: %s', ns)
+  const dir = ns === 'main' ? (this.bajo.config.dir.base + '/main') : getModuleDir(pkg)
+  if (ns !== 'main' && !fs.existsSync(`${dir}/bajo`)) throw error('Package \'%s\' isn\'t a valid Bajo package', pkg, { code: 'BAJO_INVALID_PACKAGE' })
+  let cfg = await readAllConfigs.call(this, `${dir}/bajo/config`, ns)
   cfg.dir = {
     pkg: dir,
-    data: `${this.bajo.config.dir.data}/plugins/${name}`
+    data: `${this.bajo.config.dir.data}/plugins/${ns}`
   }
-  const pkgJson = await readJson(`${dir + (pkg === 'main' ? '/..' : '')}/package.json`)
+  const pkgJson = await readJson(`${dir + (ns === 'main' ? '/..' : '')}/package.json`)
   cfg.pkg = pick(pkgJson,
     ['name', 'version', 'description', 'author', 'license', 'homepage'])
   if (cfg.name === 'main') {
     cfg.alias = 'main'
     cfg.title = 'Main App'
   } else if (!isString(cfg.alias)) cfg.alias = pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5).toLowerCase() : pkg // fix. can't be overriden
-  cfg.title = cfg.title ?? titleize.call(this, cfg.alias)
+  cfg.title = cfg.title ?? titleize(cfg.alias)
   // merge with config from datadir
   try {
     const altCfg = await readConfig(`${this.bajo.config.dir.data}/config/${cfg.name}.*`)
@@ -50,8 +50,8 @@ async function runner (pkg, { argv, env }) {
   cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
   cfg.dependencies = cfg.dependencies ?? []
   if (isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
-  this[name].config = cfg
-  this[name].log.init()
+  this[ns].config = cfg
+  this[ns].log.init()
 }
 
 async function buildConfig ({ argv, env }) {

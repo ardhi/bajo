@@ -1,6 +1,6 @@
 import yargs from 'yargs'
 import { Parser } from 'yargs/helpers'
-import flat from 'flat'
+import { unflatten } from 'flat'
 import isSet from '../core/helper/is-set.js'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../core/helper/import-module.js'
@@ -8,8 +8,6 @@ import { find, each, set, camelCase, forOwn } from 'lodash-es'
 import fs from 'fs-extra'
 import path from 'path'
 import currentLoc from '../core/helper/current-loc.js'
-
-const { unflatten } = flat
 
 const parseItem = (data, delimiter) => {
   return unflatten(data, {

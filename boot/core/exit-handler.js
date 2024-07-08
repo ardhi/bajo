@@ -16,8 +16,6 @@ async function exit (signal) {
 async function exitHandler () {
   if (!this.bajo.config.exitHandler) return
 
-  this.bajo.log.debug('Exit handlings')
-
   process.on('SIGINT', async () => {
     await exit.call(this, 'SIGINT')
   })

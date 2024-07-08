@@ -1,6 +1,8 @@
-const expect = require('chai').expect
-const { faker } = require('@faker-js/faker')
-const isSet = require('../helper/is-set')
+/* global describe, context, it */
+
+import { expect } from 'chai'
+import { faker } from '@faker-js/faker'
+import isSet from '../boot/core/helper/is-set.js'
 
 describe('helper.isSet()', function () {
   context('without argument', function () {

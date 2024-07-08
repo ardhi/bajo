@@ -2,14 +2,14 @@ import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDee
 
 async function buildCollections (options = {}) {
   const { fatal, runHook, error, join } = this.app.bajo.helper
-  let { plugin, handler, dupChecks = [], container = 'connections', useDefaultName } = options
+  let { ns, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
-  if (!plugin) plugin = this.name
-  const cfg = this.app[plugin].config
+  if (!ns) ns = this.name
+  const cfg = this.app[ns].config
   let data = get(cfg, container)
   if (!data) return []
   if (!isArray(data)) data = [data]
-  await runHook(`${plugin}:${camelCase(`before build ${container}`)}`)
+  await runHook(`${ns}:${camelCase(`before build ${container}`)}`)
   const deleted = []
   for (const index in data) {
     const item = data[index]
@@ -19,7 +19,8 @@ async function buildCollections (options = {}) {
         else item.name = 'default'
       }
     }
-    const result = await handler.call(this, { item, index, cfg })
+    const result = await handler.call(this.app[ns], { item, index, cfg })
+    this.app[ns].log.trace('Build \'%s\' collections', container)
     if (result) data[index] = result
     else if (result === false) deleted.push(index)
     if (this.app.bajo.config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
@@ -34,7 +35,7 @@ async function buildCollections (options = {}) {
       if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, join(dupChecks))
     })
   })
-  await runHook(`${plugin}:${camelCase(`after build ${container}`)}`)
+  await runHook(`${ns}:${camelCase(`after build ${container}`)}`)
   set(cfg, container, data)
   return cloneDeep(data)
 }

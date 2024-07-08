@@ -13,18 +13,13 @@ async function load (file, asDefaultImport = true, noCache = true) {
 }
 
 async function importModule (file, { asDefaultImport, asHandler, noCache } = {}) {
-  file = getPluginFile.call(this, file)
+  const me = this
+  file = getPluginFile.call(me, file)
   if (!fs.existsSync(file)) return
   let mod = await load(file, asDefaultImport, noCache)
   if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
-  if (!isPlainObject(mod)) throw error.call(this, 'File \'%s\' is NOT a handler module', file)
-  if (mod.forceAsync && mod.handler.constructor.name !== 'AsyncFunction') {
-    const oldHandler = mod.handler
-    mod.handler = async function (...args) {
-      oldHandler.call(this, ...args)
-    }
-  }
+  if (!isPlainObject(mod)) throw error.call(me.app, 'File \'%s\' is NOT a handler module', file)
   return mod
 }
 
