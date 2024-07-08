@@ -27,13 +27,8 @@ After completing those steps, move on the the next one: crating bajo bootstrap.
 Inside your ```<bajo-app-dir>```, create the ```index.js``` file and put these lines below in it:
 
 ```js
-const bajo = require('bajo')
-bajo.boot()
-  .then(scope => {
-  })
-  .catch(err => {
-    console.trace(err)
-  })
+import bajo from 'bajo'
+await bajo.default()
 ```
 
 A bajo app **ALWAYS** needs a data directory to put configuration files, etc. This
@@ -57,6 +52,12 @@ Now you can omit calling node with arguments, you just need to type:
 ```bash
 $ node index.js
 ```
+
+## Documentation
+
+- [User Guide](docs/user-guide.md)
+- [Plugin Development](docs/plugin-dev.md)
+- [API](docs/api.md)
 
 ## Ecosystem
 
