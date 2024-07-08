@@ -7,7 +7,7 @@ async function callHelperOrHandler (nameOrFn, ...args) {
     const helper = getHelper.call(this.app.bajo, nameOrFn)
     if (isFunction(helper)) result = await helper(...args)
   } else if (isFunction(nameOrFn)) {
-    result = await nameOrFn.call(this, ...args)
+    result = await nameOrFn(...args)
   }
   return result
 }

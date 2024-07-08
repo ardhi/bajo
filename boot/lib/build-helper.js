@@ -6,14 +6,14 @@ import resolvePath from '../core/helper/resolve-path.js'
 import importModule from '../core/helper/import-module.js'
 import readJson from '../core/helper/read-json.js'
 
-const wrapFn = function (name, handler, bind) {
+const wrapFn = function (handler, bind) {
   return (...args) => {
     if (bind) return handler.call(this, ...args)
     return handler(...args)
   }
 }
 
-const wrapAsyncFn = function (name, handler, bind) {
+const wrapAsyncFn = function (handler, bind) {
   return async (...args) => {
     if (bind) return await handler.call(this, ...args)
     return await handler(...args)
@@ -28,17 +28,17 @@ export default async function (dir, pkg = 'bajo') {
     const ext = path.extname(f)
     const base = f.replace(dir, '').replace(ext, '')
     const name = camelCase(base)
-    const fnName = pkg + '.' + name
+    const scope = this[camelCase(pkg)]
     let mod
     if (ext === '.json') mod = readJson(f)
     else mod = await importModule(f)
     if (isFunction(mod)) {
-      if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(this[pkg], fnName, mod, true)
-      else mod = wrapFn.call(this[pkg], fnName, mod, true)
+      if (mod.constructor.name === 'AsyncFunction') mod = wrapAsyncFn.call(scope, mod, true)
+      else mod = wrapFn.call(scope, mod, true)
     } else if (isPlainObject(mod)) {
       if (!mod.exec) { // mod.exec offer unbind, nacked function people can band to anything else later
         forOwn(mod, (v, k) => {
-          if (isFunction(v)) mod[k] = v.bind(this[pkg])
+          if (isFunction(v)) mod[k] = v.bind(scope)
         })
       }
     }

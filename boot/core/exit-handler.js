@@ -1,15 +1,16 @@
 async function exit (signal) {
-  const { eachPlugins } = this.bajo.helper
-  this.bajo.log.warn('\'%s\' signal received', signal)
-  await eachPlugins(async function ({ plugin }) {
-    const handler = this.bajo.exitHandler[plugin]
+  const me = this
+  const { eachPlugins } = me.bajo.helper
+  me.bajo.log.warn('\'%s\' signal received', signal)
+  await eachPlugins(async function ({ ns }) {
+    const handler = me.bajo.exitHandler[ns]
     if (!handler) return undefined
     try {
-      await handler.call(this[plugin])
+      await handler.call(me[ns])
     } catch (err) {}
-    this.bajo.log.debug('Exited: %s', plugin)
+    this.log.debug('Exited')
   })
-  this.bajo.log.debug('Program shutdown')
+  me.bajo.log.debug('Program shutdown')
   process.exit(0)
 }
 

@@ -9,7 +9,7 @@ async function runHook (hookName, ...args) {
   const removed = []
   for (const i in fns) {
     const fn = fns[i]
-    const res = await fn.handler.call(this.app[fn.ns], ...args)
+    const res = await fn.handler.call(this.app[fn.src], ...args)
     results.push({
       hook: hookName,
       resp: res

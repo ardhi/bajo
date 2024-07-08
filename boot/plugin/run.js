@@ -1,4 +1,4 @@
-import { set, get, camelCase, upperFirst, map } from 'lodash-es'
+import { set, get, camelCase, map } from 'lodash-es'
 
 async function run () {
   const me = this
