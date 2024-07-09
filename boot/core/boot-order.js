@@ -29,6 +29,8 @@ async function bootOrder () {
   })
   config.plugins = map(orderBy(result, ['v']), 'k')
   this.bajo.log.info('Run in \'%s\' environment', envs[config.env])
+  // misc
+  this.bajo.helper.freeze(this.bajo.config)
 }
 
 export default bootOrder

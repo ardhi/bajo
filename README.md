@@ -24,7 +24,7 @@ You'll be asked to name your project etc. **IMPORTANT**: don't forget to mark yo
 
 After completing those steps, move on the the next one: crating bajo bootstrap.
 
-Inside your ```<bajo-app-dir>```, create the ```index.js``` file and put these lines below in it:
+Inside your ```<bajo-app-dir>```, create the ```index.js``` file and put these lines below:
 
 ```js
 import bajo from 'bajo'
@@ -41,7 +41,7 @@ create a new directory called ```data``` first. After that, just type in your te
 $ node index.js --dir-data=data
 ```
 
-Or you could use ```dotenv``` by creating ```.env``` file in the same directory as ```index.js```, and put this inside:
+Or you could utilize ```dotenv``` by creating ```.env``` file in the same directory as ```index.js```, and put this inside:
 
 ```
 DIR_DATA = ./data
@@ -53,8 +53,91 @@ Now you can omit calling node with arguments, you just need to type:
 $ node index.js
 ```
 
-## Documentation
+## Configuration
 
+### General rules
+
+- All configuration files must be placed in ```<bajo-data-dir>/config/``` subfolder
+- Config files should be named after its plugin name
+- File format should be in ```.json``` or ```.js``` format
+- If  ```.js``` file is used, it should be in ES6 format and should export either plain javascript object or a function (sync or async both supported)
+- If it returns a function, this function will be called within its plugin scope and should return a plain js object
+- Other formats (```.yml```, ```.yaml``` and ```.toml```) can also be used by installing [bajoConfig](https://github.com/ardhi/bajo-config) plugin
+- Order of precedence: ```.js``` > ```.json``` > ```.yml``` > ```.yaml``` > ```.toml```
+
+### Main configuration File
+
+It should be named ```bajo.json``` with following keys:
+
+| Key | Type | Required | Default | Description |
+| --- | ---- | -------- | ------- | ----------- |
+| ```env``` | ```string``` | no | ```dev``` | App environment: ```dev``` or ```prod``` |
+| ```log``` | ```object``` | no || Logger setting |
+| &nbsp;&nbsp;```dateFormat``` | ```string``` | no | ```YYYY-MM-DDTHH:MM:ss.SSS[Z]```| Date format accoding to [dayjs](https://github.com/iamkun/dayjs) |
+| &nbsp;&nbsp;```tool``` | ```boolean``` | no | ```false``` | Set to ```true``` if you want to show log even in [tool mode](#tool-mode) |
+| &nbsp;&nbsp;```level``` | ```string``` | no || Set one of these: ```trace```, ```debug```, ```info```, ```warn```, ```error```, ```fatal``` and ```silent```. If it isn't set, it will auto selected based on environment |
+| ```lang``` | ```string``` | no || Language to use. If not set, it will be auto detected |
+| ```exitHandler``` | ```boolean``` | no | ```true``` | Set to ```false``` if you want your app **NOT** to exit gracefully |
+
+### Installed Plugins
+
+Plugins are what make Bajo Framework so great and flexible: they extends app features!
+
+To use plugins:
+
+1. Install with ```npm install <plugin-package>```
+2. Optionally create ```<bajo-data-dir>/config/<pluginName>.json``` to customize plugin settings
+3. Open/create ```<bajo-data-dir>/config/.plugins``` and put ```<plugin-package>``` in it, line by line
+
+Example below will load ```bajoConfig```, ```bajoLogger``` and ```bajoMqtt```:
+
+```
+bajo-config
+bajo-logger
+bajo-mqtt
+```
+
+If you later decide to NOT load one or more plugins from your app, you just need to remove those from ```.plugins``` file and restart your app.
+
+> **Warning**: please do not confuse between ```<plugin-package>``` and ```<pluginName>```. Plugin package is the name of JS package listed on npm, while plugin name is the name of a plugin - a camel cased plugin package
+
+### Configuration Overrides
+
+You can override ANY settings on ANY configuration files with dotenv variables and program's argument switches easily.
+
+Order of importance: dotenv variable > args switches > config files
+
+#### dotenv
+
+- Create/open ```<bajo-base-dir>/.env```
+- Use ```__``` (double underscores) as the replacement of the dot in object
+- ```DIR__DATA```: Set ```<bajo-data-dir>``` data directory
+- ```DIR__TMP```: Set ```<bajo-tmp-dir>``` temp directory
+- For every key in ```bajo.json```, use its snake cased, upper cased version, e.g:
+  - ```env``` => ```ENV```
+  - ```log.dateFormat``` => ```LOG__DATE_FORMAT```
+  - ```exitHandler``` => ```EXIT_HANDLER```
+- To override plugins config, prepend every key in plugin config with snake cased, upper cased version of the plugin name followed by a dot, e.g:
+  - ```key``` in ```myPlugin``` => ```MY_PLUGIN.KEY```
+  - ```key.subKey.subSubKey``` in ```myPlugin``` => ```MY_PLUGIN.KEY__SUB_KEY__SUB_SUB_KEY```
+
+#### Program argument switches
+- Execute with switches, e.g: ```node index.js --xxx=one --yyy=two```
+- Every switches must be prefixed with ```--```
+- Use ```-``` as the replacement of the dot in object
+- ```--dir-data```: Set ```<bajo-data-dir>``` data directory
+- ```--dir-tmp```: Set ```<bajo-tmp-dir>``` temp directory
+- For every key in ```bajo.json```, add prefix ```--``` e.g:
+  - ```env``` => ```--env=prod```
+  - ```log.dateFormat``` => ```--log-dateFormat=xxx```
+  - ```exitHandler``` => ```--exitHandler```
+- To override plugins config, prepend every key in plugin config with the plugin name  followed by a ```:```, e.g:
+  - ```key``` in ```myPlugin``` => ```--myPlugin:key```
+  - ```key.subKey.subSubKey``` in ```myPlugin``` => ```--myPlugin:key-subKey-subSubKey```
+
+## More Documentations
+
+- [Tutorial](docs/tutorial.md)
 - [User Guide](docs/user-guide.md)
 - [Plugin Development](docs/plugin-dev.md)
 - [API](docs/api.md)

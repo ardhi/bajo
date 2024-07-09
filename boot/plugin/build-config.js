@@ -23,7 +23,7 @@ export async function readAllConfigs (base, ns) {
 }
 
 async function runner (pkg, { argv, env }) {
-  const { getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
+  const { freeze, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
   const ns = camelCase(pkg)
   this.bajo.log.trace('Read configuration: %s', ns)
   const dir = ns === 'main' ? (this.bajo.config.dir.base + '/main') : getModuleDir(pkg)
@@ -51,16 +51,15 @@ async function runner (pkg, { argv, env }) {
   cfg.dependencies = cfg.dependencies ?? []
   if (isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
   this[ns].config = cfg
+  freeze(this[ns].config)
   this[ns].log.init()
 }
 
 async function buildConfig ({ argv, env }) {
-  const { freeze } = this.bajo.helper
   this.bajo.log.debug('Read configurations')
   for (const pkg of this.bajo.config.plugins) {
     await runner.call(this, pkg, { argv, env })
   }
-  freeze(this.bajo.config)
 }
 
 export default buildConfig

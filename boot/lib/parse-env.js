@@ -8,11 +8,13 @@ const parse = (data, delimiter) => {
     delimiter,
     safe: true,
     overwrite: true,
-    transformKey: k => k.toLowerCase()
+    transformKey: k => {
+      return camelCase(k.toLowerCase())
+    }
   })
 }
 
-export default function ({ delimiter = '_', splitter = '__' } = {}) {
+export default function ({ delimiter = '__', splitter = '.' } = {}) {
   let env
   try {
     env = dotEnv.config()

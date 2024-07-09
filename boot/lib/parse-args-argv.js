@@ -48,14 +48,13 @@ const parseWithYargs = async () => {
   return cli.argv
 }
 
-async function parseArgsArgv ({ delimiter = '-', splitter = '--', useParser } = {}) {
+async function parseArgsArgv ({ delimiter = '-', splitter = ':', useParser } = {}) {
   if (!isSet(useParser)) useParser = find(process.argv, a => a.startsWith('--spawn'))
   let argv = useParser ? await parseWithParser() : await parseWithYargs()
   const args = argv._
   delete argv._
   delete argv.$0
   argv = dotenvParseVariables(argv)
-
   const all = { root: {} }
   each(argv, (v, k) => {
     const parts = k.split(splitter)
