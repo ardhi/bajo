@@ -141,12 +141,7 @@ Order of importance: dotenv variable > args switches > config files
 - [User Guide](docs/user-guide.md)
 - [Plugin Development](docs/plugin-dev.md)
 - [API](docs/api.md)
-
-## Ecosystem
-
-- [bajo-emitter](https://github.com/ardhi/bajo-emitter)
-- [bajo-mqtt](https://github.com/ardhi/bajo-mqtt)
-- [bajo-udp](https://github.com/ardhi/bajo-udp)
+- [Ecosystem](docs/ecosystem.md)
 
 ## License
 
