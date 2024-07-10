@@ -7,4 +7,5 @@
 | [bajo-mqtt](https://github.com/ardhi/bajo-mqtt) | bajoMqtt | mqtt ||
 | [bajo-udp](https://github.com/ardhi/bajo-udp) | bajoUdp | udp ||
 | [bajo-serialport](https://github.com/ardhi/bajo-serialport) | bajoSerialport | sp ||
+| [bajo-sysinfo](https://github.com/ardhi/bajo-sysinfo) | bajoSysinfo | si ||
 
