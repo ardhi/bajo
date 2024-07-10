@@ -7,14 +7,15 @@ async function buildCollections (options = {}) {
   useDefaultName = useDefaultName ?? true
   if (!ns) ns = this.name
   const cfg = this.app[ns].config
-  let data = get(cfg, container)
-  if (!data) return []
-  if (!isArray(data)) data = [data]
+  let items = cloneDeep(get(cfg, container))
+  if (!items) return []
+  if (!isArray(items)) items = [items]
   this.app[ns].log.trace('Collecting %s...', container)
   await runHook(`${ns}:${camelCase(`before build ${container}`)}`)
   const deleted = []
-  for (const index in data) {
-    const item = cloneDeep(data[index])
+  const data = []
+  for (const index in items) {
+    const item = items[index]
     if (useDefaultName) {
       if (!has(item, 'name')) {
         if (find(data, { name: 'default' })) throw error('Collection \'default\' already exists')
@@ -26,6 +27,7 @@ async function buildCollections (options = {}) {
     if (result) data[index] = result
     else if (result === false) deleted.push(index)
     if (this.app.bajo.config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+    data.push(item)
   }
   if (deleted.length > 0) pullAt(data, deleted)
 
@@ -38,7 +40,6 @@ async function buildCollections (options = {}) {
     })
   })
   await runHook(`${ns}:${camelCase(`after build ${container}`)}`)
-  set(cfg, container, data)
   this.app[ns].log.debug(`${upperFirst(container)} collected: %d`, data.length)
   return cloneDeep(data)
 }
