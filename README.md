@@ -2,9 +2,19 @@
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/ardhi/bajo) ![NPM Version](https://img.shields.io/npm/v/bajo)
 
-## Installation
+> <br />**Attention**: I do NOT accept any pull request at the moment, thanks!<br /><br />
 
-> Note: you must have a proper install of ```node```, ```npm``` and/or ```yarn``` before
+## Overview
+
+Before we go any further, below are some terminologies I use throughout these documentations:
+
+- ```<bajo-base-dir>```: project directory is where you write all your codes
+- ```<bajo-data-dir>```: data directory, defaults to ```<bajo-base-dir>/data``` if not specifically stated
+- ```<bajo-tmp-dir>```: temp directory, defaults to OS temporary directory
+- ```<package>```: plugin package name as normally showed on npm listing
+- ```<plugin>```: plugin name, which is camel cased version of package name
+
+## Installation
 
 Open your terminal and type:
 
@@ -14,7 +24,7 @@ $ npm install bajo
 
 ## Fire up!
 
-Create a new empty directory, this will be your project directory or your ```<bajo-app-dir>```. Now goto your newly created directory, and type:
+Create a new empty directory, this will be your project directory or your ```<bajo-base-dir>```. Now goto your newly created directory, and type:
 
 ```bash
 $ npm init
@@ -24,7 +34,7 @@ You'll be asked to name your project etc. **IMPORTANT**: don't forget to mark yo
 
 After completing those steps, move on the the next one: crating bajo bootstrap.
 
-Inside your ```<bajo-app-dir>```, create the ```index.js``` file and put these lines below:
+Inside your ```<bajo-base-dir>```, create the ```index.js``` file and put these lines below:
 
 ```js
 import bajo from 'bajo'
@@ -32,9 +42,9 @@ await bajo.default()
 ```
 
 A bajo app **ALWAYS** needs a data directory to put configuration files, etc. This
-could be located inside or outside your ```<bajo-app-dir>```.
+could be located inside or outside your ```<bajo-base-dir>```.
 
-Lets assume you're going to put your data directory inside your ```<bajo-app-dir>```. So please
+Lets assume you're going to put your data directory inside your ```<bajo-base-dir>```. So please
 create a new directory called ```data``` first. After that, just type in your terminal:
 
 ```bash
@@ -85,9 +95,9 @@ Plugins are what make Bajo Framework so great and flexible: they extends app fea
 
 To use plugins:
 
-1. Install with ```npm install <plugin-package>```
-2. Optionally create ```<bajo-data-dir>/config/<pluginName>.json``` to customize plugin settings
-3. Open/create ```<bajo-data-dir>/config/.plugins``` and put ```<plugin-package>``` in it, line by line
+1. Install with ```npm install <package>```
+2. Optionally create ```<bajo-data-dir>/config/<plugin>.json``` to customize plugin settings
+3. Open/create ```<bajo-data-dir>/config/.plugins``` and put ```<package>``` in it, line by line
 
 Example below will load ```bajoConfig```, ```bajoLogger``` and ```bajoMqtt```:
 
@@ -99,7 +109,7 @@ bajo-mqtt
 
 If you later decide to NOT load one or more plugins from your app, you just need to remove those from ```.plugins``` file and restart your app.
 
-> **Warning**: please do not confuse between ```<plugin-package>``` and ```<pluginName>```. Plugin package is the name of JS package listed on npm, while plugin name is the name of a plugin - a camel cased plugin package
+> **Warning**: please do not confuse between ```<package>``` and ```<plugin>```. Plugin package is the name of JS package listed on npm, while plugin name is the name of a plugin - a camel cased version of plugin package
 
 ### Configuration Overrides
 
