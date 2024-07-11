@@ -2,7 +2,7 @@ import os from 'os'
 import fs from 'fs-extra'
 import Core from './core.js'
 import Plugin from './plugin.js'
-import { isFunction, set, get, filter, uniq, map, trim, without, isEmpty, camelCase, isPlainObject } from 'lodash-es'
+import { isFunction, set, get, filter, uniq, map, trim, without, isEmpty, camelCase, isPlainObject, isString } from 'lodash-es'
 import importModule from './core/method/import-module.js'
 import readJson from './core/method/read-json.js'
 import parseArgsArgv from './lib/parse-args-argv.js'
@@ -35,7 +35,7 @@ async function collectConfigHandlers (bajo) {
   }
 }
 
-async function app (cwd) {
+async function createApp (cwd) {
   const app = new Core()
   // bajo
   const bajo = new Plugin('bajo', app)
@@ -60,12 +60,13 @@ async function app (cwd) {
   bajo.config.args = args
   app.addPlugin(bajo)
   // add all plugins now
-  bajo.config.plugins = []
+  let plugins = bajo.config.plugins ?? []
+  if (isString(plugins)) plugins = [plugins]
   const pluginsFile = `${bajo.config.dir.data}/config/.plugins`
   if (fs.existsSync(pluginsFile)) {
-    bajo.config.plugins = filter(uniq(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p))), b => !isEmpty(b))
+    plugins = plugins.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
   }
-  bajo.config.plugins = without(bajo.config.plugins, 'main')
+  bajo.config.plugins = without(uniq(plugins, 'main'))
   bajo.config.plugins.push('main')
   bajo.log.init()
   for (const pkg of bajo.config.plugins) {
@@ -79,4 +80,4 @@ async function app (cwd) {
   return app
 }
 
-export default app
+export default createApp
