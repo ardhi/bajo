@@ -3,6 +3,7 @@
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
 | [bajo-config](https://github.com/ardhi/bajo-config) | bajoConfig | cfg | Add support configuration format with YAML & TOML |
+| [bajo-cli](https://github.com/ardhi/bajo-cli) | bajoCli | cli ||
 | [bajo-emitter](https://github.com/ardhi/bajo-emitter) | bajoEmitter | emitter ||
 | [bajo-extra](https://github.com/ardhi/bajo-extra) | bajoExtra | x ||
 | [bajo-mqtt](https://github.com/ardhi/bajo-mqtt) | bajoMqtt | mqtt ||
