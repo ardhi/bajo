@@ -40,8 +40,8 @@ async function app (cwd) {
   // bajo
   const bajo = new Plugin('bajo', app)
   bajo.configHandlers = [
-    { ext: '.js', handler: defConfigHandler },
-    { ext: '.json', handler: readJson }
+    { ext: '.js', readHandler: defConfigHandler },
+    { ext: '.json', readHandler: readJson }
   ]
   const { args, argv } = await parseArgsArgv.call(app)
   const env = parseEnv.call(app)
