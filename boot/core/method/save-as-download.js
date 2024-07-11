@@ -4,7 +4,7 @@ import { trim } from 'lodash-es'
 import increment from 'add-filename-increment'
 
 async function saveAsDownload (file, obj, printSaved = true) {
-  const { print, getPluginDataDir } = this.app.bajo.helper
+  const { print, getPluginDataDir } = this.app.bajo
   const plugin = this.name
   const fname = increment(`${getPluginDataDir(plugin)}/${trim(file, '/')}`, { fs: true })
   const dir = path.dirname(fname)

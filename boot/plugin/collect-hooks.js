@@ -1,7 +1,7 @@
 import { map, camelCase, merge, forOwn, groupBy } from 'lodash-es'
 
 async function collectHooks () {
-  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo.helper
+  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
   const me = this
   me.bajo.hooks = this.bajo.hooks ?? []
   me.bajo.log.debug('Collect hooks')
@@ -19,7 +19,7 @@ async function collectHooks () {
     if (!mod) return undefined
     merge(mod, { ns: name, path, src: ns })
     me.bajo.hooks.push(mod)
-  }, { glob: 'hook/**/*.js', baseNs: '/bajo' })
+  }, { glob: 'hook/**/*.js', baseNs: me.bajo.name })
   // for log trace purpose only
   if (!isLogInRange('trace')) return
   const items = groupBy(me.bajo.hooks, 'ns')

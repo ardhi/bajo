@@ -1,8 +1,8 @@
 import { find } from 'lodash-es'
-import error from '../core/helper/error.js'
+import error from '../core/method/error.js'
 
 async function checkAlias () {
-  const { eachPlugins } = this.bajo.helper
+  const { eachPlugins } = this.bajo
   this.bajo.log.debug('Checking alias & name clashes')
   const refs = []
   await eachPlugins(async function ({ ns, pkg, alias }) {

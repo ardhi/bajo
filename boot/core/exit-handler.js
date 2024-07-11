@@ -1,6 +1,6 @@
 async function exit (signal) {
   const me = this
-  const { eachPlugins } = me.bajo.helper
+  const { eachPlugins } = me.bajo
   me.bajo.log.warn('\'%s\' signal received', signal)
   await eachPlugins(async function ({ ns }) {
     const handler = me.bajo.exitHandler[ns]

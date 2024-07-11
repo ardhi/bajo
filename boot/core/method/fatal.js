@@ -1,5 +1,5 @@
-function fatal (...args) {
-  const { error } = this.app.bajo.helper
+export default function (...args) {
+  const { error } = this.app.bajo
   const ns = this.name
   args.push({ ns })
   const [msg, ...params] = args
@@ -7,5 +7,3 @@ function fatal (...args) {
   console.error(err)
   process.kill(process.pid, 'SIGINT')
 }
-
-export default fatal

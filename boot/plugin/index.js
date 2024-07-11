@@ -1,7 +1,7 @@
 import buildConfig from './build-config.js'
 import checkDependency from './check-dependency.js'
 import checkClash from './check-clash.js'
-import attachHelper from './attach-helper.js'
+import attachMethod from './attach-method.js'
 import collectHooks from './collect-hooks.js'
 import run from './run.js'
 import collectExitHandlers from './collect-exit-handlers.js'
@@ -14,7 +14,7 @@ async function bootPlugins () {
   await buildConfig.call(this, { argv, env })
   await checkClash.call(this)
   await checkDependency.call(this)
-  await attachHelper.call(this)
+  await attachMethod.call(this)
   await collectHooks.call(this)
   await run.call(this)
   await collectExitHandlers.call(this)

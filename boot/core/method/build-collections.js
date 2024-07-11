@@ -2,7 +2,7 @@ import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDee
 import pluralize from 'pluralize'
 
 async function buildCollections (options = {}) {
-  const { fatal, runHook, error, join } = this.app.bajo.helper
+  const { fatal, runHook, error, join } = this.app.bajo
   let { ns, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!ns) ns = this.name
@@ -26,7 +26,7 @@ async function buildCollections (options = {}) {
     const result = await handler.call(this.app[ns], { item, index, cfg })
     if (result) data[index] = result
     else if (result === false) deleted.push(index)
-    if (this.app.bajo.config.tool && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+    if (this.app.bajo.toolMode && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
     data.push(item)
   }
   if (deleted.length > 0) pullAt(data, deleted)

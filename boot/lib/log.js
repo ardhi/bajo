@@ -1,8 +1,8 @@
 import os from 'os'
 import Sprintf from 'sprintf-js'
 import { isEmpty, without, merge, upperFirst, isPlainObject, get } from 'lodash-es'
-import levels from '../core/helper/log-levels.js'
-import isLogInRange from '../core/helper/is-log-in-range.js'
+import levels from '../core/method/log-levels.js'
+import isLogInRange from '../core/method/is-log-in-range.js'
 import dayjs from 'dayjs'
 
 const { sprintf } = Sprintf

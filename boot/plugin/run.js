@@ -1,10 +1,10 @@
-import { set, get, camelCase, map } from 'lodash-es'
+import { set, camelCase, map } from 'lodash-es'
 
 async function run () {
   const me = this
-  const { runHook, eachPlugins, importModule, freeze, print, join } = me.bajo.helper
+  const { runHook, eachPlugins, importModule, freeze, print, join } = me.bajo
   const methods = ['init:Initializing...:Initialization completed']
-  if (!get(me.bajo.config, 'tool')) methods.push('start:Starting...:Started')
+  if (!me.bajo.toolMode) methods.push('start:Starting...:Started')
   for (const method of methods) {
     const [f, begin, end] = method.split(':')
     await runHook(`bajo:${camelCase(`before ${f} all plugins`)}`)

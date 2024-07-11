@@ -1,7 +1,7 @@
 import {} from 'lodash-es'
 
 async function collectExitHandlers () {
-  const { importModule, eachPlugins, print, join } = this.bajo.helper
+  const { importModule, eachPlugins, print, join } = this.bajo
   if (!this.bajo.config.exitHandler) return
   this.bajo.exitHandler = this.bajo.exitHandler ?? {}
   const names = []

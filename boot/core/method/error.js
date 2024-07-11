@@ -3,7 +3,7 @@ import { last, isPlainObject, each, isArray, get, isEmpty, merge } from 'lodash-
 Error.stackTraceLimit = 15
 
 function formatErrorDetails (value, ns) {
-  const { print } = this.app.bajo.helper
+  const { print } = this.app.bajo
   const result = {}
   each(value, (v, i) => {
     if (!v.context) {
@@ -23,8 +23,8 @@ function formatErrorDetails (value, ns) {
   return result
 }
 
-function error (msg = 'Internal server error', ...args) {
-  const { print } = this.app.bajo.helper
+export default function (msg = 'Internal server error', ...args) {
+  const { print } = this.app.bajo
   let payload = last(args)
   let ns
   if (isPlainObject(payload)) {
@@ -40,7 +40,7 @@ function error (msg = 'Internal server error', ...args) {
   else err = Error(message)
   const stacks = err.stack.split('\n')
   stacks.splice(1, 1) // this file
-  if (stacks[1].includes('/helper/fatal.js')) stacks.splice(1, 1) // if it goes to fatal.js
+  if (stacks[1].includes('/method/fatal.js')) stacks.splice(1, 1) // if it goes to fatal.js
   stacks.splice(1, 1) // for buildHelper.js
   err.stack = stacks.join('\n')
   if (isPlainObject(payload)) {
@@ -59,5 +59,3 @@ function error (msg = 'Internal server error', ...args) {
   }
   return err
 }
-
-export default error

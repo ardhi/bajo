@@ -3,14 +3,14 @@ import fs from 'fs-extra'
 import Core from './core.js'
 import Plugin from './plugin.js'
 import { isFunction, set, get, filter, uniq, map, trim, without, isEmpty, camelCase, isPlainObject } from 'lodash-es'
-import importModule from './core/helper/import-module.js'
-import readJson from './core/helper/read-json.js'
+import importModule from './core/method/import-module.js'
+import readJson from './core/method/read-json.js'
 import parseArgsArgv from './lib/parse-args-argv.js'
 import parseEnv from './lib/parse-env.js'
-import defaultsDeep from './core/helper/defaults-deep.js'
-import resolvePath from './core/helper/resolve-path.js'
-import currentLoc from './core/helper/current-loc.js'
-import getModuleDir from './core/helper/get-module-dir.js'
+import defaultsDeep from './core/method/defaults-deep.js'
+import resolvePath from './core/method/resolve-path.js'
+import currentLoc from './core/method/current-loc.js'
+import getModuleDir from './core/method/get-module-dir.js'
 
 async function defConfigHandler (file) {
   let mod = await importModule(file)
@@ -45,6 +45,7 @@ async function app (cwd) {
   ]
   const { args, argv } = await parseArgsArgv.call(app)
   const env = parseEnv.call(app)
+  bajo.toolMode = argv.root.tool
   bajo.config = defaultsDeep({}, env.root, argv.root)
   bajo.config.name = 'bajo'
   bajo.config.alias = 'bajo'

@@ -1,7 +1,7 @@
 import { isEmpty, find } from 'lodash-es'
 
 function breakNsPath (item = '', defaultNs = 'bajo') {
-  const { error } = this.app.bajo.helper
+  const { error } = this.app.bajo
   let [ns, ...path] = item.split(':')
   path = path.join(':')
   if (isEmpty(path)) {

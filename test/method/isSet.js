@@ -2,9 +2,9 @@
 
 import { expect } from 'chai'
 import { faker } from '@faker-js/faker'
-import isSet from '../boot/core/helper/is-set.js'
+import isSet from '../boot/core/method/is-set.js'
 
-describe('helper.isSet()', function () {
+describe('isSet()', function () {
   context('without argument', function () {
     it("should return 'false'", function () {
       expect(isSet()).to.equal(false)

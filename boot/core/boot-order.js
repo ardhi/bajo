@@ -1,9 +1,9 @@
 import { reduce, map, isNaN, trim, forOwn, orderBy } from 'lodash-es'
 import fs from 'fs-extra'
-import getModuleDir from './helper/get-module-dir.js'
+import getModuleDir from './method/get-module-dir.js'
 
 async function bootOrder () {
-  const { envs, error } = this.bajo.helper
+  const { envs, error } = this.bajo
   this.bajo.log.debug('Setup boot order')
   const config = this.bajo.config
   const order = reduce(config.plugins, (o, k, i) => {
@@ -30,7 +30,7 @@ async function bootOrder () {
   config.plugins = map(orderBy(result, ['v']), 'k')
   this.bajo.log.info('Run in \'%s\' environment', envs[config.env])
   // misc
-  this.bajo.helper.freeze(this.bajo.config)
+  this.bajo.freeze(this.bajo.config)
 }
 
 export default bootOrder

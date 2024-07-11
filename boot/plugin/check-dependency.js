@@ -2,7 +2,7 @@ import { reduce, map, trim, keys, intersection, each, camelCase, get } from 'lod
 import semver from 'semver'
 
 async function runner ({ ns, pkg, dependencies }) {
-  const { error, join } = this.app.bajo.helper
+  const { error, join } = this.app.bajo
   this.app.bajo.log.trace('Checking dependencies: %s', ns)
   const odep = reduce(dependencies, (o, k) => {
     const item = map(k.split('@'), m => trim(m))
@@ -26,7 +26,7 @@ async function runner ({ ns, pkg, dependencies }) {
 }
 
 async function checkDependency () {
-  const { eachPlugins } = this.bajo.helper
+  const { eachPlugins } = this.bajo
   this.bajo.log.debug('Checking dependencies')
   await eachPlugins(async function ({ ns, pkg, dependencies }) {
     await runner.call(this, { ns, pkg, dependencies })

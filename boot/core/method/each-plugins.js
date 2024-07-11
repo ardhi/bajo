@@ -18,7 +18,7 @@ async function eachPlugins (handler, options = {}) {
     cfg = omit(cfg, omittedPluginKeys)
     let r
     if (glob) {
-      const base = `${dir}${baseNs}`
+      const base = baseNs === '' ? dir : `${dir}/${baseNs}`
       let opts = isString(glob) ? { pattern: [glob] } : glob
       let pattern = opts.pattern ?? []
       if (isString(pattern)) pattern = [pattern]

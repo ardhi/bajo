@@ -1,10 +1,10 @@
 import { camelCase, pick, isString, omit } from 'lodash-es'
 import fs from 'fs-extra'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
-import titleize from '../core/helper/titleize.js'
+import titleize from '../core/method/titleize.js'
 
 export async function readAllConfigs (base, ns) {
-  const { readConfig } = this.bajo.helper
+  const { readConfig } = this.bajo
   let cfg = {}
   try {
     cfg = await readConfig(`${base}-${this.bajo.config.env}.*`)
@@ -23,7 +23,7 @@ export async function readAllConfigs (base, ns) {
 }
 
 async function runner (pkg, { argv, env }) {
-  const { freeze, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo.helper
+  const { freeze, getModuleDir, readConfig, error, readJson, defaultsDeep } = this.bajo
   const ns = camelCase(pkg)
   this.bajo.log.trace('Read configuration: %s', ns)
   const dir = ns === 'main' ? (this.bajo.config.dir.base + '/main') : getModuleDir(pkg)
