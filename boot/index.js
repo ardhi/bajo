@@ -1,4 +1,4 @@
-import createApp from './app.js'
+import createApp from './create-app.js'
 import buildConfig from './core/build-config.js'
 import attachMethod from './core/attach-method.js'
 import bootOrder from './core/boot-order.js'
