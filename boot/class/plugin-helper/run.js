@@ -2,7 +2,7 @@ import { set, camelCase, map } from 'lodash-es'
 
 async function run () {
   const me = this
-  const { runHook, eachPlugins, importModule, freeze, print, join } = me.bajo
+  const { runHook, eachPlugins, importModule, freeze, join } = me.bajo
   const methods = ['init:Initializing...:Initialization completed']
   if (!me.bajo.toolMode) methods.push('start:Starting...:Started')
   for (const method of methods) {
@@ -11,11 +11,11 @@ async function run () {
     await eachPlugins(async function ({ ns, dir }) {
       const mod = await importModule(`${dir}/bajo/${f}.js`)
       if (mod) {
-        this.log.debug('%s', print.__(begin))
+        this.log.debug(begin)
         await runHook(`bajo:${camelCase(`before ${f} ${ns}`)}`)
         await mod.call(this)
         await runHook(`bajo:${camelCase(`after ${f} ${ns}`)}`)
-        this.log.debug('%s', print.__(end))
+        this.log.debug(end)
       }
       if (f === 'init') freeze(this.config)
       set(me, `app.${ns}.state.${f}`, true)

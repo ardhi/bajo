@@ -1,4 +1,3 @@
-import { get } from 'lodash-es'
 import breakNsPath from './break-ns-path.js'
 
 function getPluginFile (file) {
@@ -6,8 +5,7 @@ function getPluginFile (file) {
   if (file.includes(':')) {
     const [ns, path] = breakNsPath.call(this, file)
     if (ns !== 'file' && this && this.app && this.app[ns] && ns.length > 1) {
-      const dir = get(this.app[ns], 'config.dir.pkg')
-      file = `${dir}${path}`
+      file = `${this.app[ns].config.dir.pkg}${path}`
     }
   }
   return file

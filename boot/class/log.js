@@ -1,8 +1,8 @@
 import os from 'os'
 import Sprintf from 'sprintf-js'
 import { isEmpty, without, merge, upperFirst, isPlainObject, get } from 'lodash-es'
-import levels from '../core/method/log-levels.js'
-import isLogInRange from '../core/method/is-log-in-range.js'
+import levels from './core-method/log-levels.js'
+import isLogInRange from './core-method/is-log-in-range.js'
 import dayjs from 'dayjs'
 
 const { sprintf } = Sprintf
@@ -14,7 +14,7 @@ class Log {
   }
 
   init () {
-    this.bajoLog = get(this.plugin.app.bajo, 'config.log.logger', 'bajoLogger')
+    this.bajoLog = this.plugin.app.bajo.config.log.logger ?? 'bajoLogger'
   }
 
   print (text, ...args) {

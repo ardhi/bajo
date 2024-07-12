@@ -7,16 +7,16 @@ function formatErrorDetails (value, ns) {
   const result = {}
   each(value, (v, i) => {
     if (!v.context) {
-      v.error = print.__(v.error, { ns })
+      v.error = print.write(v.error, { ns })
       return undefined
     }
     v.context.message = v.message
-    if (v.type === 'any.only') v.context.ref = print.__(`field.${get(v, 'context.valids.0.key')}`, { ns })
+    if (v.type === 'any.only') v.context.ref = print.write(`field.${get(v, 'context.valids.0.key')}`, { ns })
     const field = get(v, 'context.key')
     const val = get(v, 'context.value')
     value[i] = {
       field,
-      error: print.__(`validation.${v.type}`, v.context, { ns }),
+      error: print.write(`validation.${v.type}`, v.context, { ns }),
       value: val
     }
   })
@@ -34,7 +34,7 @@ export default function (msg = 'Internal server error', ...args) {
   if (!ns) ns = this.name
   const orgMsg = msg
   args.push({ ns })
-  const message = print.__(msg, ...args)
+  const message = print.write(msg, ...args)
   let err
   if (isPlainObject(payload) && payload.class) err = payload.class(message)
   else err = Error(message)

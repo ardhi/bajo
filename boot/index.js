@@ -1,12 +1,12 @@
-import createApp from './create-app.js'
-import buildConfig from './core/build-config.js'
-import attachMethod from './core/attach-method.js'
-import bootOrder from './core/boot-order.js'
-import bootPlugins from './plugin/index.js'
-import exitHandler from './core/exit-handler.js'
-import runTool from './core/run-tool.js'
+import App from './class/app.js'
+import BajoCore from './class/bajo-core.js'
+import attachMethod from './class/core-helper/attach-method.js'
+import bootOrder from './class/core-helper/boot-order.js'
+import bootPlugins from './class/plugin-helper/index.js'
+import exitHandler from './class/core-helper/exit-handler.js'
+import runTool from './class/core-helper/run-tool.js'
 import { last } from 'lodash-es'
-import resolvePath from './core/method/resolve-path.js'
+import resolvePath from './class/core-method/resolve-path.js'
 import shim from './lib/shim.js'
 
 shim()
@@ -21,8 +21,14 @@ async function boot (cwd) {
   cwd = resolvePath(cwd)
   process.env.BAJOCWD = cwd
 
-  const app = await createApp(cwd)
-  await buildConfig.call(app, cwd)
+  const app = new App()
+  // bajo
+  const bajo = new BajoCore(app)
+  await bajo.buildBaseConfig(cwd)
+  await bajo.buildPlugins()
+  await bajo.collectConfigHandlers()
+  await bajo.buildConfig()
+  // helper to boot app
   await attachMethod.call(app)
   await bootOrder.call(app)
   await bootPlugins.call(app)

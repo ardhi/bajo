@@ -1,15 +1,17 @@
 import Sprintf from 'sprintf-js'
 import ora from 'ora'
 import { isPlainObject, get } from 'lodash-es'
-import defaultsDeep from '../core/method/defaults-deep.js'
+import defaultsDeep from './core-method/defaults-deep.js'
 
 const { sprintf } = Sprintf
 
-export class Print {
-  constructor (opts = {}) {
+class Print {
+  constructor (plugin, opts = {}) {
     this.opts = opts
-    this.startTime = undefined
-    this.plugin = undefined
+    this.plugin = plugin
+    this.startTime = this.plugin.app.bajo.lib.dayjs()
+    this.setOpts()
+    this.ora = ora(this.opts)
   }
 
   setOpts (args = []) {
@@ -20,19 +22,12 @@ export class Print {
     this.opts = defaultsDeep(opts, this.opts)
   }
 
-  setPlugin (plugin) {
-    this.plugin = plugin
-    this.startTime = this.plugin.app.bajo.dayjs()
-    this.setOpts()
-    this.ora = ora(this.opts)
-  }
-
   setText (text, ...args) {
-    text = this.__(text, ...args)
+    text = this.write(text, ...args)
     this.setOpts(args)
     const prefixes = []
     const texts = []
-    if (this.opts.showDatetime) prefixes.push('[' + this.plugin.app.bajo.dayjs().toISOString() + ']')
+    if (this.opts.showDatetime) prefixes.push('[' + this.plugin.app.bajo.lib.dayjs().toISOString() + ']')
     if (this.opts.showCounter) texts.push('[' + this.getElapsed() + ']')
     if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
     if (texts.length > 0) text = texts.join(' ') + ' ' + text
@@ -40,12 +35,12 @@ export class Print {
     return this
   }
 
-  __ (text, ...args) {
+  write (text, ...args) {
     if (text) {
       const i18n = get(this, 'plugin.app.bajoI18N.instance')
       if (i18n) {
         if (isPlainObject(args[0])) text = i18n.t(text, args[0])
-        else text = i18n.t(text, { ns: this.ns, postProcess: 'sprintf', sprintf: args })
+        else text = i18n.t(text, { ns: this.plugin.name, postProcess: 'sprintf', sprintf: args })
       } else text = sprintf(text, ...args)
     }
     return text
@@ -53,7 +48,7 @@ export class Print {
 
   getElapsed (unit = 'hms') {
     const u = unit === 'hms' ? 'second' : unit
-    const elapsed = this.plugin.app.bajo.dayjs().diff(this.startTime, u)
+    const elapsed = this.plugin.app.bajo.lib.dayjs().diff(this.startTime, u)
     return unit === 'hms' ? this.plugin.app.bajo.secToHms(elapsed) : elapsed
   }
 
@@ -110,8 +105,4 @@ export class Print {
   }
 }
 
-export default function (options) {
-  const print = new Print(options)
-  print.setPlugin(this)
-  return print
-}
+export default Print

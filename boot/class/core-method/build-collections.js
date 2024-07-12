@@ -6,8 +6,8 @@ async function buildCollections (options = {}) {
   let { ns, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!ns) ns = this.name
-  const cfg = this.app[ns].config
-  let items = cloneDeep(get(cfg, container))
+  const cfg = this.app[ns].getConfig()
+  let items = get(cfg, container)
   if (!items) return []
   if (!isArray(items)) items = [items]
   this.app[ns].log.trace('Collecting %s...', container)

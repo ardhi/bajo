@@ -1,4 +1,4 @@
-import createMethod from '../lib/create-method.js'
+import createMethod from '../../lib/create-method.js'
 
 export default async function () {
   const { eachPlugins } = this.bajo

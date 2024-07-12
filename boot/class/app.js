@@ -9,6 +9,7 @@ class App {
   addPlugin (plugin) {
     if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
     this[plugin.name] = plugin
+    plugin.initPrint()
   }
 
   dump (...args) {

@@ -1,24 +1,20 @@
 import { camelCase, isString, omit } from 'lodash-es'
 import fastGlob from 'fast-glob'
 import path from 'path'
-import omittedPluginKeys from '../../lib/omitted-plugin-keys.js'
 
 async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }
   const result = {}
-  const plugins = [...this.app.bajo.config.plugins]
+  const plugins = this.app.bajo.getConfig('plugins', { defValue: [] })
   const { glob, useBajo, baseNs = '' } = options
   if (useBajo) plugins.unshift('bajo')
   for (const pkg of plugins) {
     const ns = camelCase(pkg)
-    const scope = this.app[ns]
-    let cfg = scope.config
+    const cfg = this.app[ns].getConfig(null, { omit: [] })
     const { alias, dependencies } = cfg
-    const dir = cfg.dir.pkg
-    cfg = omit(cfg, omittedPluginKeys)
     let r
     if (glob) {
-      const base = baseNs === '' ? dir : `${dir}/${baseNs}`
+      const base = baseNs === '' ? cfg.dir.pkg : `${cfg.dir.pkg}/${baseNs}`
       let opts = isString(glob) ? { pattern: [glob] } : glob
       let pattern = opts.pattern ?? []
       if (isString(pattern)) pattern = [pattern]
@@ -29,7 +25,7 @@ async function eachPlugins (handler, options = {}) {
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
         if (path.basename(f)[0] === '_') continue
-        const resp = await handler.call(scope, { ns, pkg, cfg, alias, file: f, dir: base, dependencies })
+        const resp = await handler.call(this.app[ns], { ns, pkg, cfg, alias, file: f, dir: base, dependencies })
         if (resp === false) break
         else if (resp === undefined) continue
         else {
@@ -38,7 +34,7 @@ async function eachPlugins (handler, options = {}) {
         }
       }
     } else {
-      r = await handler.call(scope, { ns, pkg, cfg, dir, alias, dependencies })
+      r = await handler.call(this.app[ns], { ns, pkg, cfg, dir: cfg.dir.pkg, alias, dependencies })
       if (r === false) break
       else if (r === undefined) continue
       else result[ns] = r
