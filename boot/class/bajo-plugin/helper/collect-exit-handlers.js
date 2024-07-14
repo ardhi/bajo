@@ -1,15 +1,14 @@
 async function collectExitHandlers () {
   const { importModule, eachPlugins, print, join } = this.bajo
   if (!this.bajo.config.exitHandler) return
-  this.bajo.exitHandler = this.bajo.exitHandler ?? {}
-  const names = []
+  const nss = []
   await eachPlugins(async function ({ ns, dir }) {
     const mod = await importModule(`${dir}/bajo/exit.js`)
     if (!mod) return undefined
-    this.app.bajo.exitHandler[ns] = mod
-    names.push(ns)
+    this.app[ns].exitHandler = mod
+    nss.push(ns)
   })
-  this.bajo.log.trace('Exit handlers: %s', names.length === 0 ? print.write('none') : join(names))
+  this.bajo.log.trace('Exit handlers: %s', nss.length === 0 ? print.write('none') : join(nss))
 }
 
 export default collectExitHandlers

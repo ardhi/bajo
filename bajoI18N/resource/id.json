@@ -8,8 +8,10 @@
   "[%s] Loaded plugins: %s": "[%s] Plugin termuat: %s",
   "[%s] Unloaded 'single' plugins: %s": "[%s] 'Single' plugin tak termuat: %s",
   "[%s] No %s found": "[%s] Tidak ditemukan %s",
-  "[%s] Initializing...": "[%] Inisialisasi...",
-  "[%s] Initialization completed": "[%s] Inisialisasi lengkap",
+  "[%s] Initializing...": "[%s] Inisialisasi...",
+  "[%s] Initialized": "[%s] Sudah terinisialisasi",
+  "[%s] Starting...": "[%s] Jalankan...",
+  "[%s] Started": "[%s] Sudah jalan",
   "- All -": "- Semua -",
   "Tool mode activated": "Mode perkakas diaktifkan",
   "App is running in tool mode...": "Aplikasi berjalan dalam mode perkakas",
@@ -17,5 +19,9 @@
   "Please select:": "Silahkan pilih:",
   "Tool '%s' not found. Aborted!": "perkakas '%s' tidak ditemukan. Batalkan!",
   "Please select a method:": "Silahkan pilih metode:",
-  "Unknown method '%s'": "Metode '%s' tidak dikenal"
+  "Unknown method '%s'": "Metode '%s' tidak dikenal",
+  "and": "dan",
+  "or": "atau",
+  "[%s] Exited": "[%s] Telah keluar",
+  "[%s] App shutdown": "[%s] Aplikasi dimatikan"
 }

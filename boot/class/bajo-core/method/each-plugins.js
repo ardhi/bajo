@@ -8,8 +8,8 @@ async function eachPlugins (handler, options = {}) {
   const plugins = this.app.bajo.getConfig('plugins', { defValue: [] })
   const { glob, useBajo, baseNs = '' } = options
   if (useBajo) plugins.unshift('bajo')
-  for (const pkg of plugins) {
-    const ns = camelCase(pkg)
+  for (const pkgName of plugins) {
+    const ns = camelCase(pkgName)
     const cfg = this.app[ns].getConfig(null, { omit: [] })
     const { alias, dependencies } = cfg
     let r
@@ -25,7 +25,7 @@ async function eachPlugins (handler, options = {}) {
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
         if (path.basename(f)[0] === '_') continue
-        const resp = await handler.call(this.app[ns], { ns, pkg, cfg, alias, file: f, dir: base, dependencies })
+        const resp = await handler.call(this.app[ns], { ns, pkgName, cfg, alias, file: f, dir: base, dependencies })
         if (resp === false) break
         else if (resp === undefined) continue
         else {
@@ -34,7 +34,7 @@ async function eachPlugins (handler, options = {}) {
         }
       }
     } else {
-      r = await handler.call(this.app[ns], { ns, pkg, cfg, dir: cfg.dir.pkg, alias, dependencies })
+      r = await handler.call(this.app[ns], { ns, pkgName, cfg, dir: cfg.dir.pkg, alias, dependencies })
       if (r === false) break
       else if (r === undefined) continue
       else result[ns] = r

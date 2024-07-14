@@ -1,7 +1,7 @@
 import { isPlainObject, isArray, isNumber, set, cloneDeep } from 'lodash-es'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
-import dayjs from '../../lib/dayjs.js'
+import dayjs from '../../../lib/dayjs.js'
 import isSet from './is-set.js'
 
 const statics = ['*']

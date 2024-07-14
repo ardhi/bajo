@@ -1,9 +1,9 @@
 import fastGlob from 'fast-glob'
 import path from 'path'
 import { camelCase, isFunction, isPlainObject, forOwn } from 'lodash-es'
-import resolvePath from '../class/core-method/resolve-path.js'
-import importModule from '../class/core-method/import-module.js'
-import readJson from '../class/core-method/read-json.js'
+import resolvePath from '../class/bajo-core/method/resolve-path.js'
+import importModule from '../class/bajo-core/method/import-module.js'
+import readJson from '../class/bajo-core/method/read-json.js'
 
 export default async function (dir, pkg = 'bajo') {
   dir = resolvePath(dir)

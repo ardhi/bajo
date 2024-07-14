@@ -1,4 +1,4 @@
-import readConfig from '../class/core-method/read-config.js'
+import readConfig from '../class/bajo-core/method/read-config.js'
 
 async function readAllConfigs (base) {
   let cfg = {}

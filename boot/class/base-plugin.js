@@ -1,14 +1,16 @@
-import { get, isEmpty, cloneDeep, omit, isPlainObject } from 'lodash-es'
+import { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } from 'lodash-es'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import Log from './log.js'
 import Print from './print.js'
 
 class BasePlugin {
-  constructor (name, app) {
-    this.name = name
+  constructor (pkgName, app) {
+    this.pkgName = pkgName
+    this.name = camelCase(pkgName)
     this.app = app
     this.config = {}
     this.lib = {}
+    this.exitHandler = undefined
     this.initLog()
   }
 

@@ -1,7 +1,7 @@
 import Sprintf from 'sprintf-js'
 import ora from 'ora'
 import { isPlainObject, get } from 'lodash-es'
-import defaultsDeep from './core-method/defaults-deep.js'
+import defaultsDeep from './bajo-core/method/defaults-deep.js'
 
 const { sprintf } = Sprintf
 
@@ -102,6 +102,10 @@ class Print {
     this.setText(text, ...args)
     this.ora.fail()
     process.kill(process.pid, 'SIGINT')
+  }
+
+  spinner () {
+    return new Print(this.plugin)
   }
 }
 

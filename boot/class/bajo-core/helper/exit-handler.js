@@ -1,21 +1,20 @@
 async function exit (signal) {
-  const me = this
-  const { eachPlugins } = me.bajo
-  me.bajo.log.warn('\'%s\' signal received', signal)
+  const { eachPlugins } = this
+  this.log.warn('\'%s\' signal received', signal)
   await eachPlugins(async function ({ ns }) {
-    const handler = me.bajo.exitHandler[ns]
+    const handler = this.exitHandler
     if (!handler) return undefined
     try {
-      await handler.call(me[ns])
+      await handler.call(this)
     } catch (err) {}
     this.log.debug('Exited')
   })
-  me.bajo.log.debug('Program shutdown')
+  this.log.debug('App shutdown')
   process.exit(0)
 }
 
 async function exitHandler () {
-  if (!this.bajo.config.exitHandler) return
+  if (!this.config.exitHandler) return
 
   process.on('SIGINT', async () => {
     await exit.call(this, 'SIGINT')
@@ -26,7 +25,7 @@ async function exitHandler () {
   })
 
   process.on('uncaughtException', (error, origin) => {
-    if (this.bajo.config.log.report.includes('sys:uncaughtException')) this.bajo.log.fatal({ origin }, '%s', error.message)
+    if (this.config.log.report.includes('sys:uncaughtException')) this.log.fatal({ origin }, '%s', error.message)
     setTimeout(() => {
       console.error(error)
       process.exit(1)
@@ -46,11 +45,11 @@ async function exitHandler () {
     parts.pop()
     parts.pop()
     file = parts.join(':')
-    this.bajo.log.error({ file, line, column }, '%s', reason.message)
+    this.log.error({ file, line, column }, '%s', reason.message)
   })
 
   process.on('warning', warning => {
-    this.bajo.log.error('%s', warning.message)
+    this.log.error('%s', warning.message)
   })
 }
 

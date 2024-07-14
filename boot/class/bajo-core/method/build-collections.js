@@ -1,4 +1,4 @@
-import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDeep, upperFirst } from 'lodash-es'
+import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDeep } from 'lodash-es'
 import pluralize from 'pluralize'
 
 async function buildCollections (options = {}) {
@@ -10,7 +10,7 @@ async function buildCollections (options = {}) {
   let items = get(cfg, container)
   if (!items) return []
   if (!isArray(items)) items = [items]
-  this.app[ns].log.trace('Collecting %s...', container)
+  this.app[ns].log.trace('Collecting %s...', this.app[ns].print.write(container))
   await runHook(`${ns}:${camelCase(`before build ${container}`)}`)
   const deleted = []
   const data = []
@@ -22,7 +22,7 @@ async function buildCollections (options = {}) {
         else item.name = 'default'
       }
     }
-    this.app[ns].log.trace(`- Collect ${pluralize.singular(container)}: '%s'`, item.name)
+    this.app[ns].log.trace('- Collect %s: \'%s\'', this.app[ns].print.write(pluralize.singular(container)), item.name)
     const result = await handler.call(this.app[ns], { item, index, cfg })
     if (result) data[index] = result
     else if (result === false) deleted.push(index)
@@ -40,7 +40,7 @@ async function buildCollections (options = {}) {
     })
   })
   await runHook(`${ns}:${camelCase(`after build ${container}`)}`)
-  this.app[ns].log.debug(`${upperFirst(container)} collected: %d`, data.length)
+  this.app[ns].log.debug('%s collected: %d', this.app[ns].print.write(container), data.length)
   return cloneDeep(data)
 }
 
