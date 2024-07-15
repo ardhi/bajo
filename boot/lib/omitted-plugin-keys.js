@@ -1,3 +1,3 @@
-const omittedPluginKeys = ['name', 'dir', 'alias', 'pkg', 'dependencies', 'title']
+const omittedPluginKeys = ['dir', 'pkg', 'dependencies', 'title']
 
 export default omittedPluginKeys

@@ -1,47 +1,43 @@
-import { filter, isArray, each, pullAt, camelCase, has, find, set, get, cloneDeep } from 'lodash-es'
-import pluralize from 'pluralize'
+import { filter, isArray, each, pullAt, camelCase, has, find, set, get } from 'lodash-es'
 
 async function buildCollections (options = {}) {
-  const { fatal, runHook, error, join } = this.app.bajo
+  const { runHook, join } = this.app.bajo
   let { ns, handler, dupChecks = [], container = 'connections', useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!ns) ns = this.name
   const cfg = this.app[ns].getConfig()
-  let items = get(cfg, container)
-  if (!items) return []
+  let items = get(cfg, container, [])
   if (!isArray(items)) items = [items]
-  this.app[ns].log.trace('Collecting %s...', this.app[ns].print.write(container))
+  this.app[ns].log.trace('Collecting %s', this.app[ns].print.write(container))
   await runHook(`${ns}:${camelCase(`before build ${container}`)}`)
   const deleted = []
-  const data = []
   for (const index in items) {
     const item = items[index]
     if (useDefaultName) {
       if (!has(item, 'name')) {
-        if (find(data, { name: 'default' })) throw error('Collection \'default\' already exists')
+        if (find(items, { name: 'default' })) throw this.app[ns].error('Collection \'default\' already exists')
         else item.name = 'default'
       }
     }
-    this.app[ns].log.trace('- Collect %s: \'%s\'', this.app[ns].print.write(pluralize.singular(container)), item.name)
+    this.app[ns].log.trace('- %s', item.name)
     const result = await handler.call(this.app[ns], { item, index, cfg })
-    if (result) data[index] = result
+    if (result) items[index] = result
     else if (result === false) deleted.push(index)
     if (this.app.bajo.toolMode && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
-    data.push(item)
   }
-  if (deleted.length > 0) pullAt(data, deleted)
+  if (deleted.length > 0) pullAt(items, deleted)
 
   // check for duplicity
-  each(data, c => {
+  each(items, c => {
     each(dupChecks, d => {
       const checker = set({}, d, c[d])
-      const match = filter(data, checker)
-      if (match.length > 1) fatal('One or more %s shared the same \'%s\'', container, join(dupChecks))
+      const match = filter(items, checker)
+      if (match.length > 1) this.app[ns].fatal('One or more %s shared the same \'%s\'', container, join(dupChecks))
     })
   })
   await runHook(`${ns}:${camelCase(`after build ${container}`)}`)
-  this.app[ns].log.debug('%s collected: %d', this.app[ns].print.write(container), data.length)
-  return cloneDeep(data)
+  this.app[ns].log.debug('%s collected: %d', this.app[ns].print.write(container), items.length)
+  return items
 }
 
 export default buildCollections

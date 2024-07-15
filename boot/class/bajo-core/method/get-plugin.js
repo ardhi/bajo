@@ -1,19 +1,20 @@
-import BasePlugin from '../../base-plugin.js'
+import BajoPlugin from '../../bajo-plugin.js'
 
-export default function (name) {
-  const { error } = this.app.bajo
+function getPlugin (name) {
   if (!this.app[name]) {
     // alias?
     let plugin
     for (const key in this.app) {
       const item = this.app[key]
-      if (item instanceof BasePlugin && (item.alias === name || item.pkgName === name)) {
+      if (item instanceof BajoPlugin && (item.alias === name || item.pkgName === name)) {
         plugin = item
         break
       }
     }
-    if (!plugin) throw error('Plugin \'%s\' is not loaded', name)
+    if (!plugin) throw this.error('Plugin with alias \'%s\' is not loaded', name)
     name = plugin.name
   }
   return this.app[name]
 }
+
+export default getPlugin

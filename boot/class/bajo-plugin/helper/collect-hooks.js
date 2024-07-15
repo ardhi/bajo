@@ -26,7 +26,7 @@ async function collectHooks () {
   forOwn(items, (v, k) => {
     const hooks = groupBy(v, 'path')
     forOwn(hooks, (v1, k1) => {
-      me.bajo.log.trace('Collect hook: %s:%s (%d)', k, k1, v1.length)
+      me.bajo.log.trace('- %s:%s (%d)', k, k1, v1.length)
     })
   })
   // run handler

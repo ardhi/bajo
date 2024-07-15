@@ -8,8 +8,7 @@ import { set, get } from 'lodash-es'
 async function buildBaseConfig () {
   this.toolMode = this.app.argv.root.tool
   this.config = defaultsDeep({}, this.app.env.root, this.app.argv.root)
-  this.config.name = this.name
-  this.config.alias = this.name
+  this.alias = this.name
   set(this, 'config.dir.base', this.app.cwd)
   const path = currentLoc(import.meta).dir + '/../../../..'
   set(this, 'config.dir.pkg', resolvePath(path))

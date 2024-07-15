@@ -6,12 +6,13 @@ async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }
   const result = {}
   const plugins = this.app.bajo.getConfig('plugins', { defValue: [] })
-  const { glob, useBajo, baseNs = '' } = options
+  const { glob, useBajo, baseNs = '', returnItems } = options
   if (useBajo) plugins.unshift('bajo')
   for (const pkgName of plugins) {
     const ns = camelCase(pkgName)
     const cfg = this.app[ns].getConfig(null, { omit: [] })
-    const { alias, dependencies } = cfg
+    const { dependencies } = cfg
+    const alias = this.app[ns].alias
     let r
     if (glob) {
       const base = baseNs === '' ? cfg.dir.pkg : `${cfg.dir.pkg}/${baseNs}`
@@ -39,6 +40,15 @@ async function eachPlugins (handler, options = {}) {
       else if (r === undefined) continue
       else result[ns] = r
     }
+  }
+  if (returnItems) {
+    const data = []
+    for (const r in result) {
+      for (const f in result[r]) {
+        data.push(result[r][f])
+      }
+    }
+    return data
   }
   return result
 }

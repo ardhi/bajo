@@ -12,13 +12,14 @@ function parseDur (val) {
 
 function parseDt (val) {
   const dt = dayjs(val)
-  if (!dt.isValid()) throw Error(`Unparsed date/time '${val}'`)
+  if (!dt.isValid()) throw this.error('Unparsed date/time \'%s\'', val)
   return dt.toDate()
 }
 
 function parseObject (input, silent = true, parseValue = false) {
   const obj = cloneDeep(input)
   const keys = Object.keys(obj)
+  const me = this
   keys.forEach(k => {
     const v = obj[k]
     if (isPlainObject(v)) obj[k] = parseObject(v)
@@ -36,8 +37,8 @@ function parseObject (input, silent = true, parseValue = false) {
           obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
           if (isArray(obj[k])) obj[k] = obj[k].map(item => typeof item === 'string' ? item.trim() : item)
         }
-        if (k.slice(-3) === 'Dur') obj[k] = parseDur(v)
-        if (k.slice(-2) === 'Dt') obj[k] = parseDt(v)
+        if (k.slice(-3) === 'Dur') obj[k] = parseDur.call(me, v)
+        if (k.slice(-2) === 'Dt') obj[k] = parseDt.call(me, v)
       } catch (err) {
         obj[k] = undefined
         if (!silent) throw err

@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash-es'
 
 function breakNsPath (item = '', defaultNs = 'bajo') {
-  const { error, getPlugin } = this.app.bajo
   let [ns, ...path] = item.split(':')
   path = path.join(':')
   if (isEmpty(path)) {
@@ -10,10 +9,10 @@ function breakNsPath (item = '', defaultNs = 'bajo') {
   }
   if (ns.length === 1) return [ns, path].join(':') // windows fs
   if (!this.app[ns]) {
-    const plugin = getPlugin(ns)
+    const plugin = this.getPlugin(ns)
     if (plugin) ns = plugin.name
   }
-  if (!this.app[ns]) throw error('Unknown plugin \'%s\' or plugin isn\'t loaded yet', ns)
+  if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
   return [ns, path]
 }
 

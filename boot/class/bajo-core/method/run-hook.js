@@ -9,13 +9,14 @@ async function runHook (hookName, ...args) {
   const removed = []
   for (const i in fns) {
     const fn = fns[i]
-    const res = await fn.handler.call(this.app[fn.src], ...args)
+    const scope = this.app[fn.src]
+    const res = await fn.handler.call(scope, ...args)
     results.push({
       hook: hookName,
       resp: res
     })
     if (path.startsWith('once')) removed.push(i)
-    this.log.trace('Hook \'%s -> %s\' executed', fn.src, hookName)
+    scope.log.trace('Hook \'%s\' executed', hookName)
   }
   if (removed.length > 0) pullAt(this.app.bajo.hooks, removed)
 

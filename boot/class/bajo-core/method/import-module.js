@@ -1,7 +1,6 @@
 import resolvePath from './resolve-path.js'
 import getPluginFile from './get-plugin-file.js'
 import { isFunction, isPlainObject } from 'lodash-es'
-import error from './error.js'
 import fs from 'fs-extra'
 
 async function load (file, asDefaultImport = true, noCache = true) {
@@ -19,7 +18,7 @@ async function importModule (file, { asDefaultImport, asHandler, noCache } = {})
   let mod = await load(file, asDefaultImport, noCache)
   if (!asHandler) return mod
   if (isFunction(mod)) mod = { level: 999, handler: mod }
-  if (!isPlainObject(mod)) throw error.call(me.app, 'File \'%s\' is NOT a handler module', file)
+  if (!isPlainObject(mod)) throw this.error.call(me.app, 'File \'%s\' is NOT a handler module', file)
   return mod
 }
 

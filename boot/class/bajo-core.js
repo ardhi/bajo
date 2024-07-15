@@ -1,4 +1,4 @@
-import BasePlugin from './base-plugin.js'
+import Plugin from './plugin.js'
 import dayjs from '../lib/dayjs.js'
 import importModule from './bajo-core/method/import-module.js'
 import readJson from './bajo-core/method/read-json.js'
@@ -11,7 +11,7 @@ async function defConfigHandler (file) {
   return mod
 }
 
-class BajoCore extends BasePlugin {
+class BajoCore extends Plugin {
   constructor (app) {
     super('bajo', app)
     this.runAt = new Date()
