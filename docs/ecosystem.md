@@ -6,6 +6,7 @@
 | [bajo-cli](https://github.com/ardhi/bajo-cli) | bajoCli | cli | Command line tools |
 | [bajo-db](https://github.com/ardhi/bajo-db) | bajoDb | db | Database support |
 | [bajo-db-memory](https://github.com/ardhi/bajo-db-memory) | bajoDbMemory | memory | DB driver for memory storage |
+| [bajo-db-couchdb](https://github.com/ardhi/bajo-db-couchdb) | bajoDbCouchdb | couchdb | CouchDB support & driver |
 | [bajo-emitter](https://github.com/ardhi/bajo-emitter) | bajoEmitter | emitter | Centralized event emitter & message broadcaster |
 | [bajo-extra](https://github.com/ardhi/bajo-extra) | bajoExtra | x | Extra necessary booster! |
 | [bajo-i18n](https://github.com/ardhi/bajo-i18n) | bajoI18N | i18n | I18N support |
