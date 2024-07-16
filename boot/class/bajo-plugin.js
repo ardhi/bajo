@@ -42,7 +42,7 @@ class BajoPlugin extends Plugin {
     this.config = cfg
   }
 
-  async _onoff (item, text) {
+  async _onoff (item, text, ...args) {
     this.state[item] = false
     const { runHook, importModule } = this.app.bajo
     const { camelCase } = this.app.bajo.lib._
@@ -50,7 +50,7 @@ class BajoPlugin extends Plugin {
     if (mod) {
       this.log.trace(text)
       await runHook(`bajo:${camelCase(`before ${item} ${this.name}`)}`)
-      await mod.call(this)
+      await mod.call(this, ...args)
       await runHook(`bajo:${camelCase(`after ${item} ${this.name}`)}`)
     }
     this.state[item] = true
@@ -62,12 +62,12 @@ class BajoPlugin extends Plugin {
     freeze(this.config)
   }
 
-  async start () {
-    await this._onoff('start', 'Start plugin...')
+  async start (...args) {
+    await this._onoff('start', 'Start plugin...', ...args)
   }
 
   async stop () {
-    await this._onoff('stop', '=== Stop =====================')
+    await this._onoff('stop', 'Stop plugin...')
   }
 }
 
