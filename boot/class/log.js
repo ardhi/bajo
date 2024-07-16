@@ -17,7 +17,7 @@ class Log {
     this.bajoLog = this.plugin.app.bajo.config.log.logger ?? 'bajoLogger'
   }
 
-  print (text, ...args) {
+  write (text, ...args) {
     if (text) {
       const i18n = get(this.plugin, 'app.bajoI18N.instance')
       if (i18n) {
@@ -47,7 +47,7 @@ class Log {
       data = null
     }
     args = without(args, undefined)
-    msg = this.print(`[%s] ${msg}`, this.plugin.name, ...args)
+    msg = this.write(`[%s] ${msg}`, this.plugin.name, ...args)
     if (this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger) {
       this.plugin.app[this.bajoLog].logger[level](data, msg, ...args)
     } else {
