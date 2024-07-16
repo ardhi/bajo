@@ -17,11 +17,8 @@ class BajoError {
     else err = Error(this.message)
     delete this.payload.class
     const stacks = err.stack.split('\n')
-    /*
-    stacks.splice(1, 1) // this file
-    if (fatal) stacks.splice(1, 1) // if it goes fatal
     stacks.splice(1, 1)
-    */
+    stacks.splice(1, 1)
     err.stack = stacks.join('\n')
     const values = {}
     for (const key in this.payload) {
