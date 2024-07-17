@@ -5,6 +5,7 @@
 | [bajo-config](https://github.com/ardhi/bajo-config) | bajoConfig | cfg | Add YAML & TOML support in config |
 | [bajo-common-db](https://github.com/ardhi/bajo-common-db) | bajoCommonDb | cdb | Common database |
 | [bajo-cli](https://github.com/ardhi/bajo-cli) | bajoCli | cli | Command line tools |
+| [bajo-cron](https://github.com/ardhi/bajo-cron) | bajoCron | cron | Cron support |
 | [bajo-db](https://github.com/ardhi/bajo-db) | bajoDb | db | Database support |
 | [bajo-db-couchdb](https://github.com/ardhi/bajo-db-couchdb) | bajoDbCouchdb | couchdb | CouchDB driver for BajoDB |
 | [bajo-db-elasticsearch](https://github.com/ardhi/bajo-db-elasticsearch) | bajoDbElasticsearch | elasticsearch | Elasticsearch driver for BajoDB |
