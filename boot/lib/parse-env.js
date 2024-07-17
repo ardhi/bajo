@@ -23,10 +23,10 @@ export default function ({ delimiter = '__', splitter = '.' } = {}) {
     env = { parsed: {} }
   }
   env = dotenvParseVariables(env.parsed, { assignToProcessEnv: false })
-  const all = { root: {} }
+  const all = { _: {} }
   each(env, (v, k) => {
     const parts = k.split(splitter)
-    if (!parts[1]) all.root[parts[0]] = v
+    if (!parts[1]) all._[parts[0]] = v
     else set(all, `${camelCase(parts[0])}.${parts[1]}`, v)
   })
   const result = {}

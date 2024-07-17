@@ -23,7 +23,7 @@ async function buildCollections (options = {}) {
     const result = await handler.call(this.app[ns], { item, index, cfg })
     if (result) items[index] = result
     else if (result === false) deleted.push(index)
-    if (this.app.bajo.toolMode && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+    if (this.app.bajo.applet && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
   }
   if (deleted.length > 0) pullAt(items, deleted)
 

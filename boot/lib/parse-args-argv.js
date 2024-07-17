@@ -43,7 +43,7 @@ const parseWithYargs = async () => {
     })
     .version().alias('version', 'v')
     .help().alias('help', 'h')
-    .alias('tool', 't')
+    .alias('applet', 'a')
   if (pkg.homepage) cli.epilog(`For more information please visit ${pkg.homepage}`)
   return cli.argv
 }
@@ -55,10 +55,10 @@ async function parseArgsArgv ({ delimiter = '-', splitter = ':', useParser } = {
   delete argv._
   delete argv.$0
   argv = dotenvParseVariables(argv)
-  const all = { root: {} }
+  const all = { _: {} }
   each(argv, (v, k) => {
     const parts = k.split(splitter)
-    if (!parts[1]) all.root[parts[0]] = v
+    if (!parts[1]) all._[parts[0]] = v
     else set(all, `${camelCase(parts[0])}.${parts[1]}`, v)
   })
   const result = {}

@@ -17,6 +17,8 @@ class BajoCore extends Plugin {
     this.runAt = new Date()
     this.mainNs = 'main'
     this.lib.dayjs = dayjs
+    this.applets = []
+    this.pluginPkgs = []
     this.configHandlers = [
       { ext: '.js', readHandler: defConfigHandler },
       { ext: '.json', readHandler: readJson }

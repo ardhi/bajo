@@ -4,7 +4,7 @@ async function run () {
   const me = this
   const { runHook, eachPlugins, join } = me.bajo
   const methods = ['init']
-  if (!me.bajo.toolMode) methods.push('start')
+  if (!me.bajo.applet) methods.push('start')
   for (const method of methods) {
     await runHook(`bajo:${camelCase(`before ${method} all plugins`)}`)
     await eachPlugins(async function ({ ns }) {
@@ -12,7 +12,7 @@ async function run () {
     })
     await runHook(`bajo:${camelCase(`after ${method} all plugins`)}`)
   }
-  me.bajo.log.debug('Loaded plugins: %s', join(map(me.bajo.config.plugins, b => camelCase(b))))
+  me.bajo.log.debug('Loaded plugins: %s', join(map(me.bajo.pluginPkgs, b => camelCase(b))))
 }
 
 export default run

@@ -6,8 +6,8 @@ import currentLoc from '../method/current-loc.js'
 import { set, get } from 'lodash-es'
 
 async function buildBaseConfig () {
-  this.toolMode = this.app.argv.root.tool
-  this.config = defaultsDeep({}, this.app.env.root, this.app.argv.root)
+  this.applet = this.app.argv._.applet
+  this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
   this.alias = this.name
   set(this, 'config.dir.base', this.app.cwd)
   const path = currentLoc(import.meta).dir + '/../../../..'

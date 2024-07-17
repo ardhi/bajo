@@ -3,7 +3,7 @@ import importModule from '../method/import-module.js'
 import { isFunction, isPlainObject, camelCase } from 'lodash-es'
 
 async function collectConfigHandlers () {
-  for (const pkg of this.config.plugins) {
+  for (const pkg of this.pluginPkgs) {
     let dir
     try {
       dir = getModuleDir.call(this, pkg)

@@ -1,21 +1,20 @@
-import { camelCase, isString, omit } from 'lodash-es'
+import { camelCase, isString, omit, cloneDeep } from 'lodash-es'
 import fastGlob from 'fast-glob'
 import path from 'path'
 
 async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }
   const result = {}
-  const plugins = this.app.bajo.getConfig('plugins', { defValue: [] })
+  const pluginPkgs = cloneDeep(this.app.bajo.pluginPkgs) ?? []
   const { glob, useBajo, baseNs = '', returnItems } = options
-  if (useBajo) plugins.unshift('bajo')
-  for (const pkgName of plugins) {
+  if (useBajo) pluginPkgs.unshift('bajo')
+  for (const pkgName of pluginPkgs) {
     const ns = camelCase(pkgName)
-    const cfg = this.app[ns].getConfig(null, { omit: [] })
-    const { dependencies } = cfg
+    const config = this.app[ns].config
     const alias = this.app[ns].alias
     let r
     if (glob) {
-      const base = baseNs === '' ? cfg.dir.pkg : `${cfg.dir.pkg}/${baseNs}`
+      const base = baseNs === '' ? config.dir.pkg : `${config.dir.pkg}/${baseNs}`
       let opts = isString(glob) ? { pattern: [glob] } : glob
       let pattern = opts.pattern ?? []
       if (isString(pattern)) pattern = [pattern]
@@ -26,7 +25,7 @@ async function eachPlugins (handler, options = {}) {
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
         if (path.basename(f)[0] === '_') continue
-        const resp = await handler.call(this.app[ns], { ns, pkgName, cfg, alias, file: f, dir: base, dependencies })
+        const resp = await handler.call(this.app[ns], { ns, pkgName, config, alias, file: f, dir: base })
         if (resp === false) break
         else if (resp === undefined) continue
         else {
@@ -35,7 +34,7 @@ async function eachPlugins (handler, options = {}) {
         }
       }
     } else {
-      r = await handler.call(this.app[ns], { ns, pkgName, cfg, dir: cfg.dir.pkg, alias, dependencies })
+      r = await handler.call(this.app[ns], { ns, pkgName, config, dir: config.dir.pkg, alias })
       if (r === false) break
       else if (r === undefined) continue
       else result[ns] = r

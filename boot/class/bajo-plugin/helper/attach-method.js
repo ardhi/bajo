@@ -1,6 +1,6 @@
 import createMethod from '../../../lib/create-method.js'
 
-export default async function () {
+async function attachMethod () {
   const { eachPlugins } = this.bajo
   const me = this
   me.bajo.log.debug('Attach methods')
@@ -10,3 +10,5 @@ export default async function () {
     me.bajo.log.trace('- %s (%d)', ns, num)
   })
 }
+
+export default attachMethod

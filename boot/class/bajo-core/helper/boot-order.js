@@ -4,14 +4,14 @@ import getModuleDir from '../method/get-module-dir.js'
 
 async function bootOrder () {
   this.log.debug('Setup boot order')
-  const order = reduce(this.config.plugins, (o, k, i) => {
+  const order = reduce(this.pluginPkgs, (o, k, i) => {
     const key = map(k.split(':'), m => trim(m))
     if (key[1] && !isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
     else o[key[0]] = 10000 + i
     return o
   }, {})
   const norder = {}
-  for (let n of this.config.plugins) {
+  for (let n of this.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
     const dir = n === this.mainNs ? (`${this.config.dir.base}/${this.mainNs}`) : getModuleDir(n)
     if (n !== this.mainNs && !fs.existsSync(`${dir}/bajo`)) throw this.error('Package \'%s\' not found or isn\'t a valid Bajo package', n)
@@ -25,7 +25,7 @@ async function bootOrder () {
     const item = { k, v: isNaN(norder[k]) ? v : norder[k] }
     result.push(item)
   })
-  this.config.plugins = map(orderBy(result, ['v']), 'k')
+  this.pluginPkgs = map(orderBy(result, ['v']), 'k')
   this.log.info('Run in \'%s\' environment', this.envs[this.config.env])
   // misc
   this.freeze(this.config)
