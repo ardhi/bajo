@@ -12,7 +12,7 @@ import attachMethod from './bajo-core/helper/attach-method.js'
 import bootOrder from './bajo-core/helper/boot-order.js'
 import bootPlugins from './bajo-core/helper/boot-plugins.js'
 import exitHandler from './bajo-core/helper/exit-handler.js'
-import dispatch from './bajo-core/helper/dispatch.js'
+import runAsApplet from './bajo-core/helper/run-as-applet.js'
 
 class App {
   constructor (cwd) {
@@ -63,7 +63,7 @@ class App {
     await bajo.runHook('bajo:bootComplete')
     const elapsed = new Date() - bajo.runAt
     bajo.log.info('Boot process completed in %s', bajo.secToHms(elapsed, true))
-    await dispatch.call(bajo)
+    if (bajo.applet) await runAsApplet.call(bajo)
   }
 }
 
