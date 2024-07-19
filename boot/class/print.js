@@ -1,9 +1,7 @@
-import Sprintf from 'sprintf-js'
 import ora from 'ora'
-import { isPlainObject, get } from 'lodash-es'
+import { isPlainObject } from 'lodash-es'
 import defaultsDeep from './bajo-core/method/defaults-deep.js'
-
-const { sprintf } = Sprintf
+import translate from '../lib/translate.js'
 
 class Print {
   constructor (plugin, opts = {}) {
@@ -36,14 +34,7 @@ class Print {
   }
 
   write (text, ...args) {
-    if (text) {
-      const i18n = get(this, 'plugin.app.bajoI18N.instance')
-      if (i18n) {
-        if (isPlainObject(args[0])) text = i18n.t(text, args[0])
-        else text = i18n.t(text, { ns: this.plugin.name, postProcess: 'sprintf', sprintf: args })
-      } else text = sprintf(text, ...args)
-    }
-    return text
+    return translate.call(this.plugin, text, ...args)
   }
 
   getElapsed (unit = 'hms') {

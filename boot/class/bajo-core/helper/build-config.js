@@ -14,7 +14,7 @@ const defConfig = {
   log: {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
     applet: false,
-    report: []
+    traceHook: false
   },
   lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
   exitHandler: true

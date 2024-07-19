@@ -7,7 +7,7 @@ function join (array, sep) {
   if (array.length === 1) return array[0]
   if (isSet(sep) && !isPlainObject(sep)) return array.join(sep)
   let { separator = ', ', joiner = 'and' } = sep ?? {}
-  if (isI18n) joiner = this.app.bajoI18N.t(joiner)
+  if (isI18n && this.app.bajoI18N.t) joiner = this.app.bajoI18N.t(joiner)
   const last = (array.pop() ?? '').trim()
   return array.map(a => (a + '').trim()).join(separator) + ` ${joiner} ${last}`
 }

@@ -16,7 +16,7 @@ async function runHook (hookName, ...args) {
       resp: res
     })
     if (path.startsWith('once')) removed.push(i)
-    scope.log.trace('Hook \'%s\' executed', hookName)
+    if (this.config.log.traceHook) scope.log.trace('Hook \'%s\' executed', hookName)
   }
   if (removed.length > 0) pullAt(this.app.bajo.hooks, removed)
 

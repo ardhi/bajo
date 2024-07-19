@@ -23,7 +23,7 @@ class BajoPlugin extends Plugin {
     const pkgJson = await readJson(file)
     cfg.pkg = pick(pkgJson,
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
-    if (cfg.name === this.app.bajo.mainNs) {
+    if (this.name === this.app.bajo.mainNs) {
       cfg.alias = this.app.bajo.mainNs
       cfg.title = 'Main App'
     } else if (isEmpty(cfg.alias)) cfg.alias = this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name // fix. can't be overriden
@@ -35,7 +35,7 @@ class BajoPlugin extends Plugin {
       const altCfg = await readAllConfigs.call(this.app, `${this.app.bajo.config.dir.data}/config/${this.name}`)
       cfg = defaultsDeep({}, omit(altCfg, omittedPluginKeys), cfg)
     } catch (err) {}
-    const envArgv = defaultsDeep({}, omit(this.app.env[cfg.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[cfg.name] ?? {}, omittedPluginKeys) ?? {})
+    const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
     cfg.dependencies = cfg.dependencies ?? []
     if (isString(cfg.dependencies)) cfg.dependencies = [cfg.dependencies]
@@ -49,9 +49,9 @@ class BajoPlugin extends Plugin {
     const mod = await importModule(`${this.config.dir.pkg}/bajo/${item}.js`)
     if (mod) {
       this.log.trace(text)
-      await runHook(`bajo:${camelCase(`before ${item} ${this.name}`)}`)
+      await runHook(`${this.name}:${camelCase(`before ${item}`)}`)
       await mod.call(this, ...args)
-      await runHook(`bajo:${camelCase(`after ${item} ${this.name}`)}`)
+      await runHook(`${this.name}:${camelCase(`after ${item}`)}`)
     }
     this.state[item] = true
   }
