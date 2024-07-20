@@ -26,5 +26,6 @@
 | [bajo-web](https://github.com/ardhi/bajo-web) | bajoWeb | web | Web framework |
 | [bajo-web-static](https://github.com/ardhi/bajo-web-static) | bajoWebStatic | static | Static asset for Bajo's Web framework |
 | [bajo-web-restapi](https://github.com/ardhi/bajo-web-restapi) | bajoWebRestapi | restapi | Rest API for Bajo's Web framework |
+| [bajo-web-restapi-swagger](https://github.com/ardhi/bajo-web-restapi-swagger) | bajoWebRestapiSwagger | swagger | Rest API Documentation for Bajo's Web framework |
 | [bajo-web-mpa](https://github.com/ardhi/bajo-web-mpa) | bajoWebMpa | mpa | Multi pages app for Bajo's Web framework |
 | [bajo-web-mpa-nunjucks](https://github.com/ardhi/bajo-web-mpa-nunjucks) | bajoWebMpaNunjucks | mpanjk | MPA's Nunjucks support for Bajo's Web framework |
