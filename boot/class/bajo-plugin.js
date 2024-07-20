@@ -10,7 +10,7 @@ class BajoPlugin extends Plugin {
     this.state = {}
   }
 
-  async readConfig () {
+  async loadConfig () {
     const { log, getModuleDir, readJson, defaultsDeep } = this.app.bajo
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.config.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
