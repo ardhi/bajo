@@ -15,6 +15,7 @@
 | [bajo-db-restproxy](https://github.com/ardhi/bajo-db-restproxy) | bajoDbRestproxy | rpx | Restproxy driver for BajoDB |
 | [bajo-db-restproxy-jsonserver](https://github.com/ardhi/bajo-db-restproxy-jsonserver) | bajoDbRestproxyJsonserver | rpxjs | Restproxy driver's JsonServer support for BajoDB |
 | [bajo-db-restproxy-ndut](https://github.com/ardhi/bajo-db-restproxy-ndut) | bajoDbRestproxyNdut | rpxndut | Restproxy driver's NDUT support for BajoDB |
+| [bajo-dbx](https://github.com/ardhi/bajo-dbx) | bajoDbx | dbx | DB tools & utility |
 | [bajo-emitter](https://github.com/ardhi/bajo-emitter) | bajoEmitter | emitter | Centralized event emitter & message broadcaster |
 | [bajo-extra](https://github.com/ardhi/bajo-extra) | bajoExtra | extra | Extra necessary booster! |
 | [bajo-i18n](https://github.com/ardhi/bajo-i18n) | bajoI18N | i18n | Localization & Internationalization |
