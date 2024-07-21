@@ -4,9 +4,9 @@ import resolvePath from './resolve-path.js'
 const isValidApp = (dir) => {
   if (!dir) dir = process.env.BAJOCWD
   dir = resolvePath(dir)
-  const hasAppDir = fs.existsSync(`${dir}/app/bajo`)
+  const hasMainDir = fs.existsSync(`${dir}/main/bajo`)
   const hasPackageJson = fs.existsSync(`${dir}/package.json`)
-  return hasAppDir && hasPackageJson
+  return hasMainDir && hasPackageJson
 }
 
 export default isValidApp

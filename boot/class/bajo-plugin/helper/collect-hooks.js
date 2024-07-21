@@ -1,23 +1,16 @@
-import { map, camelCase, merge, forOwn, groupBy } from 'lodash-es'
+import { merge, forOwn, groupBy } from 'lodash-es'
 
 async function collectHooks () {
-  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
+  const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo
   const me = this
   me.bajo.hooks = this.bajo.hooks ?? []
   me.bajo.log.debug('Collect hooks')
   // collects
   await eachPlugins(async function ({ ns, dir, file }) {
-    const hookName = (file.slice(dir.length + 1) ?? '').split('/')[1]
-    let [name, path] = hookName.replace('.js', '').split('@')
-    if (!path) {
-      path = name
-      name = ns
-    }
-    path = camelCase(path)
-    name = map(name.split('.'), (n, i) => i === 1 ? n : camelCase(n)).join('.')
+    const { fullNs, path } = breakNsPathFromFile({ file, dir, baseNs: ns, suffix: '/hook/' })
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
-    merge(mod, { ns: name, path, src: ns })
+    merge(mod, { ns: fullNs, path, src: ns })
     me.bajo.hooks.push(mod)
   }, { glob: 'hook/**/*.js', baseNs: me.bajo.name })
   // for log trace purpose only
