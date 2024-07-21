@@ -19,6 +19,7 @@
 | [bajo-extra](https://github.com/ardhi/bajo-extra) | bajoExtra | extra | Extra necessary booster! |
 | [bajo-i18n](https://github.com/ardhi/bajo-i18n) | bajoI18N | i18n | Localization & Internationalization |
 | [bajo-logger](https://github.com/ardhi/bajo-logger) | bajoLogger | log | Pino logger support |
+| [bajo-markdown](https://github.com/ardhi/bajo-markdown) | bajoMarkdown | md | Markdown support |
 | [bajo-mqtt](https://github.com/ardhi/bajo-mqtt) | bajoMqtt | mqtt | MQTT binding |
 | [bajo-udp](https://github.com/ardhi/bajo-udp) | bajoUdp | udp | UDP binding |
 | [bajo-serialport](https://github.com/ardhi/bajo-serialport) | bajoSerialport | sp | Serialport binding |
