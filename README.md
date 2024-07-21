@@ -1,4 +1,4 @@
-# Bajo Framework
+# bajo
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/ardhi/bajo) ![NPM Version](https://img.shields.io/npm/v/bajo)
 
