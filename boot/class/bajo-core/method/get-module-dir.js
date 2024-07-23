@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { get } from 'lodash-es'
 import getGlobalModuleDir from './get-global-module-dir.js'
 import resolvePath from './resolve-path.js'
 import { createRequire } from 'module'
@@ -21,7 +20,7 @@ function findDeep (item, paths) {
 function getModuleDir (pkgName, base) {
   if (pkgName === 'main') return resolvePath(process.env.BAJOCWD)
   if (base === 'main') base = process.env.BAJOCWD
-  else if (this && this.app && this.app[base]) base = get(this.app[base], 'config.pkg.name')
+  else if (this && this.app && this.app[base]) base = this.app[base].pkgName
   const pkgPath = pkgName + '/package.json'
   const paths = require.resolve.paths(pkgPath)
   const gdir = getGlobalModuleDir()

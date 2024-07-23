@@ -10,13 +10,18 @@ import fs from 'fs-extra'
 
 async function importPkg (...pkgs) {
   const result = {}
+  const notFound = []
   let opts = { returnDefault: true, thrownNotFound: false, noCache: false }
   if (isPlainObject(last(pkgs))) {
     opts = defaultsDeep(pkgs.pop(), opts)
   }
   for (const pkg of pkgs) {
-    const [plugin, name] = breakNsPath.call(this, pkg)
-    const dir = getModuleDir.call(this, name, plugin)
+    const [ns, name] = breakNsPath.call(this, pkg)
+    const dir = getModuleDir.call(this, name, ns)
+    if (!dir) {
+      notFound.push(pkg)
+      continue
+    }
     const p = readJson(`${dir}/package.json`, opts.thrownNotFound)
     const mainFileOrg = dir + '/' + (p.main ?? get(p, 'exports.default', 'index.js'))
     let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
@@ -32,6 +37,7 @@ async function importPkg (...pkgs) {
     }
     result[name] = mod
   }
+  if (notFound.length > 0) throw this.error('Can\'t find %s', this.join(notFound))
   if (pkgs.length === 1) return result[keys(result)[0]]
   if (opts.asObject) return result
   return values(result)
