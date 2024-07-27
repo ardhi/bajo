@@ -25,12 +25,12 @@
 | [bajo-udp](https://github.com/ardhi/bajo-udp) | bajoUdp | udp | UDP binding |
 | [bajo-serialport](https://github.com/ardhi/bajo-serialport) | bajoSerialport | sp | Serialport binding |
 | [bajo-sysinfo](https://github.com/ardhi/bajo-sysinfo) | bajoSysinfo | si | System information |
-| [bajo-web](https://github.com/ardhi/bajo-web) | bajoWeb | web | Web framework |
-| [bajo-web-static](https://github.com/ardhi/bajo-web-static) | bajoWebStatic | static | Static asset for Bajo's Web framework |
-| [bajo-web-restapi](https://github.com/ardhi/bajo-web-restapi) | bajoWebRestapi | restapi | Rest API for Bajo's Web framework |
-| [bajo-web-restapi-swagger](https://github.com/ardhi/bajo-web-restapi-swagger) | bajoWebRestapiSwagger | swagger | Rest API Documentation for Bajo's Web framework |
-| [bajo-web-mpa](https://github.com/ardhi/bajo-web-mpa) | bajoWebMpa | mpa | Multi pages app for Bajo's Web framework |
-| [bajo-web-mpa-fontawesome](https://github.com/ardhi/bajo-web-mpa-fontawesome) | bajoWebMpaFontawesome | fontawesome | MPA's Fontawesome support form MPA |
-| [bajo-web-mpa-libs](https://github.com/ardhi/bajo-web-mpa-libs) | bajoWebMpaLibs | mpalibs | MPA's most used 3rd party libs for Bajo's Web framework |
-| [bajo-web-mpa-nunjucks](https://github.com/ardhi/bajo-web-mpa-nunjucks) | bajoWebMpaNunjucks | mpanjk | MPA's Nunjucks support for Bajo's Web framework |
 | [bajo-webdav](https://github.com/ardhi/bajo-webdav) | bajoWebdav | webdav | Webdav binding |
+| [wakatobi](https://github.com/ardhi/wakatobi) | wakatobi | web | Web framework |
+| [wakatobi-static](https://github.com/ardhi/wakatobi-static) | wakatobiStatic | static | Static asset support for Wakatobi |
+| [wakatobi-rest-api](https://github.com/ardhi/wakatobi-rest-api) | wakatobiRestApi | restapi | Rest API for Wakatobi |
+| [wakatobi-swagger](https://github.com/ardhi/wakatobi-swagger) | wakatobiSwagger | swagger | Rest API Documentation for Wakatobi REST API |
+| [wakatobi-mpa](https://github.com/ardhi/wakatobi-mpa) | wakatobiMpa | mpa | Multi pages app for for Wakatobi |
+| [wakatobi-fontawesome](https://github.com/ardhi/wakatobi-fontawesome) | wakatobiFontawesome | fontawesome | Fontawesome support for Wakatobi MPA |
+| [wakatobi-mpalibs](https://github.com/ardhi/wakatobi-mpalibs) | wakatobiMpalibs | mpalibs | Most used 3rd party libs for Wakatobi MPA |
+| [wakatobi-nunjucks](https://github.com/ardhi/wakatobi-nunjucks) | wakatobiNunjucks | mpanjk | Nunjucks support for Wakatobi MPA |
