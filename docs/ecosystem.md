@@ -30,6 +30,7 @@
 | [bajo-web-restapi](https://github.com/ardhi/bajo-web-restapi) | bajoWebRestapi | restapi | Rest API for Bajo's Web framework |
 | [bajo-web-restapi-swagger](https://github.com/ardhi/bajo-web-restapi-swagger) | bajoWebRestapiSwagger | swagger | Rest API Documentation for Bajo's Web framework |
 | [bajo-web-mpa](https://github.com/ardhi/bajo-web-mpa) | bajoWebMpa | mpa | Multi pages app for Bajo's Web framework |
+| [bajo-web-mpa-fontawesome](https://github.com/ardhi/bajo-web-mpa-fontawesome) | bajoWebMpaFontawesome | fontawesome | MPA's Fontawesome support form MPA |
 | [bajo-web-mpa-libs](https://github.com/ardhi/bajo-web-mpa-libs) | bajoWebMpaLibs | mpalibs | MPA's most used 3rd party libs for Bajo's Web framework |
 | [bajo-web-mpa-nunjucks](https://github.com/ardhi/bajo-web-mpa-nunjucks) | bajoWebMpaNunjucks | mpanjk | MPA's Nunjucks support for Bajo's Web framework |
 | [bajo-webdav](https://github.com/ardhi/bajo-webdav) | bajoWebdav | webdav | Webdav binding |
