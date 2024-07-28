@@ -26,11 +26,11 @@
 | [bajo-serialport](https://github.com/ardhi/bajo-serialport) | bajoSerialport | sp | Serialport binding |
 | [bajo-sysinfo](https://github.com/ardhi/bajo-sysinfo) | bajoSysinfo | si | System information |
 | [bajo-webdav](https://github.com/ardhi/bajo-webdav) | bajoWebdav | webdav | Webdav binding |
-| [wakatobi](https://github.com/ardhi/wakatobi) | wakatobi | web | Web framework |
-| [wakatobi-static](https://github.com/ardhi/wakatobi-static) | wakatobiStatic | static | Static asset support for Wakatobi |
-| [wakatobi-rest-api](https://github.com/ardhi/wakatobi-rest-api) | wakatobiRestApi | restapi | Rest API for Wakatobi |
-| [wakatobi-swagger](https://github.com/ardhi/wakatobi-swagger) | wakatobiSwagger | swagger | Rest API Documentation for Wakatobi REST API |
-| [wakatobi-mpa](https://github.com/ardhi/wakatobi-mpa) | wakatobiMpa | mpa | Multi pages app for for Wakatobi |
-| [wakatobi-fontawesome](https://github.com/ardhi/wakatobi-fontawesome) | wakatobiFontawesome | fontawesome | Fontawesome support for Wakatobi MPA |
-| [wakatobi-mpalibs](https://github.com/ardhi/wakatobi-mpalibs) | wakatobiMpalibs | mpalibs | Most used 3rd party libs for Wakatobi MPA |
-| [wakatobi-nunjucks](https://github.com/ardhi/wakatobi-nunjucks) | wakatobiNunjucks | mpanjk | Nunjucks support for Wakatobi MPA |
+| [waibu](https://github.com/ardhi/waibu) | waibu | wb | Web framework |
+| [waibu-static](https://github.com/ardhi/waibu-static) | waibuStatic | wbstatic | Static asset support for Waibu |
+| [waibu-rest-api](https://github.com/ardhi/waibu-rest-api) | waibuRestApi | wbrestapi | Rest API for Waibu |
+| [waibu-swagger](https://github.com/ardhi/waibu-swagger) | waibuSwagger | wbswagger | Rest API Documentation for Waibu REST API |
+| [waibu-mpa](https://github.com/ardhi/waibu-mpa) | waibuMpa | wbmpa | Multi pages app for for Waibu |
+| [waibu-fontawesome](https://github.com/ardhi/waibu-fontawesome) | waibuFontawesome | wbfa | Fontawesome support for Waibu MPA |
+| [waibu-extra](https://github.com/ardhi/waibu-extra) | waibuExtra | wbxtra | Most used 3rd party libs for Waibu MPA |
+| [waibu-nunjucks](https://github.com/ardhi/waibu-nunjucks) | waibuNunjucks | wbnunjucks | Nunjucks support for Waibu MPA |
