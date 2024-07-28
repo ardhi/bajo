@@ -1,6 +1,6 @@
 # Ecosystem
 
-## Bajo Core Plugins
+## Bajo Plugins
 
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
@@ -21,6 +21,8 @@
 
 ## Dobo DBMS
 
+| Package | Name | Alias | Description |
+| ------- | ---- | ----- | ----------- |
 | [dobo](https://github.com/ardhi/dobo) | dobo | db | DBMS |
 | [dobo-couchdb](https://github.com/ardhi/dobo-couchdb) | doboCouchdb | dbcdb | CouchDB driver |
 | [dobo-elasticsearch](https://github.com/ardhi/dobo-elasticsearch) | doboElasticsearch | dbes | Elasticsearch driver |
