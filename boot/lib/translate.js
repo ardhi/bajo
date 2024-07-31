@@ -2,10 +2,10 @@ import { get, isPlainObject } from 'lodash-es'
 import Sprintf from 'sprintf-js'
 const { sprintf } = Sprintf
 
-function translate (text, ...args) {
+function translate (instance, text, ...args) {
   let ntext = text
   if (text) {
-    const i18n = get(this, 'app.bajoI18N.instance')
+    const i18n = instance ?? get(this, 'app.bajoI18N.instance')
     if (i18n) {
       if (isPlainObject(args[0])) ntext = i18n.t(text, args[0])
       else ntext = i18n.t(text, { ns: this.name, postProcess: 'sprintf', sprintf: args })

@@ -34,7 +34,7 @@ class Print {
   }
 
   write (text, ...args) {
-    return translate.call(this.plugin, text, ...args)
+    return translate.call(this.plugin, null, text, ...args)
   }
 
   getElapsed (unit = 'hms') {
