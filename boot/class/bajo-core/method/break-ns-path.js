@@ -4,6 +4,7 @@ function breakNsPath (item = '', defaultNs = 'bajo') {
   let [ns, ...path] = item.split(':')
   let subNs
   path = path.join(':')
+  if (path.startsWith('//')) return [undefined, item]
   if (isEmpty(path)) {
     path = ns
     ns = defaultNs
