@@ -39,10 +39,12 @@
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
 | [waibu](https://github.com/ardhi/waibu) | waibu | wb | Web framework |
-| [waibu-static](https://github.com/ardhi/waibu-static) | waibuStatic | wbstatic | Static asset support for Waibu |
-| [waibu-rest-api](https://github.com/ardhi/waibu-rest-api) | waibuRestApi | wbrestapi | Rest API for Waibu |
-| [waibu-swagger](https://github.com/ardhi/waibu-swagger) | waibuSwagger | wbswagger | Rest API Documentation for Waibu REST API |
-| [waibu-mpa](https://github.com/ardhi/waibu-mpa) | waibuMpa | wbmpa | Multi pages app for for Waibu |
+| [waibu-bootstrap](https://github.com/ardhi/waibu-bootstrap) | waibuBootstrap | wbbs | Bootstrap support for Waibu |
+| [waibu-bootswatch](https://github.com/ardhi/waibu-bootswatch) | waibuBootswatch | wbbw | Bootswatch support for Waibu |
 | [waibu-fontawesome](https://github.com/ardhi/waibu-fontawesome) | waibuFontawesome | wbfa | Fontawesome support for Waibu MPA |
 | [waibu-extra](https://github.com/ardhi/waibu-extra) | waibuExtra | wbxtra | Most used 3rd party libs for Waibu MPA |
+| [waibu-mpa](https://github.com/ardhi/waibu-mpa) | waibuMpa | wbmpa | Multi pages app for for Waibu |
 | [waibu-nunjucks](https://github.com/ardhi/waibu-nunjucks) | waibuNunjucks | wbnunjucks | Nunjucks support for Waibu MPA |
+| [waibu-rest-api](https://github.com/ardhi/waibu-rest-api) | waibuRestApi | wbrestapi | Rest API for Waibu |
+| [waibu-static](https://github.com/ardhi/waibu-static) | waibuStatic | wbstatic | Static asset support for Waibu |
+| [waibu-swagger](https://github.com/ardhi/waibu-swagger) | waibuSwagger | wbswagger | Rest API Documentation for Waibu REST API |
