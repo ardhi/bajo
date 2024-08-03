@@ -23,5 +23,7 @@
   "and": "dan",
   "or": "atau",
   "[%s] Exited": "[%s] Telah keluar",
-  "[%s] App shutdown": "[%s] Aplikasi dimatikan"
+  "[%s] App shutdown": "[%s] Aplikasi dimatikan",
+  "[%s] Collect %s": "",
+  "[%s] %s support is disabled": ""
 }
