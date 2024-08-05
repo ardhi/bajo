@@ -19,7 +19,7 @@
 | [bajo-sysinfo](https://github.com/ardhi/bajo-sysinfo) | bajoSysinfo | si | System information |
 | [bajo-webdav](https://github.com/ardhi/bajo-webdav) | bajoWebdav | webdav | Webdav binding |
 
-## Dobo DBMS
+## Dobo DBMS Plugins
 
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
@@ -34,17 +34,21 @@
 | [dobo-restproxy-ndut](https://github.com/ardhi/dobo-restproxy-ndut) | doboRestproxyNdut | dbrpxndut | NDUT support for doboRestproxy |
 | [dobo-extra](https://github.com/ardhi/dobo-extra) | doboExtra | dbxtra | Extra tools & utility |
 
-## Waibu Web Framework
+## Waibu Web Framework Plugins
 
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
 | [waibu](https://github.com/ardhi/waibu) | waibu | wb | Web framework |
-| [waibu-bootstrap](https://github.com/ardhi/waibu-bootstrap) | waibuBootstrap | wbbs | Bootstrap support for Waibu |
-| [waibu-bootswatch](https://github.com/ardhi/waibu-bootswatch) | waibuBootswatch | wbbw | Bootswatch support for Waibu |
+| [waibu-bootstrap](https://github.com/ardhi/waibu-bootstrap) | waibuBootstrap | wbbs | Bootstrap support for Waibu MPA |
+| [waibu-bootstrap-icons](https://github.com/ardhi/waibu-bootstrap-icons) | waibuBootstrapIcons | wbbsi | Bootstrap Icons support for Waibu MPA |
+| [waibu-bootswatch](https://github.com/ardhi/waibu-bootswatch) | waibuBootswatch | wbbw | Bootswatch support for Waibu MPA |
+| [waibu-feather](https://github.com/ardhi/waibu-feather) | waibuFeather | wbft | Feather icons support for Waibu MPA |
 | [waibu-fontawesome](https://github.com/ardhi/waibu-fontawesome) | waibuFontawesome | wbfa | Fontawesome support for Waibu MPA |
 | [waibu-extra](https://github.com/ardhi/waibu-extra) | waibuExtra | wbxtra | Most used 3rd party libs for Waibu MPA |
+| [waibu-mdi](https://github.com/ardhi/waibu-mdi) | waibuMdi | wbmdi | Material Design Icons (MDI) support for Waibu MPA |
 | [waibu-mpa](https://github.com/ardhi/waibu-mpa) | waibuMpa | wbmpa | Multi pages app for for Waibu |
 | [waibu-nunjucks](https://github.com/ardhi/waibu-nunjucks) | waibuNunjucks | wbnunjucks | Nunjucks support for Waibu MPA |
 | [waibu-rest-api](https://github.com/ardhi/waibu-rest-api) | waibuRestApi | wbrestapi | Rest API for Waibu |
+| [waibu-socket.io](https://github.com/ardhi/waibu-socket.io) | waibuSocketIo | wbsio | Socket.io support for Waibu |
 | [waibu-static](https://github.com/ardhi/waibu-static) | waibuStatic | wbstatic | Static asset support for Waibu |
 | [waibu-swagger](https://github.com/ardhi/waibu-swagger) | waibuSwagger | wbswagger | Rest API Documentation for Waibu REST API |
