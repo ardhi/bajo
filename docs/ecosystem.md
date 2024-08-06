@@ -48,6 +48,7 @@
 | [waibu-mdi](https://github.com/ardhi/waibu-mdi) | waibuMdi | wbmdi | Material Design Icons (MDI) support for Waibu MPA |
 | [waibu-mpa](https://github.com/ardhi/waibu-mpa) | waibuMpa | wbmpa | Multi pages app for for Waibu |
 | [waibu-nunjucks](https://github.com/ardhi/waibu-nunjucks) | waibuNunjucks | wbnunjucks | Nunjucks support for Waibu MPA |
+| [waibu-phosphor](https://github.com/ardhi/waibu-phosphor) | waibuPhosphor | wbmpp | Phosphoricons support for Waibu MPA |
 | [waibu-rest-api](https://github.com/ardhi/waibu-rest-api) | waibuRestApi | wbrestapi | Rest API for Waibu |
 | [waibu-socket.io](https://github.com/ardhi/waibu-socket.io) | waibuSocketIo | wbsio | Socket.io support for Waibu |
 | [waibu-static](https://github.com/ardhi/waibu-static) | waibuStatic | wbstatic | Static asset support for Waibu |
