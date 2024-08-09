@@ -11,7 +11,7 @@ import fs from 'fs-extra'
 async function importPkg (...pkgs) {
   const result = {}
   const notFound = []
-  let opts = { returnDefault: true, thrownNotFound: false, noCache: false }
+  let opts = { returnDefault: true, thrownNotFound: false }
   if (isPlainObject(last(pkgs))) {
     opts = defaultsDeep(pkgs.pop(), opts)
   }

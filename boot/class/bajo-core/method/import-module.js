@@ -3,7 +3,7 @@ import getPluginFile from './get-plugin-file.js'
 import { isFunction, isPlainObject } from 'lodash-es'
 import fs from 'fs-extra'
 
-async function load (file, asDefaultImport = true, noCache = true) {
+async function load (file, asDefaultImport = true, noCache = false) {
   file = resolvePath(file, true)
   if (noCache) file += `?_=${Date.now()}`
   const imported = await import(file)
