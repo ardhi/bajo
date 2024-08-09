@@ -1,5 +1,5 @@
 import { mergeWith, isArray } from 'lodash-es'
-// taken from https://github.com/nodeutils/defaults-deep/blob/master/lib/index.js
+// based on https://github.com/nodeutils/defaults-deep/blob/master/lib/index.js
 
 const defaultsDeep = (...args) => {
   const output = {}
