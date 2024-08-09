@@ -4,6 +4,7 @@
 
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
+| [bajo-cache](https://github.com/ardhi/bajo-cache) | bajoCache | cache | General cache service for all bajo plugins |
 | [bajo-config](https://github.com/ardhi/bajo-config) | bajoConfig | cfg | Add YAML & TOML support in config |
 | [bajo-common-db](https://github.com/ardhi/bajo-common-db) | bajoCommonDb | cdb | Common database |
 | [bajo-cli](https://github.com/ardhi/bajo-cli) | bajoCli | cli | Command line support & tools |
