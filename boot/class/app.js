@@ -4,9 +4,8 @@ import BajoCore from './bajo-core.js'
 import resolvePath from './bajo-core/method/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
-import buildBaseConfig from './bajo-core/helper/build-base-config.js'
 import buildPlugins from './bajo-core/helper/build-plugins.js'
-import buildConfig from './bajo-core/helper/build-config.js'
+import { buildBaseConfig, buildExtConfig } from './bajo-core/helper/build-config.js'
 import collectConfigHandlers from './bajo-core/helper/collect-config-handlers.js'
 import attachMethod from './bajo-core/helper/attach-method.js'
 import bootOrder from './bajo-core/helper/boot-order.js'
@@ -54,7 +53,7 @@ class App {
     await buildBaseConfig.call(bajo)
     await buildPlugins.call(bajo)
     await collectConfigHandlers.call(bajo)
-    await buildConfig.call(bajo)
+    await buildExtConfig.call(bajo)
     await attachMethod.call(bajo)
     await bootOrder.call(bajo)
     await bootPlugins.call(bajo)
