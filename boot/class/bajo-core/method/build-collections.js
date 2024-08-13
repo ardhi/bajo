@@ -1,4 +1,4 @@
-import { filter, isArray, each, pullAt, camelCase, has, find, set, get } from 'lodash-es'
+import { filter, isArray, pullAt, camelCase, has, find, set, get, isFunction } from 'lodash-es'
 
 async function buildCollections (options = {}) {
   const { runHook, join } = this.app.bajo
@@ -9,7 +9,7 @@ async function buildCollections (options = {}) {
   let items = get(cfg, container, [])
   if (!isArray(items)) items = [items]
   this.app[ns].log.trace('Collecting %s', this.app[ns].print.write(container))
-  await runHook(`${ns}:${camelCase(`before build ${container}`)}`)
+  await runHook(`${ns}:${camelCase('beforeBuildCollection')}`, container)
   const deleted = []
   for (const index in items) {
     const item = items[index]
@@ -28,14 +28,17 @@ async function buildCollections (options = {}) {
   if (deleted.length > 0) pullAt(items, deleted)
 
   // check for duplicity
-  each(items, c => {
-    each(dupChecks, d => {
-      const checker = set({}, d, c[d])
-      const match = filter(items, checker)
-      if (match.length > 1) this.app[ns].fatal('One or more %s shared the same \'%s\'', container, join(dupChecks))
-    })
-  })
-  await runHook(`${ns}:${camelCase(`after build ${container}`)}`)
+  for (const c of items) {
+    for (const d of dupChecks) {
+      if (isFunction(d)) await d.call(this.app[ns], c, items)
+      else {
+        const checker = set({}, d, c[d])
+        const match = filter(items, checker)
+        if (match.length > 1) this.app[ns].fatal('One or more %s shared the same \'%s\'', container, join(dupChecks.filter(i => !isFunction(i))))
+      }
+    }
+  }
+  await runHook(`${ns}:${camelCase('afterBuildCollection')}`, container)
   this.app[ns].log.debug('%s collected: %d', this.app[ns].print.write(container), items.length)
   return items
 }

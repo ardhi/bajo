@@ -6,7 +6,7 @@ import BajoPlugin from '../../bajo-plugin.js'
 async function buildPlugins () {
   let pluginPkgs = this.config.plugins ?? []
   if (isString(pluginPkgs)) pluginPkgs = [pluginPkgs]
-  const pluginsFile = `${this.config.dir.data}/config/.plugins`
+  const pluginsFile = `${this.dir.data}/config/.plugins`
   if (fs.existsSync(pluginsFile)) {
     pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
   }
@@ -14,7 +14,7 @@ async function buildPlugins () {
   this.pluginPkgs.push(this.mainNs)
   for (const pkg of this.pluginPkgs) {
     const ns = camelCase(pkg)
-    const dir = ns === this.mainNs ? (`${this.config.dir.base}/${this.mainNs}`) : getModuleDir.call(this, pkg)
+    const dir = ns === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir.call(this, pkg)
     if (ns !== this.mainNs && !fs.existsSync(`${dir}/${this.name}`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
     const plugin = new BajoPlugin(pkg, this.app)
     this.app.addPlugin(plugin)

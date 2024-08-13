@@ -12,7 +12,7 @@ async function collectHooks () {
     if (!mod) return undefined
     merge(mod, { ns: fullNs, path, src: ns })
     me.bajo.hooks.push(mod)
-  }, { glob: 'hook/**/*.js', baseNs: me.bajo.name })
+  }, { glob: 'hook/**/*.js', prefix: me.bajo.name })
   // for log trace purpose only
   if (!isLogInRange('trace')) return
   const items = groupBy(me.bajo.hooks, 'ns')

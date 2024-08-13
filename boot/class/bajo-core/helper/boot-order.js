@@ -13,7 +13,7 @@ async function bootOrder () {
   const norder = {}
   for (let n of this.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
-    const dir = n === this.mainNs ? (`${this.config.dir.base}/${this.mainNs}`) : getModuleDir(n)
+    const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir(n)
     if (n !== this.mainNs && !fs.existsSync(`${dir}/bajo`)) throw this.error('Package \'%s\' not found or isn\'t a valid Bajo package', n)
     norder[n] = NaN
     try {

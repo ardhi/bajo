@@ -6,7 +6,7 @@ async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }
   const result = {}
   const pluginPkgs = cloneDeep(this.app.bajo.pluginPkgs) ?? []
-  const { glob, useBajo, baseNs = '', returnItems } = options
+  const { glob, useBajo, prefix = '', returnItems } = options
   if (useBajo) pluginPkgs.unshift('bajo')
   for (const pkgName of pluginPkgs) {
     const ns = camelCase(pkgName)
@@ -14,7 +14,7 @@ async function eachPlugins (handler, options = {}) {
     const alias = this.app[ns].alias
     let r
     if (glob) {
-      const base = baseNs === '' ? config.dir.pkg : `${config.dir.pkg}/${baseNs}`
+      const base = prefix === '' ? this.app[ns].dir.pkg : `${this.app[ns].dir.pkg}/${prefix}`
       let opts = isString(glob) ? { pattern: [glob] } : glob
       let pattern = opts.pattern ?? []
       if (isString(pattern)) pattern = [pattern]
@@ -34,7 +34,7 @@ async function eachPlugins (handler, options = {}) {
         }
       }
     } else {
-      r = await handler.call(this.app[ns], { ns, pkgName, config, dir: config.dir.pkg, alias })
+      r = await handler.call(this.app[ns], { ns, pkgName, config, dir: this.app[ns].dir.pkg, alias })
       if (r === false) break
       else if (r === undefined) continue
       else result[ns] = r

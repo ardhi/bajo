@@ -2,7 +2,7 @@ async function runAsApplet () {
   const { isString, map, find } = this.lib._
   await this.eachPlugins(async function ({ file, ns, alias }) {
     this.app.bajo.applets.push({ ns, file, alias })
-  }, { glob: 'applet.js', baseNs: 'bajoCli' })
+  }, { glob: 'applet.js', prefix: 'bajoCli' })
 
   this.log.debug('Applet mode activated')
   this.print.info('App is running as applet...')

@@ -1,10 +1,10 @@
 import { reduce, map, trim, keys, intersection, each, camelCase, get } from 'lodash-es'
 import semver from 'semver'
 
-async function runner ({ ns, pkgName, config }) {
+async function runner ({ ns, pkgName }) {
   const { join } = this.app.bajo
   this.app.bajo.log.trace('- %s', ns)
-  const odep = reduce(config.dependencies, (o, k) => {
+  const odep = reduce(this.dependencies, (o, k) => {
     const item = map(k.split('@'), m => trim(m))
     o[item[0]] = item[1]
     return o

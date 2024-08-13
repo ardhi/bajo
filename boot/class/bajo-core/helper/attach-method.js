@@ -24,7 +24,7 @@ export default async function () {
   this.lib.sprintf = sprintf
   this.lib.outmatch = outmatch
   // last cleanup
-  if (!fs.existsSync(this.config.dir.data)) {
-    this.log.warn('Data directory \'%s\' doesn\'t exists!', this.config.dir.data)
+  if (!fs.existsSync(this.dir.data)) {
+    this.log.warn('Data directory \'%s\' doesn\'t exists!', this.dir.data)
   }
 }

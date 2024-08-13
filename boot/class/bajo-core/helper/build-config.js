@@ -14,7 +14,6 @@ import { map, pick, values, keys, set, get } from 'lodash-es'
 const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 
 const defConfig = {
-  dir: {},
   log: {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
     applet: false,
@@ -28,23 +27,23 @@ export async function buildBaseConfig () {
   this.applet = this.app.argv._.applet
   this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
   this.alias = this.name
-  set(this, 'config.dir.base', this.app.cwd)
+  set(this, 'dir.base', this.app.cwd)
   const path = currentLoc(import.meta).dir + '/../../../..'
-  set(this, 'config.dir.pkg', resolvePath(path))
-  if (!get(this, 'config.dir.data')) set(this, 'config.dir.data', `${this.config.dir.base}/data`)
-  this.config.dir.data = resolvePath(this.config.dir.data)
-  if (!this.config.dir.tmp) {
-    this.config.dir.tmp = `${resolvePath(os.tmpdir())}/${this.name}`
-    fs.ensureDirSync(this.config.dir.tmp)
+  set(this, 'dir.pkg', resolvePath(path))
+  if (!get(this, 'dir.data')) set(this, 'dir.data', `${this.dir.base}/data`)
+  this.dir.data = resolvePath(this.dir.data)
+  if (!this.dir.tmp) {
+    this.dir.tmp = `${resolvePath(os.tmpdir())}/${this.name}`
+    fs.ensureDirSync(this.dir.tmp)
   }
   this.app.addPlugin(this)
 }
 
 export async function buildExtConfig () {
   // config merging
-  let resp = await readAllConfigs.call(this.app, `${this.config.dir.data}/config/${this.name}`)
+  let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler']), omitted)
-  this.config = defaultsDeep({}, this.config, resp, defConfig)
+  this.config = defaultsDeep({}, resp, defConfig)
   this.config.env = (this.config.env ?? 'dev').toLowerCase()
   if (values(envs).includes(this.config.env)) this.config.env = getKeyByValue(envs, this.config.env)
   if (!keys(envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${join(keys(envs))}`)

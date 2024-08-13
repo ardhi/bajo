@@ -24,11 +24,10 @@
 
 | Package | Name | Alias | Description |
 | ------- | ---- | ----- | ----------- |
-| [dobo](https://github.com/ardhi/dobo) | dobo | db | DBMS |
+| [dobo](https://github.com/ardhi/dobo) | dobo | db | DBMS with built-in memory database |
 | [dobo-couchdb](https://github.com/ardhi/dobo-couchdb) | doboCouchdb | dbcdb | CouchDB driver |
 | [dobo-elasticsearch](https://github.com/ardhi/dobo-elasticsearch) | doboElasticsearch | dbes | Elasticsearch driver |
 | [dobo-knex](https://github.com/ardhi/dobo-knex) | doboKnex | dbknex | Knex driver |
-| [dobo-memory](https://github.com/ardhi/dobo-memory) | doboMemory | dbmem | Memory storage driver |
 | [dobo-mongodb](https://github.com/ardhi/dobo-mongodb) | doboMongodb | dbmongo | MongoDB driver |
 | [dobo-restproxy](https://github.com/ardhi/dobo-restproxy) | doboRestproxy | dbrpx | Restproxy driver |
 | [dobo-restproxy-jsonserver](https://github.com/ardhi/dobo-restproxy-jsonserver) | doboRestproxyJsonserver | dbrpxjs | JsonServer support for doboRestproxy |
