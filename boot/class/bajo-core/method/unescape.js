@@ -1,11 +1,7 @@
-import { forOwn } from 'lodash-es'
+import { forOwn, invert } from 'lodash-es'
+import escapeChars from './escape-chars.js'
 
-const mapping = {
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&apos;': "'"
-}
+const mapping = invert(escapeChars)
 
 function unescape (text) {
   forOwn(mapping, (v, k) => {
