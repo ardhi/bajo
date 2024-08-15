@@ -1,8 +1,9 @@
-import { isPlainObject, isArray, isNumber, set, cloneDeep } from 'lodash-es'
+import { isPlainObject, isArray, isNumber, set, cloneDeep, isString, omit } from 'lodash-es'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
 import dayjs from '../../../lib/dayjs.js'
 import isSet from './is-set.js'
+import translate from '../../../lib/translate.js'
 
 const statics = ['*']
 
@@ -16,10 +17,11 @@ function parseDt (val) {
   return dt.toDate()
 }
 
-function parseObject (input, silent = true, parseValue = false) {
-  const obj = cloneDeep(input)
+function parseObject (input, { silent = true, parseValue = false, i18n, plugin } = {}) {
+  let obj = cloneDeep(input)
   const keys = Object.keys(obj)
   const me = this
+  const translated = []
   keys.forEach(k => {
     const v = obj[k]
     if (isPlainObject(v)) obj[k] = parseObject(v)
@@ -33,7 +35,16 @@ function parseObject (input, silent = true, parseValue = false) {
     } else if (isSet(v)) {
       try {
         if (statics.includes(v)) obj[k] = v
-        else if (parseValue) {
+        else if (i18n && k.startsWith('t:') && isString(v)) {
+          const scope = plugin ?? me
+          let [text, ...args] = v.split('|')
+          args = args.map(a => {
+            if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
+            return a
+          })
+          obj[k.slice(2)] = translate.call(scope, i18n, text, ...args)
+          translated.push(k)
+        } else if (parseValue) {
           obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
           if (isArray(obj[k])) obj[k] = obj[k].map(item => typeof item === 'string' ? item.trim() : item)
         }
@@ -45,6 +56,7 @@ function parseObject (input, silent = true, parseValue = false) {
       }
     }
   })
+  if (translated.length > 0) obj = omit(obj, translated)
   return obj
 }
 
