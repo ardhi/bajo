@@ -42,8 +42,8 @@ export async function buildBaseConfig () {
 export async function buildExtConfig () {
   // config merging
   let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
-  resp = omitDeep(pick(resp, ['log', 'exitHandler']), omitted)
-  this.config = defaultsDeep({}, resp, defConfig)
+  resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
+  this.config = defaultsDeep({}, resp, this.config, defConfig)
   this.config.env = (this.config.env ?? 'dev').toLowerCase()
   if (values(envs).includes(this.config.env)) this.config.env = getKeyByValue(envs, this.config.env)
   if (!keys(envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${join(keys(envs))}`)
