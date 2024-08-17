@@ -16,7 +16,7 @@ async function importPkg (...pkgs) {
     opts = defaultsDeep(pkgs.pop(), opts)
   }
   for (const pkg of pkgs) {
-    const [ns, name] = breakNsPath.call(this, pkg)
+    const { ns, path: name } = breakNsPath.call(this, pkg)
     const dir = getModuleDir.call(this, name, ns)
     if (!dir) {
       notFound.push(pkg)

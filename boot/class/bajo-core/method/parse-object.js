@@ -21,7 +21,7 @@ function parseObject (input, { silent = true, parseValue = false, i18n, plugin }
   let obj = cloneDeep(input)
   const keys = Object.keys(obj)
   const me = this
-  const translated = []
+  const mutated = []
   keys.forEach(k => {
     const v = obj[k]
     if (isPlainObject(v)) obj[k] = parseObject(v)
@@ -35,15 +35,18 @@ function parseObject (input, { silent = true, parseValue = false, i18n, plugin }
     } else if (isSet(v)) {
       try {
         if (statics.includes(v)) obj[k] = v
-        else if (i18n && k.startsWith('t:') && isString(v)) {
-          const scope = plugin ?? me
-          let [text, ...args] = v.split('|')
-          args = args.map(a => {
-            if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
-            return a
-          })
-          obj[k.slice(2)] = translate.call(scope, i18n, text, ...args)
-          translated.push(k)
+        else if (k.startsWith('t:') && isString(v)) {
+          const newK = k.slice(2)
+          if (i18n) {
+            const scope = plugin ?? me
+            let [text, ...args] = v.split('|')
+            args = args.map(a => {
+              if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
+              return a
+            })
+            obj[newK] = translate.call(scope, i18n, text, ...args)
+          } else obj[newK] = v
+          mutated.push(k)
         } else if (parseValue) {
           obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
           if (isArray(obj[k])) obj[k] = obj[k].map(item => typeof item === 'string' ? item.trim() : item)
@@ -56,7 +59,7 @@ function parseObject (input, { silent = true, parseValue = false, i18n, plugin }
       }
     }
   })
-  if (translated.length > 0) obj = omit(obj, translated)
+  if (mutated.length > 0) obj = omit(obj, mutated)
   return obj
 }
 

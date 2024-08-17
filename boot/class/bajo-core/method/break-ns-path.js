@@ -1,10 +1,11 @@
 import { isEmpty } from 'lodash-es'
+import querystring from 'querystring'
 
 function breakNsPath (item = '', defaultNs = 'bajo') {
   let [ns, ...path] = item.split(':')
   let subNs
   path = path.join(':')
-  if (path.startsWith('//')) return [undefined, item]
+  if (path.startsWith('//')) return { ns: undefined, path: item } // for: http:// etc
   if (isEmpty(path)) {
     path = ns
     ns = defaultNs
@@ -15,7 +16,10 @@ function breakNsPath (item = '', defaultNs = 'bajo') {
     if (plugin) ns = plugin.name
   }
   if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
-  return [ns, path, subNs]
+  let qs
+  [path, qs] = path.split('?')
+  qs = querystring.parse(qs) ?? {}
+  return { ns, path, subNs, qs }
 }
 
 export default breakNsPath
