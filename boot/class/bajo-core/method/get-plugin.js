@@ -1,6 +1,6 @@
 import BajoPlugin from '../../bajo-plugin.js'
 
-function getPlugin (name) {
+function getPlugin (name, silent) {
   if (!this.app[name]) {
     // alias?
     let plugin
@@ -11,7 +11,10 @@ function getPlugin (name) {
         break
       }
     }
-    if (!plugin) throw this.error('Plugin with alias \'%s\' is not loaded', name)
+    if (!plugin) {
+      if (silent) return false
+      throw this.error('Plugin with alias \'%s\' is not loaded', name)
+    }
     name = plugin.name
   }
   return this.app[name]
