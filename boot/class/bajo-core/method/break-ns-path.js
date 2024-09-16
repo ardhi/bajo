@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash-es'
 import querystring from 'querystring'
 
-function breakNsPath (item = '', defaultNs = 'bajo') {
+function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
   let [ns, ...path] = item.split(':')
   let subNs
   path = path.join(':')
@@ -11,11 +11,13 @@ function breakNsPath (item = '', defaultNs = 'bajo') {
     ns = defaultNs
   }
   [ns, subNs] = ns.split('.')
-  if (!this.app[ns]) {
-    const plugin = this.getPlugin(ns)
-    if (plugin) ns = plugin.name
+  if (checkNs) {
+    if (!this.app[ns]) {
+      const plugin = this.getPlugin(ns)
+      if (plugin) ns = plugin.name
+    }
+    if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
   }
-  if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
   let qs
   [path, qs] = path.split('?')
   qs = querystring.parse(qs) ?? {}
