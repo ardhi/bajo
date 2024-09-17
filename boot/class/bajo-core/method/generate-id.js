@@ -5,6 +5,9 @@ const generateId = (options = {}) => {
   if (options === 'int') {
     type = options
     options = { pattern: '0123456789', length: 15 }
+  } else if (options === 'alpha') {
+    type = options
+    options = { pattern: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', length: 15 }
   }
   let { pattern, length = 13, returnInstance } = options
   pattern = pattern ?? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
