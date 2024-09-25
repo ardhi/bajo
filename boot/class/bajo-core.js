@@ -5,9 +5,9 @@ import readJson from './bajo-core/method/read-json.js'
 
 import { isFunction } from 'lodash-es'
 
-async function defConfigHandler (file) {
+async function defConfigHandler (file, opts) {
   let mod = await importModule(file)
-  if (isFunction(mod)) mod = await mod.call(this)
+  if (isFunction(mod)) mod = await mod.call(this, opts)
   return mod
 }
 

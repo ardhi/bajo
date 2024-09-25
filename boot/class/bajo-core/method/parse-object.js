@@ -17,7 +17,7 @@ function parseDt (val) {
   return dt.toDate()
 }
 
-function parseObject (input, { silent = true, parseValue = false, i18n, plugin } = {}) {
+function parseObject (input, { silent = true, parseValue = false, i18n, ns } = {}) {
   let obj = cloneDeep(input)
   const keys = Object.keys(obj)
   const me = this
@@ -38,7 +38,7 @@ function parseObject (input, { silent = true, parseValue = false, i18n, plugin }
         else if (k.startsWith('t:') && isString(v)) {
           const newK = k.slice(2)
           if (i18n) {
-            const scope = plugin ?? me
+            const scope = ns ? me.app[ns] : me
             let [text, ...args] = v.split('|')
             args = args.map(a => {
               if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))

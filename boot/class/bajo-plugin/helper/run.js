@@ -8,7 +8,9 @@ async function run () {
   for (const method of methods) {
     await runHook(`bajo:${camelCase(`before ${method} all plugins`)}`)
     await eachPlugins(async function ({ ns }) {
+      await runHook(`${ns}:${camelCase(`before ${method}`)}`)
       await me[ns][method]()
+      await runHook(`${ns}:${camelCase(`after ${method}`)}`)
     })
     await runHook(`bajo:${camelCase(`after ${method} all plugins`)}`)
   }

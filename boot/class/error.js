@@ -49,7 +49,8 @@ class BajoError {
       value[i] = {
         field,
         error: print.write(`validation.${v.type}`, v.context),
-        value: val
+        value: val,
+        ext: { type: v.type, context: v.context }
       }
     })
     return result

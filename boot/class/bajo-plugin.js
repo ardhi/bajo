@@ -56,12 +56,12 @@ class BajoPlugin extends Plugin {
   }
 
   async init () {
-    const { freeze } = this.app.bajo
     await this._onoff('init', 'Init plugin...')
-    freeze(this.config)
   }
 
   async start (...args) {
+    const { freeze } = this.app.bajo
+    freeze(this.config)
     await this._onoff('start', 'Start plugin...', ...args)
   }
 

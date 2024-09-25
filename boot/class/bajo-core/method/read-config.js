@@ -6,7 +6,7 @@ import parseObject from './parse-object.js'
 import { find, map, isEmpty } from 'lodash-es'
 import fg from 'fast-glob'
 
-async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {} } = {}) {
+async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) {
   if (!ns) ns = this.name
   file = resolvePath(getPluginFile.call(this, file))
   let ext = path.extname(file)
@@ -14,7 +14,7 @@ async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, d
   ext = ext.toLowerCase()
   if (['.mjs', '.js'].includes(ext)) {
     const { readHandler } = find(this.app.bajo.configHandlers, { ext })
-    return parseObject(await readHandler.call(this.app[ns], file))
+    return parseObject(await readHandler.call(this.app[ns], file, opts))
   }
   if (ext === '.json') return await readJson(file)
   if (!['', '.*'].includes(ext)) {
@@ -23,7 +23,7 @@ async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, d
       if (!ignoreError) throw this.error('Can\'t parse \'%s\'', file, { code: 'BAJO_CONFIG_NO_PARSER' })
       return parseObject(defValue)
     }
-    return parseObject(await item.readHandler.call(this.app[ns], file))
+    return parseObject(await item.readHandler.call(this.app[ns], file, opts))
   }
   const item = pattern ?? `${fname}.{${map(map(this.app.bajo.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
   const files = await fg(item, globOptions)
@@ -39,7 +39,7 @@ async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, d
       if (!ignoreError) throw this.error('Can\'t parse \'%s\'', f, { code: 'BAJO_CONFIG_NO_PARSER' })
       continue
     }
-    config = await item.readHandler.call(this.app[ns], f)
+    config = await item.readHandler.call(this.app[ns], f, opts)
     if (!isEmpty(config)) break
   }
   return parseObject(config)
