@@ -34,14 +34,13 @@ class BajoError {
   }
 
   formatErrorDetails (value) {
+    const { isString } = this.plugin.app.bajo.lib._
     const result = {}
     const me = this
     each(value, (v, i) => {
       const print = me.plugin.print
-      if (!v.context) {
-        v.error = print.write(v.error)
-        return undefined
-      }
+      if (isString(v)) v = { error: v }
+      if (!v.context) return undefined
       v.context.message = v.message
       if (v.type === 'any.only') v.context.ref = print.write(`field.${get(v, 'context.valids.0.key')}`)
       const field = get(v, 'context.key')
