@@ -23,7 +23,7 @@ class BajoError {
     const values = {}
     for (const key in this.payload) {
       const value = this.payload[key]
-      if (key === 'details' && isArray(value) && this.orgMessage === 'Validation Error') {
+      if (key === 'details' && isArray(value)) {
         const result = this.formatErrorDetails(value)
         if (result) merge(values, result)
       }
