@@ -1,6 +1,6 @@
 import createMethod from '../../../lib/create-method.js'
 import deepFreeze from 'deep-freeze-strict'
-import currentLoc from '../method/current-loc.js'
+import currentLoc from '../../../lib/current-loc.js'
 import fs from 'fs-extra'
 import fastGlob from 'fast-glob'
 import { sprintf } from 'sprintf-js'

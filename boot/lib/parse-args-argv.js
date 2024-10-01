@@ -7,7 +7,7 @@ import importModule from '../class/bajo-core/method/import-module.js'
 import { find, each, set, camelCase, forOwn } from 'lodash-es'
 import fs from 'fs-extra'
 import path from 'path'
-import currentLoc from '../class/bajo-core/method/current-loc.js'
+import currentLoc from './current-loc.js'
 
 const parseItem = (data, delimiter) => {
   return unflatten(data, {

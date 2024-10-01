@@ -1,5 +1,5 @@
 import path from 'path'
-import resolvePath from './resolve-path.js'
+import resolvePath from '../class/bajo-core/method/resolve-path.js'
 import { fileURLToPath } from 'url'
 
 const currentLoc = (meta) => {
