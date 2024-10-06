@@ -6,7 +6,7 @@ async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }
   const result = {}
   const pluginPkgs = cloneDeep(this.app.bajo.pluginPkgs) ?? []
-  const { glob, useBajo, prefix = '', returnItems } = options
+  const { glob, useBajo, prefix = '', noUnderscore = true, returnItems } = options
   if (useBajo) pluginPkgs.unshift('bajo')
   for (const pkgName of pluginPkgs) {
     const ns = camelCase(pkgName)
@@ -24,7 +24,7 @@ async function eachPlugins (handler, options = {}) {
       }
       const files = await fastGlob(pattern, opts)
       for (const f of files) {
-        if (path.basename(f)[0] === '_') continue
+        if (path.basename(f)[0] === '_' && noUnderscore) continue
         const resp = await handler.call(this.app[ns], { ns, pkgName, config, alias, file: f, dir: base })
         if (resp === false) break
         else if (resp === undefined) continue
