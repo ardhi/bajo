@@ -30,9 +30,8 @@ class BajoPlugin extends Plugin {
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
     if (this.name === this.app.bajo.mainNs) {
       this.alias = this.app.bajo.mainNs
-      this.title = 'Main App'
+      this.title = 'Main'
     }
-    this.title = this.title ?? cfg.title ?? titleize(this.name)
     // merge with config from datadir
     try {
       const altCfg = await readAllConfigs.call(this.app, `${this.app.bajo.dir.data}/config/${this.name}`)
@@ -40,10 +39,11 @@ class BajoPlugin extends Plugin {
     } catch (err) {}
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
+    cfg.prefix = trim(cfg.prefix ?? this.alias, '/')
+    this.title = this.title ?? cfg.title ?? titleize(cfg.prefix)
     this.dependencies = cfg.dependencies ?? []
     if (isString(this.dependencies)) this.dependencies = [this.dependencies]
     this.config = omit(cfg, ['title', 'dependencies'])
-    this.config.prefix = trim(this.config.prefix ?? this.alias, '/')
   }
 
   async _onoff (item, text, ...args) {
