@@ -1,8 +1,9 @@
 import Plugin from './plugin.js'
-import { pick, isString, omit, isEmpty } from 'lodash-es'
+import { trim, pick, isString, omit } from 'lodash-es'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import titleize from './bajo-core/method/titleize.js'
 import readAllConfigs from '../lib/read-all-configs.js'
+import fs from 'fs-extra'
 
 class BajoPlugin extends Plugin {
   constructor (pkgName, app) {
@@ -15,6 +16,10 @@ class BajoPlugin extends Plugin {
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs.call(this.app, `${dir}/bajo/config`)
+    this.alias = this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase()
+    const aliasFile = `${dir}/bajo/.alias`
+    if (fs.existsSync(aliasFile)) this.alias = fs.readFileSync(aliasFile, 'utf8')
+
     this.dir = {
       pkg: dir,
       data: `${this.app.bajo.dir.data}/plugins/${this.name}`
@@ -26,9 +31,8 @@ class BajoPlugin extends Plugin {
     if (this.name === this.app.bajo.mainNs) {
       this.alias = this.app.bajo.mainNs
       this.title = 'Main App'
-    } else if (isEmpty(cfg.alias)) this.alias = this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name
-    this.title = this.title ?? cfg.title ?? titleize(this.alias)
-    this.alias = this.alias ?? cfg.alias
+    }
+    this.title = this.title ?? cfg.title ?? titleize(this.name)
     // merge with config from datadir
     try {
       const altCfg = await readAllConfigs.call(this.app, `${this.app.bajo.dir.data}/config/${this.name}`)
@@ -38,7 +42,8 @@ class BajoPlugin extends Plugin {
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
     this.dependencies = cfg.dependencies ?? []
     if (isString(this.dependencies)) this.dependencies = [this.dependencies]
-    this.config = omit(cfg, ['alias', 'title', 'dependencies'])
+    this.config = omit(cfg, ['title', 'dependencies'])
+    this.config.prefix = trim(this.config.prefix ?? this.alias, '/')
   }
 
   async _onoff (item, text, ...args) {
