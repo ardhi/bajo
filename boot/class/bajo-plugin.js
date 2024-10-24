@@ -1,8 +1,8 @@
 import Plugin from './plugin.js'
-import { trim, pick, isString, omit } from 'lodash-es'
+import { pick, isString, omit } from 'lodash-es'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
-import titleize from './bajo-core/method/titleize.js'
 import readAllConfigs from '../lib/read-all-configs.js'
+import titleize from './bajo-core/method/titleize.js'
 import fs from 'fs-extra'
 
 class BajoPlugin extends Plugin {
@@ -39,8 +39,7 @@ class BajoPlugin extends Plugin {
     } catch (err) {}
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
-    cfg.prefix = trim(cfg.prefix ?? this.alias, '/')
-    this.title = this.title ?? cfg.title ?? titleize(cfg.prefix)
+    this.title = this.title ?? cfg.title ?? titleize(this.alias)
     this.dependencies = cfg.dependencies ?? []
     if (isString(this.dependencies)) this.dependencies = [this.dependencies]
     this.config = omit(cfg, ['title', 'dependencies'])

@@ -27,7 +27,6 @@ export async function buildBaseConfig () {
   this.applet = this.app.argv._.applet
   this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
   this.alias = this.name
-  this.config.prefix = this.alias
   set(this, 'dir.base', this.app.cwd)
   const path = currentLoc(import.meta).dir + '/../../../..'
   set(this, 'dir.pkg', resolvePath(path))
