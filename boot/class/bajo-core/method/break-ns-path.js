@@ -4,13 +4,14 @@ import querystring from 'querystring'
 function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
   let [ns, ...path] = item.split(':')
   let subNs
+  let subSubNs
   path = path.join(':')
   if (path.startsWith('//')) return { ns: undefined, path: item } // for: http:// etc
   if (isEmpty(path)) {
     path = ns
     ns = defaultNs
   }
-  [ns, subNs] = ns.split('.')
+  [ns, subNs, subSubNs] = ns.split('.')
   if (checkNs) {
     if (!this.app[ns]) {
       const plugin = this.getPlugin(ns)
@@ -21,7 +22,7 @@ function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
   let qs
   [path, qs] = path.split('?')
   qs = querystring.parse(qs) ?? {}
-  return { ns, path, subNs, qs }
+  return { ns, path, subNs, subSubNs, qs }
 }
 
 export default breakNsPath
