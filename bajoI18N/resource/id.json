@@ -22,6 +22,8 @@
   "Unknown method '%s'": "Metode '%s' tidak dikenal",
   "and": "dan",
   "or": "atau",
+  "Yes": "Ya",
+  "No": "Tidak",
   "[%s] Exited": "[%s] Telah keluar",
   "[%s] App shutdown": "[%s] Aplikasi dimatikan",
   "[%s] Collect %s": "",
