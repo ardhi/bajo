@@ -2,7 +2,7 @@ import { filter, isArray, pullAt, camelCase, has, find, set, get, isFunction } f
 
 async function buildCollections (options = {}) {
   const { runHook, join } = this.app.bajo
-  let { ns, handler, dupChecks = [], container = 'connections', useDefaultName } = options
+  let { ns, handler, dupChecks = [], container, useDefaultName } = options
   useDefaultName = useDefaultName ?? true
   if (!ns) ns = this.name
   const cfg = this.app[ns].getConfig()

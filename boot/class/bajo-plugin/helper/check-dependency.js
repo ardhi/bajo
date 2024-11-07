@@ -6,7 +6,8 @@ async function runner ({ ns, pkgName }) {
   this.app.bajo.log.trace('- %s', ns)
   const odep = reduce(this.dependencies, (o, k) => {
     const item = map(k.split('@'), m => trim(m))
-    o[item[0]] = item[1]
+    if (k[0] === '@') o['@' + item[1]] = item[2]
+    else o[item[0]] = item[1]
     return o
   }, {})
   const deps = keys(odep)
