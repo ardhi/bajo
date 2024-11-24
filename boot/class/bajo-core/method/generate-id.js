@@ -2,6 +2,7 @@ import { customAlphabet } from 'nanoid'
 
 const generateId = (options = {}) => {
   let type
+  if (options === true) options = 'alpha'
   if (options === 'int') {
     type = options
     options = { pattern: '0123456789', length: 15 }

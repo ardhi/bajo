@@ -19,10 +19,11 @@ function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
     }
     if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
   }
+  const fullPath = path
   let qs
   [path, qs] = path.split('?')
   qs = querystring.parse(qs) ?? {}
-  return { ns, path, subNs, subSubNs, qs }
+  return { ns, path, subNs, subSubNs, qs, fullPath }
 }
 
 export default breakNsPath

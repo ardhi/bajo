@@ -1,5 +1,5 @@
 import Plugin from './plugin.js'
-import { pick, isString, omit } from 'lodash-es'
+import { pick, isString, omit, camelCase } from 'lodash-es'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import readAllConfigs from '../lib/read-all-configs.js'
 import titleize from './bajo-core/method/titleize.js'
@@ -19,6 +19,7 @@ class BajoPlugin extends Plugin {
     this.alias = this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase()
     const aliasFile = `${dir}/bajo/.alias`
     if (fs.existsSync(aliasFile)) this.alias = fs.readFileSync(aliasFile, 'utf8')
+    this.alias = camelCase(this.alias)
 
     this.dir = {
       pkg: dir,
