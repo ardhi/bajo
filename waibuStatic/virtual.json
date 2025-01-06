@@ -1,4 +1,7 @@
 [{
   "prefix": "lodash",
-  "root": "node_modules/lodash"
+  "root": "lodash:"
+}, {
+  "prefix": "dayjs",
+  "root": "dayjs:"
 }]
