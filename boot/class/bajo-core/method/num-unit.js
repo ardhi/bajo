@@ -1,4 +1,6 @@
-import { isEmpty } from 'lodash-es'
+import lodash from 'lodash'
+
+const { isEmpty } = lodash
 
 function numUnit (value = '', defUnit = '') {
   const num = value.match(/\d+/g)

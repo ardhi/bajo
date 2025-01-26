@@ -1,4 +1,4 @@
-import { isPlainObject, last, isEmpty, has, keys, values, get } from 'lodash-es'
+import lodash from 'lodash'
 import os from 'os'
 import getModuleDir from './get-module-dir.js'
 import resolvePath from './resolve-path.js'
@@ -7,6 +7,8 @@ import defaultsDeep from './defaults-deep.js'
 import breakNsPath from './break-ns-path.js'
 import path from 'path'
 import fs from 'fs-extra'
+
+const { isPlainObject, last, isEmpty, has, keys, values, get } = lodash
 
 async function importPkg (...pkgs) {
   const result = {}

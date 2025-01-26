@@ -1,4 +1,6 @@
-import { isEmpty, isPlainObject, orderBy, forOwn } from 'lodash-es'
+import lodash from 'lodash'
+
+const { isEmpty, isPlainObject, orderBy, forOwn } = lodash
 
 function paginate (collection, { page = 1, limit = 25, sort } = {}) {
   const count = collection.length

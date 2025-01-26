@@ -1,6 +1,8 @@
-import { camelCase, isString, omit, cloneDeep } from 'lodash-es'
+import lodash from 'lodash'
 import fastGlob from 'fast-glob'
 import path from 'path'
+
+const { camelCase, isString, omit, cloneDeep } = lodash
 
 async function eachPlugins (handler, options = {}) {
   if (typeof options === 'string') options = { glob: options }

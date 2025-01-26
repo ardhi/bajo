@@ -1,10 +1,11 @@
-import { isPlainObject, isArray, isNumber, set, cloneDeep, isString, omit } from 'lodash-es'
+import lodash from 'lodash'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
 import dayjs from '../../../lib/dayjs.js'
 import isSet from './is-set.js'
 import translate from '../../../lib/translate.js'
 
+const { isPlainObject, isArray, isNumber, set, cloneDeep, isString, omit } = lodash
 const statics = ['*']
 
 function parseDur (val) {

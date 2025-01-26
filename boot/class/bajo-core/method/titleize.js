@@ -1,6 +1,7 @@
-import { words, upperFirst, map, concat, uniq, forOwn } from 'lodash-es'
+import lodash from 'lodash'
 import generateId from './generate-id.js'
 
+const { words, upperFirst, map, concat, uniq, forOwn } = lodash
 const defIgnores = ['or', 'and', 'of', 'with']
 
 const titleize = (text, { ignores = [], replacement = {} } = {}) => {

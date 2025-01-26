@@ -1,8 +1,10 @@
-import { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } from 'lodash-es'
+import lodash from 'lodash'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import Log from './log.js'
 import Print from './print.js'
 import BajoError from './error.js'
+
+const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
 class Plugin {
   constructor (pkgName, app) {

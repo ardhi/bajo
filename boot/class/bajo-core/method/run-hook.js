@@ -1,4 +1,6 @@
-import { filter, isEmpty, orderBy, pullAt } from 'lodash-es'
+import lodash from 'lodash'
+
+const { filter, isEmpty, orderBy, pullAt } = lodash
 
 async function runHook (hookName, ...args) {
   const [ns, path] = (hookName ?? '').split(':')

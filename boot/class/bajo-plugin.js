@@ -1,9 +1,11 @@
 import Plugin from './plugin.js'
-import { pick, isString, omit, camelCase } from 'lodash-es'
+import lodash from 'lodash'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import readAllConfigs from '../lib/read-all-configs.js'
 import titleize from './bajo-core/method/titleize.js'
 import fs from 'fs-extra'
+
+const { pick, omit, camelCase, trim, without } = lodash
 
 class BajoPlugin extends Plugin {
   constructor (pkgName, app) {
@@ -41,15 +43,16 @@ class BajoPlugin extends Plugin {
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
     this.title = this.title ?? cfg.title ?? titleize(this.alias)
-    this.dependencies = cfg.dependencies ?? []
-    if (isString(this.dependencies)) this.dependencies = [this.dependencies]
+
+    this.dependencies = []
+    const depFile = `${dir}/bajo/.dependencies`
+    if (fs.existsSync(depFile)) this.dependencies = without(fs.readFileSync(depFile, 'utf8').split('\n').map(item => trim(item)), '')
     this.config = omit(cfg, ['title', 'dependencies'])
   }
 
   async _onoff (item, text, ...args) {
     this.state[item] = false
     const { runHook, importModule } = this.app.bajo
-    const { camelCase } = this.app.bajo.lib._
     const mod = await importModule(`${this.dir.pkg}/bajo/${item}.js`)
     if (mod) {
       this.log.trace(text)

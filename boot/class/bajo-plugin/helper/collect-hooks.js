@@ -1,4 +1,6 @@
-import { merge, forOwn, groupBy } from 'lodash-es'
+import lodash from 'lodash'
+
+const { merge, forOwn, groupBy } = lodash
 
 async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo

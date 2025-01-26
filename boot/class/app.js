@@ -1,5 +1,5 @@
 import util from 'util'
-import { last } from 'lodash-es'
+import lodash from 'lodash'
 import BajoCore from './bajo-core.js'
 import resolvePath from './bajo-core/method/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
@@ -12,6 +12,8 @@ import bootOrder from './bajo-core/helper/boot-order.js'
 import bootPlugins from './bajo-core/helper/boot-plugins.js'
 import exitHandler from './bajo-core/helper/exit-handler.js'
 import runAsApplet from './bajo-core/helper/run-as-applet.js'
+
+const { last } = lodash
 
 class App {
   constructor (cwd) {

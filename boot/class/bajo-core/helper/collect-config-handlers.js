@@ -1,6 +1,7 @@
 import getModuleDir from '../method/get-module-dir.js'
 import importModule from '../method/import-module.js'
-import { isFunction, isPlainObject, camelCase } from 'lodash-es'
+import lodash from 'lodash'
+const { isFunction, isPlainObject, camelCase } = lodash
 
 async function collectConfigHandlers () {
   for (const pkg of this.pluginPkgs) {

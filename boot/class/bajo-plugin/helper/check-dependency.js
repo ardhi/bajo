@@ -1,5 +1,7 @@
-import { reduce, map, trim, keys, intersection, each, camelCase, get } from 'lodash-es'
+import lodash from 'lodash'
 import semver from 'semver'
+
+const { reduce, map, trim, keys, intersection, each, camelCase, get } = lodash
 
 async function runner ({ ns, pkgName }) {
   const { join } = this.app.bajo

@@ -1,4 +1,6 @@
-import { find } from 'lodash-es'
+import lodash from 'lodash'
+
+const { find } = lodash
 
 async function checkAlias () {
   const { eachPlugins } = this.bajo

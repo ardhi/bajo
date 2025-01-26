@@ -1,7 +1,9 @@
 import resolvePath from './resolve-path.js'
 import getPluginFile from './get-plugin-file.js'
-import { isFunction, isPlainObject } from 'lodash-es'
+import lodash from 'lodash'
 import fs from 'fs-extra'
+
+const { isFunction, isPlainObject } = lodash
 
 async function load (file, asDefaultImport = true, noCache = false) {
   file = resolvePath(file, true)

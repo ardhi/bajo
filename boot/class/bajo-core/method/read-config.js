@@ -3,8 +3,10 @@ import resolvePath from './resolve-path.js'
 import getPluginFile from './get-plugin-file.js'
 import readJson from './read-json.js'
 import parseObject from './parse-object.js'
-import { find, map, isEmpty } from 'lodash-es'
+import lodash from 'lodash'
 import fg from 'fast-glob'
+
+const { find, map, isEmpty } = lodash
 
 async function readConfig (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) {
   if (!ns) ns = this.name

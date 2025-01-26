@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import fastGlob from 'fast-glob'
 import { sprintf } from 'sprintf-js'
 import outmatch from 'outmatch'
+import lodash from 'lodash'
 
 export default async function () {
   await createMethod.call(this, `${currentLoc(import.meta).dir}/../method`)
@@ -18,7 +19,7 @@ export default async function () {
     })
   }
   // commonly used libraries
-  this.lib._ = await import('lodash-es')
+  this.lib._ = lodash
   this.lib.fs = fs
   this.lib.fastGlob = fastGlob
   this.lib.sprintf = sprintf

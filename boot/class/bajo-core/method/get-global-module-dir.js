@@ -1,7 +1,9 @@
 import getGlobalPath from 'get-global-path'
 import resolvePath from './resolve-path.js'
-import { dropRight } from 'lodash-es'
+import lodash from 'lodash'
 import fs from 'fs-extra'
+
+const { dropRight } = lodash
 
 function getGlobalModuleDir (pkgName, silent = true) {
   let nodeModulesDir = process.env.BAJO_GLOBAL_MODULE_DIR

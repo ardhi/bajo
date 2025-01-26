@@ -1,6 +1,7 @@
-import { get, isPlainObject } from 'lodash-es'
+import lodash from 'lodash'
 import Sprintf from 'sprintf-js'
 const { sprintf } = Sprintf
+const { get, isPlainObject } = lodash
 
 function translate (instance, text, ...args) {
   let ntext = text

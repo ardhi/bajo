@@ -1,7 +1,9 @@
-import { isString, filter, map, trim, without, uniq, camelCase, isEmpty } from 'lodash-es'
+import lodash from 'lodash'
 import fs from 'fs-extra'
 import getModuleDir from '../method/get-module-dir.js'
 import BajoPlugin from '../../bajo-plugin.js'
+
+const { isString, filter, map, trim, without, uniq, camelCase, isEmpty } = lodash
 
 async function buildPlugins () {
   let pluginPkgs = this.config.plugins ?? []

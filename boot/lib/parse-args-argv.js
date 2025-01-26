@@ -4,10 +4,12 @@ import { unflatten } from 'flat'
 import isSet from '../class/bajo-core/method/is-set.js'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import importModule from '../class/bajo-core/method/import-module.js'
-import { find, each, set, camelCase, forOwn } from 'lodash-es'
+import lodash from 'lodash'
 import fs from 'fs-extra'
 import path from 'path'
 import currentLoc from './current-loc.js'
+
+const { find, each, set, camelCase, forOwn } = lodash
 
 const parseItem = (data, delimiter) => {
   return unflatten(data, {

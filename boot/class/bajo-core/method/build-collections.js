@@ -1,4 +1,6 @@
-import { filter, isArray, pullAt, camelCase, has, find, set, get, isFunction } from 'lodash-es'
+import lodash from 'lodash'
+
+const { filter, isArray, pullAt, camelCase, has, find, set, get, isFunction } = lodash
 
 async function buildCollections (options = {}) {
   const { runHook, join } = this.app.bajo

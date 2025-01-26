@@ -1,9 +1,11 @@
 import os from 'os'
-import { isEmpty, without, merge, upperFirst } from 'lodash-es'
+import lodash from 'lodash'
 import levels from './bajo-core/method/log-levels.js'
 import isLogInRange from './bajo-core/method/is-log-in-range.js'
 import translate from '../lib/translate.js'
 import dayjs from 'dayjs'
+
+const { isEmpty, without, merge, upperFirst } = lodash
 
 class Log {
   constructor (plugin) {

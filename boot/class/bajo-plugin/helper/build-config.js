@@ -1,4 +1,6 @@
-import { camelCase } from 'lodash-es'
+import lodash from 'lodash'
+
+const { camelCase } = lodash
 
 async function buildConfig () {
   this.bajo.log.debug('Read configurations')

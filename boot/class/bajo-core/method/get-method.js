@@ -1,4 +1,6 @@
-import { get, isFunction } from 'lodash-es'
+import lodash from 'lodash'
+
+const { get, isFunction } = lodash
 
 function getMethod (name = '', thrown = true) {
   const { ns, path } = this.breakNsPath(name)

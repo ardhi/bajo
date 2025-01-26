@@ -1,6 +1,8 @@
 import fs from 'fs-extra'
-import { isEmpty } from 'lodash-es'
+import lodash from 'lodash'
 import parseObject from './parse-object.js'
+
+const { isEmpty } = lodash
 
 function readJson (file, thrownNotFound) {
   if (!fs.existsSync(file) && thrownNotFound) throw this.error('File \'%s\' not found', file)

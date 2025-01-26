@@ -1,6 +1,8 @@
-import { reduce, map, isNaN, trim, forOwn, orderBy } from 'lodash-es'
+import lodash from 'lodash'
 import fs from 'fs-extra'
 import getModuleDir from '../method/get-module-dir.js'
+
+const { reduce, map, isNaN, trim, forOwn, orderBy } = lodash
 
 async function bootOrder () {
   this.log.debug('Setup boot order')

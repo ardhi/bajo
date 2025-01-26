@@ -1,6 +1,8 @@
 import breakNsPath from './break-ns-path.js'
 import currentLoc from '../../../lib/current-loc.js'
-import { trim } from 'lodash-es'
+import lodash from 'lodash'
+
+const { trim } = lodash
 
 function getPluginFile (file) {
   if (file[0] === '.') file = `${currentLoc(import.meta).dir}/${trim(file.slice(1), '/')}`

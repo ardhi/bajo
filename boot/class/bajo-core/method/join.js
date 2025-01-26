@@ -1,5 +1,7 @@
-import { isPlainObject } from 'lodash-es'
+import lodash from 'lodash'
 import isSet from './is-set.js'
+
+const { isPlainObject } = lodash
 
 function join (array, sep) {
   const isI18n = this && this.app && this.app.bajoI18N

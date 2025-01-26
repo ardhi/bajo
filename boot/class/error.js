@@ -1,4 +1,5 @@
-import { isPlainObject, each, isArray, get, isEmpty, merge } from 'lodash-es'
+import lodash from 'lodash'
+const { isPlainObject, each, isArray, get, isEmpty, merge } = lodash
 
 Error.stackTraceLimit = 15
 

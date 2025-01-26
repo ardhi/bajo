@@ -1,4 +1,5 @@
-import { filter, trim } from 'lodash-es'
+import lodash from 'lodash'
+const { filter, trim } = lodash
 
 function arrangeArray (inputs, trimItem = true) {
   const first = []

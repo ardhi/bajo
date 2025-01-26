@@ -1,5 +1,7 @@
-import { isString, isFunction, isPlainObject, find } from 'lodash-es'
+import lodash from 'lodash'
 import BajoPlugin from '../../bajo-plugin.js'
+
+const { isString, isFunction, isPlainObject, find } = lodash
 
 async function callHandler (item, ...args) {
   let result

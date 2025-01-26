@@ -1,4 +1,7 @@
-import { mergeWith, isArray } from 'lodash-es'
+import lodash from 'lodash'
+
+const { mergeWith, isArray } = lodash
+
 // based on https://github.com/nodeutils/defaults-deep/blob/master/lib/index.js
 
 const defaultsDeep = (...args) => {

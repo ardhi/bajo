@@ -1,4 +1,6 @@
-import { camelCase, upperFirst } from 'lodash-es'
+import lodash from 'lodash'
+
+const { camelCase, upperFirst } = lodash
 
 const pascalCase = (text) => {
   return upperFirst(camelCase(text))

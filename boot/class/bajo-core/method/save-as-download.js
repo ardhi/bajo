@@ -1,7 +1,9 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { trim } from 'lodash-es'
+import lodash from 'lodash'
 import increment from 'add-filename-increment'
+
+const { trim } = lodash
 
 async function saveAsDownload (file, obj, printSaved = true) {
   const { print, getPluginDataDir } = this.app.bajo

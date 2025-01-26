@@ -9,7 +9,8 @@ import omitDeep from 'omit-deep'
 import os from 'os'
 import fs from 'fs-extra'
 
-import { map, pick, values, keys, set, get } from 'lodash-es'
+import lodash from 'lodash'
+const { map, pick, values, keys, set, get } = lodash
 
 const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 

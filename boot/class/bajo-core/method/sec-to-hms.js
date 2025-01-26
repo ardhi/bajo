@@ -1,4 +1,5 @@
-import { padStart } from 'lodash-es'
+import lodash from 'lodash'
+const { padStart } = lodash
 
 // based on: https://stackoverflow.com/questions/1322732/convert-seconds-to-hh-mm-ss-with-javascript
 

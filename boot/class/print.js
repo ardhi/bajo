@@ -1,7 +1,9 @@
 import ora from 'ora'
-import { isPlainObject } from 'lodash-es'
+import lodash from 'lodash'
 import defaultsDeep from './bajo-core/method/defaults-deep.js'
 import translate from '../lib/translate.js'
+
+const { isPlainObject } = lodash
 
 class Print {
   constructor (plugin, opts = {}) {

@@ -1,5 +1,7 @@
-import { isEmpty } from 'lodash-es'
+import lodash from 'lodash'
 import querystring from 'querystring'
+
+const { isEmpty } = lodash
 
 function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
   let [ns, ...path] = item.split(':')

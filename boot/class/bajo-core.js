@@ -3,7 +3,8 @@ import dayjs from '../lib/dayjs.js'
 import importModule from './bajo-core/method/import-module.js'
 import readJson from './bajo-core/method/read-json.js'
 
-import { isFunction } from 'lodash-es'
+import lodash from 'lodash'
+const { isFunction } = lodash
 
 async function defConfigHandler (file, opts) {
   let mod = await importModule(file)

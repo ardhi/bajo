@@ -1,5 +1,6 @@
 import _path from 'path'
-import { map, camelCase } from 'lodash-es'
+import lodash from 'lodash'
+const { map, camelCase } = lodash
 
 function breakNsPathFromFile ({ file, dir, baseNs, suffix = '', getType } = {}) {
   let item = file.replace(dir + suffix, '')

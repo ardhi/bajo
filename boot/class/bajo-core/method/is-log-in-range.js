@@ -1,5 +1,7 @@
 import logLevels from './log-levels.js'
-import { keys, indexOf } from 'lodash-es'
+import lodash from 'lodash'
+
+const { keys, indexOf } = lodash
 
 function isLogInRange (level) {
   const levels = keys(logLevels)
