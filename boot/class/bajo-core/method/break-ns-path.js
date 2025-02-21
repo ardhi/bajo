@@ -19,7 +19,7 @@ function breakNsPath (item = '', defaultNs = 'bajo', checkNs = true) {
       const plugin = this.getPlugin(ns)
       if (plugin) ns = plugin.name
     }
-    if (!this.app[ns]) throw this.error('Unknown plugin \'%s\' or plugin isn\'t loaded yet')
+    if (!this.app[ns]) throw this.error('unknownPluginOrNotLoaded%s')
   }
   const fullPath = path
   let qs

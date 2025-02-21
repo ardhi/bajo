@@ -3,9 +3,12 @@ import lodash from 'lodash'
 const { camelCase } = lodash
 
 async function buildConfig () {
-  this.bajo.log.debug('Read configurations')
+  this.bajo.log.debug('readConfigs')
   for (const pkg of this.bajo.pluginPkgs) {
-    await this[camelCase(pkg)].loadConfig()
+    const plugin = this[camelCase(pkg)]
+    await plugin.loadConfig()
+    plugin.initPrint()
+    plugin.initLog()
   }
 }
 

@@ -6,13 +6,13 @@ async function readAllConfigs (base) {
   let ext = {}
   // default config file
   try {
-    cfg = await readConfig.call(this.bajo, `${base}.*`)
+    cfg = await readConfig.call(this.bajo, `${base}.*`, { ignoreError: true })
   } catch (err) {
     if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
   }
   // env based config file
   try {
-    ext = await readConfig.call(this.bajo, `${base}-${this.bajo.config.env}.*`)
+    ext = await readConfig.call(this.bajo, `${base}-${this.bajo.config.env}.*`, { ignoreError: true })
   } catch (err) {
     if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
   }

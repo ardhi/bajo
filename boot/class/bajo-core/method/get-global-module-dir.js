@@ -11,7 +11,7 @@ function getGlobalModuleDir (pkgName, silent = true) {
     const npmPath = getGlobalPath('npm')
     if (!npmPath) {
       if (silent) return
-      throw this.error('Can\'t locate npm global module directory', { code: 'BAJO_CANT_LOCATE_NPM_GLOBAL_DIR' })
+      throw this.error('cantLocateNpmGlobalDir', { code: 'BAJO_CANT_LOCATE_NPM_GLOBAL_DIR' })
     }
     nodeModulesDir = dropRight(resolvePath(npmPath).split('/'), 1).join('/')
     process.env.BAJO_GLOBAL_MODULE_DIR = nodeModulesDir
@@ -20,7 +20,7 @@ function getGlobalModuleDir (pkgName, silent = true) {
   const dir = `${nodeModulesDir}/${pkgName}`
   if (!fs.existsSync(dir)) {
     if (silent) return
-    throw this.error('Can\'t locate \'%s\' global module directory', pkgName, { code: 'BAJO_CANT_LOCATE_MODULE_GLOBAL_DIR' })
+    throw this.error('cantLocateGlobalDir%s', pkgName, { code: 'BAJO_CANT_LOCATE_MODULE_GLOBAL_DIR' })
   }
   return dir
 }

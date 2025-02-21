@@ -10,14 +10,14 @@ async function buildCollections (options = {}) {
   const cfg = this.app[ns].getConfig()
   let items = get(cfg, container, [])
   if (!isArray(items)) items = [items]
-  this.app[ns].log.trace('Collecting %s', this.app[ns].print.write(container))
+  this.app[ns].log.trace('collecting%s', this.app[ns].print.write(container))
   await runHook(`${ns}:${camelCase('beforeBuildCollection')}`, container)
   const deleted = []
   for (const index in items) {
     const item = items[index]
     if (useDefaultName) {
       if (!has(item, 'name')) {
-        if (find(items, { name: 'default' })) throw this.app[ns].error('Collection \'default\' already exists')
+        if (find(items, { name: 'default' })) throw this.app[ns].error('collectionExists%s', 'default')
         else item.name = 'default'
       }
     }
@@ -36,12 +36,12 @@ async function buildCollections (options = {}) {
       else {
         const checker = set({}, d, c[d])
         const match = filter(items, checker)
-        if (match.length > 1) this.app[ns].fatal('One or more %s shared the same \'%s\'', container, join(dupChecks.filter(i => !isFunction(i))))
+        if (match.length > 1) this.app[ns].fatal('oneOrMoreSharedTheSame%s%s', container, join(dupChecks.filter(i => !isFunction(i))))
       }
     }
   }
   await runHook(`${ns}:${camelCase('afterBuildCollection')}`, container)
-  this.app[ns].log.debug('%s collected: %d', this.app[ns].print.write(container), items.length)
+  this.app[ns].log.debug('collected%s%d', this.app[ns].print.write(container), items.length)
   return items
 }
 

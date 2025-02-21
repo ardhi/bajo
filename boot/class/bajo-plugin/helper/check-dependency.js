@@ -15,14 +15,14 @@ async function runner ({ ns, pkgName }) {
   const deps = keys(odep)
   if (deps.length > 0) {
     if (intersection(this.app.bajo.pluginPkgs, deps).length !== deps.length) {
-      throw this.error('Dependency for \'%s\' unfulfilled: %s', pkgName, join(deps), { code: 'BAJO_DEPENDENCY' })
+      throw this.error('dependencyUnfulfilled%s%s', pkgName, join(deps), { code: 'BAJO_DEPENDENCY' })
     }
     each(deps, d => {
       if (!odep[d]) return
       const ver = get(this.app[camelCase(d)], 'config.pkg.version')
       if (!ver) return
       if (!semver.satisfies(ver, odep[d])) {
-        throw this.error('Semver check \'%s\' against \'%s\' failed', pkgName, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
+        throw this.error('semverCheckFailed%s%s', pkgName, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
       }
     })
   }
@@ -30,7 +30,7 @@ async function runner ({ ns, pkgName }) {
 
 async function checkDependency () {
   const { eachPlugins } = this.bajo
-  this.bajo.log.debug('Checking dependencies')
+  this.bajo.log.debug('checkDeps')
   await eachPlugins(async function ({ ns, pkgName, config }) {
     await runner.call(this, { ns, pkgName, config })
   })

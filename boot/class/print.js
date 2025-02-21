@@ -1,9 +1,11 @@
 import ora from 'ora'
 import lodash from 'lodash'
 import defaultsDeep from './bajo-core/method/defaults-deep.js'
-import translate from '../lib/translate.js'
+import fs from 'fs-extra'
+import Sprintf from 'sprintf-js'
+const { sprintf } = Sprintf
 
-const { isPlainObject } = lodash
+const { isPlainObject, get, without, reverse } = lodash
 
 class Print {
   constructor (plugin, opts = {}) {
@@ -12,6 +14,42 @@ class Print {
     this.startTime = this.plugin.app.bajo.lib.dayjs()
     this.setOpts()
     this.ora = ora(this.opts)
+    this.intl = {}
+  }
+
+  init () {
+    for (const l of this.plugin.app.bajo.config.intl.supported) {
+      this.intl[l] = {}
+      const path = `${this.plugin.dir.pkg}/bajo/intl/${l}.json`
+      if (!fs.existsSync(path)) continue
+      const trans = fs.readFileSync(path, 'utf8')
+      try {
+        this.intl[l] = JSON.parse(trans)
+      } catch (err) {}
+    }
+  }
+
+  write (text, lang, ...args) {
+    const fallback = this.plugin.app.bajo.config.intl.fallback
+    const plugins = reverse(without([...this.plugin.app.bajo.pluginNames], this.plugin.name))
+    plugins.unshift(this.plugin.name)
+    plugins.push('bajo')
+
+    let trans
+    for (const p of plugins) {
+      const root = get(this, `plugin.app.${p}.print.intl.${lang}`, {})
+      trans = get(root, text)
+      if (trans) break
+    }
+    if (!trans) {
+      for (const p of plugins) {
+        const root = get(this, `plugin.app.${p}.print.intl.${fallback}`, {})
+        trans = get(root, text)
+        if (trans) break
+      }
+    }
+    if (!trans) trans = text
+    return sprintf(trans, ...args)
   }
 
   setOpts (args = []) {
@@ -33,10 +71,6 @@ class Print {
     if (texts.length > 0) text = texts.join(' ') + ' ' + text
     this.ora.text = text
     return this
-  }
-
-  write (text, ...args) {
-    return translate.call(this.plugin, null, text, ...args)
   }
 
   getElapsed (unit = 'hms') {

@@ -13,7 +13,7 @@ function getPlugin (name, silent) {
     }
     if (!plugin) {
       if (silent) return false
-      throw this.error('Plugin with alias \'%s\' is not loaded', name)
+      throw this.error('pluginWithALiasNotLoaded%s', name)
     }
     name = plugin.name
   }

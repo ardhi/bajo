@@ -14,7 +14,6 @@ class Plugin {
     this.config = {}
     this.lib = {}
     this.exitHandler = undefined
-    this.initLog()
   }
 
   getConfig (path, options = {}) {
@@ -27,10 +26,12 @@ class Plugin {
 
   initLog () {
     this.log = new Log(this)
+    this.log.init()
   }
 
   initPrint (opts) {
     this.print = new Print(this, opts)
+    this.print.init()
   }
 
   error (msg, ...args) {

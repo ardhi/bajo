@@ -26,6 +26,6 @@ export default async function () {
   this.lib.outmatch = outmatch
   // last cleanup
   if (!fs.existsSync(this.dir.data)) {
-    this.log.warn('Data directory \'%s\' doesn\'t exists!', this.dir.data)
+    this.log.warn('ddirNotExists%s', this.dir.data)
   }
 }

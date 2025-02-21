@@ -1,15 +1,15 @@
 async function exit (signal) {
   const { eachPlugins } = this
-  this.log.warn('\'%s\' signal received', signal)
+  this.log.warn('signalReceived%s', signal)
   await eachPlugins(async function ({ ns }) {
     const handler = this.exitHandler
     if (!handler) return undefined
     try {
       await handler.call(this)
     } catch (err) {}
-    this.log.debug('Exited')
+    this.log.debug('exited')
   })
-  this.log.debug('App shutdown')
+  this.log.debug('appShutdown')
   process.exit(0)
 }
 

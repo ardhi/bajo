@@ -5,7 +5,7 @@ import getModuleDir from '../method/get-module-dir.js'
 const { reduce, map, isNaN, trim, forOwn, orderBy } = lodash
 
 async function bootOrder () {
-  this.log.debug('Setup boot order')
+  this.log.debug('setupBootOrder')
   const order = reduce(this.pluginPkgs, (o, k, i) => {
     const key = map(k.split(':'), m => trim(m))
     if (key[1] && !isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
@@ -16,7 +16,7 @@ async function bootOrder () {
   for (let n of this.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
     const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir(n)
-    if (n !== this.mainNs && !fs.existsSync(`${dir}/bajo`)) throw this.error('Package \'%s\' not found or isn\'t a valid Bajo package', n)
+    if (n !== this.mainNs && !fs.existsSync(`${dir}/bajo`)) throw this.error('packageNotFoundOrNotBajo%s', n)
     norder[n] = NaN
     try {
       norder[n] = Number(trim(await fs.readFile(`${dir}/bajo/.bootorder`, 'utf8')))
@@ -28,7 +28,7 @@ async function bootOrder () {
     result.push(item)
   })
   this.pluginPkgs = map(orderBy(result, ['v']), 'k')
-  this.log.info('Run in \'%s\' environment', this.envs[this.config.env])
+  this.log.info('runInEnv%s', this.envs[this.config.env])
   // misc
   this.freeze(this.config)
 }

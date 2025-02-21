@@ -39,7 +39,7 @@ async function importPkg (...pkgs) {
     }
     result[name] = mod
   }
-  if (notFound.length > 0) throw this.error('Can\'t find %s', this.join(notFound))
+  if (notFound.length > 0) throw this.error('cantFind%s', this.join(notFound))
   if (pkgs.length === 1) return result[keys(result)[0]]
   if (opts.asObject) return result
   return values(result)

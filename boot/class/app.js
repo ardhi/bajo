@@ -31,7 +31,6 @@ class App {
   addPlugin (plugin) {
     if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
     this[plugin.name] = plugin
-    plugin.initPrint()
   }
 
   dump (...args) {
@@ -63,7 +62,7 @@ class App {
     // boot complete
     await bajo.runHook('bajo:bootComplete')
     const elapsed = new Date() - bajo.runAt
-    bajo.log.info('Boot process completed in %s', bajo.secToHms(elapsed, true))
+    bajo.log.info('bootCompleted%s', bajo.secToHms(elapsed, true))
     if (bajo.applet) await runAsApplet.call(bajo)
   }
 }

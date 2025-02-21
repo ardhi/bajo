@@ -21,6 +21,19 @@ const defConfig = {
     traceHook: false
   },
   lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
+  intl: {
+    supported: ['en-US', 'id'],
+    fallback: 'en-US',
+    lookupOrder: [],
+    format: {
+      emptyValue: '',
+      datetime: { dateStyle: 'medium', 'timeStyle': 'short' },
+      date: { dateStyle: 'medium' },
+      time: { timeStyle: 'short' },
+      float: { maximumFractionDigits: 2 },
+      integer: {}
+    }
+  },
   exitHandler: true
 }
 
@@ -57,6 +70,7 @@ export async function buildExtConfig () {
     this.config.exitHandler = false
   }
   const exts = map(this.configHandlers, 'ext')
-  this.log.init()
-  this.log.debug('Config handlers: %s', join(exts))
+  this.initPrint()
+  this.initLog()
+  this.log.debug('configHandlers%s', join(exts))
 }

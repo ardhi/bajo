@@ -15,7 +15,7 @@ async function run () {
     })
     await runHook(`bajo:${camelCase(`after ${method} all plugins`)}`)
   }
-  me.bajo.log.debug('Loaded plugins: %s', join(map(me.bajo.pluginPkgs, b => camelCase(b))))
+  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.pluginPkgs, b => camelCase(b))))
 }
 
 export default run

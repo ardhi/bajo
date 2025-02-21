@@ -3,7 +3,7 @@ import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
 import dayjs from '../../../lib/dayjs.js'
 import isSet from './is-set.js'
-import translate from '../../../lib/translate.js'
+// import translate from '../../../lib/translate.js'
 
 const { isPlainObject, isArray, isNumber, set, cloneDeep, isString, omit } = lodash
 const statics = ['*']
@@ -14,11 +14,11 @@ function parseDur (val) {
 
 function parseDt (val) {
   const dt = dayjs(val)
-  if (!dt.isValid()) throw this.error('Unparsed date/time \'%s\'', val)
+  if (!dt.isValid()) throw this.error('dtUnparsable%s', val)
   return dt.toDate()
 }
 
-function parseObject (input, { silent = true, parseValue = false, i18n, ns } = {}) {
+function parseObject (input, { silent = true, parseValue = false, lang, ns } = {}) {
   let obj = cloneDeep(input)
   const keys = Object.keys(obj)
   const me = this
@@ -38,14 +38,16 @@ function parseObject (input, { silent = true, parseValue = false, i18n, ns } = {
         if (statics.includes(v)) obj[k] = v
         else if (k.startsWith('t:') && isString(v)) {
           const newK = k.slice(2)
-          if (i18n) {
+          if (lang) {
             const scope = ns ? me.app[ns] : me
             let [text, ...args] = v.split('|')
             args = args.map(a => {
-              if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
+              // if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
+              if (a.slice(0, 2) === 't:') a = scope.print.write(lang, a.slice(2))
               return a
             })
-            obj[newK] = translate.call(scope, i18n, text, ...args)
+            // obj[newK] = translate.call(scope, i18n, text, ...args)
+            obj[newK] = scope.print.write(text, lang, ...args)
           } else obj[newK] = v
           mutated.push(k)
         } else if (parseValue) {

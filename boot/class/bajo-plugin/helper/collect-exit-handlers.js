@@ -8,7 +8,7 @@ async function collectExitHandlers () {
     this.app[ns].exitHandler = mod
     nss.push(ns)
   })
-  this.bajo.log.trace('Exit handlers: %s', nss.length === 0 ? print.write('none') : join(nss))
+  this.bajo.log.trace('exitHandlers%s', nss.length === 0 ? print.write('none') : join(nss))
 }
 
 export default collectExitHandlers

@@ -2,7 +2,6 @@ import os from 'os'
 import lodash from 'lodash'
 import levels from './bajo-core/method/log-levels.js'
 import isLogInRange from './bajo-core/method/is-log-in-range.js'
-import translate from '../lib/translate.js'
 import dayjs from 'dayjs'
 
 const { isEmpty, without, merge, upperFirst } = lodash
@@ -18,7 +17,8 @@ class Log {
   }
 
   write (text, ...args) {
-    return translate.call(this.plugin, null, text, ...args)
+    const lang = this.plugin.app.bajo.config.lang
+    return this.plugin.print.write(text, lang, ...args)
   }
 
   isExtLogger () {
@@ -40,7 +40,7 @@ class Log {
       data = null
     }
     args = without(args, undefined)
-    msg = this.write(`[%s] ${msg}`, this.plugin.name, ...args)
+    msg = `[${this.plugin.name}] ${this.write(msg, ...args)}`
     if (this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger) {
       this.plugin.app[this.bajoLog].logger[level](data, msg, ...args)
     } else {
