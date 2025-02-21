@@ -50,11 +50,12 @@ class BajoPlugin extends Plugin {
     this.config = omit(cfg, ['title', 'dependencies'])
   }
 
-  async _onoff (item, text, ...args) {
+  async _onoff (item, ...args) {
     this.state[item] = false
     const { runHook, importModule } = this.app.bajo
     const mod = await importModule(`${this.dir.pkg}/bajo/${item}.js`)
     if (mod) {
+      const text = this.print.write('plugin%s', this.print.write(item))
       this.log.trace(text)
       await runHook(`${this.name}:${camelCase(`before ${item}`)}`)
       await mod.call(this, ...args)
@@ -64,17 +65,17 @@ class BajoPlugin extends Plugin {
   }
 
   async init () {
-    await this._onoff('init', 'Init plugin...')
+    await this._onoff('init')
   }
 
   async start (...args) {
     const { freeze } = this.app.bajo
     freeze(this.config)
-    await this._onoff('start', 'Start plugin...', ...args)
+    await this._onoff('start', ...args)
   }
 
   async stop () {
-    await this._onoff('stop', 'Stop plugin...')
+    await this._onoff('stop')
   }
 }
 

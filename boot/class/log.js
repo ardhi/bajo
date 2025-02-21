@@ -17,8 +17,7 @@ class Log {
   }
 
   write (text, ...args) {
-    const lang = this.plugin.app.bajo.config.lang
-    return this.plugin.print.write(text, lang, ...args)
+    return this.plugin.print.write(text, ...args)
   }
 
   isExtLogger () {

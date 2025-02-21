@@ -17,7 +17,7 @@ async function buildCollections (options = {}) {
     const item = items[index]
     if (useDefaultName) {
       if (!has(item, 'name')) {
-        if (find(items, { name: 'default' })) throw this.app[ns].error('collectionExists%s', 'default')
+        if (find(items, { name: 'default' })) throw this.app[ns].error('collExists%s', 'default')
         else item.name = 'default'
       }
     }

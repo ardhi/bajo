@@ -1,7 +1,7 @@
 {
   "packageNotFoundOrNotBajo%s": "Package '%s' not found or isn't a valid Bajo package",
   "unknownPluginOrNotLoaded%s": "Unknown plugin '%s' or plugin isn't loaded yet",
-  "collectionExists%s": "Collection '%s' already exists",
+  "collExists%s": "Collection '%s' already exists",
   "cantLocateNpmGlobalDir": "Can't locate npm global module directory",
   "cantLocateGlobalDir%s": "Can't locate '%s' global module directory",
   "cantFindMethod%s": "Can't find method named '%s'",
@@ -132,5 +132,16 @@
   "applet": "Applet",
   "unsupported%s%s": "Unsupported %s '%s'",
   "error%": "Error: %s",
-  "savedAs%%": "%s saved as '%s'"
+  "savedAs%%": "%s saved as '%s'",
+  "loaded%s": "Loaded %s",
+  "production": "production",
+  "staging": "staging",
+  "development": "development",
+  "unsupportedLangFallbackTo%s": "Unsupported language, fallback to '%s'",
+  "plugin%s": "%s plugin...",
+  "init": "Init",
+  "start": "Start",
+  "stop": "Stop",
+  "supportDisabled%s": "%s support is disabled",
+  "collect%s": "Collect %s"
 }

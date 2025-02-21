@@ -28,7 +28,7 @@ async function bootOrder () {
     result.push(item)
   })
   this.pluginPkgs = map(orderBy(result, ['v']), 'k')
-  this.log.info('runInEnv%s', this.envs[this.config.env])
+  this.log.info('runInEnv%s', this.print.write(this.envs[this.config.env]))
   // misc
   this.freeze(this.config)
 }

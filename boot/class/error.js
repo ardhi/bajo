@@ -8,7 +8,7 @@ class BajoError {
     this.plugin = plugin
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
     this.orgMessage = msg
-    this.message = this.plugin.print.write(msg, ...args)
+    this.message = plugin.print.write(msg, ...args)
     this.write()
   }
 

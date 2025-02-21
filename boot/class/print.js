@@ -4,8 +4,9 @@ import defaultsDeep from './bajo-core/method/defaults-deep.js'
 import fs from 'fs-extra'
 import Sprintf from 'sprintf-js'
 const { sprintf } = Sprintf
+let unknownLangWarning = false
 
-const { isPlainObject, get, without, reverse } = lodash
+const { last, isPlainObject, get, without, reverse } = lodash
 
 class Print {
   constructor (plugin, opts = {}) {
@@ -29,8 +30,18 @@ class Print {
     }
   }
 
-  write (text, lang, ...args) {
-    const fallback = this.plugin.app.bajo.config.intl.fallback
+  write (text, ...args) {
+    const opts = last(args)
+    let lang = this.plugin.app.bajo.config.lang
+    if (isPlainObject(opts)) {
+      args.pop()
+      lang = opts.lang
+    }
+    const { fallback, supported } = this.plugin.app.bajo.config.intl
+    if (!unknownLangWarning && !supported.includes(lang)) {
+      unknownLangWarning = true
+      this.plugin.app.bajo.log.warn('unsupportedLangFallbackTo%s', fallback)
+    }
     const plugins = reverse(without([...this.plugin.app.bajo.pluginNames], this.plugin.name))
     plugins.unshift(this.plugin.name)
     plugins.push('bajo')

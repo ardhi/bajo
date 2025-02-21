@@ -1,6 +1,6 @@
 const envs = {
   dev: 'development',
-  staging: 'Staging',
+  staging: 'staging',
   prod: 'production'
 }
 
