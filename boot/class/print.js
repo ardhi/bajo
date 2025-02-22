@@ -6,7 +6,7 @@ import Sprintf from 'sprintf-js'
 const { sprintf } = Sprintf
 let unknownLangWarning = false
 
-const { last, isPlainObject, get, without, reverse } = lodash
+const { isString, last, isPlainObject, get, without, reverse, map } = lodash
 
 class Print {
   constructor (plugin, opts = {}) {
@@ -60,7 +60,11 @@ class Print {
       }
     }
     if (!trans) trans = text
-    return sprintf(trans, ...args)
+    const params = map(args, a => {
+      if (!isString(a)) return a
+      return a.replaceAll('%', '%%')
+    })
+    return sprintf(trans, ...params)
   }
 
   setOpts (args = []) {
