@@ -5,7 +5,7 @@
   "cantLocateNpmGlobalDir": "Can't locate npm global module directory",
   "cantLocateGlobalDir%s": "Can't locate '%s' global module directory",
   "cantFindMethod%s": "Can't find method named '%s'",
-  "pluginWithALiasNotLoaded%s": "Plugin with alias '%s' is not loaded",
+  "pluginWithAliasNotLoaded%s": "Plugin with alias '%s' is not loaded",
   "cantFind%s": "Can't find %s",
   "dtUnparsable%s": "Date/time unparsable '%s'",
   "cantParse%s": "'Can't parse '%s'",
@@ -143,5 +143,9 @@
   "start": "Start",
   "stop": "Stop",
   "supportDisabled%s": "%s support is disabled",
-  "collect%s": "Collect %s"
+  "collect%s": "Collect %s",
+  "andL": "and",
+  "orL": "or",
+  "noneL": "none",
+  "isRequired%s": "'%s' is required"
 }

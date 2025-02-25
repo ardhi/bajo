@@ -42,11 +42,9 @@ function parseObject (input, { silent = true, parseValue = false, lang, ns } = {
             const scope = ns ? me.app[ns] : me
             let [text, ...args] = v.split('|')
             args = args.map(a => {
-              // if (a.slice(0, 2) === 't:') a = translate.call(scope, i18n, a.slice(2))
               if (a.slice(0, 2) === 't:') a = scope.print.write(lang, a.slice(2))
               return a
             })
-            // obj[newK] = translate.call(scope, i18n, text, ...args)
             obj[newK] = scope.print.write(text, lang, ...args)
           } else obj[newK] = v
           mutated.push(k)

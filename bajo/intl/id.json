@@ -5,7 +5,7 @@
   "cantLocateNpmGlobalDir": "Tidak bisa menentukan direktori global npm",
   "cantLocateGlobalDir%s": "Tidak bisa menentukan direktori global modul '%s'",
   "cantFindMethod%s": "Tidak menemukan metode dengan nama '%s'",
-  "pluginWithALiasNotLoaded%s": "Plugin dengan alias '%s' tidak termuat",
+  "pluginWithAliasNotLoaded%s": "Plugin dengan alias '%s' tidak termuat",
   "cantFind%s": "Tidak bisa menemukan %s",
   "dtUnparsable%s": "Tanggal/waktu tidak bisa di parsing '%s'",
   "cantParse%s": "'Tidak bisa memparsing '%s'",
@@ -143,5 +143,8 @@
   "start": "Jalankan",
   "stop": "Berhentikan",
   "supportDisabled%s": "Dukungan %s dimatikan",
-  "collect%s": "Koleksi %s"
+  "collect%s": "Koleksi %s",
+  "andL": "dan",
+  "orL": "atau",
+  "noneL": "kosong"
 }

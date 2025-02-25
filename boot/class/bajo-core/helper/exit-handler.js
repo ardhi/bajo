@@ -25,10 +25,9 @@ async function exitHandler () {
   })
 
   process.on('uncaughtException', (error, origin) => {
-    if (this.config.log.report.includes('sys:uncaughtException')) this.log.fatal({ origin }, '%s', error.message)
     setTimeout(() => {
       console.error(error)
-      process.exit(1)
+      // process.exit(1)
     }, 50)
   })
 
