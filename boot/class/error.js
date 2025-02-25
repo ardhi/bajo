@@ -48,7 +48,7 @@ class BajoError {
       const val = get(v, 'context.value')
       value[i] = {
         field,
-        error: print.write(`validation.${v.type}`, v.context),
+        error: print.write(`validation.${v.type}`, v.context ?? {}, {}),
         value: val,
         ext: { type: v.type, context: v.context }
       }

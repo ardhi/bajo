@@ -35,7 +35,7 @@ class Print {
     let lang = this.plugin.app.bajo.config.lang
     if (isPlainObject(opts)) {
       args.pop()
-      lang = opts.lang
+      if (opts.lang) lang = opts.lang
     }
     const { fallback, supported } = this.plugin.app.bajo.config.intl
     if (!unknownLangWarning && !supported.includes(lang)) {
