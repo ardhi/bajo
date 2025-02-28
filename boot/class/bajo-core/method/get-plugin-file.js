@@ -5,6 +5,7 @@ import lodash from 'lodash'
 const { trim } = lodash
 
 function getPluginFile (file) {
+  if (!this) return file
   if (file[0] === '.') file = `${currentLoc(import.meta).dir}/${trim(file.slice(1), '/')}`
   if (!this) return file
   if (file.includes(':')) {

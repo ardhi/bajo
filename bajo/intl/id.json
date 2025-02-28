@@ -144,7 +144,9 @@
   "stop": "Berhentikan",
   "supportDisabled%s": "Dukungan %s dimatikan",
   "collect%s": "Koleksi %s",
-  "andL": "dan",
-  "orL": "atau",
-  "noneL": "kosong"
+  "and": "dan",
+  "or": "atau",
+  "none": "kosong",
+  "isRequired%s": "'%s' disyaratkan",
+  "isDisabled%s": "'%s' dimatikan"
 }

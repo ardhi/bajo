@@ -1,14 +1,15 @@
-function extractText (text, start, end) {
+function extractText (text, patternStart, patternEnd) {
   let result = ''
-  const open = text.indexOf(start)
+  const open = text.indexOf(patternStart)
   if (open > -1) {
-    text = text.slice(open + end.length)
-    const close = text.indexOf(end)
+    text = text.slice(open + patternStart.length)
+    const close = text.indexOf(patternEnd)
     if (close > -1) {
       result = text.slice(0, close)
     }
   }
-  return result
+  const pattern = `${patternStart}${result}${patternEnd}`
+  return { result, pattern }
 }
 
 export default extractText

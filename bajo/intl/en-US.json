@@ -144,8 +144,9 @@
   "stop": "Stop",
   "supportDisabled%s": "%s support is disabled",
   "collect%s": "Collect %s",
-  "andL": "and",
-  "orL": "or",
-  "noneL": "none",
-  "isRequired%s": "'%s' is required"
+  "and": "and",
+  "or": "or",
+  "none": "none",
+  "isRequired%s": "'%s' is required",
+  "isDisabled%s": "'%s' is disabled"
 }

@@ -3,7 +3,6 @@ import dotenvParseVariables from 'dotenv-parse-variables'
 import ms from 'ms'
 import dayjs from '../../../lib/dayjs.js'
 import isSet from './is-set.js'
-// import translate from '../../../lib/translate.js'
 
 const { isPlainObject, isArray, isNumber, set, cloneDeep, isString, omit } = lodash
 const statics = ['*']
@@ -40,12 +39,8 @@ function parseObject (input, { silent = true, parseValue = false, lang, ns } = {
           const newK = k.slice(2)
           if (lang) {
             const scope = ns ? me.app[ns] : me
-            let [text, ...args] = v.split('|')
-            args = args.map(a => {
-              if (a.slice(0, 2) === 't:') a = scope.print.write(lang, a.slice(2))
-              return a
-            })
-            obj[newK] = scope.print.write(text, lang, ...args)
+            const [text, ...args] = v.split('|')
+            obj[newK] = scope.print.write(text, ...args, { lang })
           } else obj[newK] = v
           mutated.push(k)
         } else if (parseValue) {
