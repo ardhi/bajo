@@ -12,7 +12,11 @@ async function buildPlugins () {
   if (fs.existsSync(pluginsFile)) {
     pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
   }
-  this.pluginPkgs = without(uniq(pluginPkgs), this.mainNs)
+  this.pluginPkgs = map(filter(without(uniq(pluginPkgs), this.mainNs), p => {
+    return p[0] !== '#'
+  }), p => {
+    return trim(p.split('#')[0])
+  })
   this.pluginPkgs.push(this.mainNs)
   for (const pkg of this.pluginPkgs) {
     const ns = camelCase(pkg)
