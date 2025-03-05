@@ -28,12 +28,12 @@ class App {
     this.cwd = cwd
   }
 
-  addPlugin (plugin) {
+  addPlugin = (plugin) => {
     if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
     this[plugin.name] = plugin
   }
 
-  dump (...args) {
+  dump = (...args) => {
     const terminate = last(args) === true
     if (terminate) args.pop()
     for (const arg of args) {
@@ -43,7 +43,7 @@ class App {
     if (terminate) process.kill(process.pid, 'SIGINT')
   }
 
-  async boot () {
+  boot = async () => {
     // argv/args
     const { args, argv } = await parseArgsArgv.call(this.app) ?? {}
     this.argv = argv

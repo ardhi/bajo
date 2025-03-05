@@ -16,7 +16,7 @@ class Plugin {
     this.exitHandler = undefined
   }
 
-  getConfig (path, options = {}) {
+  getConfig = (path, options = {}) => {
     let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue)
     options.omit = options.omit ?? omittedPluginKeys
     if (isPlainObject(obj) && !isEmpty(options.omit)) obj = omit(obj, options.omit)
@@ -24,30 +24,26 @@ class Plugin {
     return obj
   }
 
-  initLog () {
+  initLog = () => {
     this.log = new Log(this)
     this.log.init()
   }
 
-  initPrint (opts) {
+  initPrint = (opts) => {
     this.print = new Print(this, opts)
     this.print.init()
   }
 
-  error (msg, ...args) {
+  error = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
     const error = new BajoError(this, msg, ...args)
     return error.write()
   }
 
-  fatal (msg, ...args) {
-    let e
-    if (this.print) {
-      const error = new BajoError(this, msg, ...args)
-      e = error.write(true)
-    } else e = new Error(msg, ...args)
-    console.error(e)
-    process.kill(process.pid, 'SIGINT')
+  fatal = (msg, ...args) => {
+    if (!this.print) return new Error(msg, ...args)
+    const error = new BajoError(this, msg, ...args)
+    return error.fatal()
   }
 }
 

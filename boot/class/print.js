@@ -18,7 +18,7 @@ class Print {
     this.intl = {}
   }
 
-  init () {
+  init = () => {
     for (const l of this.plugin.app.bajo.config.intl.supported) {
       this.intl[l] = {}
       const path = `${this.plugin.dir.pkg}/bajo/intl/${l}.json`
@@ -30,7 +30,7 @@ class Print {
     }
   }
 
-  write (text, ...args) {
+  write = (text, ...args) => {
     const opts = last(args)
     let lang = this.plugin.app.bajo.config.lang
     if (isPlainObject(opts)) {
@@ -67,7 +67,7 @@ class Print {
     return sprintf(trans, ...params)
   }
 
-  setOpts (args = []) {
+  setOpts = (args = []) => {
     const config = this.plugin.app.bajo.config
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
@@ -75,7 +75,7 @@ class Print {
     this.opts = defaultsDeep(opts, this.opts)
   }
 
-  setText (text, ...args) {
+  setText = (text, ...args) => {
     text = this.write(text, ...args)
     this.setOpts(args)
     const prefixes = []
@@ -88,65 +88,65 @@ class Print {
     return this
   }
 
-  getElapsed (unit = 'hms') {
+  getElapsed = (unit = 'hms') => {
     const u = unit === 'hms' ? 'second' : unit
     const elapsed = this.plugin.app.bajo.lib.dayjs().diff(this.startTime, u)
     return unit === 'hms' ? this.plugin.app.bajo.secToHms(elapsed) : elapsed
   }
 
-  start (text, ...args) {
+  start = (text, ...args) => {
     this.setOpts(args)
     this.setText(text, ...args)
     this.ora.start()
     return this
   }
 
-  stop () {
+  stop = () => {
     this.ora.stop()
     return this
   }
 
-  succeed (text, ...args) {
+  succeed = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.succeed()
     return this
   }
 
-  fail (text, ...args) {
+  fail = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.fail()
     return this
   }
 
-  warn (text, ...args) {
+  warn = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.warn()
     return this
   }
 
-  info (text, ...args) {
+  info = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.info()
     return this
   }
 
-  clear () {
+  clear = () => {
     this.ora.clear()
     return this
   }
 
-  render () {
+  render = () => {
     this.ora.render()
     return this
   }
 
-  fatal (text, ...args) {
+  fatal = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.fail()
     process.kill(process.pid, 'SIGINT')
   }
 
-  spinner () {
+  spinner = () => {
     return new Print(this.plugin)
   }
 }

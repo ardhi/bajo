@@ -3,7 +3,7 @@ async function collectExitHandlers () {
   if (!this.bajo.config.exitHandler) return
   const nss = []
   await eachPlugins(async function ({ ns, dir }) {
-    const mod = await importModule(`${dir}/bajo/exit.js`)
+    const mod = await importModule(`${dir}/plugin/exit.js`)
     if (!mod) return undefined
     this.app[ns].exitHandler = mod
     nss.push(ns)

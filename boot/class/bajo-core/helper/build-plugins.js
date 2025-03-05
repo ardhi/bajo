@@ -1,7 +1,7 @@
 import lodash from 'lodash'
 import fs from 'fs-extra'
 import getModuleDir from '../method/get-module-dir.js'
-import BajoPlugin from '../../bajo-plugin.js'
+import resolvePath from '../method/resolve-path.js'
 
 const { isString, filter, map, trim, without, uniq, camelCase, isEmpty } = lodash
 
@@ -21,8 +21,17 @@ async function buildPlugins () {
   for (const pkg of this.pluginPkgs) {
     const ns = camelCase(pkg)
     const dir = ns === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir.call(this, pkg)
-    if (ns !== this.mainNs && !fs.existsSync(`${dir}/${this.name}`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
-    const plugin = new BajoPlugin(pkg, this.app)
+    if (ns !== this.mainNs && !fs.existsSync(`${dir}/plugin`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
+    let plugin
+    const factory = `${dir}/plugin/factory.js`
+    if (fs.existsSync(factory)) {
+      const { default: builder } = await import(resolvePath(factory, true))
+      const FactoryClass = await builder.call(this, pkg)
+      plugin = new FactoryClass()
+      if (!(plugin instanceof this.lib.BajoPlugin)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
+    } else {
+      plugin = new this.lib.BajoPlugin(pkg, this.app)
+    }
     this.pluginNames.push(plugin.name)
     this.app.addPlugin(plugin)
   }

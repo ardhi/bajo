@@ -13,13 +13,13 @@ class BajoPlugin extends Plugin {
     this.state = {}
   }
 
-  async loadConfig () {
+  loadConfig = async () => {
     const { log, getModuleDir, readJson, defaultsDeep } = this.app.bajo
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
-    let cfg = await readAllConfigs.call(this.app, `${dir}/bajo/config`)
-    this.alias = this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase()
-    const aliasFile = `${dir}/bajo/.alias`
+    let cfg = await readAllConfigs.call(this.app, `${dir}/plugin/config`)
+    this.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase())
+    const aliasFile = `${dir}/plugin/.alias`
     if (fs.existsSync(aliasFile)) this.alias = fs.readFileSync(aliasFile, 'utf8')
     this.alias = camelCase(this.alias)
 
@@ -41,19 +41,19 @@ class BajoPlugin extends Plugin {
       cfg = defaultsDeep({}, omit(altCfg, omittedPluginKeys), cfg)
     } catch (err) {}
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
-    cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {})
+    cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
     this.title = this.title ?? cfg.title ?? titleize(this.alias)
 
-    this.dependencies = []
-    const depFile = `${dir}/bajo/.dependencies`
+    this.dependencies = this.dependencies ?? []
+    const depFile = `${dir}/plugin/.dependencies`
     if (fs.existsSync(depFile)) this.dependencies = without(fs.readFileSync(depFile, 'utf8').split('\n').map(item => trim(item)), '')
     this.config = omit(cfg, ['title', 'dependencies'])
   }
 
-  async _onoff (item, ...args) {
+  _onoff = async (item, ...args) => {
     this.state[item] = false
     const { runHook, importModule } = this.app.bajo
-    const mod = await importModule(`${this.dir.pkg}/bajo/${item}.js`)
+    const mod = await importModule(`${this.dir.pkg}/plugin/${item}.js`)
     if (mod) {
       const text = this.print.write('plugin%s', this.print.write(item))
       this.log.trace(text)
@@ -64,17 +64,17 @@ class BajoPlugin extends Plugin {
     this.state[item] = true
   }
 
-  async init () {
+  init = async () => {
     await this._onoff('init')
   }
 
-  async start (...args) {
+  start = async (...args) => {
     const { freeze } = this.app.bajo
     freeze(this.config)
     await this._onoff('start', ...args)
   }
 
-  async stop () {
+  stop = async () => {
     await this._onoff('stop')
   }
 }

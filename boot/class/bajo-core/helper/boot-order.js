@@ -16,10 +16,10 @@ async function bootOrder () {
   for (let n of this.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
     const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir(n)
-    if (n !== this.mainNs && !fs.existsSync(`${dir}/bajo`)) throw this.error('packageNotFoundOrNotBajo%s', n)
+    if (n !== this.mainNs && !fs.existsSync(`${dir}/plugin`)) throw this.error('packageNotFoundOrNotBajo%s', n)
     norder[n] = NaN
     try {
-      norder[n] = Number(trim(await fs.readFile(`${dir}/bajo/.bootorder`, 'utf8')))
+      norder[n] = Number(trim(await fs.readFile(`${dir}/plugin/.bootorder`, 'utf8')))
     } catch (err) {}
   }
   const result = []

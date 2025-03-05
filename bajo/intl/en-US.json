@@ -151,5 +151,6 @@
   "isDisabled%s": "'%s' is disabled",
   "formSubmitted": "Form Submitted",
   "formSubmittedInfo": "The form you entered has been successfully submitted and is stored securely in our system.",
-  "thankYou": "Thank you!"
+  "thankYou": "Thank you!",
+  "adminArea": "Admin Area"
 }

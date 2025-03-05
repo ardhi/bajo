@@ -12,7 +12,7 @@ class BajoError {
     this.write()
   }
 
-  write (fatal) {
+  write = () => {
     let err
     if (this.payload.class) err = this.payload.class(this.message)
     else err = Error(this.message)
@@ -31,10 +31,18 @@ class BajoError {
       err[key] = value
     }
     if (!isEmpty(values)) err.values = values
+    err.ns = this.plugin.name
+    err.orgMessage = this.orgMessage
     return err
   }
 
-  formatErrorDetails (value) {
+  fatal = () => {
+    const err = this.write()
+    console.error(err)
+    process.kill(process.pid, 'SIGINT')
+  }
+
+  formatErrorDetails = (value) => {
     const { isString } = this.plugin.app.bajo.lib._
     const result = {}
     const me = this

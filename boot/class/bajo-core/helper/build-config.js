@@ -27,7 +27,7 @@ const defConfig = {
     lookupOrder: [],
     format: {
       emptyValue: '',
-      datetime: { dateStyle: 'medium', 'timeStyle': 'short' },
+      datetime: { dateStyle: 'medium', timeStyle: 'short' },
       date: { dateStyle: 'medium' },
       time: { timeStyle: 'short' },
       float: { maximumFractionDigits: 2 },

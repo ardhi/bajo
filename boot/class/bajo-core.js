@@ -1,4 +1,5 @@
 import Plugin from './plugin.js'
+import BajoPlugin from './bajo-plugin.js'
 import dayjs from '../lib/dayjs.js'
 import importModule from './bajo-core/method/import-module.js'
 import readJson from './bajo-core/method/read-json.js'
@@ -18,6 +19,7 @@ class BajoCore extends Plugin {
     this.runAt = new Date()
     this.mainNs = 'main'
     this.lib.dayjs = dayjs
+    this.lib.BajoPlugin = BajoPlugin
     this.applets = []
     this.pluginPkgs = []
     this.pluginNames = []

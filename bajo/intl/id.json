@@ -151,5 +151,6 @@
   "isDisabled%s": "'%s' dimatikan",
   "formSubmitted": "Form Terkirim",
   "formSubmittedInfo": "Form yang Anda masukkan telah sukses terkirim dan disimpan dengan aman di sistim kami.",
-  "thankYou": "Terima kasih!"
+  "thankYou": "Terima kasih!",
+  "adminArea": "Area Admin"
 }

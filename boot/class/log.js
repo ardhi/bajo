@@ -12,24 +12,24 @@ class Log {
     this.format = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
   }
 
-  init () {
+  init = () => {
     this.bajoLog = this.plugin.app.bajo.config.log.logger ?? 'bajoLogger'
   }
 
-  write (text, ...args) {
+  write = (text, ...args) => {
     return this.plugin.print.write(text, ...args)
   }
 
-  isExtLogger () {
+  isExtLogger = () => {
     return this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger
   }
 
-  child () {
+  child = () => {
     if (this.isExtLogger()) return this.plugin.app[this.bajoLog].logger.child()
     return this.plugin.app
   }
 
-  formatMsg (level, ...params) {
+  formatMsg = (level, ...params) => {
     if (this.plugin.app.bajo.config.log.level === 'silent') return
     if (!isLogInRange.call(this.plugin.app.bajo, level)) return
     let [data, msg, ...args] = params
