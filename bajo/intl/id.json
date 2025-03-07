@@ -5,7 +5,7 @@
   "cantLocateNpmGlobalDir": "Tidak bisa menentukan direktori global npm",
   "cantLocateGlobalDir%s": "Tidak bisa menentukan direktori global modul '%s'",
   "cantFindMethod%s": "Tidak menemukan metode dengan nama '%s'",
-  "pluginWithAliasNotLoaded%s": "Plugin dengan alias '%s' tidak termuat",
+  "pluginWithNameAliasNotLoaded%s": "Plugin dengan name/alias '%s' tidak termuat",
   "cantFind%s": "Tidak bisa menemukan %s",
   "dtUnparsable%s": "Tanggal/waktu tidak bisa di parsing '%s'",
   "cantParse%s": "'Tidak bisa memparsing '%s'",
@@ -152,5 +152,7 @@
   "formSubmitted": "Form Terkirim",
   "formSubmittedInfo": "Form yang Anda masukkan telah sukses terkirim dan disimpan dengan aman di sistim kami.",
   "thankYou": "Terima kasih!",
-  "adminArea": "Area Admin"
+  "adminArea": "Area Admin",
+  "instanceCreatedOnConn%s%s": "Instance '%s' telah dibuat pada koneksi '%s'",
+  "fileNotModuleHandler%s": "Berkas '%s' BUKAN merupakan module handler"
 }

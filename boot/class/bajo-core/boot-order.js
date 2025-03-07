@@ -1,6 +1,5 @@
 import lodash from 'lodash'
 import fs from 'fs-extra'
-import getModuleDir from '../method/get-module-dir.js'
 
 const { reduce, map, isNaN, trim, forOwn, orderBy } = lodash
 
@@ -15,7 +14,7 @@ async function bootOrder () {
   const norder = {}
   for (let n of this.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
-    const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir(n)
+    const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : this.getModuleDir(n)
     if (n !== this.mainNs && !fs.existsSync(`${dir}/plugin`)) throw this.error('packageNotFoundOrNotBajo%s', n)
     norder[n] = NaN
     try {

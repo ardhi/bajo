@@ -1,8 +1,7 @@
 import os from 'os'
 import lodash from 'lodash'
-import levels from './bajo-core/method/log-levels.js'
-import isLogInRange from './bajo-core/method/is-log-in-range.js'
 import dayjs from 'dayjs'
+import logLevels from '../lib/log-levels.js'
 
 const { isEmpty, without, merge, upperFirst } = lodash
 
@@ -31,7 +30,7 @@ class Log {
 
   formatMsg = (level, ...params) => {
     if (this.plugin.app.bajo.config.log.level === 'silent') return
-    if (!isLogInRange.call(this.plugin.app.bajo, level)) return
+    if (!this.plugin.app.bajo.isLogInRange(level)) return
     let [data, msg, ...args] = params
     if (typeof data === 'string') {
       args.unshift(msg)
@@ -46,7 +45,7 @@ class Log {
       let text
       const dt = new Date()
       if (this.plugin.app.bajo.config.env === 'prod') {
-        const json = { level: levels[level], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
+        const json = { level: logLevels[level], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
         if (!isEmpty(data)) merge(json, data)
         merge(json, { msg })
         text = JSON.stringify(json)
@@ -59,7 +58,7 @@ class Log {
   }
 }
 
-Object.keys(levels).forEach(level => {
+Object.keys(logLevels).forEach(level => {
   Log.prototype[level] = function (...params) {
     this.formatMsg(level, ...params)
   }

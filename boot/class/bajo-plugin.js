@@ -2,7 +2,6 @@ import Plugin from './plugin.js'
 import lodash from 'lodash'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import readAllConfigs from '../lib/read-all-configs.js'
-import titleize from './bajo-core/method/titleize.js'
 import fs from 'fs-extra'
 
 const { pick, omit, camelCase, trim, without } = lodash
@@ -42,7 +41,7 @@ class BajoPlugin extends Plugin {
     } catch (err) {}
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
-    this.title = this.title ?? cfg.title ?? titleize(this.alias)
+    this.title = this.title ?? cfg.title ?? this.app.bajo.titleize(this.alias)
 
     this.dependencies = this.dependencies ?? []
     const depFile = `${dir}/plugin/.dependencies`

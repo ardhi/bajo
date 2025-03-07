@@ -1,7 +1,6 @@
 import lodash from 'lodash'
 import fs from 'fs-extra'
-import getModuleDir from '../method/get-module-dir.js'
-import resolvePath from '../method/resolve-path.js'
+import resolvePath from '../../lib/resolve-path.js'
 
 const { isString, filter, map, trim, without, uniq, camelCase, isEmpty } = lodash
 
@@ -20,7 +19,7 @@ async function buildPlugins () {
   this.pluginPkgs.push(this.mainNs)
   for (const pkg of this.pluginPkgs) {
     const ns = camelCase(pkg)
-    const dir = ns === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : getModuleDir.call(this, pkg)
+    const dir = ns === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : this.getModuleDir(pkg)
     if (ns !== this.mainNs && !fs.existsSync(`${dir}/plugin`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
     let plugin
     const factory = `${dir}/plugin/factory.js`

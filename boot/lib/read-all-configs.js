@@ -1,22 +1,19 @@
-import readConfig from '../class/bajo-core/method/read-config.js'
-import defaultsDeep from '../class/bajo-core/method/defaults-deep.js'
-
 async function readAllConfigs (base) {
   let cfg = {}
   let ext = {}
   // default config file
   try {
-    cfg = await readConfig.call(this.bajo, `${base}.*`, { ignoreError: true })
+    cfg = await this.bajo.readConfig(`${base}.*`, { ignoreError: true })
   } catch (err) {
     if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
   }
   // env based config file
   try {
-    ext = await readConfig.call(this.bajo, `${base}-${this.bajo.config.env}.*`, { ignoreError: true })
+    ext = await this.bajo.readConfig(`${base}-${this.bajo.config.env}.*`, { ignoreError: true })
   } catch (err) {
     if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
   }
-  return defaultsDeep({}, ext, cfg)
+  return this.bajo.defaultsDeep({}, ext, cfg)
   /*
   try {
     cfg = await readConfig.call(this.bajo, `${base}-${this.bajo.config.env}.*`)

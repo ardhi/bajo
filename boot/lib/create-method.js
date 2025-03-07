@@ -1,9 +1,7 @@
 import fastGlob from 'fast-glob'
 import path from 'path'
 import lodash from 'lodash'
-import resolvePath from '../class/bajo-core/method/resolve-path.js'
-import importModule from '../class/bajo-core/method/import-module.js'
-import readJson from '../class/bajo-core/method/read-json.js'
+import resolvePath from './resolve-path.js'
 
 const { camelCase, isFunction, isPlainObject, forOwn } = lodash
 
@@ -15,8 +13,8 @@ export default async function (dir, pkg = 'bajo') {
     const base = f.replace(dir, '').replace(ext, '')
     const name = camelCase(base)
     let mod
-    if (ext === '.json') mod = readJson(f)
-    else mod = await importModule(f)
+    if (ext === '.json') mod = this.app.bajo.readJson(f)
+    else mod = await this.app.bajo.importModule(f)
     if (isFunction(mod)) {
       mod = mod.bind(this)
     } else if (isPlainObject(mod)) {

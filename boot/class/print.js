@@ -1,6 +1,5 @@
 import ora from 'ora'
 import lodash from 'lodash'
-import defaultsDeep from './bajo-core/method/defaults-deep.js'
 import fs from 'fs-extra'
 import Sprintf from 'sprintf-js'
 const { sprintf } = Sprintf
@@ -72,7 +71,7 @@ class Print {
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
     this.opts.isSilent = !!(config.silent || this.opts.isSilent)
-    this.opts = defaultsDeep(opts, this.opts)
+    this.opts = this.plugin.app.bajo.defaultsDeep(opts, this.opts)
   }
 
   setText = (text, ...args) => {

@@ -2,7 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import os from 'os'
 
-const resolvePath = (item, asFileUrl) => {
+function resolvePath (item, asFileUrl) {
   if (item.startsWith('file://')) item = fileURLToPath(item)
   item = path.resolve(item)
   if (os.platform() === 'win32') {

@@ -1,17 +1,16 @@
 import util from 'util'
 import lodash from 'lodash'
 import BajoCore from './bajo-core.js'
-import resolvePath from './bajo-core/method/resolve-path.js'
+import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
-import buildPlugins from './bajo-core/helper/build-plugins.js'
-import { buildBaseConfig, buildExtConfig } from './bajo-core/helper/build-config.js'
-import collectConfigHandlers from './bajo-core/helper/collect-config-handlers.js'
-import attachMethod from './bajo-core/helper/attach-method.js'
-import bootOrder from './bajo-core/helper/boot-order.js'
-import bootPlugins from './bajo-core/helper/boot-plugins.js'
-import exitHandler from './bajo-core/helper/exit-handler.js'
-import runAsApplet from './bajo-core/helper/run-as-applet.js'
+import buildPlugins from './bajo-core/build-plugins.js'
+import { buildBaseConfig, buildExtConfig } from './bajo-core/build-config.js'
+import collectConfigHandlers from './bajo-core/collect-config-handlers.js'
+import bootOrder from './bajo-core/boot-order.js'
+import bootPlugins from './bajo-core/boot-plugins.js'
+import exitHandler from './bajo-core/exit-handler.js'
+import runAsApplet from './bajo-core/run-as-applet.js'
 
 const { last } = lodash
 
@@ -55,7 +54,6 @@ class App {
     await buildPlugins.call(bajo)
     await collectConfigHandlers.call(bajo)
     await buildExtConfig.call(bajo)
-    await attachMethod.call(bajo)
     await bootOrder.call(bajo)
     await bootPlugins.call(bajo)
     await exitHandler.call(bajo)

@@ -1,9 +1,8 @@
 import yargs from 'yargs'
 import { Parser } from 'yargs/helpers'
 import { unflatten } from 'flat'
-import isSet from '../class/bajo-core/method/is-set.js'
 import dotenvParseVariables from 'dotenv-parse-variables'
-import importModule from '../class/bajo-core/method/import-module.js'
+import importModule from './import-module.js'
 import lodash from 'lodash'
 import fs from 'fs-extra'
 import path from 'path'
@@ -51,7 +50,7 @@ const parseWithYargs = async () => {
 }
 
 async function parseArgsArgv ({ delimiter = '-', splitter = ':', useParser } = {}) {
-  if (!isSet(useParser)) useParser = find(process.argv, a => a.startsWith('--spawn'))
+  if (!useParser) useParser = find(process.argv, a => a.startsWith('--spawn'))
   let argv = useParser ? await parseWithParser() : await parseWithYargs()
   const args = argv._
   delete argv._

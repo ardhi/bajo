@@ -5,7 +5,7 @@
   "cantLocateNpmGlobalDir": "Can't locate npm global module directory",
   "cantLocateGlobalDir%s": "Can't locate '%s' global module directory",
   "cantFindMethod%s": "Can't find method named '%s'",
-  "pluginWithAliasNotLoaded%s": "Plugin with alias '%s' is not loaded",
+  "pluginWithNameAliasNotLoaded%s": "Plugin with name/alias '%s' is not loaded",
   "cantFind%s": "Can't find %s",
   "dtUnparsable%s": "Date/time unparsable '%s'",
   "cantParse%s": "'Can't parse '%s'",
@@ -152,5 +152,7 @@
   "formSubmitted": "Form Submitted",
   "formSubmittedInfo": "The form you entered has been successfully submitted and is stored securely in our system.",
   "thankYou": "Thank you!",
-  "adminArea": "Admin Area"
+  "adminArea": "Admin Area",
+  "instanceCreatedOnConn%s%s": "Instance '%s' created on connection '%s'",
+  "fileNotModuleHandler%s": "File '%s' is NOT a module handler"
 }
