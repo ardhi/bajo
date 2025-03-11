@@ -570,32 +570,35 @@ class BajoCore extends Plugin {
     return dt.toDate()
   }
 
-  parseObject = (input, { silent = true, parseValue = false, lang, ns } = {}) => {
+  parseObject = (input, options = {}) => {
+    const { silent = true, parseValue = false, lang, ns } = options
+    const translate = (item) => {
+      const scope = ns ? this.app[ns] : this
+      const [text, ...args] = item.split('|')
+      return scope.print.write(text, ...args, { lang })
+    }
     const statics = ['*']
     let obj = cloneDeep(input)
     const keys = Object.keys(obj)
-    const me = this
     const mutated = []
     keys.forEach(k => {
-      const v = obj[k]
-      if (isPlainObject(v)) obj[k] = this.parseObject(v)
+      let v = obj[k]
+      if (isPlainObject(v)) obj[k] = this.parseObject(v, options)
       else if (isArray(v)) {
         v.forEach((i, idx) => {
-          if (isPlainObject(i)) obj[k][idx] = this.parseObject(i)
+          if (isPlainObject(i)) obj[k][idx] = this.parseObject(i, options)
           else if (statics.includes(i)) obj[k][idx] = i
           else if (parseValue) obj[k][idx] = dotenvParseVariables(set({}, 'item', obj[k][idx]), { assignToProcessEnv: false }).item
           if (isArray(obj[k][idx])) obj[k][idx] = obj[k][idx].map(item => typeof item === 'string' ? item.trim() : item)
         })
       } else if (this.isSet(v)) {
+        if (isString(v) && v.startsWith('t:') && lang) v = translate(v.slice(2))
         try {
           if (statics.includes(v)) obj[k] = v
           else if (k.startsWith('t:') && isString(v)) {
             const newK = k.slice(2)
-            if (lang) {
-              const scope = ns ? me.app[ns] : me
-              const [text, ...args] = v.split('|')
-              obj[newK] = scope.print.write(text, ...args, { lang })
-            } else obj[newK] = v
+            if (lang) obj[newK] = translate(v)
+            else obj[newK] = v
             mutated.push(k)
           } else if (parseValue) {
             obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
