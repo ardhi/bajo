@@ -42,8 +42,10 @@ export async function buildBaseConfig () {
   if (!get(this, 'dir.data')) set(this, 'dir.data', `${this.dir.base}/data`)
   this.dir.data = this.resolvePath(this.dir.data)
   if (!fs.existsSync(this.dir.data)) {
-    this.log.warn('ddirNotExists%s', this.dir.data)
+    console.log('Data directory (%s) doesn\'t exist yet', this.dir.data)
+    process.exit(1)
   }
+  fs.ensureDirSync(`${this.dir.data}/config`)
   if (!this.dir.tmp) {
     this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.name}`
     fs.ensureDirSync(this.dir.tmp)

@@ -154,5 +154,7 @@
   "thankYou": "Terima kasih!",
   "adminArea": "Area Admin",
   "instanceCreatedOnConn%s%s": "Instance '%s' telah dibuat pada koneksi '%s'",
-  "fileNotModuleHandler%s": "Berkas '%s' BUKAN merupakan module handler"
+  "fileNotModuleHandler%s": "Berkas '%s' BUKAN merupakan module handler",
+  "error%s": "Kesalahan: %s",
+  "invalid%s%s": "%s tidak valid (%s)"
 }

@@ -19,8 +19,15 @@ async function buildPlugins () {
   this.pluginPkgs.push(this.mainNs)
   for (const pkg of this.pluginPkgs) {
     const ns = camelCase(pkg)
-    const dir = ns === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : this.getModuleDir(pkg)
-    if (ns !== this.mainNs && !fs.existsSync(`${dir}/plugin`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
+    let dir
+    if (ns === 'main') {
+      dir = `${this.dir.base}/${this.mainNs}`
+      fs.ensureDirSync(dir)
+      fs.ensureDirSync(`${dir}/plugin`)
+    } else {
+      dir = this.getModuleDir(pkg)
+      if (!fs.existsSync(`${dir}/plugin`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
+    }
     let plugin
     const factory = `${dir}/plugin/factory.js`
     if (fs.existsSync(factory)) {

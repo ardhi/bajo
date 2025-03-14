@@ -28,7 +28,7 @@ const {
   isFunction, words, upperFirst, map, concat, uniq, forOwn, padStart,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase, isNumber,
   cloneDeep, isPlainObject, isArray, isString, set, omit, keys, indexOf,
-  last, get, has, values, dropRight, mergeWith
+  last, get, has, values, dropRight, pick, mergeWith
 } = lodash
 
 class BajoCore extends Plugin {
@@ -163,14 +163,11 @@ class BajoCore extends Plugin {
     if (deleted.length > 0) pullAt(items, deleted)
 
     // check for duplicity
-    for (const c of items) {
-      for (const d of dupChecks) {
-        if (isFunction(d)) await d.call(this.app[ns], c, items)
-        else {
-          const checker = set({}, d, c[d])
-          const match = filter(items, checker)
-          if (match.length > 1) this.app[ns].fatal('oneOrMoreSharedTheSame%s%s', container, this.join(dupChecks.filter(i => !isFunction(i))))
-        }
+    if (dupChecks.length > 0) {
+      const checkers = []
+      for (const c of items) {
+        const checker = JSON.stringify(pick(c, dupChecks))
+        if (checkers.includes(checker)) this.app[ns].fatal('oneOrMoreSharedTheSame%s%s', container, this.join(dupChecks.filter(i => !isFunction(i))))
       }
     }
     await this.runHook(`${ns}:${camelCase('afterBuildCollection')}`, container)

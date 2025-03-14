@@ -3,6 +3,20 @@ import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import Log from './log.js'
 import Print from './print.js'
 import BajoError from './error.js'
+import fastGlob from 'fast-glob'
+import { sprintf } from 'sprintf-js'
+import outmatch from 'outmatch'
+import dayjs from '../lib/dayjs.js'
+import fs from 'fs-extra'
+
+const lib = {
+  _: lodash,
+  fs,
+  fastGlob,
+  sprintf,
+  outmatch,
+  dayjs
+}
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
@@ -12,7 +26,7 @@ class Plugin {
     this.name = camelCase(pkgName)
     this.app = app
     this.config = {}
-    this.lib = {}
+    this.lib = lib
     this.exitHandler = undefined
   }
 

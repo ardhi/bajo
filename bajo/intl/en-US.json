@@ -154,5 +154,7 @@
   "thankYou": "Thank you!",
   "adminArea": "Admin Area",
   "instanceCreatedOnConn%s%s": "Instance '%s' created on connection '%s'",
-  "fileNotModuleHandler%s": "File '%s' is NOT a module handler"
+  "fileNotModuleHandler%s": "File '%s' is NOT a module handler",
+  "error%s": "Error: %s",
+  "invalid%s%s": "Invalid %s (%s)"
 }
