@@ -13,7 +13,7 @@ class BajoPlugin extends Plugin {
   }
 
   loadConfig = async () => {
-    const { log, getModuleDir, readJson, defaultsDeep } = this.app.bajo
+    const { log, getModuleDir, readJson, defaultsDeep, parseObject } = this.app.bajo
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs.call(this.app, `${dir}/plugin/config`)
@@ -46,7 +46,7 @@ class BajoPlugin extends Plugin {
     this.dependencies = this.dependencies ?? []
     const depFile = `${dir}/plugin/.dependencies`
     if (fs.existsSync(depFile)) this.dependencies = without(fs.readFileSync(depFile, 'utf8').split('\n').map(item => trim(item)), '')
-    this.config = omit(cfg, ['title', 'dependencies'])
+    this.config = parseObject(omit(cfg, ['title', 'dependencies']), { parseValue: true })
   }
 
   _onoff = async (item, ...args) => {

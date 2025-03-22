@@ -131,7 +131,7 @@
   "file": "File",
   "applet": "Applet",
   "unsupported%s%s": "Unsupported %s '%s'",
-  "error%": "Error: %s",
+  "error%s": "Error: %s",
   "savedAs%%": "%s saved as '%s'",
   "loaded%s": "Loaded %s",
   "production": "production",
@@ -155,6 +155,6 @@
   "adminArea": "Admin Area",
   "instanceCreatedOnConn%s%s": "Instance '%s' created on connection '%s'",
   "fileNotModuleHandler%s": "File '%s' is NOT a module handler",
-  "error%s": "Error: %s",
+  "error%s%s%s": "%s error (%s): %s",
   "invalid%s%s": "Invalid %s (%s)"
 }

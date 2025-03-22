@@ -5,6 +5,18 @@ import logLevels from '../lib/log-levels.js'
 
 const { isEmpty, without, merge, upperFirst } = lodash
 
+export function isIgnored (level) {
+  const { filter, isArray } = this.lib._
+  let ignore = this.app.bajo.config.log.ignore ?? []
+  if (!isArray(ignore)) ignore = [ignore]
+  const items = filter(ignore, i => {
+    const [ns, lvl] = i.split(':')
+    if (lvl) return ns === this.name && lvl === level
+    return ns === this.name
+  })
+  return items.length > 0
+}
+
 class Log {
   constructor (plugin) {
     this.plugin = plugin
@@ -21,6 +33,10 @@ class Log {
 
   isExtLogger = () => {
     return this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger
+  }
+
+  isIgnored = level => {
+    return isIgnored.call(this.plugin, level)
   }
 
   child = () => {
@@ -53,7 +69,7 @@ class Log {
         text = `[${dayjs(dt).utc(true).format(this.format)}] ${upperFirst(level)}: ${msg}`
         if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
       }
-      console.log(text)
+      if (!this.isIgnored(level)) console.log(text)
     }
   }
 }

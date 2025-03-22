@@ -113,14 +113,14 @@ class BajoCore extends Plugin {
 
   breakNsPath = (item = '', defaultNs = 'bajo', checkNs = true) => {
     let [ns, ...path] = item.split(':')
+    const fullNs = ns
     let subNs
     let subSubNs
     path = path.join(':')
-    if (path.startsWith('//')) return { ns: undefined, path: item } // for: http:// etc
-    if (isEmpty(path)) {
-      path = ns
-      ns = defaultNs
+    if (path.startsWith('//')) {
+      return { path: item } // for: http:// etc
     }
+
     [ns, subNs, subSubNs] = ns.split('.')
     if (checkNs) {
       if (!this.app[ns]) {
@@ -133,7 +133,7 @@ class BajoCore extends Plugin {
     let qs
     [path, qs] = path.split('?')
     qs = querystring.parse(qs) ?? {}
-    return { ns, path, subNs, subSubNs, qs, fullPath }
+    return { ns, path, subNs, subSubNs, qs, fullPath, fullNs }
   }
 
   buildCollections = async (options = {}) => {
@@ -189,8 +189,12 @@ class BajoCore extends Plugin {
         const applet = find(bajo.applets, a => (a.ns === ns || a.alias === ns))
         if (applet) result = await bajo.runApplet(applet, path, ...args)
       } else {
-        const method = bajo.getMethod(item)
-        if (method) result = await method(...args)
+        const [ns, method, ...params] = item.split(':')
+        const fn = bajo.getMethod(`${ns}:${method}`)
+        if (fn) {
+          if (params.length > 0) args.unshift(...params)
+          result = await fn(...args)
+        }
       }
     } else if (isFunction(item)) {
       result = await item.call(scope, ...args)
@@ -688,7 +692,6 @@ class BajoCore extends Plugin {
     if (isEmpty(fns)) return
     fns = orderBy(fns, ['level'])
     const results = []
-    const removed = []
     for (const i in fns) {
       const fn = fns[i]
       const scope = this.app[fn.src]
@@ -697,11 +700,8 @@ class BajoCore extends Plugin {
         hook: hookName,
         resp: res
       })
-      if (path.startsWith('once')) removed.push(i)
       if (this.config.log.traceHook) scope.log.trace('hookExecuted%s', hookName)
     }
-    if (removed.length > 0) pullAt(this.app.bajo.hooks, removed)
-
     return results
   }
 

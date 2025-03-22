@@ -131,7 +131,7 @@
   "file": "Berkas",
   "applet": "Applet",
   "unsupported%s%s": "%s '%s' tidak didukung",
-  "error%": "Kesalahan: %s",
+  "error%s": "Kesalahan: %s",
   "savedAs%%": "%s disimpan sbg '%s'",
   "loaded%s": "%s termuat",
   "production": "produksi",
@@ -155,6 +155,6 @@
   "adminArea": "Area Admin",
   "instanceCreatedOnConn%s%s": "Instance '%s' telah dibuat pada koneksi '%s'",
   "fileNotModuleHandler%s": "Berkas '%s' BUKAN merupakan module handler",
-  "error%s": "Kesalahan: %s",
+  "error%s%s%s": "Kesalahan %s (%s): %s",
   "invalid%s%s": "%s tidak valid (%s)"
 }

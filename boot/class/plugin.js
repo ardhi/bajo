@@ -9,6 +9,19 @@ import outmatch from 'outmatch'
 import dayjs from '../lib/dayjs.js'
 import fs from 'fs-extra'
 
+function outmatchNs (source, pattern) {
+  const { breakNsPath } = this.app.bajo
+  const [src, subSrc] = source.split(':')
+  if (!subSrc) return pattern === src
+  try {
+    const { fullNs, path } = breakNsPath(pattern)
+    const isMatch = outmatch(path)
+    return src === fullNs && isMatch(subSrc)
+  } catch (err) {
+    return false
+  }
+}
+
 const lib = {
   _: lodash,
   fs,
@@ -27,6 +40,7 @@ class Plugin {
     this.app = app
     this.config = {}
     this.lib = lib
+    this.lib.outmatchNs = outmatchNs.bind(this)
     this.exitHandler = undefined
   }
 

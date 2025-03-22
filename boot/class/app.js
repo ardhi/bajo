@@ -60,7 +60,7 @@ class App {
     // boot complete
     const elapsed = new Date() - bajo.runAt
     bajo.log.info('bootCompleted%s', bajo.secToHms(elapsed, true))
-    await bajo.runHook('bajo:bootComplete')
+    await bajo.runHook('bajo:afterBootComplete')
     if (bajo.applet) await runAsApplet.call(bajo)
   }
 }

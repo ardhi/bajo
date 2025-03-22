@@ -73,4 +73,5 @@ export async function buildExtConfig () {
   this.initPrint()
   this.initLog()
   this.log.debug('configHandlers%s', this.join(exts))
+  this.config = this.parseObject(this.config, { parseValue: true })
 }
