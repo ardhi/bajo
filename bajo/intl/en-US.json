@@ -156,5 +156,6 @@
   "instanceCreatedOnConn%s%s": "Instance '%s' created on connection '%s'",
   "fileNotModuleHandler%s": "File '%s' is NOT a module handler",
   "error%s%s%s": "%s error (%s): %s",
-  "invalid%s%s": "Invalid %s (%s)"
+  "invalid%s%s": "Invalid %s (%s)",
+  "demo": "Demo"
 }
