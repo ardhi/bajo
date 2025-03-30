@@ -157,5 +157,11 @@
   "fileNotModuleHandler%s": "File '%s' is NOT a module handler",
   "error%s%s%s": "%s error (%s): %s",
   "invalid%s%s": "Invalid %s (%s)",
-  "demo": "Demo"
+  "demo": "Demo",
+  "documentation": "Documentation",
+  "info": "Info",
+  "main": "Main",
+  "usage": "Usage",
+  "monitoring": "Monitoring",
+  "faq": "F.A.Q"
 }

@@ -157,5 +157,11 @@
   "fileNotModuleHandler%s": "Berkas '%s' BUKAN merupakan module handler",
   "error%s%s%s": "Kesalahan %s (%s): %s",
   "invalid%s%s": "%s tidak valid (%s)",
-  "demo": "Demo"
+  "demo": "Demo",
+  "documentation": "Dokumentasi",
+  "info": "Info",
+  "main": "Utama",
+  "usage": "Pemakaian",
+  "monitoring": "Pemantauan",
+  "faq": "Tanya Jawab"
 }

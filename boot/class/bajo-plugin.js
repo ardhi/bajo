@@ -32,7 +32,7 @@ class BajoPlugin extends Plugin {
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
     if (this.name === this.app.bajo.mainNs) {
       this.alias = this.app.bajo.mainNs
-      this.title = 'Main'
+      this.title = this.alias
     }
     // merge with config from datadir
     try {
@@ -41,7 +41,7 @@ class BajoPlugin extends Plugin {
     } catch (err) {}
     const envArgv = defaultsDeep({}, omit(this.app.env[this.name] ?? {}, omittedPluginKeys) ?? {}, omit(this.app.argv[this.name] ?? {}, omittedPluginKeys) ?? {})
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
-    this.title = this.title ?? cfg.title ?? this.app.bajo.titleize(this.alias)
+    this.title = this.title ?? cfg.title ?? this.alias
 
     this.dependencies = this.dependencies ?? []
     const depFile = `${dir}/plugin/.dependencies`
