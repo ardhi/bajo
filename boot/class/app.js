@@ -22,9 +22,8 @@ class App {
       const parts = l.split('=')
       cwd = parts[1]
     }
-    cwd = resolvePath(cwd)
-    process.env.BAJOCWD = cwd
-    this.cwd = cwd
+    this.dir = resolvePath(cwd)
+    process.env.APPDIR = this.dir
   }
 
   addPlugin = (plugin) => {

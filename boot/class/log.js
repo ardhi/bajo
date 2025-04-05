@@ -54,6 +54,10 @@ class Log {
       data = null
     }
     args = without(args, undefined)
+    if (data instanceof Error) {
+      msg = 'error%s'
+      args = [data.message]
+    }
     msg = `[${this.plugin.name}] ${this.write(msg, ...args)}`
     if (this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger) {
       this.plugin.app[this.bajoLog].logger[level](data, msg, ...args)
@@ -69,7 +73,10 @@ class Log {
         text = `[${dayjs(dt).utc(true).format(this.format)}] ${upperFirst(level)}: ${msg}`
         if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
       }
-      if (!this.isIgnored(level)) console.log(text)
+      if (!this.isIgnored(level)) {
+        console.log(text)
+        if (data instanceof Error && level === 'trace') console.error(data)
+      }
     }
   }
 }

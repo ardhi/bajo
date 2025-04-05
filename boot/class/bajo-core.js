@@ -377,14 +377,14 @@ class BajoCore extends Plugin {
   }
 
   getModuleDir = (pkgName, base) => {
-    if (pkgName === 'main') return resolvePath(process.env.BAJOCWD)
-    if (base === 'main') base = process.env.BAJOCWD
+    if (pkgName === 'main') return resolvePath(this.app.dir)
+    if (base === 'main') base = this.app.dir
     else if (this && this.app && this.app[base]) base = this.app[base].pkgName
     const pkgPath = pkgName + '/package.json'
     const paths = require.resolve.paths(pkgPath)
     const gdir = this.getGlobalModuleDir()
     paths.unshift(gdir)
-    paths.unshift(resolvePath(path.join(process.env.BAJOCWD, 'node_modules')))
+    paths.unshift(resolvePath(path.join(this.app.dir, 'node_modules')))
     let dir = this.findDeep(pkgPath, paths)
     if (base && !dir) dir = this.findDeep(`${base}/node_modules/${pkgPath}`, paths)
     if (!dir) return null
@@ -503,7 +503,7 @@ class BajoCore extends Plugin {
   }
 
   isValidApp = (dir) => {
-    if (!dir) dir = process.env.BAJOCWD
+    if (!dir) dir = this.app.dir
     dir = resolvePath(dir)
     const hasMainDir = fs.existsSync(`${dir}/main/plugin`)
     const hasPackageJson = fs.existsSync(`${dir}/package.json`)
@@ -511,7 +511,7 @@ class BajoCore extends Plugin {
   }
 
   isValidPlugin = (dir) => {
-    if (!dir) dir = process.env.BAJOCWD
+    if (!dir) dir = this.app.dir
     dir = resolvePath(dir)
     const hasPluginDir = fs.existsSync(`${dir}/plugin`)
     const hasPackageJson = fs.existsSync(`${dir}/package.json`)
