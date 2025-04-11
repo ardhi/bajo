@@ -32,7 +32,7 @@ class BajoPlugin extends Plugin {
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
     if (this.name === this.app.bajo.mainNs) {
       this.alias = this.app.bajo.mainNs
-      this.title = this.alias
+      this.title = this.title ?? this.alias
     }
     // merge with config from datadir
     try {
