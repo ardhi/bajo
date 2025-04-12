@@ -163,5 +163,7 @@
   "main": "Main",
   "usage": "Usage",
   "monitoring": "Monitoring",
-  "faq": "F.A.Q"
+  "faq": "F.A.Q",
+  "details": "Details",
+  "country": "Country"
 }

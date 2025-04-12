@@ -163,5 +163,7 @@
   "main": "Utama",
   "usage": "Pemakaian",
   "monitoring": "Pemantauan",
-  "faq": "Tanya Jawab"
+  "faq": "Tanya Jawab",
+  "details": "Detil",
+  "country": "Negara"
 }
