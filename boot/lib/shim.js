@@ -8,6 +8,15 @@ function shim () {
       return this.replace(new RegExp(str, 'g'), newStr)
     }
   }
+  if (!String.prototype.splice) {
+    String.prototype.splice = function(index, count, add) { // eslint-disable-line
+      if (index < 0) {
+        index += this.length
+        if (index < 0) index = 0
+      }
+      return this.slice(0, index) + (add || '') + this.slice(index + count)
+    }
+  }
 }
 
 export default shim
