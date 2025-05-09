@@ -26,7 +26,13 @@ const defConfig = {
       date: { dateStyle: 'medium' },
       time: { timeStyle: 'short' },
       float: { maximumFractionDigits: 2 },
+      double: { maximumFractionDigits: 5 },
+      smallint: {},
       integer: {}
+    },
+    unitSys: {
+      'en-US': 'imperial',
+      id: 'metric'
     }
   },
   exitHandler: true

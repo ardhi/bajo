@@ -21,6 +21,7 @@ import outmatch from 'outmatch'
 import resolvePath from '../lib/resolve-path.js'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
+import { types as formatTypes, formats } from '../lib/formats.js'
 
 const require = createRequire(import.meta.url)
 
@@ -278,27 +279,56 @@ class BajoCore extends Plugin {
     return { result, pattern }
   }
 
+  getUnitFormat = (options = {}) => {
+    const lang = options.lang ?? this.config.lang
+    let unitSys = options.unitSys ?? this.config.intl.unitSys[lang] ?? 'metric'
+    if (!['imperial', 'nautical', 'metric'].includes(unitSys)) unitSys = 'metric'
+    return { unitSys, format: formats[unitSys] }
+  }
+
+  formatByType = (type, value, dataType, options = {}) => {
+    const { format } = this.getUnitFormat(options)
+    const { withUnit = true } = options
+    const lang = options.lang ?? this.config.lang
+    value = format[`${type}Fn`](value)
+    const unit = format[`${type}Unit`]
+    const sep = format[`${type}UnitSep`] ?? ' '
+    if (!withUnit) return [value, unit, sep]
+    const setting = this.defaultsDeep(options[dataType], this.config.intl.format[dataType])
+    value = new Intl.NumberFormat(lang, setting).format(value)
+    return `${value}${sep}${unit}`
+  }
+
   format = (value, type, options = {}) => {
     const { format } = this.config.intl
     const { emptyValue = format.emptyValue } = options
     const lang = options.lang ?? this.config.lang
+    options.withUnit = options.withUnit ?? true
+    let valueFormatted
     if ([undefined, null, ''].includes(value)) return emptyValue
     if (type === 'auto') {
       if (value instanceof Date) type = 'datetime'
     }
-    if (['integer', 'smallint'].includes(type)) {
-      value = parseInt(value)
+    if (['float', 'double'].includes(type) && this.app.bajoSpatial) {
+      if (options.latitude) return this.app.bajoSpatial.latToDms(value)
+      if (options.longitude) return this.app.bajoSpatial.lngToDms(value)
+    }
+    if (['integer', 'smallint', 'float', 'double'].includes(type)) {
+      value = ['integer', 'smallint'].includes(type) ? parseInt(value) : parseFloat(value)
       if (isNaN(value)) return emptyValue
+      for (const u of formatTypes) {
+        if (options[u]) valueFormatted = this.formatByType(u, value, type, options)
+      }
+    }
+    if (['integer', 'smallint'].includes(type)) {
       const setting = this.defaultsDeep(options.integer, format.integer)
-      return new Intl.NumberFormat(lang, setting).format(value)
+      value = new Intl.NumberFormat(lang, setting).format(Math.round(value))
+      return valueFormatted && options.withUnit ? valueFormatted : value
     }
     if (['float', 'double'].includes(type)) {
-      value = parseFloat(value)
-      if (isNaN(value)) return emptyValue
-      if (this.app.bajoSpatial && options.latitude) return this.app.bajoSpatial.latToDms(value)
-      if (this.app.bajoSpatial && options.longitude) return this.app.bajoSpatial.lngToDms(value)
-      const setting = this.defaultsDeep(options.float, format.float)
-      return new Intl.NumberFormat(lang, setting).format(value)
+      const setting = this.defaultsDeep(options[type], format[type])
+      value = new Intl.NumberFormat(lang, setting).format(value)
+      return valueFormatted && options.withUnit ? valueFormatted : value
     }
     if (['datetime', 'date'].includes(type)) {
       const setting = this.defaultsDeep(options[type], format[type])
