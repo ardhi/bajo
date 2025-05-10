@@ -4,4 +4,7 @@
 }, {
   "prefix": "dayjs",
   "root": "dayjs:"
+}, {
+  "prefix": "sprintf",
+  "root": "sprintf-js:/dist"
 }]

@@ -61,7 +61,7 @@ class Print {
     if (!trans) trans = text
     const params = map(args, a => {
       if (!isString(a)) return a
-      return a.replaceAll('%', '%%')
+      return a
     })
     return sprintf(trans, ...params)
   }
