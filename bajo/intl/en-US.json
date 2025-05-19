@@ -166,5 +166,7 @@
   "faq": "F.A.Q",
   "details": "Details",
   "country": "Country",
-  "save": "Save"
+  "save": "Save",
+  "local": "Local",
+  "global": "Global"
 }

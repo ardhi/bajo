@@ -166,5 +166,7 @@
   "faq": "Tanya Jawab",
   "details": "Detil",
   "country": "Negara",
-  "save": "Simpan"
+  "save": "Simpan",
+  "local": "Lokal",
+  "global": "Global"
 }
