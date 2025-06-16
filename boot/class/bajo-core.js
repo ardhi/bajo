@@ -26,10 +26,10 @@ import { types as formatTypes, formats } from '../lib/formats.js'
 const require = createRequire(import.meta.url)
 
 const {
-  isFunction, words, upperFirst, map, concat, uniq, forOwn, padStart,
+  isFunction, map,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase, isNumber,
   cloneDeep, isPlainObject, isArray, isString, set, omit, keys, indexOf,
-  last, get, has, values, dropRight, pick, mergeWith
+  last, get, has, values, dropRight, pick
 } = lodash
 
 class BajoCore extends Plugin {
@@ -75,21 +75,6 @@ class BajoCore extends Plugin {
     return new Promise((resolve) => {
       setImmediate(() => resolve())
     })
-  }
-
-  arrangeArray = (inputs, trimItem = true) => {
-    const first = []
-    const last = []
-
-    const items = filter(inputs, item => {
-      if (trimItem) item = trim(item)
-      if (item[0] === '^') first.push(item.slice(1))
-      else if (item[0] === '$') last.push(item.slice(1))
-      return !['^', '$'].includes(item[0])
-    })
-    items.unshift(...first)
-    items.push(...last)
-    return items
   }
 
   breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
@@ -205,16 +190,6 @@ class BajoCore extends Plugin {
     return result
   }
 
-  defaultsDeep = (...args) => {
-    const output = {}
-    args.reverse().forEach(function (item) {
-      mergeWith(output, item, function (objectValue, sourceValue) {
-        return isArray(sourceValue) ? sourceValue : undefined
-      })
-    })
-    return output
-  }
-
   eachPlugins = async (handler, options = {}) => {
     if (typeof options === 'string') options = { glob: options }
     const result = {}
@@ -265,20 +240,6 @@ class BajoCore extends Plugin {
     return result
   }
 
-  extractText = (text, patternStart, patternEnd) => {
-    let result = ''
-    const open = text.indexOf(patternStart)
-    if (open > -1) {
-      text = text.slice(open + patternStart.length)
-      const close = text.indexOf(patternEnd)
-      if (close > -1) {
-        result = text.slice(0, close)
-      }
-    }
-    const pattern = `${patternStart}${result}${patternEnd}`
-    return { result, pattern }
-  }
-
   getUnitFormat = (options = {}) => {
     const lang = options.lang ?? this.config.lang
     let unitSys = options.unitSys ?? this.config.intl.unitSys[lang] ?? 'metric'
@@ -287,6 +248,7 @@ class BajoCore extends Plugin {
   }
 
   formatByType = (type, value, dataType, options = {}) => {
+    const { defaultsDeep } = this.lib.aneka
     const { format } = this.getUnitFormat(options)
     const { withUnit = true } = options
     const lang = options.lang ?? this.config.lang
@@ -294,12 +256,13 @@ class BajoCore extends Plugin {
     const unit = format[`${type}Unit`]
     const sep = format[`${type}UnitSep`] ?? ' '
     if (!withUnit) return [value, unit, sep]
-    const setting = this.defaultsDeep(options[dataType], this.config.intl.format[dataType])
+    const setting = defaultsDeep(options[dataType], this.config.intl.format[dataType])
     value = new Intl.NumberFormat(lang, setting).format(value)
     return `${value}${sep}${unit}`
   }
 
   format = (value, type, options = {}) => {
+    const { defaultsDeep } = this.lib.aneka
     const { format } = this.config.intl
     const { emptyValue = format.emptyValue } = options
     const lang = options.lang ?? this.config.lang
@@ -321,21 +284,21 @@ class BajoCore extends Plugin {
       }
     }
     if (['integer', 'smallint'].includes(type)) {
-      const setting = this.defaultsDeep(options.integer, format.integer)
+      const setting = defaultsDeep(options.integer, format.integer)
       value = new Intl.NumberFormat(lang, setting).format(Math.round(value))
       return valueFormatted && options.withUnit ? valueFormatted : value
     }
     if (['float', 'double'].includes(type)) {
-      const setting = this.defaultsDeep(options[type], format[type])
+      const setting = defaultsDeep(options[type], format[type])
       value = new Intl.NumberFormat(lang, setting).format(value)
       return valueFormatted && options.withUnit ? valueFormatted : value
     }
     if (['datetime', 'date'].includes(type)) {
-      const setting = this.defaultsDeep(options[type], format[type])
+      const setting = defaultsDeep(options[type], format[type])
       return new Intl.DateTimeFormat(lang, setting).format(new Date(value))
     }
     if (['time'].includes(type)) {
-      const setting = this.defaultsDeep(options.time, format.time)
+      const setting = defaultsDeep(options.time, format.time)
       return new Intl.DateTimeFormat(lang, setting).format(new Date(`1970-01-01T${value}Z`))
     }
     if (['array'].includes(type)) return value.join(', ')
@@ -381,10 +344,6 @@ class BajoCore extends Plugin {
       throw this.error('cantLocateGlobalDir%s', pkgName, { code: 'BAJO_CANT_LOCATE_MODULE_GLOBAL_DIR' })
     }
     return dir
-  }
-
-  getKeyByValue = (object, value) => {
-    return Object.keys(object).find(key => object[key] === value)
   }
 
   getMethod = (name = '', thrown = true) => {
@@ -467,11 +426,12 @@ class BajoCore extends Plugin {
   }
 
   importPkg = async (...pkgs) => {
+    const { defaultsDeep } = this.lib.aneka
     const result = {}
     const notFound = []
     let opts = { returnDefault: true, thrownNotFound: false }
     if (isPlainObject(last(pkgs))) {
-      opts = this.defaultsDeep(pkgs.pop(), opts)
+      opts = defaultsDeep(pkgs.pop(), opts)
     }
     for (const pkg of pkgs) {
       const { ns, path: name } = this.breakNsPath(pkg)
@@ -501,22 +461,6 @@ class BajoCore extends Plugin {
     return values(result)
   }
 
-  includes = (matcher = [], array = []) => {
-    if (typeof matcher === 'string') matcher = [matcher]
-    let found = false
-    for (const m of matcher) {
-      found = array.includes(m)
-      if (found) break
-    }
-    return found
-  }
-
-  isClass = (item) => {
-    return typeof item === 'function' &&
-      Object.prototype.hasOwnProperty.call(item, 'prototype') &&
-      !Object.prototype.hasOwnProperty.call(item, 'arguments')
-  }
-
   isEmptyDir = async (dir) => {
     await fs.exists(dir)
     return await emptyDir(dir)
@@ -526,10 +470,6 @@ class BajoCore extends Plugin {
     const levels = keys(this.logLevels)
     const logLevel = indexOf(levels, this.app.bajo.config.log.level)
     return indexOf(levels, level) >= logLevel
-  }
-
-  isSet = (input) => {
-    return ![null, undefined].includes(input)
   }
 
   isValidApp = (dir) => {
@@ -549,13 +489,14 @@ class BajoCore extends Plugin {
   }
 
   join = (array, sep) => {
+    const { isSet } = this.lib.aneka
     const translate = val => {
       if (this && this.print) return this.print.write(val).toLowerCase()
       return val
     }
     if (array.length === 0) return translate('none')
     if (array.length === 1) return array[0]
-    if (this.isSet(sep) && !isPlainObject(sep)) return array.join(sep)
+    if (isSet(sep) && !isPlainObject(sep)) return array.join(sep)
     let { separator = ', ', joiner = 'and' } = sep ?? {}
     joiner = translate(joiner)
     const last = (array.pop() ?? '').trim()
@@ -566,29 +507,6 @@ class BajoCore extends Plugin {
     const num = value.match(/\d+/g)
     const unit = value.match(/[a-zA-Z]+/g)
     return `${num[0]}${isEmpty(unit) ? defUnit : unit[0]}`
-  }
-
-  paginate = (collection, { page = 1, limit = 25, sort } = {}) => {
-    const count = collection.length
-    const offset = (page - 1) * limit
-    const fields = []
-    const dirs = []
-    if (isPlainObject(sort)) {
-      forOwn(sort, (v, k) => {
-        fields.push(k)
-        dirs.push(v < 0 ? 'desc' : 'asc')
-      })
-    }
-    if (!isEmpty(fields)) collection = orderBy(collection, fields, dirs)
-    const data = collection.slice(offset, offset + limit)
-
-    return {
-      data,
-      page,
-      limit,
-      count,
-      pages: Math.ceil(collection.length / limit)
-    }
   }
 
   parseDur = (val) => {
@@ -603,6 +521,7 @@ class BajoCore extends Plugin {
 
   parseObject = (input, options = {}) => {
     const { silent = true, parseValue = false, lang, ns } = options
+    const { isSet } = this.lib.aneka
     const translate = (item) => {
       const scope = ns ? this.app[ns] : this
       const [text, ...args] = item.split('|')
@@ -622,7 +541,7 @@ class BajoCore extends Plugin {
           else if (parseValue) obj[k][idx] = dotenvParseVariables(set({}, 'item', obj[k][idx]), { assignToProcessEnv: false }).item
           if (isArray(obj[k][idx])) obj[k][idx] = obj[k][idx].map(item => typeof item === 'string' ? item.trim() : item)
         })
-      } else if (this.isSet(v)) {
+      } else if (isSet(v)) {
         if (isString(v) && v.startsWith('t:') && lang) v = translate(v.slice(2))
         try {
           if (statics.includes(v)) obj[k] = v
@@ -647,15 +566,12 @@ class BajoCore extends Plugin {
     return obj
   }
 
-  pascalCase = (text) => {
-    return upperFirst(camelCase(text))
-  }
-
   pick = (obj, items, excludeUnset) => {
+    const { isSet } = this.lib.aneka
     const result = {}
     for (const item of items) {
       const [k, nk] = item.split(':')
-      if (excludeUnset && !this.isSet(obj[k])) continue
+      if (excludeUnset && !isSet(obj[k])) continue
       result[nk ?? k] = obj[k]
     }
     return result
@@ -711,11 +627,6 @@ class BajoCore extends Plugin {
     return this.parseObject(JSON.parse(resp))
   }
 
-  round = (val, scale = 0) => {
-    scale = scale <= 0 ? 1 : 10 ** scale
-    return Math.round(val * scale) / scale
-  }
-
   runHook = async (hookName, ...args) => {
     const [ns, path] = (hookName ?? '').split(':')
     let fns = filter(this.app.bajo.hooks, { ns, path })
@@ -744,44 +655,6 @@ class BajoCore extends Plugin {
     await fs.writeFile(fname, obj, 'utf8')
     if (printSaved) print.succeed('savedAs%s', path.resolve(fname), { skipSilence: true })
     return fname
-  }
-
-  // based on: https://stackoverflow.com/questions/1322732/convert-seconds-to-hh-mm-ss-with-javascript
-  secToHms = (secs, ms) => {
-    let remain
-    if (ms) {
-      remain = secs % 1000
-      secs = Math.floor(secs / 1000)
-    }
-    const secNum = parseInt(secs, 10)
-    const hours = Math.floor(secNum / 3600)
-    const minutes = Math.floor(secNum / 60) % 60
-    const seconds = secNum % 60
-
-    let hms = [hours, minutes, seconds]
-      .map(v => v < 10 ? '0' + v : v)
-      .filter((v, i) => v !== '00' || i > 0)
-      .join(':')
-    if (ms) hms += '+' + padStart(remain, 3, '0')
-    return hms
-  }
-
-  titleize = (text, { ignores = [], replacement = {} } = {}) => {
-    const defIgnores = ['or', 'and', 'of', 'with']
-    const replacer = {}
-    forOwn(replacement, (v, k) => {
-      const id = this.generateId('int')
-      replacer[id] = k
-      text = text.replace(k, ` ${id} `)
-    })
-    return map(words(text), t => {
-      forOwn(replacer, (v, k) => {
-        if (k === t) t = replacement[replacer[k]]
-      })
-      ignores = uniq(concat(ignores, defIgnores))
-      if (ignores.includes(t)) return t
-      return upperFirst(t)
-    }).join(' ')
   }
 }
 

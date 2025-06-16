@@ -13,7 +13,8 @@ class BajoPlugin extends Plugin {
   }
 
   loadConfig = async () => {
-    const { log, getModuleDir, readJson, defaultsDeep, parseObject } = this.app.bajo
+    const { defaultsDeep } = this.lib.aneka
+    const { log, getModuleDir, readJson, parseObject } = this.app.bajo
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs.call(this.app, `${dir}/plugin/config`)

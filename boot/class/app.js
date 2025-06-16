@@ -58,7 +58,7 @@ class App {
     await exitHandler.call(bajo)
     // boot complete
     const elapsed = new Date() - bajo.runAt
-    bajo.log.info('bootCompleted%s', bajo.secToHms(elapsed, true))
+    bajo.log.info('bootCompleted%s', bajo.lib.aneka.secToHms(elapsed, true))
     await bajo.runHook('bajo:afterBootComplete')
     if (bajo.applet) await runAsApplet.call(bajo)
   }

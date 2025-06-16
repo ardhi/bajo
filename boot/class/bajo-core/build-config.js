@@ -39,8 +39,9 @@ const defConfig = {
 }
 
 export async function buildBaseConfig () {
+  const { defaultsDeep } = this.lib.aneka
   this.applet = this.app.argv._.applet
-  this.config = this.defaultsDeep({}, this.app.env._, this.app.argv._)
+  this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
   this.alias = this.name
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../../..'
@@ -61,11 +62,12 @@ export async function buildBaseConfig () {
 
 export async function buildExtConfig () {
   // config merging
+  const { defaultsDeep } = this.lib.aneka
   let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
-  this.config = this.defaultsDeep({}, resp, this.config, defConfig)
+  this.config = defaultsDeep({}, resp, this.config, defConfig)
   this.config.env = (this.config.env ?? 'dev').toLowerCase()
-  if (values(this.envs).includes(this.config.env)) this.config.env = this.getKeyByValue(this.envs, this.config.env)
+  if (values(this.envs).includes(this.config.env)) this.config.env = this.lib.aneka.getKeyByValue(this.envs, this.config.env)
   if (!keys(this.envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(this.envs))}`)
   process.env.NODE_ENV = this.envs[this.config.env]
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'

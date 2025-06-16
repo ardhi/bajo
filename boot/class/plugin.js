@@ -8,6 +8,7 @@ import { sprintf } from 'sprintf-js'
 import outmatch from 'outmatch'
 import dayjs from '../lib/dayjs.js'
 import fs from 'fs-extra'
+import aneka from 'aneka/index.js'
 
 function outmatchNs (source, pattern) {
   const { breakNsPath } = this.app.bajo
@@ -28,7 +29,8 @@ const lib = {
   fastGlob,
   sprintf,
   outmatch,
-  dayjs
+  dayjs,
+  aneka
 }
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash

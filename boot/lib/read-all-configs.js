@@ -13,7 +13,7 @@ async function readAllConfigs (base) {
   } catch (err) {
     if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
   }
-  return this.bajo.defaultsDeep({}, ext, cfg)
+  return this.bajo.lib.aneka.defaultsDeep({}, ext, cfg)
 }
 
 export default readAllConfigs

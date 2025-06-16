@@ -71,7 +71,7 @@ class Print {
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
     this.opts.isSilent = !!(config.silent || this.opts.isSilent)
-    this.opts = this.plugin.app.bajo.defaultsDeep(opts, this.opts)
+    this.opts = this.plugin.lib.aneka.defaultsDeep(opts, this.opts)
   }
 
   setText = (text, ...args) => {
@@ -89,8 +89,8 @@ class Print {
 
   getElapsed = (unit = 'hms') => {
     const u = unit === 'hms' ? 'second' : unit
-    const elapsed = this.plugin.app.bajo.lib.dayjs().diff(this.startTime, u)
-    return unit === 'hms' ? this.plugin.app.bajo.secToHms(elapsed) : elapsed
+    const elapsed = this.plugin.lib.dayjs().diff(this.startTime, u)
+    return unit === 'hms' ? this.plugin.lib.aneka.secToHms(elapsed) : elapsed
   }
 
   start = (text, ...args) => {
