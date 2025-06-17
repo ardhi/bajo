@@ -273,8 +273,9 @@ class BajoCore extends Plugin {
       if (value instanceof Date) type = 'datetime'
     }
     if (['float', 'double'].includes(type) && this.app.bajoSpatial) {
-      if (options.latitude) return this.app.bajoSpatial.latToDms(value)
-      if (options.longitude) return this.app.bajoSpatial.lngToDms(value)
+      const { latToDms, lngToDms } = this.app.bajoSpatial.lib.anekaSpatial
+      if (options.latitude) return latToDms(value)
+      if (options.longitude) return lngToDms(value)
     }
     if (['integer', 'smallint', 'float', 'double'].includes(type)) {
       value = ['integer', 'smallint'].includes(type) ? parseInt(value) : parseFloat(value)
