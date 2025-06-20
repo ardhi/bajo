@@ -24,12 +24,9 @@ async function buildPlugins () {
       dir = `${this.dir.base}/${this.mainNs}`
       fs.ensureDirSync(dir)
       fs.ensureDirSync(`${dir}/plugin`)
-    } else {
-      dir = this.getModuleDir(pkg)
-      if (!fs.existsSync(`${dir}/plugin`)) throw new Error(`Package '${pkg}' isn't a valid Bajo package`)
-    }
+    } else dir = this.getModuleDir(pkg)
     let plugin
-    const factory = `${dir}/plugin/factory.js`
+    const factory = `${dir}/index.js`
     if (fs.existsSync(factory)) {
       const { default: builder } = await import(resolvePath(factory, true))
       const FactoryClass = await builder.call(this, pkg)

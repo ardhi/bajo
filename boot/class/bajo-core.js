@@ -1,6 +1,5 @@
 import Plugin from './plugin.js'
 import BajoPlugin from './bajo-plugin.js'
-import dayjs from '../lib/dayjs.js'
 import increment from 'add-filename-increment'
 import fs from 'fs-extra'
 import path from 'path'
@@ -16,8 +15,6 @@ import { customAlphabet } from 'nanoid'
 import fastGlob from 'fast-glob'
 import querystring from 'querystring'
 import deepFreeze from 'deep-freeze-strict'
-import { sprintf } from 'sprintf-js'
-import outmatch from 'outmatch'
 import resolvePath from '../lib/resolve-path.js'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
@@ -37,12 +34,6 @@ class BajoCore extends Plugin {
     super('bajo', app)
     this.runAt = new Date()
     this.mainNs = 'main'
-    this.lib._ = lodash
-    this.lib.fs = fs
-    this.lib.fastGlob = fastGlob
-    this.lib.sprintf = sprintf
-    this.lib.outmatch = outmatch
-    this.lib.dayjs = dayjs
     this.lib.BajoPlugin = BajoPlugin
     this.applets = []
     this.pluginPkgs = []
@@ -382,8 +373,7 @@ class BajoCore extends Plugin {
   }
 
   getPluginDataDir = (name, ensureDir = true) => {
-    const { getPlugin } = this.app.bajo
-    const plugin = getPlugin(name)
+    const plugin = this.getPlugin(name)
     const dir = `${this.app.bajo.dir.data}/plugins/${plugin.name}`
     if (ensureDir) fs.ensureDirSync(dir)
     return dir
@@ -476,7 +466,7 @@ class BajoCore extends Plugin {
   isValidApp = (dir) => {
     if (!dir) dir = this.app.dir
     dir = resolvePath(dir)
-    const hasMainDir = fs.existsSync(`${dir}/main/plugin`)
+    const hasMainDir = fs.existsSync(`${dir}/main`)
     const hasPackageJson = fs.existsSync(`${dir}/package.json`)
     return hasMainDir && hasPackageJson
   }
@@ -484,7 +474,7 @@ class BajoCore extends Plugin {
   isValidPlugin = (dir) => {
     if (!dir) dir = this.app.dir
     dir = resolvePath(dir)
-    const hasPluginDir = fs.existsSync(`${dir}/plugin`)
+    const hasPluginDir = fs.existsSync(dir)
     const hasPackageJson = fs.existsSync(`${dir}/package.json`)
     return hasPluginDir && hasPackageJson
   }
@@ -649,8 +639,7 @@ class BajoCore extends Plugin {
 
   saveAsDownload = async (file, obj, printSaved = true) => {
     const { print, getPluginDataDir } = this.app.bajo
-    const plugin = this.name
-    const fname = increment(`${getPluginDataDir(plugin)}/${trim(file, '/')}`, { fs: true })
+    const fname = increment(`${getPluginDataDir(this.name)}/${trim(file, '/')}`, { fs: true })
     const dir = path.dirname(fname)
     if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
     await fs.writeFile(fname, obj, 'utf8')

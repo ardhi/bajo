@@ -43,7 +43,6 @@ class Plugin {
     this.config = {}
     this.lib = lib
     this.lib.outmatchNs = outmatchNs.bind(this)
-    this.exitHandler = undefined
   }
 
   getConfig = (path, options = {}) => {

@@ -4,7 +4,6 @@ import checkClash from '../bajo-plugin/check-clash.js'
 import attachMethod from '../bajo-plugin/attach-method.js'
 import collectHooks from '../bajo-plugin/collect-hooks.js'
 import run from '../bajo-plugin/run.js'
-import collectExitHandlers from '../bajo-plugin/collect-exit-handlers.js'
 
 async function bootPlugins () {
   await buildConfig.call(this.app)
@@ -12,7 +11,6 @@ async function bootPlugins () {
   await checkDependency.call(this.app)
   await attachMethod.call(this.app)
   await collectHooks.call(this.app)
-  await collectExitHandlers.call(this.app)
   await run.call(this.app)
 }
 
