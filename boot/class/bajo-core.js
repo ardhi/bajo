@@ -127,9 +127,9 @@ class BajoCore extends Plugin {
     path = parts.join('/')
     const realPath = realParts.join('/')
     let fullPath = path
-    if (!isEmpty(qs)) fullPath += ('?' + querystring.stringify(qs))
+    if (!isEmpty(qs)) fullPath += ('?' + querystring.stringify(qs, null, null, { encodeURIComponent: (text) => (text) }))
     let realFullPath = realPath
-    if (!isEmpty(qs)) realFullPath += ('?' + querystring.stringify(qs))
+    if (!isEmpty(qs)) realFullPath += ('?' + querystring.stringify(qs, null, null, { encodeURIComponent: (text) => (text) }))
     return { ns, path, subNs, subSubNs, qs, fullPath, fullNs, realPath, realFullPath }
   }
 
