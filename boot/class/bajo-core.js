@@ -106,11 +106,31 @@ class BajoCore extends Plugin {
       }
       if (!this.app[ns]) throw this.error('unknownPluginOrNotLoaded%s')
     }
-    const fullPath = path
     let qs
     [path, qs] = path.split('?')
     qs = querystring.parse(qs) ?? {}
-    return { ns, path, subNs, subSubNs, qs, fullPath, fullNs }
+    // normalize path
+    const parts = path.split('/')
+    const realParts = []
+    const params = {}
+    for (const idx in parts) {
+      const part = parts[idx]
+      if (part[0] !== ':' || part.indexOf('|') === -1) {
+        realParts.push(part)
+        continue
+      }
+      const [key, val] = part.split('|')
+      parts[idx] = key
+      params[key.slice(1)] = val
+      realParts.push(val)
+    }
+    path = parts.join('/')
+    const realPath = realParts.join('/')
+    let fullPath = path
+    if (!isEmpty(qs)) fullPath += ('?' + querystring.stringify(qs))
+    let realFullPath = realPath
+    if (!isEmpty(qs)) realFullPath += ('?' + querystring.stringify(qs))
+    return { ns, path, subNs, subSubNs, qs, fullPath, fullNs, realPath, realFullPath }
   }
 
   buildCollections = async (options = {}) => {

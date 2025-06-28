@@ -1,6 +1,6 @@
 {
   "name": "bajo",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A framework to build a giant monstrous app rapidly",
   "main": "boot/index.js",
   "scripts": {
