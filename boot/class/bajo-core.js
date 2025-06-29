@@ -88,6 +88,12 @@ class BajoCore extends Plugin {
     return { ns, subNs, path: _path, fullNs: names.join('.'), type }
   }
 
+  buildNsPath = ({ ns = '', subNs, subSubNs, path } = {}) => {
+    if (subNs) ns += '.' + subNs
+    if (subSubNs) ns += '.' + subSubNs
+    return `${ns}:${path}`
+  }
+
   breakNsPath = (item = '', defaultNs = 'bajo', checkNs = true) => {
     let [ns, ...path] = item.split(':')
     const fullNs = ns
