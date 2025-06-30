@@ -23,7 +23,7 @@ import { types as formatTypes, formats } from '../lib/formats.js'
 const require = createRequire(import.meta.url)
 
 const {
-  isFunction, map,
+  isFunction, map, isObject,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase, isNumber,
   cloneDeep, isPlainObject, isArray, isString, set, omit, keys, indexOf,
   last, get, has, values, dropRight, pick
@@ -489,20 +489,28 @@ class BajoCore extends Plugin {
     return indexOf(levels, level) >= logLevel
   }
 
-  isValidApp = (dir) => {
-    if (!dir) dir = this.app.dir
-    dir = resolvePath(dir)
-    const hasMainDir = fs.existsSync(`${dir}/main`)
-    const hasPackageJson = fs.existsSync(`${dir}/package.json`)
-    return hasMainDir && hasPackageJson
+  isValidAppPlugin = (file, type, returnPkg) => {
+    if (isObject(file)) return get(file, 'bajo.type') === type
+    file = resolvePath(file)
+    if (path.basename(file) !== 'package.json') file += '/package.json'
+    try {
+      const pkg = fs.readJsonSync(file)
+      const valid = get(pkg, 'bajo.type') === type
+      if (valid) return returnPkg ? pkg : valid
+      return false
+    } catch (err) {
+      return false
+    }
   }
 
-  isValidPlugin = (dir) => {
+  isValidApp = (dir, returnPkg) => {
     if (!dir) dir = this.app.dir
-    dir = resolvePath(dir)
-    const hasPluginDir = fs.existsSync(dir)
-    const hasPackageJson = fs.existsSync(`${dir}/package.json`)
-    return hasPluginDir && hasPackageJson
+    return this.isValidAppPlugin(dir, 'app', returnPkg)
+  }
+
+  isValidPlugin = (dir, returnPkg) => {
+    if (!dir) dir = this.app.dir
+    return this.isValidAppPlugin(dir, 'plugin', returnPkg)
   }
 
   join = (array, sep) => {
