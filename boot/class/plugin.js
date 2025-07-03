@@ -46,7 +46,7 @@ class Plugin {
   }
 
   getConfig = (path, options = {}) => {
-    let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue)
+    let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue ?? {})
     options.omit = options.omit ?? omittedPluginKeys
     if (isPlainObject(obj) && !isEmpty(options.omit)) obj = omit(obj, options.omit)
     if (!options.noclone) obj = cloneDeep(obj)
