@@ -2,7 +2,7 @@ import lodash from 'lodash'
 import fs from 'fs-extra'
 import resolvePath from '../../lib/resolve-path.js'
 
-const { isString, filter, map, trim, without, uniq, camelCase, isEmpty } = lodash
+const { isString, filter, map, trim, without, uniq, camelCase, isEmpty, omit } = lodash
 
 async function buildPlugins () {
   let pluginPkgs = this.config.plugins ?? []
@@ -38,7 +38,7 @@ async function buildPlugins () {
     this.pluginNames.push(plugin.name)
     this.app.addPlugin(plugin)
   }
-  delete this.config.plugins
+  this.config = omit(this.config, this.pluginNames)
 }
 
 export default buildPlugins
