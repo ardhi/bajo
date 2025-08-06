@@ -46,12 +46,14 @@ class BajoError {
     const { isString } = this.plugin.app.bajo.lib._
     const result = {}
     const me = this
+    this.plugin.app.dump(value)
     each(value, (v, i) => {
       const print = me.plugin.print
       if (isString(v)) v = { error: v }
       if (!v.context) return undefined
       v.context.message = v.message
-      if (v.type === 'any.only') v.context.ref = print.write(`field.${get(v, 'context.valids.0.key')}`)
+      // if (v.type === 'any.only') v.context.ref = print.write(`field.${get(v, 'context.valids.0.key')}`)
+      if (v.type === 'any.only') v.context.ref = get(v, 'context.valids', []).join(', ')
       const field = get(v, 'context.key')
       const val = get(v, 'context.value')
       value[i] = {
