@@ -2,8 +2,9 @@ import os from 'os'
 import lodash from 'lodash'
 import dayjs from 'dayjs'
 import logLevels from '../lib/log-levels.js'
+import chalk from 'chalk'
 
-const { isEmpty, without, merge, upperFirst } = lodash
+const { isEmpty, without, merge } = lodash
 
 export function isIgnored (level) {
   const { filter, isArray } = this.lib._
@@ -47,6 +48,7 @@ class Log {
   formatMsg = (level, ...params) => {
     if (this.plugin.app.bajo.config.log.level === 'silent') return
     if (!this.plugin.app.bajo.isLogInRange(level)) return
+    const plain = this.plugin.app.bajo.config.log.plain
     let [data, msg, ...args] = params
     if (typeof data === 'string') {
       args.unshift(msg)
@@ -58,19 +60,23 @@ class Log {
       msg = 'error%s'
       args = [data.message]
     }
-    msg = `[${this.plugin.name}] ${this.write(msg, ...args)}`
+    msg = this.write(msg, ...args)
     if (this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger) {
-      this.plugin.app[this.bajoLog].logger[level](data, msg, ...args)
+      this.plugin.app[this.bajoLog].logger[level](data, `[${this.plugin.name}] ${msg}`, ...args)
     } else {
       let text
       const dt = new Date()
       if (this.plugin.app.bajo.config.env === 'prod') {
-        const json = { level: logLevels[level], time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
+        const json = { level: logLevels[level].number, time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
         if (!isEmpty(data)) merge(json, data)
-        merge(json, { msg })
+        merge(json, { msg: `[${this.plugin.name}] ${msg}` })
         text = JSON.stringify(json)
       } else {
-        text = `[${dayjs(dt).utc(true).format(this.format)}] ${upperFirst(level)}: ${msg}`
+        const date = dayjs(dt).utc(true).format(this.format)
+        const tdate = plain ? `[${date}]` : chalk.cyan(date)
+        const tlevel = plain ? level.toUpperCase() : chalk[logLevels[level].color](level.toUpperCase())
+        const tplugin = plain ? `[${this.plugin.name}]` : chalk.bgBlue(`${this.plugin.name}`)
+        text = `${tdate} ${tlevel}: ${tplugin} ${msg}`
         if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
       }
       if (!this.isIgnored(level)) {

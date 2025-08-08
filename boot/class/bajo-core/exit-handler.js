@@ -5,7 +5,7 @@ async function exit (signal) {
     try {
       await this.stop()
     } catch (err) {}
-    this.log.debug('exited')
+    this.log.trace('exited')
   })
   this.log.debug('appShutdown')
   process.exit(0)

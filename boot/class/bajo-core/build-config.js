@@ -12,6 +12,7 @@ const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 const defConfig = {
   log: {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
+    plain: false,
     applet: false,
     traceHook: false
   },
@@ -65,7 +66,7 @@ export async function buildExtConfig () {
   const { defaultsDeep } = this.lib.aneka
   let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
-  this.config = defaultsDeep({}, resp, this.config, defConfig)
+  this.config = defaultsDeep({}, this.config, resp, defConfig)
   this.config.env = (this.config.env ?? 'dev').toLowerCase()
   if (values(this.envs).includes(this.config.env)) this.config.env = this.lib.aneka.getKeyByValue(this.envs, this.config.env)
   if (!keys(this.envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(this.envs))}`)

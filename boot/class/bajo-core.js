@@ -43,7 +43,6 @@ class BajoCore extends Plugin {
       { ext: '.json', readHandler: this.readJson }
     ]
     this.whiteSpace = [' ', '\t', '\n', '\r']
-    this.logLevels = logLevels
     this.envs = { dev: 'development', staging: 'staging', prod: 'production' }
   }
 
@@ -484,7 +483,7 @@ class BajoCore extends Plugin {
   }
 
   isLogInRange = (level) => {
-    const levels = keys(this.logLevels)
+    const levels = keys(logLevels)
     const logLevel = indexOf(levels, this.app.bajo.config.log.level)
     return indexOf(levels, level) >= logLevel
   }

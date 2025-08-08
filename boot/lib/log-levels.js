@@ -1,1 +1,9 @@
-export default { trace: 10, debug: 20, info: 30, warn: 40, error: 50, fatal: 60, silent: 99 }
+export default {
+  trace: { number: 10, color: 'gray' },
+  debug: { number: 20, color: 'greenBright' },
+  info: { number: 30, color: 'blueBright' },
+  warn: { number: 40, color: 'yellowBright' },
+  error: { number: 50, color: 'redBright' },
+  fatal: { number: 60, color: 'magentaBright' },
+  silent: { number: 99, color: 'white' }
+}
