@@ -20,7 +20,7 @@ class Print {
   init = () => {
     for (const l of this.plugin.app.bajo.config.intl.supported) {
       this.intl[l] = {}
-      const path = `${this.plugin.dir.pkg}/bajo/intl/${l}.json`
+      const path = `${this.plugin.dir.pkg}/extend/bajo/intl/${l}.json`
       if (!fs.existsSync(path)) continue
       const trans = fs.readFileSync(path, 'utf8')
       try {

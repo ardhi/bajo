@@ -218,7 +218,7 @@ class BajoCore extends Plugin {
       const alias = this.app[ns].alias
       let r
       if (glob) {
-        const base = prefix === '' ? this.app[ns].dir.pkg : `${this.app[ns].dir.pkg}/${prefix}`
+        const base = prefix === '' ? `${this.app[ns].dir.pkg}/extend` : `${this.app[ns].dir.pkg}/extend/${prefix}`
         let opts = isString(glob) ? { pattern: [glob] } : glob
         let pattern = opts.pattern ?? []
         if (isString(pattern)) pattern = [pattern]
@@ -449,7 +449,8 @@ class BajoCore extends Plugin {
     if (isPlainObject(last(pkgs))) {
       opts = defaultsDeep(pkgs.pop(), opts)
     }
-    for (const pkg of pkgs) {
+    for (let pkg of pkgs) {
+      if (pkg.indexOf(':') === -1) pkg = `bajo:${pkg}`
       const { ns, path: name } = this.breakNsPath(pkg)
       const dir = this.getModuleDir(name, ns)
       if (!dir) {

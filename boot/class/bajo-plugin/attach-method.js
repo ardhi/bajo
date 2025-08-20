@@ -6,7 +6,7 @@ async function attachMethod () {
   me.bajo.log.debug('attachMethods')
   await eachPlugins(async function ({ ns, pkgName }) {
     const dir = ns === me.bajo.mainNs ? (`${me.bajo.dir.base}/${me.bajo.mainNs}`) : me.bajo.getModuleDir(pkgName)
-    const num = await createMethod.call(me[ns], `${dir}/plugin-method`, pkgName)
+    const num = await createMethod.call(me[ns], `${dir}/method`, pkgName)
     me.bajo.log.trace('- %s (%d)', ns, num)
   })
 }
