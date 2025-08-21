@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>app.js - Bajo Framework</title>
+    
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://bajo.app" target="_blank" class="menu-item" >Project Website</a></h2><h2><a href="https://github.com/ardhi/bajo" target="_blank" class="menu-item" >Github</a></h2><h3 class="collapsed_header">Classes</h3><ul class="collapse_top"><li><a href="App.html">App</a><ul class='methods'><li data-type='method' style='display: none;'><a href="App.html#addPlugin">addPlugin</a></li><li data-type='method' style='display: none;'><a href="App.html#boot">boot</a></li><li data-type='method' style='display: none;'><a href="App.html#dump">dump</a></li></ul></li><li><a href="BajoCore.html">BajoCore</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoCore.html#breakNsPath">breakNsPath</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#buildCollections">buildCollections</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#freeze">freeze</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#resolvePath">resolvePath</a></li></ul></li><li><a href="BajoError.html">BajoError</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoError.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#formatErrorDetails">formatErrorDetails</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#write">write</a></li></ul></li><li><a href="BajoPlugin.html">BajoPlugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoPlugin.html#exit">exit</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#init">init</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#loadConfig">loadConfig</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#start">start</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#stop">stop</a></li></ul></li><li><a href="Log.html">Log</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Log.html#child">child</a></li><li data-type='method' style='display: none;'><a href="Log.html#debug">debug</a></li><li data-type='method' style='display: none;'><a href="Log.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Log.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Log.html#formatMsg">formatMsg</a></li><li data-type='method' style='display: none;'><a href="Log.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Log.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Log.html#isExtLogger">isExtLogger</a></li><li data-type='method' style='display: none;'><a href="Log.html#isIgnored">isIgnored</a></li><li data-type='method' style='display: none;'><a href="Log.html#trace">trace</a></li><li data-type='method' style='display: none;'><a href="Log.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Log.html#write">write</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Plugin.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#getConfig">getConfig</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initLog">initLog</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initPrint">initPrint</a></li></ul></li><li><a href="Print.html">Print</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Print.html#clear">clear</a></li><li data-type='method' style='display: none;'><a href="Print.html#fail">fail</a></li><li data-type='method' style='display: none;'><a href="Print.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Print.html#getElapsed">getElapsed</a></li><li data-type='method' style='display: none;'><a href="Print.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Print.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Print.html#render">render</a></li><li data-type='method' style='display: none;'><a href="Print.html#setOpts">setOpts</a></li><li data-type='method' style='display: none;'><a href="Print.html#setText">setText</a></li><li data-type='method' style='display: none;'><a href="Print.html#spinner">spinner</a></li><li data-type='method' style='display: none;'><a href="Print.html#start">start</a></li><li data-type='method' style='display: none;'><a href="Print.html#stop">stop</a></li><li data-type='method' style='display: none;'><a href="Print.html#succeed">succeed</a></li><li data-type='method' style='display: none;'><a href="Print.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Print.html#write">write</a></li></ul></li></ul><h3><a href="global.html">Global</a></h3>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">app.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import util from 'util'
+import lodash from 'lodash'
+import BajoCore from './bajo-core.js'
+import resolvePath from '../lib/resolve-path.js'
+import parseArgsArgv from '../lib/parse-args-argv.js'
+import parseEnv from '../lib/parse-env.js'
+import buildPlugins from './bajo-core/build-plugins.js'
+import { buildBaseConfig, buildExtConfig } from './bajo-core/build-config.js'
+import collectConfigHandlers from './bajo-core/collect-config-handlers.js'
+import bootOrder from './bajo-core/boot-order.js'
+import bootPlugins from './bajo-core/boot-plugins.js'
+import exitHandler from './bajo-core/exit-handler.js'
+import runAsApplet from './bajo-core/run-as-applet.js'
+
+const { last } = lodash
+
+/**
+ * Top most class ever exists on any Bajo app
+ *
+ * @class
+ */
+class App {
+  /**
+   * Class constructor
+   *
+   * @param {string} cwd - Current working dirctory
+   */
+  constructor (cwd) {
+    if (!cwd) cwd = process.cwd()
+    const l = last(process.argv)
+    if (l.startsWith('--cwd')) {
+      const parts = l.split('=')
+      cwd = parts[1]
+    }
+    this.dir = resolvePath(cwd)
+    process.env.APPDIR = this.dir
+  }
+
+  /**
+   * Add a plugin to the app
+   *
+   * @method
+   * @param {Object} plugin - A valid bajo plugin
+   */
+  addPlugin = (plugin) => {
+    if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
+    this[plugin.name] = plugin
+  }
+
+  /**
+   * Dumping variable on screen
+   *
+   * @method
+   * @param  {...*} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
+   */
+  dump = (...args) => {
+    const terminate = last(args) === true
+    if (terminate) args.pop()
+    for (const arg of args) {
+      const result = util.inspect(arg, false, null, true)
+      console.log(result)
+    }
+    if (terminate) process.kill(process.pid, 'SIGINT')
+  }
+
+  /**
+   * Booting the app
+   *
+   * @method
+   * @async
+   */
+  boot = async () => {
+    // argv/args
+    const { args, argv } = await parseArgsArgv.call(this.app) ?? {}
+    this.argv = argv
+    this.args = args
+    this.env = parseEnv() ?? {}
+
+    const bajo = new BajoCore(this)
+    await buildBaseConfig.call(bajo)
+    await buildPlugins.call(bajo)
+    await collectConfigHandlers.call(bajo)
+    await buildExtConfig.call(bajo)
+    await bootOrder.call(bajo)
+    await bootPlugins.call(bajo)
+    await exitHandler.call(bajo)
+    // boot complete
+    const elapsed = new Date() - bajo.runAt
+    bajo.log.info('bootCompleted%s', bajo.lib.aneka.secToHms(elapsed, true))
+    await bajo.runHook('bajo:afterBootComplete')
+    if (bajo.applet) await runAsApplet.call(bajo)
+  }
+}
+
+export default App
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Aug 22 2025 02:12:45 GMT+0700 (Western Indonesia Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

@@ -3,7 +3,17 @@ const { isPlainObject, each, isArray, get, isEmpty, merge } = lodash
 
 Error.stackTraceLimit = 15
 
+/**
+ * Bajo Error Class
+ */
 class BajoError {
+  /**
+   * Class constructor
+   *
+   * @param {Object} plugin - Plugin instance
+   * @param {string} msg - Error message
+   * @param  {...*} [args] - Variables to interpolate with error message. Payload object can be pushed as the very last argument
+   */
   constructor (plugin, msg, ...args) {
     this.plugin = plugin
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
@@ -12,6 +22,12 @@ class BajoError {
     this.write()
   }
 
+  /**
+   * Create the error object
+   *
+   * @method
+   * @returns {Object} Error object
+   */
   write = () => {
     let err
     if (this.payload.class) err = this.payload.class(this.message)
@@ -36,17 +52,28 @@ class BajoError {
     return err
   }
 
+  /**
+   * Print error object on screen and terminate app process
+   *
+   * @method
+   */
   fatal = () => {
     const err = this.write()
     console.error(err)
     process.kill(process.pid, 'SIGINT')
   }
 
+  /**
+   * Pretty format error details
+   *
+   * @method
+   * @param {Object} value - Value to format
+   * @returns {Object}
+   */
   formatErrorDetails = (value) => {
     const { isString } = this.plugin.app.bajo.lib._
     const result = {}
     const me = this
-    this.plugin.app.dump(value)
     each(value, (v, i) => {
       const print = me.plugin.print
       if (isString(v)) v = { error: v }

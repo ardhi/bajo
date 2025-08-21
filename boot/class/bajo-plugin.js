@@ -5,12 +5,31 @@ import readAllConfigs from '../lib/read-all-configs.js'
 
 const { pick, omit } = lodash
 
+/**
+ * Bajo's base class plugin
+ *
+ * @class
+ */
+
 class BajoPlugin extends Plugin {
+  /**
+   * Class constructor
+   *
+   * @param {string} pkgName - Package name (the one you use in package.json)
+   * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
+   */
   constructor (pkgName, app) {
     super(pkgName, app)
     this.state = {}
   }
 
+  /**
+   * Load config from file in data directory, program arguments and environment variables. Level of importance:
+   * ```Env Variables > Program Arguments > Config File```
+   *
+   * @method
+   * @async
+   */
   loadConfig = async () => {
     const { defaultsDeep } = this.lib.aneka
     const { get } = this.lib._
@@ -48,13 +67,40 @@ class BajoPlugin extends Plugin {
     this.config = parseObject(cfg, { parseValue: true })
   }
 
+  /**
+   * Initialize plugin
+   *
+   * @method
+   * @async
+   */
   init = async () => {
   }
 
+  /**
+   * Start plugin
+   *
+   * @method
+   * @async
+   */
   start = async () => {
   }
 
+  /**
+   * Stop plugin
+   *
+   * @method
+   * @async
+   */
   stop = async () => {
+  }
+
+  /**
+   * Exit handler
+   *
+   * @method
+   * @async
+   */
+  exit = async () => {
   }
 }
 

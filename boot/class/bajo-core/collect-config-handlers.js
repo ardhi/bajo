@@ -8,7 +8,7 @@ async function collectConfigHandlers () {
       dir = this.getModuleDir(pkg)
     } catch (err) {}
     if (!dir) continue
-    const file = `${dir}/bajo/config-handlers.js`
+    const file = `${dir}/extend/bajo/config-handlers.js`
     let mod = await this.importModule(file)
     if (!mod) continue
     if (isFunction(mod)) mod = await mod.call(this.app[camelCase(pkg)])

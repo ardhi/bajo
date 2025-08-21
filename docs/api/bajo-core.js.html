@@ -1,4 +1,56 @@
-import Plugin from './plugin.js'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>bajo-core.js - Bajo Framework</title>
+    
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://bajo.app" target="_blank" class="menu-item" >Project Website</a></h2><h2><a href="https://github.com/ardhi/bajo" target="_blank" class="menu-item" >Github</a></h2><h3 class="collapsed_header">Classes</h3><ul class="collapse_top"><li><a href="App.html">App</a><ul class='methods'><li data-type='method' style='display: none;'><a href="App.html#addPlugin">addPlugin</a></li><li data-type='method' style='display: none;'><a href="App.html#boot">boot</a></li><li data-type='method' style='display: none;'><a href="App.html#dump">dump</a></li></ul></li><li><a href="BajoCore.html">BajoCore</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoCore.html#breakNsPath">breakNsPath</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#buildCollections">buildCollections</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#freeze">freeze</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#resolvePath">resolvePath</a></li></ul></li><li><a href="BajoError.html">BajoError</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoError.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#formatErrorDetails">formatErrorDetails</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#write">write</a></li></ul></li><li><a href="BajoPlugin.html">BajoPlugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoPlugin.html#exit">exit</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#init">init</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#loadConfig">loadConfig</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#start">start</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#stop">stop</a></li></ul></li><li><a href="Log.html">Log</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Log.html#child">child</a></li><li data-type='method' style='display: none;'><a href="Log.html#debug">debug</a></li><li data-type='method' style='display: none;'><a href="Log.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Log.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Log.html#formatMsg">formatMsg</a></li><li data-type='method' style='display: none;'><a href="Log.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Log.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Log.html#isExtLogger">isExtLogger</a></li><li data-type='method' style='display: none;'><a href="Log.html#isIgnored">isIgnored</a></li><li data-type='method' style='display: none;'><a href="Log.html#trace">trace</a></li><li data-type='method' style='display: none;'><a href="Log.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Log.html#write">write</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Plugin.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#getConfig">getConfig</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initLog">initLog</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initPrint">initPrint</a></li></ul></li><li><a href="Print.html">Print</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Print.html#clear">clear</a></li><li data-type='method' style='display: none;'><a href="Print.html#fail">fail</a></li><li data-type='method' style='display: none;'><a href="Print.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Print.html#getElapsed">getElapsed</a></li><li data-type='method' style='display: none;'><a href="Print.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Print.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Print.html#render">render</a></li><li data-type='method' style='display: none;'><a href="Print.html#setOpts">setOpts</a></li><li data-type='method' style='display: none;'><a href="Print.html#setText">setText</a></li><li data-type='method' style='display: none;'><a href="Print.html#spinner">spinner</a></li><li data-type='method' style='display: none;'><a href="Print.html#start">start</a></li><li data-type='method' style='display: none;'><a href="Print.html#stop">stop</a></li><li data-type='method' style='display: none;'><a href="Print.html#succeed">succeed</a></li><li data-type='method' style='display: none;'><a href="Print.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Print.html#write">write</a></li></ul></li></ul><h3><a href="global.html">Global</a></h3>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">bajo-core.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Plugin from './plugin.js'
 import BajoPlugin from './bajo-plugin.js'
 import increment from 'add-filename-increment'
 import fs from 'fs-extra'
@@ -69,7 +121,7 @@ class BajoCore extends Plugin {
    *
    * @method
    * @param {string} file - File to resolve
-   * @param {boolean} [asFileUrl=false] - Return as file URL format ```file://<name>```
+   * @param {boolean} [asFileUrl=false] - Return as file URL format ```file://&lt;name>```
    * @returns {string}
    */
   resolvePath = (file, asFileUrl) => {
@@ -132,7 +184,7 @@ class BajoCore extends Plugin {
    */
 
   /**
-   * Break name to its namespace & path infos
+   * Break name to its namespace &amp; path infos
    *
    * @method
    * @param {string} name - Name to break
@@ -221,7 +273,7 @@ class BajoCore extends Plugin {
       const result = await handler.call(this.app[ns], { item, index, cfg })
       if (result) items[index] = result
       else if (result === false) deleted.push(index)
-      if (this.app.bajo.applet && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+      if (this.app.bajo.applet &amp;&amp; item.skipOnTool &amp;&amp; !deleted.includes(index)) deleted.push(index)
     }
     if (deleted.length > 0) pullAt(items, deleted)
 
@@ -247,7 +299,7 @@ class BajoCore extends Plugin {
     }
     const bajo = scope.app.bajo
     if (isString(item)) {
-      if (item.startsWith('applet:') && bajo.applets.length > 0) {
+      if (item.startsWith('applet:') &amp;&amp; bajo.applets.length > 0) {
         const [, ns, path] = item.split(':')
         const applet = find(bajo.applets, a => (a.ns === ns || a.alias === ns))
         if (applet) result = await bajo.runApplet(applet, path, ...args)
@@ -261,7 +313,7 @@ class BajoCore extends Plugin {
       }
     } else if (isFunction(item)) {
       result = await item.call(scope, ...args)
-    } else if (isPlainObject(item) && item.handler) {
+    } else if (isPlainObject(item) &amp;&amp; item.handler) {
       result = await item.handler.call(scope, ...args)
     }
     return result
@@ -289,7 +341,7 @@ class BajoCore extends Plugin {
         }
         const files = await fastGlob(pattern, opts)
         for (const f of files) {
-          if (path.basename(f)[0] === '_' && noUnderscore) continue
+          if (path.basename(f)[0] === '_' &amp;&amp; noUnderscore) continue
           const resp = await handler.call(this.app[ns], { ns, pkgName, config, alias, file: f, dir: base })
           if (resp === false) break
           else if (resp === undefined) continue
@@ -349,7 +401,7 @@ class BajoCore extends Plugin {
     if (type === 'auto') {
       if (value instanceof Date) type = 'datetime'
     }
-    if (['float', 'double'].includes(type) && this.app.bajoSpatial) {
+    if (['float', 'double'].includes(type) &amp;&amp; this.app.bajoSpatial) {
       const { latToDms, lngToDms } = this.app.bajoSpatial.lib.anekaSpatial
       if (options.latitude) return latToDms(value)
       if (options.longitude) return lngToDms(value)
@@ -364,12 +416,12 @@ class BajoCore extends Plugin {
     if (['integer', 'smallint'].includes(type)) {
       const setting = defaultsDeep(options.integer, format.integer)
       value = new Intl.NumberFormat(lang, setting).format(Math.round(value))
-      return valueFormatted && options.withUnit ? valueFormatted : value
+      return valueFormatted &amp;&amp; options.withUnit ? valueFormatted : value
     }
     if (['float', 'double'].includes(type)) {
       const setting = defaultsDeep(options[type], format[type])
       value = new Intl.NumberFormat(lang, setting).format(value)
-      return valueFormatted && options.withUnit ? valueFormatted : value
+      return valueFormatted &amp;&amp; options.withUnit ? valueFormatted : value
     }
     if (['datetime', 'date'].includes(type)) {
       const setting = defaultsDeep(options[type], format[type])
@@ -427,7 +479,7 @@ class BajoCore extends Plugin {
   getMethod = (name = '', thrown = true) => {
     const { ns, path } = this.breakNsPath(name)
     const method = get(this.app, `${ns}.${path}`)
-    if (method && isFunction(method)) return method
+    if (method &amp;&amp; isFunction(method)) return method
     if (thrown) throw this.error('cantFindMethod%s', name)
   }
 
@@ -446,14 +498,14 @@ class BajoCore extends Plugin {
   getModuleDir = (pkgName, base) => {
     if (pkgName === 'main') return resolvePath(this.app.dir)
     if (base === 'main') base = this.app.dir
-    else if (this && this.app && this.app[base]) base = this.app[base].pkgName
+    else if (this &amp;&amp; this.app &amp;&amp; this.app[base]) base = this.app[base].pkgName
     const pkgPath = pkgName + '/package.json'
     const paths = require.resolve.paths(pkgPath)
     const gdir = this.getGlobalModuleDir()
     paths.unshift(gdir)
     paths.unshift(resolvePath(path.join(this.app.dir, 'node_modules')))
     let dir = this.findDeep(pkgPath, paths)
-    if (base && !dir) dir = this.findDeep(`${base}/node_modules/${pkgPath}`, paths)
+    if (base &amp;&amp; !dir) dir = this.findDeep(`${base}/node_modules/${pkgPath}`, paths)
     if (!dir) return null
     return resolvePath(path.dirname(dir))
   }
@@ -471,7 +523,7 @@ class BajoCore extends Plugin {
     if (file.includes(':')) {
       if (file.slice(1, 2) === ':') return file // windows fs
       const { ns, path } = this.breakNsPath(file)
-      if (ns !== 'file' && this && this.app && this.app[ns] && ns.length > 1) {
+      if (ns !== 'file' &amp;&amp; this &amp;&amp; this.app &amp;&amp; this.app[ns] &amp;&amp; ns.length > 1) {
         file = `${this.app[ns].dir.pkg}${path}`
       }
     }
@@ -484,7 +536,7 @@ class BajoCore extends Plugin {
       let plugin
       for (const key in this.app) {
         const item = this.app[key]
-        if (item instanceof BajoPlugin && (item.alias === name || item.pkgName === name)) {
+        if (item instanceof BajoPlugin &amp;&amp; (item.alias === name || item.pkgName === name)) {
           plugin = item
           break
         }
@@ -527,9 +579,9 @@ class BajoCore extends Plugin {
       }
       if (opts.noCache) mainFile += `?_=${Date.now()}`
       let mod = await import(mainFile)
-      if (opts.returnDefault && has(mod, 'default')) {
+      if (opts.returnDefault &amp;&amp; has(mod, 'default')) {
         mod = mod.default
-        if (opts.returnDefault && has(mod, 'default')) mod = mod.default
+        if (opts.returnDefault &amp;&amp; has(mod, 'default')) mod = mod.default
       }
       result[name] = mod
     }
@@ -577,12 +629,12 @@ class BajoCore extends Plugin {
   join = (array, sep) => {
     const { isSet } = this.lib.aneka
     const translate = val => {
-      if (this && this.print) return this.print.write(val).toLowerCase()
+      if (this &amp;&amp; this.print) return this.print.write(val).toLowerCase()
       return val
     }
     if (array.length === 0) return translate('none')
     if (array.length === 1) return array[0]
-    if (isSet(sep) && !isPlainObject(sep)) return array.join(sep)
+    if (isSet(sep) &amp;&amp; !isPlainObject(sep)) return array.join(sep)
     let { separator = ', ', joiner = 'and' } = sep ?? {}
     joiner = translate(joiner)
     const last = (array.pop() ?? '').trim()
@@ -628,10 +680,10 @@ class BajoCore extends Plugin {
           if (isArray(obj[k][idx])) obj[k][idx] = obj[k][idx].map(item => typeof item === 'string' ? item.trim() : item)
         })
       } else if (isSet(v)) {
-        if (isString(v) && v.startsWith('t:') && lang) v = translate(v.slice(2))
+        if (isString(v) &amp;&amp; v.startsWith('t:') &amp;&amp; lang) v = translate(v.slice(2))
         try {
           if (statics.includes(v)) obj[k] = v
-          else if (k.startsWith('t:') && isString(v)) {
+          else if (k.startsWith('t:') &amp;&amp; isString(v)) {
             const newK = k.slice(2)
             if (lang) obj[newK] = translate(v)
             else obj[newK] = v
@@ -657,7 +709,7 @@ class BajoCore extends Plugin {
     const result = {}
     for (const item of items) {
       const [k, nk] = item.split(':')
-      if (excludeUnset && !isSet(obj[k])) continue
+      if (excludeUnset &amp;&amp; !isSet(obj[k])) continue
       result[nk ?? k] = obj[k]
     }
     return result
@@ -704,7 +756,7 @@ class BajoCore extends Plugin {
 
   readJson = (file, thrownNotFound = false) => {
     if (isPlainObject(thrownNotFound)) thrownNotFound = false
-    if (!fs.existsSync(file) && thrownNotFound) throw this.error('notFound%s%s', this.print.write('file'), file)
+    if (!fs.existsSync(file) &amp;&amp; thrownNotFound) throw this.error('notFound%s%s', this.print.write('file'), file)
     let resp
     try {
       resp = fs.readFileSync(file, 'utf8')
@@ -744,3 +796,32 @@ class BajoCore extends Plugin {
 }
 
 export default BajoCore
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Aug 22 2025 02:12:45 GMT+0700 (Western Indonesia Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

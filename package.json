@@ -52,6 +52,7 @@
     "@faker-js/faker": "^8.0.2",
     "chai": "^4.3.7",
     "clean-jsdoc-theme": "^4.2.7",
+    "docdash": "^2.0.2",
     "sinon": "^15.1.2"
   }
 }

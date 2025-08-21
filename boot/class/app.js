@@ -14,7 +14,17 @@ import runAsApplet from './bajo-core/run-as-applet.js'
 
 const { last } = lodash
 
+/**
+ * Top most class ever exists on any Bajo app
+ *
+ * @class
+ */
 class App {
+  /**
+   * Class constructor
+   *
+   * @param {string} cwd - Current working dirctory
+   */
   constructor (cwd) {
     if (!cwd) cwd = process.cwd()
     const l = last(process.argv)
@@ -26,11 +36,23 @@ class App {
     process.env.APPDIR = this.dir
   }
 
+  /**
+   * Add a plugin to the app
+   *
+   * @method
+   * @param {Object} plugin - A valid bajo plugin
+   */
   addPlugin = (plugin) => {
     if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
     this[plugin.name] = plugin
   }
 
+  /**
+   * Dumping variable on screen
+   *
+   * @method
+   * @param  {...*} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
+   */
   dump = (...args) => {
     const terminate = last(args) === true
     if (terminate) args.pop()
@@ -41,6 +63,12 @@ class App {
     if (terminate) process.kill(process.pid, 'SIGINT')
   }
 
+  /**
+   * Booting the app
+   *
+   * @method
+   * @async
+   */
   boot = async () => {
     // argv/args
     const { args, argv } = await parseArgsArgv.call(this.app) ?? {}

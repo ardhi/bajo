@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>log.js - Bajo Framework</title>
+    
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://bajo.app" target="_blank" class="menu-item" >Project Website</a></h2><h2><a href="https://github.com/ardhi/bajo" target="_blank" class="menu-item" >Github</a></h2><h3 class="collapsed_header">Classes</h3><ul class="collapse_top"><li><a href="App.html">App</a><ul class='methods'><li data-type='method' style='display: none;'><a href="App.html#addPlugin">addPlugin</a></li><li data-type='method' style='display: none;'><a href="App.html#boot">boot</a></li><li data-type='method' style='display: none;'><a href="App.html#dump">dump</a></li></ul></li><li><a href="BajoCore.html">BajoCore</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoCore.html#breakNsPath">breakNsPath</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#buildCollections">buildCollections</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#freeze">freeze</a></li><li data-type='method' style='display: none;'><a href="BajoCore.html#resolvePath">resolvePath</a></li></ul></li><li><a href="BajoError.html">BajoError</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoError.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#formatErrorDetails">formatErrorDetails</a></li><li data-type='method' style='display: none;'><a href="BajoError.html#write">write</a></li></ul></li><li><a href="BajoPlugin.html">BajoPlugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="BajoPlugin.html#exit">exit</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#init">init</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#loadConfig">loadConfig</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#start">start</a></li><li data-type='method' style='display: none;'><a href="BajoPlugin.html#stop">stop</a></li></ul></li><li><a href="Log.html">Log</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Log.html#child">child</a></li><li data-type='method' style='display: none;'><a href="Log.html#debug">debug</a></li><li data-type='method' style='display: none;'><a href="Log.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Log.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Log.html#formatMsg">formatMsg</a></li><li data-type='method' style='display: none;'><a href="Log.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Log.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Log.html#isExtLogger">isExtLogger</a></li><li data-type='method' style='display: none;'><a href="Log.html#isIgnored">isIgnored</a></li><li data-type='method' style='display: none;'><a href="Log.html#trace">trace</a></li><li data-type='method' style='display: none;'><a href="Log.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Log.html#write">write</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Plugin.html#error">error</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#getConfig">getConfig</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initLog">initLog</a></li><li data-type='method' style='display: none;'><a href="Plugin.html#initPrint">initPrint</a></li></ul></li><li><a href="Print.html">Print</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Print.html#clear">clear</a></li><li data-type='method' style='display: none;'><a href="Print.html#fail">fail</a></li><li data-type='method' style='display: none;'><a href="Print.html#fatal">fatal</a></li><li data-type='method' style='display: none;'><a href="Print.html#getElapsed">getElapsed</a></li><li data-type='method' style='display: none;'><a href="Print.html#info">info</a></li><li data-type='method' style='display: none;'><a href="Print.html#init">init</a></li><li data-type='method' style='display: none;'><a href="Print.html#render">render</a></li><li data-type='method' style='display: none;'><a href="Print.html#setOpts">setOpts</a></li><li data-type='method' style='display: none;'><a href="Print.html#setText">setText</a></li><li data-type='method' style='display: none;'><a href="Print.html#spinner">spinner</a></li><li data-type='method' style='display: none;'><a href="Print.html#start">start</a></li><li data-type='method' style='display: none;'><a href="Print.html#stop">stop</a></li><li data-type='method' style='display: none;'><a href="Print.html#succeed">succeed</a></li><li data-type='method' style='display: none;'><a href="Print.html#warn">warn</a></li><li data-type='method' style='display: none;'><a href="Print.html#write">write</a></li></ul></li></ul><h3><a href="global.html">Global</a></h3>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">log.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import os from 'os'
+import lodash from 'lodash'
+import dayjs from 'dayjs'
+import logLevels from '../lib/log-levels.js'
+import chalk from 'chalk'
+
+const { isEmpty, without, merge } = lodash
+
+export function isIgnored (level) {
+  const { filter, isArray } = this.lib._
+  let ignore = this.app.bajo.config.log.ignore ?? []
+  if (!isArray(ignore)) ignore = [ignore]
+  const items = filter(ignore, i => {
+    const [ns, lvl] = i.split(':')
+    if (lvl) return ns === this.name &amp;&amp; lvl === level
+    return ns === this.name
+  })
+  return items.length > 0
+}
+
+/**
+ * Bajo Logger
+ *
+ * @class
+ */
+class Log {
+  /**
+   * Class constructor
+   *
+   * @param {Object} plugin - Plugin instance
+   */
+  constructor (plugin) {
+    this.plugin = plugin
+    this.format = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+  }
+
+  /**
+   * Initialize logger. Auto detect to use different logger via Bajo's config file
+   *
+   * @method
+   */
+  init = () => {
+    this.bajoLog = this.plugin.app.bajo.config.log.logger ?? 'bajoLogger'
+  }
+
+  /**
+   * Interpolate and translate text via plugin's print engine. Check Print class
+   * for more information
+   *
+   * @method
+   * @param {string} text - Text pattern to use
+   * @param {...*} [args] - Variables to interpolate with text pattern above
+   * @returns {string} Interpolated &amp; translated text
+   */
+  write = (text, ...args) => {
+    return this.plugin.print.write(text, ...args)
+  }
+
+  /**
+   * Do we use external logger or Bajo's built-in one?
+   *
+   * @method
+   * @returns {boolean}
+   */
+  isExtLogger = () => {
+    return !!(this.plugin.app[this.bajoLog] &amp;&amp; this.plugin.app[this.bajoLog].logger)
+  }
+
+  /**
+   * Is provided level being ignored by config?
+   *
+   * @method
+   * @param {string} level - Log level
+   * @returns {boolean}
+   */
+  isIgnored = level => {
+    return isIgnored.call(this.plugin, level)
+  }
+
+  /**
+   * Create child logger
+   *
+   * @method
+   * @returns {Object} Child logger instance
+   */
+  child = () => {
+    if (this.isExtLogger()) return this.plugin.app[this.bajoLog].logger.child()
+    return this.plugin.app
+  }
+
+  /**
+   * Display &amp; format message according to one of these rules:
+   * 1. ```level``` ```text``` ```var 1``` ```var 2``` ```...var n``` - Translate ```text``` and interpolate with ```vars``` for level ```level```
+   * 2. ```level``` ```data``` ```text``` ```var 1``` ```var 2``` ```...var n``` - As above, and append stringified ```data```
+   * 3. ```level``` ```error``` - Format as **error**. If current log level is _trace_, dump the error object on screen
+   *
+   * @method
+   * @param {string} level - Log level to use
+   * @param {...*} params - See format above
+   */
+  formatMsg = (level, ...params) => {
+    if (this.plugin.app.bajo.config.log.level === 'silent') return
+    if (!this.plugin.app.bajo.isLogInRange(level)) return
+    const plain = this.plugin.app.bajo.config.log.plain
+    let [data, msg, ...args] = params
+    if (typeof data === 'string') {
+      args.unshift(msg)
+      msg = data
+      data = null
+    }
+    args = without(args, undefined)
+    if (data instanceof Error) {
+      msg = 'error%s'
+      args = [data.message]
+    }
+    msg = this.write(msg, ...args)
+    if (this.plugin.app[this.bajoLog] &amp;&amp; this.plugin.app[this.bajoLog].logger) {
+      this.plugin.app[this.bajoLog].logger[level](data, `[${this.plugin.name}] ${msg}`, ...args)
+    } else {
+      let text
+      const dt = new Date()
+      if (this.plugin.app.bajo.config.env === 'prod') {
+        const json = { level: logLevels[level].number, time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
+        if (!isEmpty(data)) merge(json, data)
+        merge(json, { msg: `[${this.plugin.name}] ${msg}` })
+        text = JSON.stringify(json)
+      } else {
+        const date = dayjs(dt).utc(true).format(this.format)
+        const tdate = plain ? `[${date}]` : chalk.cyan(date)
+        const tlevel = plain ? level.toUpperCase() : chalk[logLevels[level].color](level.toUpperCase())
+        const tplugin = plain ? `[${this.plugin.name}]` : chalk.bgBlue(`${this.plugin.name}`)
+        text = `${tdate} ${tlevel}: ${tplugin} ${msg}`
+        if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
+      }
+      if (!this.isIgnored(level)) {
+        console.log(text)
+        if (data instanceof Error &amp;&amp; level === 'trace') console.error(data)
+      }
+    }
+  }
+
+  /**
+   * Display &amp; format message as ```trace``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  trace = (...params) => {
+    this.formatMsg('trace', ...params)
+  }
+
+  /**
+   * Display &amp; format message as ```debug``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  debug = (...params) => {
+    this.formatMsg('debug', ...params)
+  }
+
+  /**
+   * Display &amp; format message as ```info``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  info = (...params) => {
+    this.formatMsg('info', ...params)
+  }
+
+  /**
+   * Display &amp; format message as ```warn``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  warn = (...params) => {
+    this.formatMsg('warn', ...params)
+  }
+
+  /**
+   * Display &amp; format message as ```error``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  error = (...params) => {
+    this.formatMsg('error', ...params)
+  }
+
+  /**
+   * Display &amp; format message as ```fatal``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  fatal = (...params) => {
+    this.formatMsg('fatal', ...params)
+  }
+
+  silent = (...params) => {
+    this.formatMsg('silent', ...params)
+  }
+}
+
+export default Log
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Aug 22 2025 02:12:45 GMT+0700 (Western Indonesia Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

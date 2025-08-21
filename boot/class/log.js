@@ -18,33 +18,86 @@ export function isIgnored (level) {
   return items.length > 0
 }
 
+/**
+ * Bajo Logger
+ *
+ * @class
+ */
 class Log {
+  /**
+   * Class constructor
+   *
+   * @param {Object} plugin - Plugin instance
+   */
   constructor (plugin) {
     this.plugin = plugin
     this.format = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
   }
 
+  /**
+   * Initialize logger. Auto detect to use different logger via Bajo's config file
+   *
+   * @method
+   */
   init = () => {
     this.bajoLog = this.plugin.app.bajo.config.log.logger ?? 'bajoLogger'
   }
 
+  /**
+   * Interpolate and translate text via plugin's print engine. Check Print class
+   * for more information
+   *
+   * @method
+   * @param {string} text - Text pattern to use
+   * @param {...*} [args] - Variables to interpolate with text pattern above
+   * @returns {string} Interpolated & translated text
+   */
   write = (text, ...args) => {
     return this.plugin.print.write(text, ...args)
   }
 
+  /**
+   * Do we use external logger or Bajo's built-in one?
+   *
+   * @method
+   * @returns {boolean}
+   */
   isExtLogger = () => {
-    return this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger
+    return !!(this.plugin.app[this.bajoLog] && this.plugin.app[this.bajoLog].logger)
   }
 
+  /**
+   * Is provided level being ignored by config?
+   *
+   * @method
+   * @param {string} level - Log level
+   * @returns {boolean}
+   */
   isIgnored = level => {
     return isIgnored.call(this.plugin, level)
   }
 
+  /**
+   * Create child logger
+   *
+   * @method
+   * @returns {Object} Child logger instance
+   */
   child = () => {
     if (this.isExtLogger()) return this.plugin.app[this.bajoLog].logger.child()
     return this.plugin.app
   }
 
+  /**
+   * Display & format message according to one of these rules:
+   * 1. ```level``` ```text``` ```var 1``` ```var 2``` ```...var n``` - Translate ```text``` and interpolate with ```vars``` for level ```level```
+   * 2. ```level``` ```data``` ```text``` ```var 1``` ```var 2``` ```...var n``` - As above, and append stringified ```data```
+   * 3. ```level``` ```error``` - Format as **error**. If current log level is _trace_, dump the error object on screen
+   *
+   * @method
+   * @param {string} level - Log level to use
+   * @param {...*} params - See format above
+   */
   formatMsg = (level, ...params) => {
     if (this.plugin.app.bajo.config.log.level === 'silent') return
     if (!this.plugin.app.bajo.isLogInRange(level)) return
@@ -85,12 +138,70 @@ class Log {
       }
     }
   }
-}
 
-Object.keys(logLevels).forEach(level => {
-  Log.prototype[level] = function (...params) {
-    this.formatMsg(level, ...params)
+  /**
+   * Display & format message as ```trace``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  trace = (...params) => {
+    this.formatMsg('trace', ...params)
   }
-})
+
+  /**
+   * Display & format message as ```debug``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  debug = (...params) => {
+    this.formatMsg('debug', ...params)
+  }
+
+  /**
+   * Display & format message as ```info``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  info = (...params) => {
+    this.formatMsg('info', ...params)
+  }
+
+  /**
+   * Display & format message as ```warn``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  warn = (...params) => {
+    this.formatMsg('warn', ...params)
+  }
+
+  /**
+   * Display & format message as ```error``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  error = (...params) => {
+    this.formatMsg('error', ...params)
+  }
+
+  /**
+   * Display & format message as ```fatal``` level. See {@link Log#formatMsg|formatMsg} for details
+   *
+   * @method
+   * @param  {...*} params
+   */
+  fatal = (...params) => {
+    this.formatMsg('fatal', ...params)
+  }
+
+  silent = (...params) => {
+    this.formatMsg('silent', ...params)
+  }
+}
 
 export default Log
