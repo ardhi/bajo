@@ -8,7 +8,8 @@ async function collectHooks () {
   me.bajo.hooks = this.bajo.hooks ?? []
   me.bajo.log.debug('collectHooks')
   // collects
-  await eachPlugins(async function ({ ns, dir, file }) {
+  await eachPlugins(async function ({ dir, file }) {
+    const { name: ns } = this
     const { fullNs, path } = breakNsPathFromFile({ file, dir, baseNs: ns, suffix: '/hook/' })
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined

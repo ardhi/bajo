@@ -9,7 +9,8 @@ async function run () {
   if (!me.bajo.applet) methods.push('start')
   for (const method of methods) {
     await runHook(`bajo:${camelCase(`before ${method} all plugins`)}`)
-    await eachPlugins(async function ({ ns }) {
+    await eachPlugins(async function () {
+      const { name: ns } = this
       if (method === 'start') freeze(me[ns].config)
       await runHook(`${ns}:${camelCase(`before ${method}`)}`)
       await me[ns][method]()

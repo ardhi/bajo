@@ -6,7 +6,8 @@ async function checkAlias () {
   const { eachPlugins } = this.bajo
   this.bajo.log.debug('checkAliasNameClash')
   const refs = []
-  await eachPlugins(async function ({ ns, pkgName, alias }) {
+  await eachPlugins(async function () {
+    const { name: ns, pkgName, alias } = this
     let item = find(refs, { ns })
     if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkgName, item.ns, item.pkgName, { code: 'BAJO_NAME_CLASH' })
     item = find(refs, { alias })

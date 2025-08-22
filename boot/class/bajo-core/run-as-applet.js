@@ -1,6 +1,7 @@
 async function runAsApplet () {
   const { isString, map, find } = this.lib._
-  await this.eachPlugins(async function ({ file, ns, alias }) {
+  await this.eachPlugins(async function ({ file }) {
+    const { name: ns, alias } = this
     this.app.bajo.applets.push({ ns, file, alias })
   }, { glob: 'applet.js', prefix: 'bajoCli' })
 

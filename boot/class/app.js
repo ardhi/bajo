@@ -51,7 +51,7 @@ class App {
    * Dumping variable on screen
    *
    * @method
-   * @param  {...*} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
+   * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
    */
   dump = (...args) => {
     const terminate = last(args) === true

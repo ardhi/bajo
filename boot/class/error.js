@@ -12,7 +12,7 @@ class BajoError {
    *
    * @param {Object} plugin - Plugin instance
    * @param {string} msg - Error message
-   * @param  {...*} [args] - Variables to interpolate with error message. Payload object can be pushed as the very last argument
+   * @param  {...any} [args] - Variables to interpolate with error message. Payload object can be pushed as the very last argument
    */
   constructor (plugin, msg, ...args) {
     this.plugin = plugin

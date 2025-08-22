@@ -1,7 +1,7 @@
 async function exit (signal) {
   const { eachPlugins } = this
   this.log.warn('signalReceived%s', signal)
-  await eachPlugins(async function ({ ns }) {
+  await eachPlugins(async function () {
     try {
       await this.stop()
     } catch (err) {}

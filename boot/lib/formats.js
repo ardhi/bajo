@@ -1,3 +1,27 @@
+/**
+ * @typedef {Object} DataType
+ * @type {Array}
+ * @property {string} 0 - string
+ * @property {string} 1 - float
+ * @property {string} 2 - double
+ * @property {string} 3 - integer
+ * @property {string} 4 - smallint
+ * @property {string} 5 - date
+ * @property {string} 6 - time
+ * @property {string} 7 - datetime
+ * @property {string} 8 - array
+ * @property {string} 9 - object
+ * @property {string} 10 - auto
+ */
+
+/**
+ * @typedef {Object} FormatType
+ * @type {Array}
+ * @property {string} 0 - speed
+ * @property {string} 1 - distance
+ * @property {string} 3 - area
+ * @property {string} 4 - degree
+ */
 export const types = ['speed', 'distance', 'area', 'degree']
 
 export const formats = {

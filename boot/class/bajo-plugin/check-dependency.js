@@ -3,7 +3,8 @@ import semver from 'semver'
 
 const { reduce, map, trim, keys, intersection, each, camelCase, get } = lodash
 
-async function runner ({ ns, pkgName }) {
+async function runner () {
+  const { name: ns, pkgName } = this
   const { join } = this.app.bajo
   this.app.bajo.log.trace('- %s', ns)
   const odep = reduce(this.dependencies, (o, k) => {
@@ -31,8 +32,8 @@ async function runner ({ ns, pkgName }) {
 async function checkDependency () {
   const { eachPlugins } = this.bajo
   this.bajo.log.debug('checkDeps')
-  await eachPlugins(async function ({ ns, pkgName, config }) {
-    await runner.call(this, { ns, pkgName, config })
+  await eachPlugins(async function () {
+    await runner.call(this)
   })
 }
 

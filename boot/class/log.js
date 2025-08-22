@@ -49,7 +49,7 @@ class Log {
    *
    * @method
    * @param {string} text - Text pattern to use
-   * @param {...*} [args] - Variables to interpolate with text pattern above
+   * @param {...any} [args] - Variables to interpolate with text pattern above
    * @returns {string} Interpolated & translated text
    */
   write = (text, ...args) => {
@@ -96,7 +96,7 @@ class Log {
    *
    * @method
    * @param {string} level - Log level to use
-   * @param {...*} params - See format above
+   * @param {...any} params - See format above
    */
   formatMsg = (level, ...params) => {
     if (this.plugin.app.bajo.config.log.level === 'silent') return
@@ -143,7 +143,7 @@ class Log {
    * Display & format message as ```trace``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   trace = (...params) => {
     this.formatMsg('trace', ...params)
@@ -153,7 +153,7 @@ class Log {
    * Display & format message as ```debug``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   debug = (...params) => {
     this.formatMsg('debug', ...params)
@@ -163,7 +163,7 @@ class Log {
    * Display & format message as ```info``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   info = (...params) => {
     this.formatMsg('info', ...params)
@@ -173,7 +173,7 @@ class Log {
    * Display & format message as ```warn``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   warn = (...params) => {
     this.formatMsg('warn', ...params)
@@ -183,7 +183,7 @@ class Log {
    * Display & format message as ```error``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   error = (...params) => {
     this.formatMsg('error', ...params)
@@ -193,7 +193,7 @@ class Log {
    * Display & format message as ```fatal``` level. See {@link Log#formatMsg|formatMsg} for details
    *
    * @method
-   * @param  {...*} params
+   * @param  {...any} params
    */
   fatal = (...params) => {
     this.formatMsg('fatal', ...params)

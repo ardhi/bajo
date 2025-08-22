@@ -53,7 +53,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text pattern to translate. See {@link https://github.com/alexei/sprintf.js|sprintf} for all supported token & format
-   * @param {...*} [args] - Variables to interpolate with text pattern above. If the last argument is an object, it will be use to override default translation option. Example: to force language to 'id', pass the last argument as "{ lang: 'id' }"
+   * @param {...any} [args] - Variables to interpolate with text pattern above. If the last argument is an object, it will be use to override default translation option. Example: to force language to 'id', pass the last argument as "{ lang: 'id' }"
    * @returns {string} Interpolated & translated text
    */
   write = (text, ...args) => {
@@ -97,7 +97,7 @@ class Print {
    * Set spinner options
    *
    * @method
-   * @param {*[]} [args=[]] - Array of options. If the last argument is an object, it will be used to override ora options
+   * @param {any[]} [args=[]] - Array of options. If the last argument is an object, it will be used to override ora options
    */
   setOpts = (args = []) => {
     const config = this.plugin.app.bajo.config
@@ -112,7 +112,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   setText = (text, ...args) => {
@@ -146,7 +146,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   start = (text, ...args) => {
@@ -172,7 +172,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   succeed = (text, ...args) => {
@@ -186,7 +186,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   fail = (text, ...args) => {
@@ -200,7 +200,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   warn = (text, ...args) => {
@@ -214,7 +214,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Object} Return itself, usefull to chain methods
    */
   info = (text, ...args) => {
@@ -250,7 +250,7 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...*} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    */
   fatal = (text, ...args) => {
     this.setText(text, ...args)

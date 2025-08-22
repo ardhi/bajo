@@ -62,7 +62,7 @@ class Plugin {
    * @method
    * @param {string} [path] - dot separated config path (think of lodash's 'get'). If not provided, the full config will be given
    * @param {Object} [options={}] - Options
-   * @param {*} [options.defValue={}] - Default value to use if returned object is undefined
+   * @param {any} [options.defValue={}] - Default value to use if returned object is undefined
    * @param {string[]} [options.omit=[]] - Omit these keys from returned object
    * @param {boolean} [options.noClone=false] - Set true to NOT clone returned object
    * @returns {Object} Returned object. If no path provided, the whole config object is returned
@@ -101,7 +101,7 @@ class Plugin {
    *
    * @method
    * @param {msg} msg - Error message
-   * @param  {...*} [args] - Argument variables you might want to add to the error object
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
    * @returns {Object} BajoError instance
    */
   error = (msg, ...args) => {
@@ -116,7 +116,7 @@ class Plugin {
    *
    * @method
    * @param {msg} msg - Error message
-   * @param  {...*} [args] - Argument variables you might want to add to the error object
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
    */
   fatal = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
