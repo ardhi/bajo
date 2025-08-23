@@ -1,4 +1,8 @@
 /**
+ * @module lib/log-levels
+ */
+
+/**
  * @typedef {Object} LogLevelsType
  * @type {Object}
  * @property {Object} trace

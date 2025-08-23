@@ -1,3 +1,10 @@
+/**
+ * @module lib/shim
+ */
+
+/**
+ * Function to attach some of the methods needed but probably not provided by your node installation
+ */
 function shim () {
   // taken from: https://vanillajstoolkit.com/polyfills/stringreplaceall/
   if (!String.prototype.replaceAll) {

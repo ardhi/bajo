@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>class/app.js - Bajo Framework</title>
+    <title>lib/create-method.js - Bajo Framework</title>
     
     
     
@@ -40,7 +40,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">class/app.js</h1>
+    <h1 class="page-title">lib/create-method.js</h1>
     
 
     
@@ -50,119 +50,45 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import util from 'util'
+            <pre class="prettyprint source linenums"><code>import fastGlob from 'fast-glob'
+import path from 'path'
 import lodash from 'lodash'
-import BajoCore from './bajo-core.js'
-import resolvePath from '../lib/resolve-path.js'
-import parseArgsArgv from '../lib/parse-args-argv.js'
-import parseEnv from '../lib/parse-env.js'
-import {
-  buildBaseConfig,
-  buildExtConfig,
-  buildPlugins,
-  collectConfigHandlers,
-  bootOrder,
-  bootPlugins,
-  exitHandler,
-  runAsApplet
-} from './helper/bajo-core.js'
+import resolvePath from './resolve-path.js'
 
-const { last } = lodash
+const { camelCase, isFunction } = lodash
 
 /**
- * App class. This is where everything starts, the boot process:
- *
- * 1. Parsing all arguments and environment values
- * 2. Create {@link BajoCore|Bajo core} instance
- * 3. Building core's {@link module:class/helper/bajo-core.buildBaseConfig|base config}
- * 4. {@link module:class/helper/bajo-core.buildPlugins|Building plugins}
- * 5. Collect all config handler
- * 6. Building core's {@link module:class/helper/bajo-core.buildExtConfig|extra config}
- * 7. Setup boot order
- * 8. Iterate loaded plugin and boot it one by one
- * 9. Attach exit handlers
- * 10. Finish
- *
- * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
- *
- * If app mode is ```applet```, it runs your choosen applet instead.
- *
- * @class
+ * @module lib/create-method
  */
-class App {
-  /**
-   * Class constructor
-   *
-   * @param {string} cwd - Current working dirctory
-   */
-  constructor (cwd) {
-    if (!cwd) cwd = process.cwd()
-    const l = last(process.argv)
-    if (l.startsWith('--cwd')) {
-      const parts = l.split('=')
-      cwd = parts[1]
-    }
-    this.dir = resolvePath(cwd)
-    process.env.APPDIR = this.dir
-  }
 
-  /**
-   * Add a plugin to the app
-   *
-   * @method
-   * @param {Object} plugin - A valid bajo plugin
-   */
-  addPlugin = (plugin) => {
-    if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
-    this[plugin.name] = plugin
+/**
+ * This function scan directory for ```.js``` and ```.json``` files, read its content, and
+ * turn it to become a class method by attach it to its scope (its class instance) dynamically.
+ *
+ * File path is camel-cased and become the method name. File that starts with underscore (eg: ```_my-file.js```)
+ * is ignored; usefull to use such file as your shared library.
+ *
+ * @async
+ * @param {string} dir - Directory to scan
+ * @returns {number} Number of files found
+ */
+async function createMethod (dir) {
+  dir = resolvePath(dir)
+  const files = await fastGlob([`!${dir}/**/_*.{js,json}`, `${dir}/**/*.{js,json}`])
+  for (const f of files) {
+    const ext = path.extname(f)
+    const base = f.replace(dir, '').slice(0, -ext.length)
+    const name = camelCase(base)
+    let mod
+    if (ext === '.json') mod = this.app.bajo.readJson(f)
+    else mod = await this.app.bajo.importModule(f)
+    if (isFunction(mod)) mod = mod.bind(this)
+    this[name] = mod
   }
-
-  /**
-   * Dumping variable on screen
-   *
-   * @method
-   * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
-   */
-  dump = (...args) => {
-    const terminate = last(args) === true
-    if (terminate) args.pop()
-    for (const arg of args) {
-      const result = util.inspect(arg, false, null, true)
-      console.log(result)
-    }
-    if (terminate) process.kill(process.pid, 'SIGINT')
-  }
-
-  /**
-   * Booting the app
-   *
-   * @method
-   * @async
-   */
-  boot = async () => {
-    // argv/args
-    const { args, argv } = await parseArgsArgv.call(this.app) ?? {}
-    this.argv = argv
-    this.args = args
-    this.env = parseEnv() ?? {}
-
-    const bajo = new BajoCore(this)
-    await buildBaseConfig.call(bajo)
-    await buildPlugins.call(bajo)
-    await collectConfigHandlers.call(bajo)
-    await buildExtConfig.call(bajo)
-    await bootOrder.call(bajo)
-    await bootPlugins.call(bajo)
-    await exitHandler.call(bajo)
-    // boot complete
-    const elapsed = new Date() - bajo.runAt
-    bajo.log.info('bootCompleted%s', bajo.lib.aneka.secToHms(elapsed, true))
-    await bajo.runHook('bajo:afterBootComplete')
-    if (bajo.applet) await runAsApplet.call(bajo)
-  }
+  return files.length
 }
 
-export default App
+export default createMethod
 </code></pre>
         </article>
     </section>

@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>class/app.js - Bajo Framework</title>
+    <title>lib/log-levels - Bajo Framework</title>
     
     
     
@@ -40,132 +40,371 @@
 
 <div id="main">
     
-    <h1 class="page-title">class/app.js</h1>
+    <h1 class="page-title">lib/log-levels</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>import util from 'util'
-import lodash from 'lodash'
-import BajoCore from './bajo-core.js'
-import resolvePath from '../lib/resolve-path.js'
-import parseArgsArgv from '../lib/parse-args-argv.js'
-import parseEnv from '../lib/parse-env.js'
-import {
-  buildBaseConfig,
-  buildExtConfig,
-  buildPlugins,
-  collectConfigHandlers,
-  bootOrder,
-  bootPlugins,
-  exitHandler,
-  runAsApplet
-} from './helper/bajo-core.js'
+</header>
 
-const { last } = lodash
+<article>
+    
+        <div class="container-overview">
+        
+            
 
-/**
- * App class. This is where everything starts, the boot process:
- *
- * 1. Parsing all arguments and environment values
- * 2. Create {@link BajoCore|Bajo core} instance
- * 3. Building core's {@link module:class/helper/bajo-core.buildBaseConfig|base config}
- * 4. {@link module:class/helper/bajo-core.buildPlugins|Building plugins}
- * 5. Collect all config handler
- * 6. Building core's {@link module:class/helper/bajo-core.buildExtConfig|extra config}
- * 7. Setup boot order
- * 8. Iterate loaded plugin and boot it one by one
- * 9. Attach exit handlers
- * 10. Finish
- *
- * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
- *
- * If app mode is ```applet```, it runs your choosen applet instead.
- *
- * @class
- */
-class App {
-  /**
-   * Class constructor
-   *
-   * @param {string} cwd - Current working dirctory
-   */
-  constructor (cwd) {
-    if (!cwd) cwd = process.cwd()
-    const l = last(process.argv)
-    if (l.startsWith('--cwd')) {
-      const parts = l.split('=')
-      cwd = parts[1]
-    }
-    this.dir = resolvePath(cwd)
-    process.env.APPDIR = this.dir
-  }
+<dl class="details">
+    
 
-  /**
-   * Add a plugin to the app
-   *
-   * @method
-   * @param {Object} plugin - A valid bajo plugin
-   */
-  addPlugin = (plugin) => {
-    if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
-    this[plugin.name] = plugin
-  }
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_log-levels.js.html">lib/log-levels.js</a>, <a href="lib_log-levels.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
 
-  /**
-   * Dumping variable on screen
-   *
-   * @method
-   * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
-   */
-  dump = (...args) => {
-    const terminate = last(args) === true
-    if (terminate) args.pop()
-    for (const arg of args) {
-      const result = util.inspect(arg, false, null, true)
-      console.log(result)
-    }
-    if (terminate) process.kill(process.pid, 'SIGINT')
-  }
+    
 
-  /**
-   * Booting the app
-   *
-   * @method
-   * @async
-   */
-  boot = async () => {
-    // argv/args
-    const { args, argv } = await parseArgsArgv.call(this.app) ?? {}
-    this.argv = argv
-    this.args = args
-    this.env = parseEnv() ?? {}
+    
 
-    const bajo = new BajoCore(this)
-    await buildBaseConfig.call(bajo)
-    await buildPlugins.call(bajo)
-    await collectConfigHandlers.call(bajo)
-    await buildExtConfig.call(bajo)
-    await bootOrder.call(bajo)
-    await bootPlugins.call(bajo)
-    await exitHandler.call(bajo)
-    // boot complete
-    const elapsed = new Date() - bajo.runAt
-    bajo.log.info('bootCompleted%s', bajo.lib.aneka.secToHms(elapsed, true))
-    await bajo.runHook('bajo:afterBootComplete')
-    if (bajo.applet) await runAsApplet.call(bajo)
-  }
-}
+    
 
-export default App
-</code></pre>
-        </article>
-    </section>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id="~LogLevelsType">LogLevelsType</h4>
+
+
+
+
+
+<dl class="details">
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_log-levels.js.html">lib/log-levels.js</a>, <a href="lib_log-levels.js.html#line5">line 5</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>trace</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>debug</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>info</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>warn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fatal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>silent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
 
 
 

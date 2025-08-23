@@ -1,4 +1,8 @@
 /**
+ * @module lib/formats
+ */
+
+/**
  * @typedef {Object} DataType
  * @type {Array}
  * @property {string} 0 - string

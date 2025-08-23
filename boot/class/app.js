@@ -4,18 +4,36 @@ import BajoCore from './bajo-core.js'
 import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
-import buildPlugins from './bajo-core/build-plugins.js'
-import { buildBaseConfig, buildExtConfig } from './bajo-core/build-config.js'
-import collectConfigHandlers from './bajo-core/collect-config-handlers.js'
-import bootOrder from './bajo-core/boot-order.js'
-import bootPlugins from './bajo-core/boot-plugins.js'
-import exitHandler from './bajo-core/exit-handler.js'
-import runAsApplet from './bajo-core/run-as-applet.js'
+import {
+  buildBaseConfig,
+  buildExtConfig,
+  buildPlugins,
+  collectConfigHandlers,
+  bootOrder,
+  bootPlugins,
+  exitHandler,
+  runAsApplet
+} from './helper/bajo-core.js'
 
 const { last } = lodash
 
 /**
- * Top most class ever exists on any Bajo app
+ * App class. This is where everything starts, the boot process:
+ *
+ * 1. Parsing all arguments and environment values
+ * 2. Create {@link BajoCore|Bajo core} instance
+ * 3. Building core's {@link module:class/helper/bajo-core.buildBaseConfig|base config}
+ * 4. {@link module:class/helper/bajo-core.buildPlugins|Building plugins}
+ * 5. Collect all config handler
+ * 6. Building core's {@link module:class/helper/bajo-core.buildExtConfig|extra config}
+ * 7. Setup boot order
+ * 8. Iterate loaded plugin and boot it one by one
+ * 9. Attach exit handlers
+ * 10. Finish
+ *
+ * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
+ *
+ * If app mode is ```applet```, it runs your choosen applet instead.
  *
  * @class
  */
