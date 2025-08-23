@@ -2,7 +2,7 @@
   "name": "bajo",
   "version": "1.3.0",
   "description": "A framework to build a giant monstrous app rapidly",
-  "main": "boot/index.js",
+  "main": "index.js",
   "scripts": {
     "build-doc": "jsdoc -c .jsdoc.conf.json",
     "test": "mocha"
