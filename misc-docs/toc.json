@@ -10,5 +10,8 @@
   },
   "ecosystem": {
     "title": "Ecosystem"
+  },
+  "contribution": {
+    "title": "Contribution"
   }
 }
