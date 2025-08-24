@@ -1,4 +1,4 @@
-# Contributions
+# Contribution
 
 Thank you very much to those of you who want to join as contributors, but I have committed to devoting 100% of my time to this project. Therefore, I am currently unable to accept pull requests from anyone until the project becomes large enough for me to manage it independently.
 

@@ -10,6 +10,7 @@
 - [User Guide](docs/user-guide.md)
 - [Plugin Development](docs/plugin-dev.md)
 - [Ecosystem](docs/ecosystem.md)
+- [Contribution](docs/contribution.md)
 - [API](api-docs)
 
 ## License
