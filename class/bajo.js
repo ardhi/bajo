@@ -106,7 +106,7 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @param {string} file - File to resolve
-   * @param {boolean} [asFileUrl=false] - Return as file URL format ```file://<name>```
+   * @param {boolean} [asFileUrl=false] - Return as file URL format ```file:///<name>```
    * @returns {string}
    */
   resolvePath = (file, asFileUrl) => {
@@ -981,7 +981,7 @@ class Bajo extends BasePlugin {
    * @param {Object} [options.globOptions={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options
    * @param {Object} [options.defValue={}] - Default value to use if value returned empty
    * @param {Object} [options.opts={}] - Parser setting
-   * @returns {OObject}
+   * @returns {Object}
    */
   readConfig = async (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) => {
     if (!ns) ns = this.name
