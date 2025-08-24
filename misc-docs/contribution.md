@@ -17,4 +17,4 @@ Please donate to the channels below. Your donation will motivate me to work fast
 ### Bitcoin
 
 Address: **bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f**
-<p><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="../misc-docs/bitcoin.jpeg" width="200" height="200" /></p>
+<p><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="bitcoin.jpeg" width="200" height="200" /></p>
