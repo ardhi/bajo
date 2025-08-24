@@ -6,12 +6,12 @@
 
 ## Documentations
 
-- [Getting Started](docs/getting-started.md)
-- [User Guide](docs/user-guide.md)
-- [Plugin Development](docs/plugin-dev.md)
-- [Ecosystem](docs/ecosystem.md)
-- [Contribution](docs/contribution.md)
-- [API](api-docs)
+- [Getting Started](misc-docs/getting-started.md)
+- [User Guide](misc-docs/user-guide.md)
+- [Plugin Development](misc-docs/plugin-dev.md)
+- [Ecosystem](misc-docs/ecosystem.md)
+- [Contribution](misc-docs/contribution.md)
+- [API](docs)
 
 ## License
 
