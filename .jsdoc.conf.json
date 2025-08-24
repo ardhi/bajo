@@ -4,32 +4,30 @@
     "encoding": "utf8",
     "recurse": true,
     "verbose": true,
-    "destination": "./docs/api",
+    "destination": "./api-docs",
     "template": "node_modules/clean-jsdoc-theme",
+    "tutorials": "./docs",
     "theme_opts": {
       "default_theme": "light",
       "display-module-header": true,
       "title": "Bajo Framework",
       "homepageTitle": "Bajo Framework",
       "menu": [{
-        "title": "Docs",
-        "link": "../"
+        "title": "Bajo.app",
+        "link": "https://bajo.app"
       }, {
         "title": "NPM",
         "link": "https://www.npmjs.com/package/bajo"
       }, {
         "title": "Github",
         "link": "https://github.com/ardhi/bajo"
-      }, {
-        "title": "Bajo.app",
-        "link": "https://bajo.app"
       }]
     }
   },
   "source": {
     "include": ["."],
     "includePattern": ".+\\.js(doc|x)?$",
-    "exclude": ["node_modules", "docs", "test"]
+    "exclude": ["node_modules", "docs", "test", "api-docs"]
   },
   "markdown": {
     "hardwrap": false,

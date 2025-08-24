@@ -1,0 +1,14 @@
+{
+  "getting-started": {
+    "title": "Getting Started"
+  },
+  "user-guide": {
+    "title": "User Guide"
+  },
+  "plugin-dev": {
+    "title": "Plugin Development"
+  },
+  "ecosystem": {
+    "title": "Ecosystem"
+  }
+}

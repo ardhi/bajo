@@ -7,11 +7,10 @@
 ## Documentations
 
 - [Getting Started](docs/getting-started.md)
-- [Tutorial](docs/tutorial.md)
 - [User Guide](docs/user-guide.md)
 - [Plugin Development](docs/plugin-dev.md)
 - [Ecosystem](docs/ecosystem.md)
-- [API](docs/api)
+- [API](api-docs)
 
 ## License
 
