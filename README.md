@@ -38,7 +38,7 @@ Inside your ```<bajo-base-dir>```, create the ```index.js``` file and put these 
 
 ```js
 import bajo from 'bajo'
-await bajo.default()
+await bajo()
 ```
 
 A bajo app **ALWAYS** needs a data directory to put configuration files, etc. This
@@ -73,7 +73,7 @@ $ node index.js
 - If  ```.js``` file is used, it should be in ES6 format and should export either plain javascript object or a function (sync or async both supported)
 - If it returns a function, this function will be called within its plugin scope and should return a plain js object
 - Other formats (```.yml```, ```.yaml``` and ```.toml```) can also be used by installing [bajoConfig](https://github.com/ardhi/bajo-config) plugin
-- Order of precedence: ```.js``` > ```.json``` > ```.yml``` > ```.yaml``` > ```.toml```
+- Order of importance: ```.js``` > ```.json``` > ```.yml``` > ```.yaml``` > ```.toml```
 
 ### Main configuration File
 
@@ -84,7 +84,7 @@ It should be named ```bajo.json``` with following keys:
 | ```env``` | ```string``` | no | ```dev``` | App environment: ```dev``` or ```prod``` |
 | ```log``` | ```object``` | no || Logger setting |
 | &nbsp;&nbsp;```dateFormat``` | ```string``` | no | ```YYYY-MM-DDTHH:MM:ss.SSS[Z]```| Date format accoding to [dayjs](https://github.com/iamkun/dayjs) |
-| &nbsp;&nbsp;```tool``` | ```boolean``` | no | ```false``` | Set to ```true``` if you want to show log even in [tool mode](#tool-mode) |
+| &nbsp;&nbsp;```applet``` | ```boolean``` | no | ```false``` | Set to ```true``` if you want to show log even in [applet mode](#applet-mode) |
 | &nbsp;&nbsp;```level``` | ```string``` | no || Set one of these: ```trace```, ```debug```, ```info```, ```warn```, ```error```, ```fatal``` and ```silent```. If it isn't set, it will auto selected based on environment |
 | ```lang``` | ```string``` | no || Language to use. If not set, it will be auto detected |
 | ```exitHandler``` | ```boolean``` | no | ```true``` | Set to ```false``` if you want your app **NOT** to exit gracefully |
@@ -99,15 +99,15 @@ To use plugins:
 2. Optionally create ```<bajo-data-dir>/config/<plugin>.json``` to customize plugin settings
 3. Open/create ```<bajo-data-dir>/config/.plugins``` and put ```<package>``` in it, line by line
 
-Example below will load ```bajoConfig```, ```bajoLogger``` and ```bajoMqtt```:
+Example below will load ```bajoConfig```, ```bajoExtra``` and ```bajoTemplate```:
 
 ```
 bajo-config
-bajo-logger
-bajo-mqtt
+bajo-extra
+bajo-template
 ```
 
-If you later decide to NOT load one or more plugins from your app, you just need to remove those from ```.plugins``` file and restart your app.
+If you later decide to NOT load one or more plugins from your app, you just need to remove those from ```.plugins``` file or put ```#``` hash mark in front of package name and restart your app.
 
 > **Warning**: please do not confuse between ```<package>``` and ```<plugin>```. Plugin package is the name of JS package listed on npm, while plugin name is the name of a plugin - a camel cased version of plugin package
 
@@ -132,7 +132,7 @@ Order of importance: dotenv variable > args switches > config files
   - ```key.subKey.subSubKey``` in ```myPlugin``` => ```MY_PLUGIN.KEY__SUB_KEY__SUB_SUB_KEY```
 
 #### Program argument switches
-- Execute with switches, e.g: ```node index.js --xxx=one --yyy=two```
+- Use switches, e.g: ```node index.js --xxx=one --yyy=two```
 - Every switches must be prefixed with ```--```
 - Use ```-``` as the replacement of the dot in object
 - ```--dir-data```: Set ```<bajo-data-dir>``` data directory
