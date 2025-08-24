@@ -144,19 +144,10 @@ class BasePlugin {
    * @param  {...any} [args] - Argument variables you might want to add to the error object
    * @returns {Object} Err instance
    */
-  err = (msg, ...args) => {
+  error = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
     const error = new Err(this, msg, ...args)
     return error.write()
-  }
-
-  /**
-   * Alias to err () method above
-   *
-   * @method
-   */
-  error = (msg, ...args) => {
-    return this.error(msg, ...args)
   }
 
   /**
