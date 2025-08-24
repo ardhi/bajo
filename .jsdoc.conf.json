@@ -4,9 +4,9 @@
     "encoding": "utf8",
     "recurse": true,
     "verbose": true,
-    "destination": "./api-docs",
+    "destination": "./docs",
     "template": "node_modules/clean-jsdoc-theme",
-    "tutorials": "./docs",
+    "tutorials": "./misc-docs",
     "theme_opts": {
       "default_theme": "light",
       "display-module-header": true,
