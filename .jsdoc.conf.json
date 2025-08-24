@@ -4,7 +4,6 @@
     "encoding": "utf8",
     "recurse": true,
     "verbose": true,
-    "readme": "README.md",
     "destination": "./docs/api",
     "template": "node_modules/clean-jsdoc-theme",
     "theme_opts": {
@@ -13,14 +12,17 @@
       "title": "Bajo Framework",
       "homepageTitle": "Bajo Framework",
       "menu": [{
-        "title": "Bajo.app",
-        "link": "https://bajo.app"
+        "title": "Docs",
+        "link": "../"
       }, {
         "title": "NPM",
         "link": "https://www.npmjs.com/package/bajo"
       }, {
         "title": "Github",
         "link": "https://github.com/ardhi/bajo"
+      }, {
+        "title": "Bajo.app",
+        "link": "https://bajo.app"
       }]
     }
   },
