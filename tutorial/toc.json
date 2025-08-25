@@ -13,5 +13,8 @@
   },
   "contribution": {
     "title": "Contribution"
+  },
+  "config": {
+    "title": "Config Object"
   }
 }

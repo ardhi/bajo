@@ -15,6 +15,7 @@ class Err {
    */
   constructor (plugin, msg, ...args) {
     this.plugin = plugin
+    this.app = plugin.app
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
     this.orgMessage = msg
     this.message = this.payload.noTrans ? msg : plugin.print.write(msg, ...args)

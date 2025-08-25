@@ -36,28 +36,59 @@ const lib = {
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
 /**
+ * @typedef TLib
+ * @memberof BasePlugin
+ * @type {Object}
+ * @property {Object} _ - Access to {@link https://lodash.com|lodash}
+ * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
+ * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
+ * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
+ * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
+ * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
+ * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+ */
+
+/**
  * This is the base class of bajo's plugin system.
  *
  * @class
  */
 class BasePlugin {
   /**
+   * Package name, the one from package.json
+   *
+   * @readonly
+   * @memberof BasePlugin
+   * @type {string}
+   */
+  static pkgName
+
+  /**
+   * Plugin name. Simply the camel cased version of plugin's package name
+   *
+   * @readonly
+   * @memberof BasePlugin
+   * @type {string}
+   */
+  static pluginName
+
+  /**
+   * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
+   * Bajo will provide this automatically
+   *
+   * @readonly
+   * @memberof BasePlugin
+   * @type {string}
+   */
+  static alias = ''
+
+  /**
    * @param {string} pkgName - Package name (the one you use in package.json)
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
-    /**
-     * Package name, the one from package.json
-     * @type {string}
-     */
-    this.pkgName = pkgName
-
-    /**
-     * Plugin name. Simply the camel cased version of plugin's package name
-     *
-     * @type {string}
-     */
-    this.name = camelCase(pkgName)
+    this.constructor.pkgName = pkgName
+    this.constructor.pluginName = camelCase(pkgName)
 
     /**
      * Reference to app instance
@@ -83,14 +114,7 @@ class BasePlugin {
      * console.log(camelCase('Elit commodo sit et aliqua'))
      * ```
      *
-     * @type {Object}
-     * @property {Object} _ - Access to {@link https://lodash.com|lodash}
-     * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
-     * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
-     * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
-     * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
-     * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
-     * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+     * @type {TLib}
      */
     this.lib = lib
     this.lib.outmatchNs = outmatchNs.bind(this)
@@ -162,6 +186,33 @@ class BasePlugin {
     if (!this.print) return new Error(msg, ...args)
     const error = new Err(this, msg, ...args)
     error.fatal()
+  }
+
+  /**
+   * Getter for plugin's package name
+   *
+   * @type {string}
+   */
+  get pkgName () {
+    return this.constructor.pkgName
+  }
+
+  /**
+   * Getter for plugin's name
+   *
+   * @type {string}
+   */
+  get name () {
+    return this.constructor.pluginName
+  }
+
+  /**
+   * Getter for plugin's alias
+   *
+   * @type {string}
+   */
+  get alias () {
+    return this.constructor.alias
   }
 }
 

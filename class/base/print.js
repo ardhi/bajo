@@ -25,6 +25,7 @@ class Print {
   constructor (plugin, opts = {}) {
     this.opts = opts
     this.plugin = plugin
+    this.app = plugin.app
     this.startTime = this.plugin.app.bajo.lib.dayjs()
     this.setOpts()
     this.ora = ora(this.opts)
@@ -68,7 +69,7 @@ class Print {
       unknownLangWarning = true
       this.plugin.app.bajo.log.warn('unsupportedLangFallbackTo%s', fallback)
     }
-    const plugins = reverse(without([...this.plugin.app.bajo.pluginNames], this.plugin.name))
+    const plugins = reverse(without([...this.app.getPluginNames()], this.plugin.name))
     plugins.unshift(this.plugin.name)
     plugins.push('bajo')
 

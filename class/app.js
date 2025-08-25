@@ -51,6 +51,7 @@ class App {
       cwd = parts[1]
     }
     this.dir = resolvePath(cwd)
+    this.pluginFactory = {}
     process.env.APPDIR = this.dir
   }
 
@@ -60,9 +61,19 @@ class App {
    * @method
    * @param {Object} plugin - A valid bajo plugin
    */
-  addPlugin = (plugin) => {
+  addPlugin = (plugin, factory) => {
     if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
     this[plugin.name] = plugin
+    if (factory) this.pluginFactory[plugin.name] = factory
+  }
+
+  /**
+   * Get all loaded plugin names
+   *
+   * @returns {string[]}
+   */
+  getPluginNames = () => {
+    return Object.keys(this.pluginFactory)
   }
 
   /**

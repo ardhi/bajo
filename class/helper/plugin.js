@@ -63,7 +63,8 @@ export async function checkNameAliases () {
   this.bajo.log.debug('checkAliasNameClash')
   const refs = []
   await eachPlugins(async function () {
-    const { name: ns, pkgName, alias } = this
+    const { name: ns, pkgName } = this
+    const { alias } = this.constructor
     let item = find(refs, { ns })
     if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkgName, item.ns, item.pkgName, { code: 'BAJO_NAME_CLASH' })
     item = find(refs, { alias })
@@ -82,7 +83,8 @@ export async function checkDependencies () {
     const { name: ns, pkgName } = this
     const { join } = this.app.bajo
     this.app.bajo.log.trace('- %s', ns)
-    const odep = reduce(this.dependencies, (o, k) => {
+    const { dependencies } = this.app.pluginFactory[this.name]
+    const odep = reduce(dependencies, (o, k) => {
       const item = map(k.split('@'), m => trim(m))
       if (k[0] === '@') o['@' + item[1]] = item[2]
       else o[item[0]] = item[1]

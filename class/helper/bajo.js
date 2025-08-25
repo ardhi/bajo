@@ -85,7 +85,6 @@ export async function buildBaseConfig () {
   const { defaultsDeep } = this.lib.aneka
   this.applet = this.app.argv._.applet
   this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
-  this.alias = this.name
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
   set(this, 'dir.pkg', this.resolvePath(path))
@@ -132,20 +131,15 @@ export async function buildPlugins () {
       fs.ensureDirSync(dir)
       fs.ensureDirSync(`${dir}/plugin`)
     } else dir = this.getModuleDir(pkg)
-    let plugin
     const factory = `${dir}/index.js`
-    if (fs.existsSync(factory)) {
-      const { default: builder } = await import(resolvePath(factory, true))
-      const FactoryClass = await builder.call(this, pkg)
-      plugin = new FactoryClass()
-      if (!(plugin instanceof this.lib.Plugin)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
-    } else {
-      plugin = new this.lib.Plugin(pkg, this.app)
-    }
-    this.pluginNames.push(plugin.name)
-    this.app.addPlugin(plugin)
+    if (!fs.existsSync(factory)) throw new Error(`Plugin package '${pkg}' file not found!`)
+    const { default: builder } = await import(resolvePath(factory, true))
+    const ClassFactory = await builder.call(this, pkg)
+    const plugin = new ClassFactory()
+    if (!(plugin instanceof this.lib.Plugin)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
+    this.app.addPlugin(plugin, ClassFactory)
   }
-  this.config = omit(this.config, this.pluginNames)
+  this.config = omit(this.config, this.app.getPluginNames())
 }
 
 /**
@@ -320,7 +314,8 @@ export async function exitHandler () {
 export async function runAsApplet () {
   const { isString, map, find } = this.lib._
   await this.eachPlugins(async function ({ file }) {
-    const { name: ns, alias } = this
+    const { name: ns } = this
+    const { alias } = this.constructor
     this.app.bajo.applets.push({ ns, file, alias })
   }, { glob: 'applet.js', prefix: 'bajoCli' })
 

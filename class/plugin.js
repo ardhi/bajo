@@ -14,27 +14,22 @@ const { pick, omit } = lodash
 
 class Plugin extends BasePlugin {
   /**
+   * Dependencies to other plugins. Enter all plugin's package name your plugin dependent from.
+   *
+   * Semver is also supported.
+   *
+   * @type {string[]}
+   * @memberof Plugin
+   * @readonly
+   */
+  static dependencies = []
+
+  /**
    * @param {string} pkgName - Package name (the one you use in package.json)
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
     super(pkgName, app)
-    /**
-     * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
-     * Bajo will provide this automatically
-     *
-     * @type {string}
-     */
-    this.alias = ''
-
-    /**
-     * Dependencies to other plugins. Enter all plugin's package name your plugin dependent from.
-     *
-     * Semver is also supported.
-     *
-     * @type {Array}
-     */
-    this.dependencies = []
     this.state = {}
   }
 
@@ -47,13 +42,13 @@ class Plugin extends BasePlugin {
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.lib.aneka
-    const { get } = this.lib._
+    const { get, kebabCase } = this.lib._
     const { log, readJson, parseObject, getModuleDir } = this.app.bajo
     log.trace('- %s', this.name)
     const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs.call(this.app, `${dir}/config`)
-    this.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase())
-    this.alias = this.alias.toLowerCase()
+    this.constructor.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase())
+    this.constructor.alias = kebabCase(this.alias)
 
     this.dir = {
       pkg: dir,
@@ -64,7 +59,7 @@ class Plugin extends BasePlugin {
     this.pkg = pick(pkgJson,
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
     if (this.name === this.app.bajo.mainNs) {
-      this.alias = this.app.bajo.mainNs
+      this.constructor.alias = this.app.bajo.mainNs
       this.title = this.title ?? this.alias
     }
     // merge with config from datadir
@@ -77,8 +72,6 @@ class Plugin extends BasePlugin {
     const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
     cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
     this.title = this.title ?? cfg.title ?? this.alias
-
-    this.dependencies = this.dependencies ?? []
     this.config = parseObject(cfg, { parseValue: true })
   }
 

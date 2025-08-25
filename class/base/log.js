@@ -29,6 +29,7 @@ class Log {
    */
   constructor (plugin) {
     this.plugin = plugin
+    this.app = plugin.app
     this.format = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
   }
 

@@ -37,23 +37,27 @@ const {
  */
 class Bajo extends BasePlugin {
   /**
+   * Your main namespace. And yes, you suppose NOT to change this
+   *
+   * @readonly
+   * @memberof Bajo
+   * @type {string}
+   */
+  static mainNs = 'main'
+
+  /**
    * @param {Object} app
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (app) {
     super('bajo', app)
+    this.constructor.alias = 'bajo'
+
     /**
      * Date/time when your app start
      * @type {Date}
      */
     this.runAt = new Date()
-
-    /**
-     * Your main namespace. And yes, you suppose NOT to change this
-     *
-     * @type {string}
-     */
-    this.mainNs = 'main'
 
     /**
      * Storage for applets
@@ -68,13 +72,6 @@ class Bajo extends BasePlugin {
      * @type {Array}
      */
     this.pluginPkgs = []
-
-    /**
-     * List of all loaded plugin's names
-     *
-     * @type {Array}
-     */
-    this.pluginNames = []
 
     /**
      * Storage for config handlers. By default there are only two handlers available: ```.js```
@@ -92,12 +89,22 @@ class Bajo extends BasePlugin {
     this.whiteSpace = [' ', '\t', '\n', '\r']
     this.envs = { dev: 'development', staging: 'staging', prod: 'production' }
     this.lib.Plugin = Plugin
+    /**
+     * Config object. See {@tutorial config} for details
+     *
+     * @type {Object}
+     */
+    this.config = {}
   }
 
   async _defConfigHandler (file, opts = {}) {
     let mod = await importModule(file)
     if (isFunction(mod)) mod = await mod.call(this, opts)
     return mod
+  }
+
+  get mainNs () {
+    return this.constructor.mainNs
   }
 
   /**
@@ -158,9 +165,9 @@ class Bajo extends BasePlugin {
   }
 
   /**
-   * Object returned by {@link BajoCore#breakNsPath|breakNsPath}
+   * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}
    *
-   * @typedef {Object} NsPathType
+   * @typedef {Object} TNsPath
    * @property {string} ns - Namespace
    * @property {string} [subNs] - Sub namespace
    * @property {string} [subSubNs] - Sub of sub namespace
@@ -174,7 +181,7 @@ class Bajo extends BasePlugin {
    * @method
    * @param {string} name - Name to break
    * @param {boolean} [checkNs=true] - If true (default), namespace will be checked for its validity
-   * @returns {NsPathType}
+   * @returns {TNsPath}
    */
   breakNsPath = (name = '', checkNs = true) => {
     let [ns, ...path] = name.split(':')
@@ -386,9 +393,9 @@ class Bajo extends BasePlugin {
   }
 
   /**
-   * Object returned by {@link BajoCore#getUnitFormat|getUnitFormat}
+   * Object returned by {@link Bajo#getUnitFormat|bajo:getUnitFormat}
    *
-   * @typedef {Object} ObjectFormatType
+   * @typedef {Object} TObjectFormat
    * @property {string} unitSys - Unit system
    * @property {Object} format - Format object
    */
@@ -400,7 +407,7 @@ class Bajo extends BasePlugin {
    * @param {Object} [options={}] - Options
    * @param {string} [options.lang] - Language to use. Defaults to the one you set in config
    * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or ```metric``` if unspecified
-   * @returns {ObjectFormatType} - Returned value
+   * @returns {TObjectFormat} - Returned value
    */
   getUnitFormat = (options = {}) => {
     const lang = options.lang ?? this.config.lang
@@ -413,9 +420,9 @@ class Bajo extends BasePlugin {
    * Format value by type
    *
    * @method
-   * @param {string} type - Format type. See {@link FormatType} for acceptable values
+   * @param {string} type - Format type. See {@link TFormat} for acceptable values
    * @param {any} value - Value to format
-   * @param {string} [dataType] - Value's data type. See {@link DataType} for acceptable values
+   * @param {string} [dataType] - Value's data type. See {@link TData} for acceptable values
    * @param {Object} [options={}] - Options
    * @param {boolean} [options.withUnit=true] - Return with its unit appended
    * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config
@@ -440,7 +447,7 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @param {any} value - Value to format
-   * @param {string} [type] - Data type to use. See {@link DataType} for acceptable values. If not provided, return the untouched value
+   * @param {string} [type] - Data type to use. See {@link TData} for acceptable values. If not provided, return the untouched value
    * @param {Object} [options={}] - Options
    * @param {string} [options.emptyValue=''] - Empty value to use if function resulted empty. Defaults to the one from your config
    * @param {boolean} [options.withUnit=true] - Return with its unit appended
@@ -782,7 +789,7 @@ class Bajo extends BasePlugin {
    * Check whether log level is within log's app current level
    *
    * @method
-   * @param {string} level - Level to check. See {@link LogLevelsType} for more
+   * @param {string} level - Level to check. See {@link TLogLevels} for more
    * @returns {boolean}
    */
   isLogInRange = (level) => {
