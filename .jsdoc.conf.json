@@ -6,7 +6,8 @@
     "verbose": true,
     "destination": "./docs",
     "template": "node_modules/clean-jsdoc-theme",
-    "tutorials": "./misc-docs",
+    "tutorials": "./tutorial",
+    "readme": "./docs/home.md",
     "theme_opts": {
       "default_theme": "light",
       "display-module-header": true,

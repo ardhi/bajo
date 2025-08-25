@@ -4,6 +4,8 @@
 
 > <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](misc-docs/contribution.md))<br /><br />
 
+<img src="docs/logo.png" width="300" height="300" alt="bajo">
+
 ## Documentations
 
 - [Getting Started](misc-docs/getting-started.md)
