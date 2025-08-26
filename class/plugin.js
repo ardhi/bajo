@@ -18,9 +18,8 @@ class Plugin extends BasePlugin {
    *
    * Semver is also supported.
    *
-   * @type {string[]}
+   * @constant {string[]}
    * @memberof Plugin
-   * @readonly
    */
   static dependencies = []
 
