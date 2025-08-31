@@ -1,128 +1,95 @@
 import ora from 'ora'
 import lodash from 'lodash'
-import fs from 'fs-extra'
-import Sprintf from 'sprintf-js'
-const { sprintf } = Sprintf
-let unknownLangWarning = false
+import aneka from 'aneka'
+const { defaultsDeep } = aneka
 
-const { isString, last, isPlainObject, get, without, reverse, map } = lodash
+const { isPlainObject } = lodash
 
 /**
- * Print class. Use sprintf to interpolate pattern and variable. Support
- * many methods to display things on screen including {@link https://github.com/sindresorhus/ora|ora} based spinner.
+ * @typedef TPrintOptions
+ * @property {boolean} [showDatetime=false] - Show actual date & time
+ * @property {boolean} [showCounter=false] - Show as counter
+ * @property {boolean} [silent] - Suppress any messages. Defaults to the one set in {@tutorial config}
+ * @property {Object} [ora] - {@link https://github.com/sindresorhus/ora#api|Ora's options} object
+ * @see {@link Print}
+ */
+
+/**
+ * Universal print engine, supports text translation using {@link App#t|app's built-in translation}.
  *
- * It also serve as the foundation of Bajo's I18n lightweight system.
+ * Features many methods to display things on screen/console using {@link https://github.com/sindresorhus/ora|ora}
+ * based spinner.
  *
  * @class
  */
 class Print {
   /**
-   * Class constructor
-   *
-   * @param {Object} plugin - Plugin instance
-   * @param {Object} [opts={}] - Options to pass to {@link https://github.com/sindresorhus/ora|ora}
+   * @param {BasePlugin} plugin - Plugin instance
+   * @param {TPrintOptions} [options={}] - Options object
    */
-  constructor (plugin, opts = {}) {
-    this.opts = opts
+  constructor (plugin, options = {}) {
+    /**
+     * Options object
+     * @type {TPrintOptions}
+     */
+    this.options = options
+
+    /**
+     * Attached plugin
+     * @type {BasePlugin}
+     */
     this.plugin = plugin
+
+    /**
+     * The app instance
+     * @type {App}
+     */
     this.app = plugin.app
-    this.startTime = this.plugin.app.bajo.lib.dayjs()
+
+    /**
+     * Time when instance is created
+     * @type {Object}
+     * @see {@link https://day.js.org|dayjs} &nbsp;object
+     */
+    this.startTime = this.app.lib.dayjs()
+
+    /**
+     * ora instance
+     * @see {@link https://github.com/sindresorhus/ora|ora}
+     */
+    this.ora = ora(this.options.ora)
     this.setOpts()
-    this.ora = ora(this.opts)
-    this.intl = {}
   }
 
   /**
-   * Initialize print engine and read plugin's translation files
-   *
-   * @method
-   */
-  init = () => {
-    for (const l of this.plugin.app.bajo.config.intl.supported) {
-      this.intl[l] = {}
-      const path = `${this.plugin.dir.pkg}/extend/bajo/intl/${l}.json`
-      if (!fs.existsSync(path)) continue
-      const trans = fs.readFileSync(path, 'utf8')
-      try {
-        this.intl[l] = JSON.parse(trans)
-      } catch (err) {}
-    }
-  }
-
-  /**
-   * Interpolate and translate text according to the chosen language
-   *
-   * @method
-   * @param {string} text - Text pattern to translate. See {@link https://github.com/alexei/sprintf.js|sprintf} for all supported token & format
-   * @param {...any} [args] - Variables to interpolate with text pattern above. If the last argument is an object, it will be use to override default translation option. Example: to force language to 'id', pass the last argument as "{ lang: 'id' }"
-   * @returns {string} Interpolated & translated text
-   */
-  write = (text, ...args) => {
-    const opts = last(args)
-    let lang = this.plugin.app.bajo.config.lang
-    if (isPlainObject(opts)) {
-      args.pop()
-      if (opts.lang) lang = opts.lang
-    }
-    const { fallback, supported } = this.plugin.app.bajo.config.intl
-    if (!unknownLangWarning && !supported.includes(lang)) {
-      unknownLangWarning = true
-      this.plugin.app.bajo.log.warn('unsupportedLangFallbackTo%s', fallback)
-    }
-    const plugins = reverse(without([...this.app.getPluginNames()], this.plugin.name))
-    plugins.unshift(this.plugin.name)
-    plugins.push('bajo')
-
-    let trans
-    for (const p of plugins) {
-      const root = get(this, `plugin.app.${p}.print.intl.${lang}`, {})
-      trans = get(root, text)
-      if (trans) break
-    }
-    if (!trans) {
-      for (const p of plugins) {
-        const root = get(this, `plugin.app.${p}.print.intl.${fallback}`, {})
-        trans = get(root, text)
-        if (trans) break
-      }
-    }
-    if (!trans) trans = text
-    const params = map(args, a => {
-      if (!isString(a)) return a
-      return a
-    })
-    return sprintf(trans, ...params)
-  }
-
-  /**
-   * Set spinner options
+   * Setting spinner options; override the one passed at constructor
    *
    * @method
    * @param {any[]} [args=[]] - Array of options. If the last argument is an object, it will be used to override ora options
    */
   setOpts = (args = []) => {
-    const config = this.plugin.app.bajo.config
+    const { silent } = this.app.bajo.config
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
-    this.opts.isSilent = !!(config.silent || this.opts.isSilent)
-    this.opts = this.plugin.lib.aneka.defaultsDeep(opts, this.opts)
+    this.options.silent = !!(silent || this.options.silent)
+    this.options = defaultsDeep(opts, this.options)
   }
 
   /**
-   * Set spinner text
+   * Set spinner's text
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   setText = (text, ...args) => {
-    text = this.write(text, ...args)
+    text = this.plugin.t(text, ...args)
     this.setOpts(args)
     const prefixes = []
     const texts = []
-    if (this.opts.showDatetime) prefixes.push('[' + this.plugin.app.bajo.lib.dayjs().toISOString() + ']')
-    if (this.opts.showCounter) texts.push('[' + this.getElapsed() + ']')
+    if (this.options.showDatetime) prefixes.push('[' + this.app.lib.dayjs().toISOString() + ']')
+    if (this.options.showCounter) texts.push('[' + this.getElapsed() + ']')
     if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
     if (texts.length > 0) text = texts.join(' ') + ' ' + text
     this.ora.text = text
@@ -130,16 +97,17 @@ class Print {
   }
 
   /**
-   * Get elapsed time since print instance is created
+   * Get elapsed time since instance is created
    *
    * @method
    * @param {string} [unit=hms] - Unit's time. Put 'hms' (default) to get hour, minute, second format or of any format supported by {@link https://day.js.org/docs/en/display/difference|dayjs}
    * @returns {string} Elapsed time since start
+   * @see {@link https://day.js.org/docs/en/display/difference|dayjs duration format}
    */
   getElapsed = (unit = 'hms') => {
     const u = unit === 'hms' ? 'second' : unit
-    const elapsed = this.plugin.lib.dayjs().diff(this.startTime, u)
-    return unit === 'hms' ? this.plugin.lib.aneka.secToHms(elapsed) : elapsed
+    const elapsed = this.app.lib.dayjs().diff(this.startTime, u)
+    return unit === 'hms' ? this.app.lib.aneka.secToHms(elapsed) : elapsed
   }
 
   /**
@@ -147,8 +115,8 @@ class Print {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   start = (text, ...args) => {
     this.setOpts(args)
@@ -161,7 +129,7 @@ class Print {
    * Stop the spinner
    *
    * @method
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   stop = () => {
     this.ora.stop()
@@ -174,7 +142,7 @@ class Print {
    * @method
    * @param {string} text - Text to use
    * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   succeed = (text, ...args) => {
     this.setText(text, ...args)
@@ -188,7 +156,7 @@ class Print {
    * @method
    * @param {string} text - Text to use
    * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   fail = (text, ...args) => {
     this.setText(text, ...args)
@@ -202,7 +170,7 @@ class Print {
    * @method
    * @param {string} text - Text to use
    * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   warn = (text, ...args) => {
     this.setText(text, ...args)
@@ -211,12 +179,12 @@ class Print {
   }
 
   /**
-   * Print failed message, prefixed with an info icon
+   * Print information message, prefixed with an info icon
    *
    * @method
    * @param {string} text - Text to use
    * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   info = (text, ...args) => {
     this.setText(text, ...args)
@@ -228,7 +196,7 @@ class Print {
    * Clear spinner text
    *
    * @method
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   clear = () => {
     this.ora.clear()
@@ -239,7 +207,7 @@ class Print {
    * Force render spinner
    *
    * @method
-   * @returns {Object} Return itself, usefull to chain methods
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   render = () => {
     this.ora.render()
@@ -247,7 +215,7 @@ class Print {
   }
 
   /**
-   * Print failed message, prefixed with a cross icon and terminate the app process
+   * Print failed message, prefixed with a cross icon and exit
    *
    * @method
    * @param {string} text - Text to use
@@ -256,17 +224,18 @@ class Print {
   fatal = (text, ...args) => {
     this.setText(text, ...args)
     this.ora.fail()
-    process.kill(process.pid, 'SIGINT')
+    this.app.exit()
   }
 
   /**
-   * Create a new spinner
+   * Create a new print instance
    *
    * @method
-   * @returns {Object} Return new instance
+   * @param {TPrintOptions} [options] - Options object. If not provided, defaults to the current options
+   * @returns {Print} Return new print instance
    */
-  spinner = () => {
-    return new Print(this.plugin)
+  spinner = (options) => {
+    return new Print(this.plugin, options ?? this.options)
   }
 }
 

@@ -31,80 +31,35 @@ const {
 
 /**
  * The Core. The main engine. The one and only plugin that control app's boot process and
- * making sure all other plugins working smoothly.
+ * making sure all other plugins working nicely.
  *
  * @class
  */
 class Bajo extends BasePlugin {
   /**
-   * Your main namespace. And yes, you suppose to NOT CHANGE this
-   *
-   * @memberof Bajo
-   * @constant {string}
-   * @default 'main'
-   */
-  static mainNs = 'main'
-
-  /**
-   * @param {Object} app
-   * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
+   * @param {App} app - App instance. Usefull to call app method inside a plugin
    */
   constructor (app) {
     super('bajo', app)
-    this.constructor.alias = 'bajo'
-
+    this.whiteSpace = [' ', '\t', '\n', '\r']
     /**
-     * Date/time when your app start
-     * @type {Date}
+     * Config object
+     *
+     * @type {Object}
+     * @see {@tutorial config}
      */
-    this.runAt = new Date()
+    this.config = {}
 
-    /**
-     * Storage for applets
-     *
-     * @type {Array}
-     */
-    this.applets = []
-
-    /**
-     * List of all loaded plugin's package names
-     *
-     * @type {Array}
-     */
-    this.pluginPkgs = []
-
-    /**
-     * Storage for config handlers. By default there are only two handlers available: ```.js```
-     * and ```.json```.
-     *
-     * Use plugin to add more type - e.g: {@link https://github.com/ardhi/bajo-config|bajo-config}
-     * lets you to use ```.yaml``` and ```.toml```
-     *
-     * @type {Array}
-     */
-    this.configHandlers = [
+    app.configHandlers = [
       { ext: '.js', readHandler: this._defConfigHandler },
       { ext: '.json', readHandler: this.readJson }
     ]
-    this.whiteSpace = [' ', '\t', '\n', '\r']
-    this.envs = { dev: 'development', staging: 'staging', prod: 'production' }
-    this.lib.Plugin = Plugin
-    /**
-     * Config object. See {@tutorial config} for details
-     *
-     * @type {Object}
-     */
-    this.config = {}
   }
 
   async _defConfigHandler (file, opts = {}) {
     let mod = await importModule(file)
     if (isFunction(mod)) mod = await mod.call(this, opts)
     return mod
-  }
-
-  get mainNs () {
-    return this.constructor.mainNs
   }
 
   /**
@@ -124,10 +79,10 @@ class Bajo extends BasePlugin {
    * Freeze object
    *
    * @method
-   * @param {Object} obj - Object
-   * @param {boolean} [shallow=false] - If true (default), deep freeze object
+   * @param {Object} obj - Object to freeze
+   * @param {boolean} [shallow=false] - If ```false``` (default), deep freeze object
    */
-  freeze = (obj, shallow) => {
+  freeze = (obj, shallow = false) => {
     if (shallow) Object.freeze(obj)
     else deepFreeze(obj)
   }
@@ -158,6 +113,25 @@ class Bajo extends BasePlugin {
     return { ns, subNs, path: _path, fullNs: names.join('.'), type }
   }
 
+  /**
+   * Name based ```<ns>:<path>``` format
+   * @typedef {string} TNsPathPairs
+   * @see TNsPathResult
+   * @see Bajo#buildNsPath
+   * @see Bajo#breakNsPath
+   */
+
+  /**
+   * Build ns/path pairs
+   *
+   * @method
+   * @param {object} [options={}] - Options object
+   * @param {string} [options.ns=''] - Namespace
+   * @param {string} [options.subNs] - Sub namespace
+   * @param {string} [options.subSubNs] - Sub sub namespace
+   * @param {string} [options.path] - Path
+   * @returns {TNsPathPairs} - Ns/path pairs
+   */
   buildNsPath = ({ ns = '', subNs, subSubNs, path } = {}) => {
     if (subNs) ns += '.' + subNs
     if (subSubNs) ns += '.' + subSubNs
@@ -167,21 +141,24 @@ class Bajo extends BasePlugin {
   /**
    * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}
    *
-   * @typedef {Object} TNsPath
+   * @typedef {Object} TNsPathResult
    * @property {string} ns - Namespace
    * @property {string} [subNs] - Sub namespace
    * @property {string} [subSubNs] - Sub of sub namespace
    * @property {string} path - Path without query string or hash
    * @property {string} fullPath - Full path, including query string and hash
+   * @see TNsPathPairs
+   * @see Bajo#buildNsPath
+   * @see Bajo#breakNsPath
    */
 
   /**
    * Break name to its namespace & path infos
    *
    * @method
-   * @param {string} name - Name to break
-   * @param {boolean} [checkNs=true] - If true (default), namespace will be checked for its validity
-   * @returns {TNsPath}
+   * @param {(TNsPathPairs|string)} name - Name to break
+   * @param {boolean} [checkNs=true] - If ```true``` (default), namespace will be checked for its validity
+   * @returns {TNsPathResult}
    */
   breakNsPath = (name = '', checkNs = true) => {
     let [ns, ...path] = name.split(':')
@@ -229,21 +206,19 @@ class Bajo extends BasePlugin {
   }
 
   /**
-   * Method to transform an array or object from config into an array of collection safely.
-   *
-   * Emitted hooks:
-   * 1. ```{ns}:beforeBuildCollection (container)``` - called before collection is built
-   * 2. ```{ns}:afterBuildCollection (container, items)``` - called after collection is built
+   * Method to transform config's array or object into an array of collection.
    *
    * @method
    * @async
    * @param {Object} options - Options
    * @param {string} [options.ns] - Namespace. If not provided, defaults to ```bajo```
    * @param {function} [options.handler] - Handler to call while building the collection item
-   * @param {Array} [options.dupChecks=[]] - Array of keys to check for duplicates
+   * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates
    * @param {string} options.container - Key used as container name
    * @param {boolean} [options.useDefaultName=true] - If true (default) and ```name``` key is not provided, returned collection will be named ```default```
-   * @returns {Array} The collection
+   * @fires bajo:beforeBuildCollection
+   * @fires bajo:afterBuildCollection
+   * @returns {Object[]} The collection
    */
   buildCollections = async (options = {}) => {
     let { ns, handler, dupChecks = [], container, useDefaultName } = options
@@ -252,8 +227,16 @@ class Bajo extends BasePlugin {
     const cfg = this.app[ns].getConfig()
     let items = get(cfg, container, [])
     if (!isArray(items)) items = [items]
-    this.app[ns].log.trace('collecting%s', this.app[ns].print.write(container))
-    await this.runHook(`${ns}:${camelCase('beforeBuildCollection')}`, container)
+    this.app[ns].log.trace('collecting%s', this.t(container))
+
+    /**
+     * Emitted before collection is built
+     *
+     * @event bajo:beforeBuildCollection
+     * @param {string} container
+     * @see Bajo#buildCollections
+     */
+    await this.runHook(`${ns}:beforeBuildCollection`, container)
     const deleted = []
     for (const index in items) {
       const item = items[index]
@@ -279,13 +262,23 @@ class Bajo extends BasePlugin {
         if (checkers.includes(checker)) this.app[ns].fatal('oneOrMoreSharedTheSame%s%s', container, this.join(dupChecks.filter(i => !isFunction(i))))
       }
     }
-    await this.runHook(`${ns}:${camelCase('afterBuildCollection')}`, container, items)
-    this.app[ns].log.debug('collected%s%d', this.app[ns].print.write(container), items.length)
+
+    /**
+     * Emitted after collection is built
+     *
+     * @event bajo:afterBuildCollection
+     * @param {string} container
+     * @param {Object[]} items
+     * @see Bajo#buildCollections
+     */
+    await this.runHook(`${ns}:afterBuildCollection`, container, items)
+    this.app[ns].log.debug('collected%s%d', this.t(container), items.length)
     return items
   }
 
   /**
-   * Calling any plugin's method by its name. Name format: ```ns:methodName```.
+   * Calling any plugin's method by its name:
+   *
    * - If name is a string, the corresponding plugin's method will be called with passed args as its parameters
    * - If name is a plugin instance, this will be used as the scope instead. The first args is now the handler name and the rest are its parameters
    * - If name is a function, this function will be run under scope with the remaining args
@@ -293,7 +286,7 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @async
-   * @param {(string|Object|function)} name - Method's name, function handler, plain object or plugin instance
+   * @param {(TNsPathPairs|Object|function)} name - Method's name, function handler, plain object or plugin instance
    * @param  {...any} [args] - One or more arguments passed as parameter to the handler
    * @returns {any} Returned value
    */
@@ -306,10 +299,10 @@ class Bajo extends BasePlugin {
     }
     const bajo = scope.app.bajo
     if (isString(item)) {
-      if (item.startsWith('applet:') && bajo.applets.length > 0) {
+      if (item.startsWith('applet:') && bajo.app.applets.length > 0) {
         const [, ns, path] = item.split(':')
-        const applet = find(bajo.applets, a => (a.ns === ns || a.alias === ns))
-        if (applet) result = await bajo.runApplet(applet, path, ...args)
+        const applet = find(bajo.app.applets, a => (a.ns === ns || a.alias === ns))
+        if (applet && scope.app.bajoCli) result = await scope.app.bajoCli.runApplet(applet, path, ...args)
       } else {
         const [ns, method, ...params] = item.split(':')
         const fn = bajo.getMethod(`${ns}:${method}`)
@@ -337,7 +330,7 @@ class Bajo extends BasePlugin {
    * @async
    * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin
    * @param {(string|Object)} [options={}] - Options. If a string is provided, it serves as the glob pattern, otherwise:
-   * @param {(string|Array)} [options.glob] - Glob pattern. If provided,
+   * @param {(string|string[])} [options.glob] - Glob pattern. If provided,
    * @param {boolean} [options.useBajo=false] - If true, add ```bajo``` to the running plugins too
    * @param {string} [options.prefix=''] - Prepend glob pattern with prefix
    * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored
@@ -347,7 +340,7 @@ class Bajo extends BasePlugin {
   eachPlugins = async (handler, options = {}) => {
     if (typeof options === 'string') options = { glob: options }
     const result = {}
-    const pluginPkgs = cloneDeep(this.app.bajo.pluginPkgs) ?? []
+    const pluginPkgs = cloneDeep(this.app.pluginPkgs) ?? []
     const { glob, useBajo, prefix = '', noUnderscore = true, returnItems } = options
     if (useBajo) pluginPkgs.unshift('bajo')
     for (const pkgName of pluginPkgs) {
@@ -395,9 +388,10 @@ class Bajo extends BasePlugin {
   /**
    * Object returned by {@link Bajo#getUnitFormat|bajo:getUnitFormat}
    *
-   * @typedef {Object} TObjectFormat
+   * @typedef {Object} TBajoFormatResult
    * @property {string} unitSys - Unit system
    * @property {Object} format - Format object
+   * @see Bajo#getUnitFormat
    */
 
   /**
@@ -407,7 +401,7 @@ class Bajo extends BasePlugin {
    * @param {Object} [options={}] - Options
    * @param {string} [options.lang] - Language to use. Defaults to the one you set in config
    * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or ```metric``` if unspecified
-   * @returns {TObjectFormat} - Returned value
+   * @returns {TBajoFormatResult} - Returned value
    */
   getUnitFormat = (options = {}) => {
     const lang = options.lang ?? this.config.lang
@@ -420,16 +414,16 @@ class Bajo extends BasePlugin {
    * Format value by type
    *
    * @method
-   * @param {string} type - Format type. See {@link TFormat} for acceptable values
+   * @param {string} type - Format type. See {@link TBajoFormatType} for acceptable values
    * @param {any} value - Value to format
-   * @param {string} [dataType] - Value's data type. See {@link TData} for acceptable values
+   * @param {string} [dataType] - Value's data type. See {@link TBajoDataType} for acceptable values
    * @param {Object} [options={}] - Options
    * @param {boolean} [options.withUnit=true] - Return with its unit appended
    * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config
    * @returns {(Array|string)} Return string if ```withUnit``` is true. Otherwise is an array of ```[value, unit, separator]```
    */
   formatByType = (type, value, dataType, options = {}) => {
-    const { defaultsDeep } = this.lib.aneka
+    const { defaultsDeep } = this.app.lib.aneka
     const { format } = this.getUnitFormat(options)
     const { withUnit = true } = options
     const lang = options.lang ?? this.config.lang
@@ -447,7 +441,7 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @param {any} value - Value to format
-   * @param {string} [type] - Data type to use. See {@link TData} for acceptable values. If not provided, return the untouched value
+   * @param {string} [type] - Data type to use. See {@link TBajoDataType} for acceptable values. If not provided, return the untouched value
    * @param {Object} [options={}] - Options
    * @param {string} [options.emptyValue=''] - Empty value to use if function resulted empty. Defaults to the one from your config
    * @param {boolean} [options.withUnit=true] - Return with its unit appended
@@ -457,7 +451,7 @@ class Bajo extends BasePlugin {
    * @returns {string} Formatted value
    */
   format = (value, type, options = {}) => {
-    const { defaultsDeep } = this.lib.aneka
+    const { defaultsDeep } = this.app.lib.aneka
     const { format } = this.config.intl
     const { emptyValue = format.emptyValue } = options
     const lang = options.lang ?? this.config.lang
@@ -468,7 +462,7 @@ class Bajo extends BasePlugin {
       if (value instanceof Date) type = 'datetime'
     }
     if (['float', 'double'].includes(type) && this.app.bajoSpatial) {
-      const { latToDms, lngToDms } = this.app.bajoSpatial.lib.anekaSpatial
+      const { latToDms, lngToDms } = this.app.lib.anekaSpatial
       if (options.latitude) return latToDms(value)
       if (options.longitude) return lngToDms(value)
     }
@@ -688,7 +682,7 @@ class Bajo extends BasePlugin {
   /**
    * Import file/module from any loaded plugins
    *
-   * Your plugin structure:
+   * Example: your plugin structure looks like this
    * ```
    * |- src
    * |  |- lib
@@ -697,29 +691,29 @@ class Bajo extends BasePlugin {
    * |- package.json
    * ```
    *
-   * Inside your app/plugin:
+   * And now this is how to import ```my-module.js```:
    * ```javascript
    * const { importModule } = this.app.bajo
    * const myModule = await importModule('myPlugin:/src/lib/my-module.js')
    * ```
+   *
    * @method
    * @async
-   * @param {string} file - File in format ```ns:<ns based file path>```
+   * @param {TNsPathPairs} file - File to import
    * @param {Object} [options={}] - Options
    * @param {boolean} [options.asDefaultImport=true] - If ```true``` (default), return default imported module
    * @param {boolean} [options.asHandler] - If ```true```, return as a {@link HandlerType|handler}
    * @param {boolean} [options.noCache] - If ```true```, always import as a fresh copy
-   * @returns {(function|Object)}
+   * @returns {any}
    */
   importModule = async (file, { asDefaultImport, asHandler, noCache } = {}) => {
     return await importModule.call(this, file, { asDefaultImport, asHandler, noCache })
   }
 
   /**
-   * Import one or more package belongs to a plugin
+   * Import one or more packages belongs to a plugin
    *
-   * Example: you want to import packages ```delay``` and ```chalk``` from ```bajo``` namespace and use it inside your app/plugin
-   *
+   * Example: you want to import ```delay``` and ```chalk``` from ```bajo``` plugin because you want to use it in your code
    * ```javascript
    * const { importPkg } from this.app.bajo
    * const [delay, chalk] = await importPkg('bajo:delay', 'bajo:chalk')
@@ -730,11 +724,11 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @async
-   * @param {...any} pkgs - One or more packages in format ```ns:packageName```
+   * @param {...TNsPathPairs} pkgs - One or more packages in format ```<ns>:<packageName>```
    * @returns {(Object|Array)} Depends on how many parameters are provided, it should return the named package or an array of packages
    */
   importPkg = async (...pkgs) => {
-    const { defaultsDeep } = this.lib.aneka
+    const { defaultsDeep } = this.app.lib.aneka
     const result = {}
     const notFound = []
     let opts = { returnDefault: true, thrownNotFound: false }
@@ -771,11 +765,11 @@ class Bajo extends BasePlugin {
   }
 
   /**
-   * Check whether directory is empty or not. More info please {@link https://github.com/gulpjs/empty-dir|check here}.
+   * Check whether a directory is empty or not. More info please {@link https://github.com/gulpjs/empty-dir|check here}.
    *
    * @method
    * @async
-   * @param {string} dir - Directory to check. Can be a ns based directory too!
+   * @param {(string|TNsPathPairs)} dir - Directory to check
    * @param {function} filterFn - Filter function to filter out files that cause false positives.
    * @returns {boolean}
    */
@@ -838,19 +832,28 @@ class Bajo extends BasePlugin {
     return this.isValidAppPlugin(dir, 'plugin', returnPkg)
   }
 
-  join = (array, sep) => {
-    const { isSet } = this.lib.aneka
+  /**
+   * Human friendly join array of items.
+   *
+   * @method
+   * @param {any[]} array - Array to join
+   * @param {(string|Object)} options - If provided and is a string, it will be used as separator
+   * @param {string} [options.separator=', '] - Separator to use
+   * @param {string} [options.lastSeparator=and] - Text to use as the last separator
+   * @returns {string}
+   */
+  join = (array, options) => {
+    const { isSet } = this.app.lib.aneka
     const translate = val => {
-      if (this && this.print) return this.print.write(val).toLowerCase()
-      return val
+      return this.t(val).toLowerCase()
     }
     if (array.length === 0) return translate('none')
     if (array.length === 1) return array[0]
-    if (isSet(sep) && !isPlainObject(sep)) return array.join(sep)
-    let { separator = ', ', joiner = 'and' } = sep ?? {}
-    joiner = translate(joiner)
+    if (isSet(options) && !isPlainObject(options)) return array.join(options)
+    let { separator = ', ', lastSeparator = 'and' } = options ?? {}
+    lastSeparator = translate(lastSeparator)
     const last = (array.pop() ?? '').trim()
-    return array.map(a => (a + '').trim()).join(separator) + ` ${joiner} ${last}`
+    return array.map(a => (a + '').trim()).join(separator) + ` ${lastSeparator} ${last}`
   }
 
   /**
@@ -871,22 +874,24 @@ class Bajo extends BasePlugin {
    * Parse duration to its millisecond value. Use {@link https://github.com/vercel/ms|ms} under the hood
    *
    * @method
-   * @param {(number|string)} dur - If string is given, parse this to its millisecond value. Otherwise return as is
+   * @param {(number|string)} dur - If string is given, parse this to its millisecond value. Otherwise returns as is
    * @returns {number}
+   * @see {@link https://github.com/vercel/ms|ms}
    */
   parseDur = (dur) => {
     return isNumber(dur) ? dur : ms(dur)
   }
 
   /**
-   * Parse datetime string as Javascript object. Please visit {@link https://day.js.org|dayjs} for valid formats and more infos
+   * Parse datetime string as Javascript date object. Please visit {@link https://day.js.org|dayjs} for valid formats and more infos
    *
    * @method
    * @param {string} dt - Datetime string
-   * @returns {Object} Javascript object
+   * @returns {Object} Javascript date object
+   * @see {@link https://day.js.org|dayjs}
    */
   parseDt = (dt) => {
-    const value = this.lib.dayjs(dt)
+    const value = this.app.lib.dayjs(dt)
     if (!value.isValid()) throw this.error('dtUnparsable%s', dt)
     return value.toDate()
   }
@@ -896,7 +901,7 @@ class Bajo extends BasePlugin {
    * to parse values, so please have a visit to know how it works
    *
    * If ```options.parseValue``` is ```true```, any key ends with ```Dur``` and ```Dt``` will
-   * also be parsed as millisecond and Javascript datetime accordingly
+   * also be parsed as millisecond and Javascript date time accordingly.
    *
    * @method
    * @param {(Object|string)} input - If string is given, parse it first using JSON.parse
@@ -905,14 +910,15 @@ class Bajo extends BasePlugin {
    * @param {boolean} [options.parseValue=false] - If ```true```, values will be parsed & normalized
    * @param {string} [options.lang] - If provided, use this language instead of the one in config
    * @returns {Object}
+   * @see {@link https://github.com/ladjs/dotenv-parse-variables}
    */
   parseObject = (input, options = {}) => {
     const { silent = true, parseValue = false, lang, ns } = options
-    const { isSet } = this.lib.aneka
+    const { isSet } = this.app.lib.aneka
     const translate = (item) => {
       const scope = ns ? this.app[ns] : this
       const [text, ...args] = item.split('|')
-      return scope.print.write(text, ...args, { lang })
+      return scope.t(text, ...args, { lang })
     }
     const statics = ['*']
     if (isString(input)) {
@@ -962,7 +968,7 @@ class Bajo extends BasePlugin {
   }
 
   pick = (obj, items, excludeUnset) => {
-    const { isSet } = this.lib.aneka
+    const { isSet } = this.app.lib.aneka
     const result = {}
     for (const item of items) {
       const [k, nk] = item.split(':')
@@ -997,19 +1003,19 @@ class Bajo extends BasePlugin {
     const fname = path.dirname(file) + '/' + path.basename(file, ext)
     ext = ext.toLowerCase()
     if (ext === '.js') {
-      const { readHandler } = find(this.app.bajo.configHandlers, { ext })
+      const { readHandler } = find(this.app.configHandlers, { ext })
       return this.parseObject(await readHandler.call(this.app[ns], file, opts))
     }
     if (ext === '.json') return await this.readJson(file)
     if (!['', '.*'].includes(ext)) {
-      const item = find(this.app.bajo.configHandlers, { ext })
+      const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
         return this.parseObject(defValue)
       }
       return this.parseObject(await item.readHandler.call(this.app[ns], file, opts))
     }
-    const item = pattern ?? `${fname}.{${map(map(this.app.bajo.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
+    const item = pattern ?? `${fname}.{${map(map(this.app.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
     const files = await fastGlob(item, globOptions)
     if (files.length === 0) {
       if (!ignoreError) throw this.error('noConfigFileFound', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
@@ -1018,7 +1024,7 @@ class Bajo extends BasePlugin {
     let config = defValue
     for (const f of files) {
       const ext = path.extname(f).toLowerCase()
-      const item = find(this.app.bajo.configHandlers, { ext })
+      const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
@@ -1039,7 +1045,7 @@ class Bajo extends BasePlugin {
    */
   readJson = (file, thrownNotFound = false) => {
     if (isPlainObject(thrownNotFound)) thrownNotFound = false
-    if (!fs.existsSync(file) && thrownNotFound) throw this.error('notFound%s%s', this.print.write('file'), file)
+    if (!fs.existsSync(file) && thrownNotFound) throw this.error('notFound%s%s', this.t('file'), file)
     let resp
     try {
       resp = fs.readFileSync(file, 'utf8')
@@ -1049,11 +1055,11 @@ class Bajo extends BasePlugin {
   }
 
   /**
-   * Run named hook
+   * Run named hook/event
    *
    * @method
    * @async
-   * @param {string} hookName - ns based hook name
+   * @param {TNsPathPairs} hookName
    * @param  {...any} [args] - Argument passed to the hook function
    * @returns {Array} Array of hook execution results
    */

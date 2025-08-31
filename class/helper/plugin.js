@@ -1,6 +1,7 @@
 import createMethod from '../../lib/create-method.js'
 import semver from 'semver'
 import lodash from 'lodash'
+import Print from '../base/print.js'
 
 const {
   merge,
@@ -18,7 +19,7 @@ const {
 } = lodash
 
 /**
- * @module
+ * @module Helper/Plugin
  */
 
 /**
@@ -32,7 +33,7 @@ export async function attachMethods () {
   me.bajo.log.debug('attachMethods')
   await eachPlugins(async function () {
     const { name: ns, pkgName } = this
-    const dir = ns === me.bajo.mainNs ? (`${me.bajo.dir.base}/${me.bajo.mainNs}`) : me.bajo.getModuleDir(pkgName)
+    const dir = ns === me.mainNs ? (`${me.bajo.dir.base}/${me.mainNs}`) : me.bajo.getModuleDir(pkgName)
     const num = await createMethod.call(me[ns], `${dir}/method`, pkgName)
     me.bajo.log.trace('- %s (%d)', ns, num)
   })
@@ -45,11 +46,10 @@ export async function attachMethods () {
  */
 export async function buildConfigs () {
   this.bajo.log.debug('readConfigs')
-  for (const pkg of this.bajo.pluginPkgs) {
-    const plugin = this[camelCase(pkg)]
-    await plugin.loadConfig()
-    plugin.initPrint()
-    plugin.initLog()
+  for (const ns of this.getPluginNames()) {
+    await this[ns].loadConfig()
+    this[ns].print = new Print(this[ns])
+    this.loadIntl(ns)
   }
 }
 
@@ -83,7 +83,7 @@ export async function checkDependencies () {
     const { name: ns, pkgName } = this
     const { join } = this.app.bajo
     this.app.bajo.log.trace('- %s', ns)
-    const { dependencies } = this.app.pluginFactory[this.name]
+    const { dependencies } = this.app.pluginClass[this.name]
     const odep = reduce(dependencies, (o, k) => {
       const item = map(k.split('@'), m => trim(m))
       if (k[0] === '@') o['@' + item[1]] = item[2]
@@ -92,7 +92,7 @@ export async function checkDependencies () {
     }, {})
     const deps = keys(odep)
     if (deps.length > 0) {
-      if (intersection(this.app.bajo.pluginPkgs, deps).length !== deps.length) {
+      if (intersection(this.app.pluginPkgs, deps).length !== deps.length) {
         throw this.error('dependencyUnfulfilled%s%s', pkgName, join(deps), { code: 'BAJO_DEPENDENCY' })
       }
       each(deps, d => {
@@ -167,5 +167,5 @@ export async function run () {
     })
     await runHook(`bajo:${camelCase(`after ${method} all plugins`)}`)
   }
-  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.pluginPkgs, b => camelCase(b))))
+  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
 }

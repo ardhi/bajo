@@ -40,11 +40,11 @@ class Plugin extends BasePlugin {
    * @async
    */
   loadConfig = async () => {
-    const { defaultsDeep } = this.lib.aneka
-    const { get, kebabCase } = this.lib._
+    const { defaultsDeep } = this.app.lib.aneka
+    const { get, kebabCase } = this.app.lib._
     const { log, readJson, parseObject, getModuleDir } = this.app.bajo
     log.trace('- %s', this.name)
-    const dir = this.name === this.app.bajo.mainNs ? (`${this.app.bajo.dir.base}/${this.app.bajo.mainNs}`) : getModuleDir(this.pkgName)
+    const dir = this.name === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs.call(this.app, `${dir}/config`)
     this.constructor.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase())
     this.constructor.alias = kebabCase(this.alias)
@@ -53,12 +53,12 @@ class Plugin extends BasePlugin {
       pkg: dir,
       data: `${this.app.bajo.dir.data}/plugins/${this.name}`
     }
-    const file = `${dir + (this.name === this.app.bajo.mainNs ? '/..' : '')}/package.json`
+    const file = `${dir + (this.name === this.app.mainNs ? '/..' : '')}/package.json`
     const pkgJson = await readJson(file)
     this.pkg = pick(pkgJson,
       ['name', 'version', 'description', 'author', 'license', 'homepage'])
-    if (this.name === this.app.bajo.mainNs) {
-      this.constructor.alias = this.app.bajo.mainNs
+    if (this.name === this.app.mainNs) {
+      this.constructor.alias = this.app.mainNs
       this.title = this.title ?? this.alias
     }
     // merge with config from datadir

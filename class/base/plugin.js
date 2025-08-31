@@ -1,55 +1,15 @@
 import lodash from 'lodash'
 import omittedPluginKeys from '../../lib/omitted-plugin-keys.js'
-import Log from './log.js'
-import Print from './print.js'
 import Err from './err.js'
-import fastGlob from 'fast-glob'
-import { sprintf } from 'sprintf-js'
-import outmatch from 'outmatch'
-import dayjs from '../../lib/dayjs.js'
-import fs from 'fs-extra'
-import aneka from 'aneka/index.js'
-
-function outmatchNs (source, pattern) {
-  const { breakNsPath } = this.app.bajo
-  const [src, subSrc] = source.split(':')
-  if (!subSrc) return pattern === src
-  try {
-    const { fullNs, path } = breakNsPath(pattern)
-    const isMatch = outmatch(path)
-    return src === fullNs && isMatch(subSrc)
-  } catch (err) {
-    return false
-  }
-}
-
-const lib = {
-  _: lodash,
-  fs,
-  fastGlob,
-  sprintf,
-  outmatch,
-  dayjs,
-  aneka
-}
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
 /**
- * @typedef TLib
- * @memberof BasePlugin
- * @type {Object}
- * @property {Object} _ - Access to {@link https://lodash.com|lodash}
- * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
- * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
- * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
- * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
- * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
- * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
- */
-
-/**
- * This is the base class of bajo's plugin system.
+ * This is the base class for all bajo plugin.
+ *
+ * Two main plugins exist:
+ * - {@link Bajo} - Core plugin class, responsible for boot system etc. You should not touch this
+ * - {@link Plugin} - Plugin class your own plugin should extend from
  *
  * @class
  */
@@ -72,7 +32,7 @@ class BasePlugin {
 
   /**
    * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
-   * Bajo will provide this automatically
+   * Bajo will provide this automatically (by using the kebab-cased version of plugin name)
    *
    * @readonly
    * @memberof BasePlugin
@@ -99,23 +59,19 @@ class BasePlugin {
      * Config object
      *
      * @type {Object}
+     * @see {@tutorial config}
      */
     this.config = {}
+  }
 
-    /**
-     * Property to give you direct access to the most commonly used 3rd party library in a bajo based app.
-     * No manual import necessary, always available, everywhere, anytime!
-     *
-     * Example:
-     * ```javascript
-     * const { camelCase, kebabCase } = this.lib._
-     * console.log(camelCase('Elit commodo sit et aliqua'))
-     * ```
-     *
-     * @type {TLib}
-     */
-    this.lib = lib
-    this.lib.outmatchNs = outmatchNs.bind(this)
+  log = {
+    trace: (...params) => this.app.log.trace(this.name, ...params),
+    debug: (...params) => this.app.log.debug(this.name, ...params),
+    info: (...params) => this.app.log.info(this.name, ...params),
+    warn: (...params) => this.app.log.warn(this.name, ...params),
+    error: (...params) => this.app.log.error(this.name, ...params),
+    fatal: (...params) => this.app.log.fatal(this.name, ...params),
+    silent: (...params) => this.app.log.silent(this.name, ...params)
   }
 
   /**
@@ -135,27 +91,6 @@ class BasePlugin {
     if (isPlainObject(obj) && !isEmpty(options.omit)) obj = omit(obj, options.omit)
     if (!options.noClone) obj = cloneDeep(obj)
     return obj
-  }
-
-  /**
-   * Initialize log. Please refer to {@link Log} class for more info
-   *
-   * @method
-   */
-  initLog = () => {
-    this.log = new Log(this)
-    this.log.init()
-  }
-
-  /**
-   * Initialize print engine. Please refer to {@link Print} class for more info
-   *
-   * @method
-   * @param {Object} [options] - Print options
-   */
-  initPrint = (options) => {
-    this.print = new Print(this, options)
-    this.print.init()
   }
 
   /**
@@ -211,6 +146,10 @@ class BasePlugin {
    */
   get alias () {
     return this.constructor.alias
+  }
+
+  t = (text, ...params) => {
+    return this.app.t(this.name, text, ...params)
   }
 }
 

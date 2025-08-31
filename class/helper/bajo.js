@@ -1,6 +1,8 @@
 import readAllConfigs from '../../lib/read-all-configs.js'
 import currentLoc from '../../lib/current-loc.js'
 import resolvePath from '../../lib/resolve-path.js'
+import Print from '../base/print.js'
+import Log from '../base/log.js'
 import omitDeep from 'omit-deep'
 import os from 'os'
 import fs from 'fs-extra'
@@ -27,7 +29,6 @@ const {
   keys,
   set,
   get,
-  isString,
   filter,
   trim,
   without,
@@ -42,7 +43,7 @@ const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 const defConfig = {
   log: {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
-    plain: false,
+    pretty: false,
     applet: false,
     traceHook: false
   },
@@ -70,7 +71,7 @@ const defConfig = {
 }
 
 /**
- * @module
+ * @module Helper/Bajo
  */
 
 /**
@@ -82,7 +83,7 @@ const defConfig = {
  * @async
  */
 export async function buildBaseConfig () {
-  const { defaultsDeep } = this.lib.aneka
+  const { defaultsDeep } = this.app.lib.aneka
   this.applet = this.app.argv._.applet
   this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
@@ -99,7 +100,6 @@ export async function buildBaseConfig () {
     this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.name}`
     fs.ensureDirSync(this.dir.tmp)
   }
-  this.app.addPlugin(this)
 }
 
 /**
@@ -111,33 +111,32 @@ export async function buildBaseConfig () {
  * @async
  */
 export async function buildPlugins () {
-  let pluginPkgs = this.config.plugins ?? []
-  if (isString(pluginPkgs)) pluginPkgs = [pluginPkgs]
+  let pluginPkgs = []
   const pluginsFile = `${this.dir.data}/config/.plugins`
   if (fs.existsSync(pluginsFile)) {
     pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
   }
-  this.pluginPkgs = map(filter(without(uniq(pluginPkgs), this.mainNs), p => {
+  this.app.pluginPkgs = map(filter(without(uniq(pluginPkgs), this.app.mainNs), p => {
     return p[0] !== '#'
   }), p => {
     return trim(p.split('#')[0])
   })
-  this.pluginPkgs.push(this.mainNs)
-  for (const pkg of this.pluginPkgs) {
+  this.app.pluginPkgs.push(this.app.mainNs)
+  for (const pkg of this.app.pluginPkgs) {
     const ns = camelCase(pkg)
     let dir
     if (ns === 'main') {
-      dir = `${this.dir.base}/${this.mainNs}`
+      dir = `${this.dir.base}/${this.app.mainNs}`
       fs.ensureDirSync(dir)
       fs.ensureDirSync(`${dir}/plugin`)
     } else dir = this.getModuleDir(pkg)
     const factory = `${dir}/index.js`
     if (!fs.existsSync(factory)) throw new Error(`Plugin package '${pkg}' file not found!`)
     const { default: builder } = await import(resolvePath(factory, true))
-    const ClassFactory = await builder.call(this, pkg)
-    const plugin = new ClassFactory()
-    if (!(plugin instanceof this.lib.Plugin)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
-    this.app.addPlugin(plugin, ClassFactory)
+    const ClassDef = await builder.call(this, pkg)
+    const plugin = new ClassDef()
+    if (!(plugin instanceof this.app.pluginClass.base)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
+    this.app.addPlugin(plugin, ClassDef)
   }
   this.config = omit(this.config, this.app.getPluginNames())
 }
@@ -148,7 +147,7 @@ export async function buildPlugins () {
  * @async
  */
 export async function collectConfigHandlers () {
-  for (const pkg of this.pluginPkgs) {
+  for (const pkg of this.app.pluginPkgs) {
     let dir
     try {
       dir = this.getModuleDir(pkg)
@@ -159,7 +158,7 @@ export async function collectConfigHandlers () {
     if (!mod) continue
     if (isFunction(mod)) mod = await mod.call(this.app[camelCase(pkg)])
     if (isPlainObject(mod)) mod = [mod]
-    this.configHandlers = this.configHandlers.concat(mod)
+    this.app.configHandlers = this.app.configHandlers.concat(mod)
   }
 }
 
@@ -173,26 +172,28 @@ export async function collectConfigHandlers () {
  */
 export async function buildExtConfig () {
   // config merging
-  const { defaultsDeep } = this.lib.aneka
+  const { defaultsDeep } = this.app.lib.aneka
   let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
+  const envs = this.app.constructor.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
   this.config.env = (this.config.env ?? 'dev').toLowerCase()
-  if (values(this.envs).includes(this.config.env)) this.config.env = this.lib.aneka.getKeyByValue(this.envs, this.config.env)
-  if (!keys(this.envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(this.envs))}`)
-  process.env.NODE_ENV = this.envs[this.config.env]
+  if (values(envs).includes(this.config.env)) this.config.env = this.app.lib.aneka.getKeyByValue(envs, this.config.env)
+  if (!keys(envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(envs))}`)
+  process.env.NODE_ENV = envs[this.config.env]
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
   if (this.config.silent) this.config.log.level = 'silent'
   if (this.applet) {
-    if (!this.pluginPkgs.includes('bajo-cli')) throw new Error('Applet needs to have \'bajo-cli\' loaded first')
+    if (!this.app.pluginPkgs.includes('bajo-cli')) throw new Error('Applet needs to have \'bajo-cli\' loaded first')
     if (!this.config.log.applet) this.config.log.level = 'silent'
     this.config.exitHandler = false
   }
-  const exts = map(this.configHandlers, 'ext')
-  this.initPrint()
-  this.initLog()
+  const exts = map(this.app.configHandlers, 'ext')
+  this.app.log = new Log(this.app)
   this.log.debug('configHandlers%s', this.join(exts))
   this.config = this.parseObject(this.config, { parseValue: true })
+  this.app.loadIntl(this.name)
+  this.print = new Print(this)
 }
 
 /**
@@ -202,17 +203,17 @@ export async function buildExtConfig () {
  */
 export async function bootOrder () {
   this.log.debug('setupBootOrder')
-  const order = reduce(this.pluginPkgs, (o, k, i) => {
+  const order = reduce(this.app.pluginPkgs, (o, k, i) => {
     const key = map(k.split(':'), m => trim(m))
     if (key[1] && !isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
     else o[key[0]] = 10000 + i
     return o
   }, {})
   const norder = {}
-  for (let n of this.pluginPkgs) {
+  for (let n of this.app.pluginPkgs) {
     n = map(n.split(':'), m => trim(m))[0]
-    const dir = n === this.mainNs ? (`${this.dir.base}/${this.mainNs}`) : this.getModuleDir(n)
-    if (n !== this.mainNs && !fs.existsSync(dir)) throw this.error('packageNotFoundOrNotBajo%s', n)
+    const dir = n === this.app.mainNs ? (`${this.dir.base}/${this.app.mainNs}`) : this.getModuleDir(n)
+    if (n !== this.app.mainNs && !fs.existsSync(dir)) throw this.error('packageNotFoundOrNotBajo%s', n)
     norder[n] = NaN
     try {
       norder[n] = Number(trim(await fs.readFile(`${dir}/.bootorder`, 'utf8')))
@@ -223,20 +224,21 @@ export async function bootOrder () {
     const item = { k, v: isNaN(norder[k]) ? v : norder[k] }
     result.push(item)
   })
-  this.pluginPkgs = map(orderBy(result, ['v']), 'k')
-  this.log.info('runInEnv%s', this.print.write(this.envs[this.config.env]))
+  this.app.pluginPkgs = map(orderBy(result, ['v']), 'k')
+  this.log.info('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
   // misc
   this.freeze(this.config)
 }
 
 /**
  * Iterate through all plugins loaded and do:
- * 1. {@link module:class/helper/bajo-plugin.buildConfigs|build configs}
- * 2. {@link module:class/helper/bajo-plugin.checkNameAliases|ensure names & aliases uniqueness}
- * 3. {@link module:class/helper/bajo-plugin.checkDependencies|ensure dependencies are met}
- * 4. {@link module:class/helper/bajo-plugin.attachMethods|build and attach dynamic methods}
- * 5. {@link module:class/helper/bajo-plugin.collectHooks|collect hooks}
- * 6. {@link module:class/helper/bajo-plugin.run|run plugins}
+ *
+ * 1. {@link module:Helper/Plugin.buildConfigs|build configs}
+ * 2. {@link module:Helper/Plugin.checkNameAliases|ensure names & aliases uniqueness}
+ * 3. {@link module:Helper/Plugin.checkDependencies|ensure dependencies are met}
+ * 4. {@link module:Helper/Plugin.attachMethods|build and attach dynamic methods}
+ * 5. {@link module:Helper/Plugin.collectHooks|collect hooks}
+ * 6. {@link module:Helper/Plugin.run|run plugins}
  *
  * @async
  */
@@ -257,25 +259,12 @@ export async function bootPlugins () {
 export async function exitHandler () {
   if (!this.config.exitHandler) return
 
-  async function exit (signal) {
-    const { eachPlugins } = this
-    this.log.warn('signalReceived%s', signal)
-    await eachPlugins(async function () {
-      try {
-        await this.stop()
-      } catch (err) {}
-      this.log.trace('exited')
-    })
-    this.log.debug('appShutdown')
-    process.exit(0)
-  }
-
   process.on('SIGINT', async () => {
-    await exit.call(this, 'SIGINT')
+    await this.app.exit('SIGINT')
   })
 
   process.on('SIGTERM', async () => {
-    await exit.call(this, 'SIGTERM')
+    await this.app.exit('SIGTERM')
   })
 
   process.on('uncaughtException', (error, origin) => {
@@ -312,27 +301,27 @@ export async function exitHandler () {
  * @async
  */
 export async function runAsApplet () {
-  const { isString, map, find } = this.lib._
+  const { isString, map, find } = this.app.lib._
   await this.eachPlugins(async function ({ file }) {
     const { name: ns } = this
     const { alias } = this.constructor
-    this.app.bajo.applets.push({ ns, file, alias })
+    this.app.applets.push({ ns, file, alias })
   }, { glob: 'applet.js', prefix: 'bajoCli' })
 
   this.log.debug('appletModeActivated')
   this.print.info('appRunningAsApplet')
-  if (this.applets.length === 0) this.print.fatal('noAppletLoaded')
+  if (this.app.applets.length === 0) this.print.fatal('noAppletLoaded')
   let name = this.applet
   if (!isString(this.applet)) {
     const select = await this.importPkg('bajoCli:@inquirer/select')
     name = await select({
-      message: this.print.write('Please select:'),
-      choices: map(this.applets, t => ({ value: t.ns }))
+      message: this.t('Please select:'),
+      choices: map(this.app.applets, t => ({ value: t.ns }))
     })
   }
   const [ns, path] = name.split(':')
-  const applet = find(this.applets, a => (a.ns === ns || a.alias === ns))
-  if (!applet) this.print.fatal('notFound%s%s', this.print.write('applet'), name)
+  const applet = find(this.app.applets, a => (a.ns === ns || a.alias === ns))
+  if (!applet) this.print.fatal('notFound%s%s', this.app.t('applet'), name)
   await this.runHook(`${this.app[applet.ns]}:beforeAppletRun`)
   await this.app.bajoCli.runApplet(applet, path, ...this.app.args)
   await this.runHook(`${this.app[applet.ns]}:afterAppletRun`)
