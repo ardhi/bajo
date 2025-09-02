@@ -1,9 +1,11 @@
-import createMethod from '../../lib/create-method.js'
 import semver from 'semver'
 import lodash from 'lodash'
 import Print from '../misc/print.js'
+import path from 'path'
+import resolvePath from '../../lib/resolve-path.js'
 
 const {
+  isFunction,
   merge,
   forOwn,
   groupBy,
@@ -28,6 +30,24 @@ const {
  * @async
  */
 export async function attachMethods () {
+  const { fastGlob } = this.lib
+
+  async function createMethod (dir) {
+    dir = resolvePath(dir)
+    const files = await fastGlob([`!${dir}/**/_*.{js,json}`, `${dir}/**/*.{js,json}`])
+    for (const f of files) {
+      const ext = path.extname(f)
+      const base = f.replace(dir, '').slice(0, -ext.length)
+      const name = camelCase(base)
+      let mod
+      if (ext === '.json') mod = this.app.bajo.readJson(f)
+      else mod = await this.app.bajo.importModule(f)
+      if (isFunction(mod)) mod = mod.bind(this)
+      this[name] = mod
+    }
+    return files.length
+  }
+
   const { eachPlugins } = this.bajo
   const me = this // the app
   me.bajo.log.debug('attachMethods')

@@ -1,5 +1,4 @@
 import lodash from 'lodash'
-import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 import Err from './misc/err.js'
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
@@ -93,7 +92,7 @@ class Plugin {
    */
   getConfig = (path, options = {}) => {
     let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue ?? {})
-    options.omit = options.omit ?? omittedPluginKeys
+    options.omit = options.omit ?? []
     if (isPlainObject(obj) && !isEmpty(options.omit)) obj = omit(obj, options.omit)
     if (!options.noClone) obj = cloneDeep(obj)
     return obj

@@ -298,8 +298,8 @@ export async function exitHandler () {
  * If app is in ```applet``` mode, this little helper should take care plugin's applet boot process
  *
  * @async
- * @fires [ns]:beforeAppletRun
- * @fires [ns]:afterAppletRun
+ * @fires {ns}:beforeAppletRun
+ * @fires {ns}:afterAppletRun
  */
 export async function runAsApplet () {
   const { isString, map, find } = this.app.lib._
@@ -327,7 +327,7 @@ export async function runAsApplet () {
   /**
    * Emitted before applet is run. ```[ns]``` is applet's namespace
    *
-   * @event [ns]:beforeAppletRun
+   * @event {ns}:beforeAppletRun
    * @param {...any} params
    * @see {@tutorial hook}
    * @see module:Helper/Bajo.runAsApplet
@@ -337,7 +337,7 @@ export async function runAsApplet () {
   /**
    * Emitted after applet is run. ```[ns]``` is applet's namespace
    *
-   * @event [ns]:afterAppletRun
+   * @event {ns}:afterAppletRun
    * @param {...any} params
    * @see {@tutorial hook}
    * @see module:Helper/Bajo.runAsApplet

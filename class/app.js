@@ -4,7 +4,6 @@ import Bajo from './bajo.js'
 import fastGlob from 'fast-glob'
 import { sprintf } from 'sprintf-js'
 import outmatch from 'outmatch'
-import dayjs from '../lib/dayjs.js'
 import fs from 'fs-extra'
 import aneka from 'aneka/index.js'
 import Base from './base.js'
@@ -21,6 +20,13 @@ import {
   exitHandler,
   runAsApplet
 } from './helper/bajo.js'
+
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc.js'
+import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+
+dayjs.extend(utc)
+dayjs.extend(customParseFormat)
 
 const { isPlainObject, get, reverse, map, isString, last, without, keys } = lodash
 let unknownLangWarning = false

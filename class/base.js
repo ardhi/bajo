@@ -1,5 +1,4 @@
 import Plugin from './plugin.js'
-import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
 
 /**
  * This is the class that your own plugin suppose to extend. Don't use {@link Plugin} directly
@@ -37,7 +36,7 @@ class Base extends Plugin {
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
-    const { get, kebabCase, keys, pick, omit } = this.app.lib._
+    const { get, kebabCase, keys, pick } = this.app.lib._
     const { log, readJson, parseObject, getModuleDir, readAllConfigs } = this.app.bajo
     const defKeys = keys(this.config)
     log.trace('- %s', this.ns)
@@ -61,10 +60,10 @@ class Base extends Plugin {
     // merge with config from datadir
     try {
       const altCfg = await readAllConfigs(`${this.app.bajo.dir.data}/config/${this.ns}`)
-      cfg = defaultsDeep({}, omit(altCfg, omittedPluginKeys), cfg)
+      cfg = defaultsDeep({}, altCfg, cfg)
     } catch (err) {}
-    const cfgEnv = omit(get(this, `app.env.${this.ns}`, {}), omittedPluginKeys) ?? {}
-    const cfgArgv = omit(get(this, `app.argv.${this.ns}`, {}), omittedPluginKeys) ?? {}
+    const cfgEnv = get(this, `app.env.${this.ns}`, {})
+    const cfgArgv = get(this, `app.argv.${this.ns}`, {})
     const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
     cfg = pick(defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {}), defKeys)
     // cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
