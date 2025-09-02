@@ -1,7 +1,7 @@
 import createMethod from '../../lib/create-method.js'
 import semver from 'semver'
 import lodash from 'lodash'
-import Print from '../base/print.js'
+import Print from '../misc/print.js'
 
 const {
   merge,
@@ -19,7 +19,7 @@ const {
 } = lodash
 
 /**
- * @module Helper/Plugin
+ * @module Helper/Base
  */
 
 /**
@@ -32,7 +32,7 @@ export async function attachMethods () {
   const me = this // the app
   me.bajo.log.debug('attachMethods')
   await eachPlugins(async function () {
-    const { name: ns, pkgName } = this
+    const { ns, pkgName } = this
     const dir = ns === me.mainNs ? (`${me.bajo.dir.base}/${me.mainNs}`) : me.bajo.getModuleDir(pkgName)
     const num = await createMethod.call(me[ns], `${dir}/method`, pkgName)
     me.bajo.log.trace('- %s (%d)', ns, num)
@@ -46,7 +46,7 @@ export async function attachMethods () {
  */
 export async function buildConfigs () {
   this.bajo.log.debug('readConfigs')
-  for (const ns of this.getPluginNames()) {
+  for (const ns of this.getAllNs()) {
     await this[ns].loadConfig()
     this[ns].print = new Print(this[ns])
     this.loadIntl(ns)
@@ -63,7 +63,7 @@ export async function checkNameAliases () {
   this.bajo.log.debug('checkAliasNameClash')
   const refs = []
   await eachPlugins(async function () {
-    const { name: ns, pkgName } = this
+    const { ns, pkgName } = this
     const { alias } = this.constructor
     let item = find(refs, { ns })
     if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkgName, item.ns, item.pkgName, { code: 'BAJO_NAME_CLASH' })
@@ -80,10 +80,10 @@ export async function checkNameAliases () {
  */
 export async function checkDependencies () {
   async function runner () {
-    const { name: ns, pkgName } = this
+    const { ns, pkgName } = this
     const { join } = this.app.bajo
     this.app.bajo.log.trace('- %s', ns)
-    const { dependencies } = this.app.pluginClass[this.name]
+    const { dependencies } = this.app.pluginClass[this.ns]
     const odep = reduce(dependencies, (o, k) => {
       const item = map(k.split('@'), m => trim(m))
       if (k[0] === '@') o['@' + item[1]] = item[2]
@@ -117,6 +117,7 @@ export async function checkDependencies () {
  * Collect and build hooks and push them to the bajo's hook system
  *
  * @async
+ * @fires bajo:afterCollectHooks
  */
 export async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo
@@ -125,13 +126,13 @@ export async function collectHooks () {
   me.bajo.log.debug('collectHooks')
   // collects
   await eachPlugins(async function ({ dir, file }) {
-    const { name: ns } = this
+    const { ns } = this
     const { fullNs, path } = breakNsPathFromFile({ file, dir, baseNs: ns, suffix: '/hook/' })
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
     merge(mod, { ns: fullNs, path, src: ns })
     me.bajo.hooks.push(mod)
-  }, { glob: 'hook/**/*.js', prefix: me.bajo.name })
+  }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only
   if (!isLogInRange('trace')) return
   const items = groupBy(me.bajo.hooks, 'ns')
@@ -141,31 +142,74 @@ export async function collectHooks () {
       me.bajo.log.trace('- %s:%s (%d)', k, k1, v1.length)
     })
   })
-  // run handler
-  await runHook('bajo:afterCollectHooks')
+
+  /**
+   * Emitted after hooks are collected
+   *
+   * @event bajo:afterCollectHooks
+   * @param {Object[]} hooks - Array of hook objects
+   * @see {@tutorial hook}
+   * @see module:Helper/Base.collectHooks
+   */
+  await runHook('bajo:afterCollectHooks', this.bajo.hooks)
 }
 
 /**
  * Finally, run all plugins
  *
  * @async
+ * @fires bajo:beforeAll{method}
+ * @fires {ns}:before{method}
+ * @fires {ns}:after{method}
+ * @fires bajo:afterAll{method}
  */
 export async function run () {
   const me = this
   const { runHook, eachPlugins, join } = me.bajo
   const { freeze } = me.bajo
   const methods = ['init']
-  if (!me.bajo.applet) methods.push('start')
+  if (!me.applet) methods.push('start')
   for (const method of methods) {
-    await runHook(`bajo:${camelCase(`before ${method} all plugins`)}`)
+    /**
+     * Emitted before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     *
+     * @event bajo:beforeAll{method}
+     * @param {string} method - Accepted methods: ```Init```, ```Start```
+     * @see module:Helper/Base.run
+     */
+    await runHook(`bajo:${camelCase(`before all ${method}`)}`)
     await eachPlugins(async function () {
-      const { name: ns } = this
+      const { ns } = this
       if (method === 'start') freeze(me[ns].config)
+      /**
+       * Emitted before ```{method}``` is executed within ```{ns}``` context
+       *
+       * - ```{ns}``` - namespace
+       * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
+       *
+       * @event {ns}:before{method}
+       * @see module:Helper/Base.run
+       */
       await runHook(`${ns}:${camelCase(`before ${method}`)}`)
       await me[ns][method]()
+      /**
+       * Emitted after ```{method}``` is executed within ```{ns}``` context
+       *
+       * - ```{ns}``` - namespace
+       * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
+       *
+       * @event {ns}:after{method}
+       * @see module:Helper/Base.run
+       */
       await runHook(`${ns}:${camelCase(`after ${method}`)}`)
     })
-    await runHook(`bajo:${camelCase(`after ${method} all plugins`)}`)
+    /**
+     * Emitted after all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     *
+     * @event bajo:afterAll{method}
+     * @see module:Helper/Base.run
+     */
+    await runHook(`bajo:${camelCase(`after all ${method}`)}`)
   }
   me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
 }

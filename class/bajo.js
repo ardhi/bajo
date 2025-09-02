@@ -1,5 +1,4 @@
 import Plugin from './plugin.js'
-import BasePlugin from './base/plugin.js'
 import increment from 'add-filename-increment'
 import fs from 'fs-extra'
 import path from 'path'
@@ -35,7 +34,7 @@ const {
  *
  * @class
  */
-class Bajo extends BasePlugin {
+class Bajo extends Plugin {
   /**
    * @param {App} app - App instance. Usefull to call app method inside a plugin
    */
@@ -174,7 +173,7 @@ class Bajo extends BasePlugin {
     if (checkNs) {
       if (!this.app[ns]) {
         const plugin = this.getPlugin(ns)
-        if (plugin) ns = plugin.name
+        if (plugin) ns = plugin.ns
       }
       if (!this.app[ns]) throw this.error('unknownPluginOrNotLoaded%s')
     }
@@ -223,7 +222,7 @@ class Bajo extends BasePlugin {
   buildCollections = async (options = {}) => {
     let { ns, handler, dupChecks = [], container, useDefaultName } = options
     useDefaultName = useDefaultName ?? true
-    if (!ns) ns = this.name
+    if (!ns) ns = this.ns
     const cfg = this.app[ns].getConfig()
     let items = get(cfg, container, [])
     if (!isArray(items)) items = [items]
@@ -234,6 +233,7 @@ class Bajo extends BasePlugin {
      *
      * @event bajo:beforeBuildCollection
      * @param {string} container
+     * @see {@tutorial hook}
      * @see Bajo#buildCollections
      */
     await this.runHook(`${ns}:beforeBuildCollection`, container)
@@ -250,7 +250,7 @@ class Bajo extends BasePlugin {
       const result = await handler.call(this.app[ns], { item, index, cfg })
       if (result) items[index] = result
       else if (result === false) deleted.push(index)
-      if (this.app.bajo.applet && item.skipOnTool && !deleted.includes(index)) deleted.push(index)
+      if (this.app.applet && item.skipOnApplet && !deleted.includes(index)) deleted.push(index)
     }
     if (deleted.length > 0) pullAt(items, deleted)
 
@@ -269,6 +269,7 @@ class Bajo extends BasePlugin {
      * @event bajo:afterBuildCollection
      * @param {string} container
      * @param {Object[]} items
+     * @see {@tutorial hook}
      * @see Bajo#buildCollections
      */
     await this.runHook(`${ns}:afterBuildCollection`, container, items)
@@ -595,7 +596,7 @@ class Bajo extends BasePlugin {
    *
    * @method
    * @param {string} pkgName - Package name to find
-   * @param {*} base - Provide base name if ```pkgName``` is a module under ```base```'s package name
+   * @param {string} base - Provide base name if ```pkgName``` is a module under ```base```'s package name
    * @returns {string} Return absolute package directory
    */
   getModuleDir = (pkgName, base) => {
@@ -623,7 +624,7 @@ class Bajo extends BasePlugin {
    */
   getPluginDataDir = (name, ensureDir = true) => {
     const plugin = this.getPlugin(name)
-    const dir = `${this.app.bajo.dir.data}/plugins/${plugin.name}`
+    const dir = `${this.app.bajo.dir.data}/plugins/${plugin.ns}`
     if (ensureDir) fs.ensureDirSync(dir)
     return dir
   }
@@ -632,7 +633,7 @@ class Bajo extends BasePlugin {
    * Resolve file path from:
    *
    * - local/absolute file
-   * - ns based path (```myPlugin:/path/to/file.txt```)
+   * - TNsPath (```myPlugin:/path/to/file.txt```)
    *
    * @method
    * @param {string} file - File path, see above for supported types
@@ -674,7 +675,7 @@ class Bajo extends BasePlugin {
         if (silent) return false
         throw this.error('pluginWithNameAliasNotLoaded%s', name)
       }
-      name = plugin.name
+      name = plugin.ns
     }
     return this.app[name]
   }
@@ -997,7 +998,7 @@ class Bajo extends BasePlugin {
    * @returns {Object}
    */
   readConfig = async (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) => {
-    if (!ns) ns = this.name
+    if (!ns) ns = this.ns
     file = resolvePath(this.getPluginFile(file))
     let ext = path.extname(file)
     const fname = path.dirname(file) + '/' + path.basename(file, ext)
@@ -1055,6 +1056,33 @@ class Bajo extends BasePlugin {
   }
 
   /**
+   * Read all config files by path
+   *
+   * @method
+   * @async
+   * @param {string} path - Base path to start looking config files
+   * @returns {Object}
+   */
+  readAllConfigs = async (path) => {
+    const { defaultsDeep } = this.app.lib.aneka
+    let cfg = {}
+    let ext = {}
+    // default config file
+    try {
+      cfg = await this.readConfig(`${path}.*`, { ignoreError: true })
+    } catch (err) {
+      if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
+    }
+    // env based config file
+    try {
+      ext = await this.readConfig(`${path}-${this.config.env}.*`, { ignoreError: true })
+    } catch (err) {
+      if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
+    }
+    return defaultsDeep({}, ext, cfg)
+  }
+
+  /**
    * Run named hook/event
    *
    * @method
@@ -1098,7 +1126,7 @@ class Bajo extends BasePlugin {
    */
   saveAsDownload = async (file, item, printSaved = true) => {
     const { print, getPluginDataDir } = this.app.bajo
-    const fname = increment(`${getPluginDataDir(this.name)}/download/${trim(file, '/')}`, { fs: true })
+    const fname = increment(`${getPluginDataDir(this.ns)}/download/${trim(file, '/')}`, { fs: true })
     const dir = path.dirname(fname)
     if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
     await fs.writeFile(fname, item, 'utf8')

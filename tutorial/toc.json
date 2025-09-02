@@ -16,5 +16,8 @@
   },
   "config": {
     "title": "Config Object"
+  },
+  "hook": {
+    "title": "Hook & Event"
   }
 }

@@ -7,7 +7,7 @@ import outmatch from 'outmatch'
 import dayjs from '../lib/dayjs.js'
 import fs from 'fs-extra'
 import aneka from 'aneka/index.js'
-import Plugin from './plugin.js'
+import Base from './base.js'
 import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
@@ -22,7 +22,7 @@ import {
   runAsApplet
 } from './helper/bajo.js'
 
-const { isPlainObject, get, reverse, map, isString } = lodash
+const { isPlainObject, get, reverse, map, isString, last, without, keys } = lodash
 let unknownLangWarning = false
 
 function outmatchNs (source, pattern) {
@@ -38,11 +38,8 @@ function outmatchNs (source, pattern) {
   }
 }
 
-const { last, without, keys } = lodash
-
 /**
- * @typedef TAppEnv
- * @type {Object}
+ * @typedef {Object} TAppEnv
  * @property {string} dev=development
  * @property {string} staging=staging
  * @property {string} prod=production
@@ -50,8 +47,7 @@ const { last, without, keys } = lodash
  */
 
 /**
- * @typedef TAppLib
- * @type {Object}
+ * @typedef {Object} TAppLib
  * @property {Object} _ - Access to {@link https://lodash.com|lodash}
  * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
  * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
@@ -72,9 +68,11 @@ const lib = {
 }
 
 /**
- * App class. This is where everything starts, the boot process:
+ * App class. This is the root. This is where all plugins call it home.
  *
- * 1. Parsing all arguments and environment values
+ * Boot process:
+ *
+ * 1. Parsing {@link module:Lib.parseArgsArgv|program arguments, options} and {@link module:Lib.parseEnv|environment values}
  * 2. Create {@link Bajo|Bajo} instance
  * 3. Building {@link module:Helper/Bajo.buildBaseConfig|base config}
  * 4. {@link module:Helper/Bajo.buildPlugins|Building plugins}
@@ -83,7 +81,7 @@ const lib = {
  * 7. Setup {@link module:Helper/Bajo.bootOrder|boot order}
  * 8. {@link module:Helper/Bajo.bootPlugins|Boot loaded plugins}
  * 9. Attach {@link module:Helper/Bajo.exitHandler|exit handlers}
- * 10. Finish
+ * 10. {@link module:Helper/Bajo.runAsApplet|Run in applet mode} if ```-a``` or ```--applet``` is given
  *
  * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
  *
@@ -167,8 +165,15 @@ class App {
     this.lib.outmatchNs = outmatchNs.bind(this)
 
     /**
+     * Instance of system log
+     *
+     * @type {Log}
+     */
+    this.log = {}
+
+    /**
      * All plugin's class definitions are saved here as key-value pairs with plugin name as its key.
-     * The special key ```base``` is for {@link BasePlugin}'s class so anytime you want to
+     * The special key ```base``` is for {@link Base}'s class so anytime you want to
      * create your own plugin, just use something like this:
      *
      * ```javascript
@@ -176,7 +181,76 @@ class App {
      *   ... your class
      * }
      */
-    this.pluginClass = { base: Plugin }
+    this.pluginClass = { base: Base }
+
+    /**
+     * If app runs in applet mode, this will be the applet's name
+     *
+     * @type {string}
+     */
+    this.applet = undefined
+
+    /**
+     * Program arguments
+     *
+     * ```
+     * $ node index.js arg1 arg2
+     * ...
+     * console.log(this.args) // it should print: ['arg1', 'arg2']
+     * ```
+     *
+     * @type {string[]}
+     * @see module:Lib.parseArgsArgv
+     */
+    this.args = []
+
+    /**
+     * Program options.
+     *
+     * - Dash (```-```) breaks the string into object keys
+     * - While colon (```:```) is used as namespace separator. If no namespace found, it is saved under ```_``` key.
+     *
+     * Values are parsed automatically. See {@link https://github.com/ladjs/dotenv-parse-variables|dotenv-parse-variables}
+     * for details.
+     *
+     * ```
+     * $ node index.js --my-name-first=John --my-name-last=Doe --my-birthDay=secret --nameSpace:path-subPath=true
+     * ...
+     * // {
+     * //   _: {
+     * //    my: {
+     * //       name: { first: 'John', last: 'Doe' },
+     * //       birthDay: 'secret'
+     * //     }
+     * //   },
+     * //   nameSpace: { path: { subPath: true } }
+     * // }
+     * ```
+     *
+     * @type {Object}
+     * @see module:Lib.parseArgsArgv
+     */
+    this.argv = {}
+
+    /**
+     * Environment variables. Support dotenv (```.env```) file too!
+     *
+     * - Underscore (```_```) translates key to camel-cased one
+     * - Double underscores (```__```) breaks the key into object keys
+     * - While dot (```.```) is used as namespace separator. If no namespace found, it is saved under ```_``` key.
+     *
+     * Values are also parsed automatically using {@link https://github.com/ladjs/dotenv-parse-variables|dotenv-parse-variables}.
+     *
+     * Example:
+     *
+     * - ```MY_KEY=secret``` → ```{ _: { myKey: 'secret' } }```
+     * - ```MY_KEY__SUB_KEY=supersecret``` → ```{ _: { myKey: { subKey: 'supersecret' } } }```
+     * - ```MY_NS.MY_NAME=John``` → ```{ myNs: { myName: 'John' } }```
+     *
+     * @type {Object}
+     * @see module:Lib.parseEnv
+     */
+    this.envVars = {}
 
     if (!cwd) cwd = process.cwd()
     const l = last(process.argv)
@@ -200,23 +274,23 @@ class App {
    * @param {Object} [pluginClass] - Plugin's class definition
    */
   addPlugin = (plugin, pluginClass) => {
-    if (this[plugin.name]) throw new Error(`Plugin '${plugin.name}' added already`)
-    this[plugin.name] = plugin
-    if (pluginClass) this.pluginClass[plugin.name] = pluginClass
+    if (this[plugin.ns]) throw new Error(`Plugin '${plugin.ns}' added already`)
+    this[plugin.ns] = plugin
+    if (pluginClass) this.pluginClass[plugin.ns] = pluginClass
   }
 
   /**
-   * Get all loaded plugin names
+   * Get all loaded plugin namesspaces
    *
    * @method
    * @returns {string[]}
    */
-  getPluginNames = () => {
+  getAllNs = () => {
     return without(keys(this.pluginClass), 'base')
   }
 
   /**
-   * Dumping variable on screen
+   * Dumping variable on screen. Like ```console.log``` but with max 10 depth.
    *
    * @method
    * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
@@ -225,27 +299,29 @@ class App {
     const terminate = last(args) === true
     if (terminate) args.pop()
     for (const arg of args) {
-      const result = util.inspect(arg, false, null, true)
+      const result = util.inspect(arg, { depth: 10, colors: true })
       console.log(result)
     }
     if (terminate) process.kill(process.pid, 'SIGINT')
   }
 
   /**
-   * Booting the app
+   * Booting the app.
    *
    * @method
    * @async
    * @returns {App}
+   * @fires bajo:afterBootComplete
    */
   boot = async () => {
-    // argv/args
-    const { args, argv } = await parseArgsArgv.call(this) ?? {}
-    this.argv = argv
-    this.args = args
-    this.env = parseEnv() ?? {}
-
     this.bajo = new Bajo(this)
+    // argv/args/env
+    const { argv, args } = await parseArgsArgv.call(this) ?? {}
+    this.args = args
+    this.argv = argv
+    this.envVars = parseEnv.call(this)
+    this.applet = this.envVars._.applet ?? this.argv._.applet
+
     await buildBaseConfig.call(this.bajo)
     await buildPlugins.call(this.bajo)
     await collectConfigHandlers.call(this.bajo)
@@ -256,8 +332,15 @@ class App {
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.info('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
+    /**
+     * Emitted after boot process is completed
+     *
+     * @event bajo:afterBootComplete
+     * @see {@tutorial hook}
+     * @see App#boot
+     */
     await this.bajo.runHook('bajo:afterBootComplete')
-    if (this.bajo.applet) await runAsApplet.call(this.bajo)
+    if (this.applet) await runAsApplet.call(this.bajo)
     return this
   }
 
@@ -305,26 +388,26 @@ class App {
    * @method
    * @param {string} ns - Namespace
    * @param {string} text - Text to translate
-   * @param  {...any} args - Arguments
+   * @param  {...any} params - Arguments
    * @returns {string}
    */
-  t = (ns, text, ...args) => {
+  t = (ns, text, ...params) => {
     if (!text) {
       text = ns
       ns = 'bajo'
     }
-    const opts = last(args)
+    const opts = last(params)
     let lang = this.bajo.config.lang
     if (isPlainObject(opts)) {
-      args.pop()
+      params.pop()
       if (opts.lang) lang = opts.lang
     }
     const { fallback, supported } = this.bajo.config.intl
     if (!unknownLangWarning && !supported.includes(lang)) {
       unknownLangWarning = true
-      this.bajo.log.warn('unsupportedLangFallbackTo%s', fallback)
+      this.bajo.log.warn(`Unsupported language, fallback to '${fallback}'`)
     }
-    const plugins = reverse(without([...this.getPluginNames()], ns))
+    const plugins = reverse(without([...this.getAllNs()], ns))
     plugins.unshift(ns)
     plugins.push('bajo')
 
@@ -342,11 +425,11 @@ class App {
       }
     }
     if (!trans) trans = text
-    const params = map(args, a => {
+    const values = map(params, a => {
       if (!isString(a)) return a
       return a
     })
-    return sprintf(trans, ...params)
+    return sprintf(trans, ...values)
   }
 }
 

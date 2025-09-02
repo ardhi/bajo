@@ -6,7 +6,7 @@ Error.stackTraceLimit = 15
 /**
  * Bajo error class, a thin wrapper of node's Error object.
  *
- * Every Bajo {@link BasePlugin|plugin} has a built-in method called ```error``` which basically the shortcut to create a new Err instance.
+ * Every Bajo {@link Plugin|plugin} has a built-in method called ```error``` which basically the shortcut to create a new Err instance.
  * It helps you create this instance anywhere in your code quickly without the hassle of importing & instantiating:
  *
  * ```javascript
@@ -16,14 +16,14 @@ Error.stackTraceLimit = 15
  */
 class Err {
   /**
-   * @param {BasePlugin} plugin - Plugin instance
+   * @param {Plugin} plugin - Plugin instance
    * @param {string} msg - Error message
    * @param  {...any} [args] - Variables to interpolate with error message. Payload object can be pushed at the very last argument
    */
   constructor (plugin, msg, ...args) {
     /**
      * Attached plugin
-     * @type {BasePlugin}
+     * @type {Plugin}
      */
     this.plugin = plugin
 
@@ -78,7 +78,7 @@ class Err {
       err[key] = value
     }
     if (!isEmpty(values)) err.values = values
-    err.ns = this.plugin.name
+    err.ns = this.plugin.ns
     err.orgMessage = this.orgMessage
     return err
   }

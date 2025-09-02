@@ -1,8 +1,7 @@
-import readAllConfigs from '../../lib/read-all-configs.js'
 import currentLoc from '../../lib/current-loc.js'
 import resolvePath from '../../lib/resolve-path.js'
-import Print from '../base/print.js'
-import Log from '../base/log.js'
+import Print from '../misc/print.js'
+import Log from '../misc/log.js'
 import omitDeep from 'omit-deep'
 import os from 'os'
 import fs from 'fs-extra'
@@ -14,7 +13,7 @@ import {
   attachMethods,
   collectHooks,
   run
-} from './plugin.js'
+} from './base.js'
 
 const {
   reduce,
@@ -34,13 +33,13 @@ const {
   without,
   uniq,
   camelCase,
-  isEmpty,
-  omit
+  isEmpty
 } = lodash
 
 const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 
 const defConfig = {
+  env: 'dev',
   log: {
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
     pretty: false,
@@ -84,8 +83,7 @@ const defConfig = {
  */
 export async function buildBaseConfig () {
   const { defaultsDeep } = this.app.lib.aneka
-  this.applet = this.app.argv._.applet
-  this.config = defaultsDeep({}, this.app.env._, this.app.argv._)
+  this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
   set(this, 'dir.pkg', this.resolvePath(path))
@@ -97,7 +95,7 @@ export async function buildBaseConfig () {
   }
   fs.ensureDirSync(`${this.dir.data}/config`)
   if (!this.dir.tmp) {
-    this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.name}`
+    this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.ns}`
     fs.ensureDirSync(this.dir.tmp)
   }
 }
@@ -138,7 +136,6 @@ export async function buildPlugins () {
     if (!(plugin instanceof this.app.pluginClass.base)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
     this.app.addPlugin(plugin, ClassDef)
   }
-  this.config = omit(this.config, this.app.getPluginNames())
 }
 
 /**
@@ -173,26 +170,28 @@ export async function collectConfigHandlers () {
 export async function buildExtConfig () {
   // config merging
   const { defaultsDeep } = this.app.lib.aneka
-  let resp = await readAllConfigs.call(this.app, `${this.dir.data}/config/${this.name}`)
+  let resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
   const envs = this.app.constructor.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
-  this.config.env = (this.config.env ?? 'dev').toLowerCase()
   if (values(envs).includes(this.config.env)) this.config.env = this.app.lib.aneka.getKeyByValue(envs, this.config.env)
   if (!keys(envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(envs))}`)
+  this.config.lang = this.config.lang.split('.')[0]
   process.env.NODE_ENV = envs[this.config.env]
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
   if (this.config.silent) this.config.log.level = 'silent'
-  if (this.applet) {
+  if (this.app.applet) {
     if (!this.app.pluginPkgs.includes('bajo-cli')) throw new Error('Applet needs to have \'bajo-cli\' loaded first')
     if (!this.config.log.applet) this.config.log.level = 'silent'
     this.config.exitHandler = false
   }
+  this.config = this.parseObject(pick(this.config, keys(defConfig)), { parseValue: true })
+  this.config.lang = this.config.lang.split('.')[0]
+
   const exts = map(this.app.configHandlers, 'ext')
   this.app.log = new Log(this.app)
-  this.log.debug('configHandlers%s', this.join(exts))
-  this.config = this.parseObject(this.config, { parseValue: true })
-  this.app.loadIntl(this.name)
+  this.log.debug(`Config handlers: ${this.join(exts)}`)
+  this.app.loadIntl(this.ns)
   this.print = new Print(this)
 }
 
@@ -233,12 +232,12 @@ export async function bootOrder () {
 /**
  * Iterate through all plugins loaded and do:
  *
- * 1. {@link module:Helper/Plugin.buildConfigs|build configs}
- * 2. {@link module:Helper/Plugin.checkNameAliases|ensure names & aliases uniqueness}
- * 3. {@link module:Helper/Plugin.checkDependencies|ensure dependencies are met}
- * 4. {@link module:Helper/Plugin.attachMethods|build and attach dynamic methods}
- * 5. {@link module:Helper/Plugin.collectHooks|collect hooks}
- * 6. {@link module:Helper/Plugin.run|run plugins}
+ * 1. {@link module:Helper/Base.buildConfigs|build configs}
+ * 2. {@link module:Helper/Base.checkNameAliases|ensure names & aliases uniqueness}
+ * 3. {@link module:Helper/Base.checkDependencies|ensure dependencies are met}
+ * 4. {@link module:Helper/Base.attachMethods|build and attach dynamic methods}
+ * 5. {@link module:Helper/Base.collectHooks|collect hooks}
+ * 6. {@link module:Helper/Base.run|run plugins}
  *
  * @async
  */
@@ -299,11 +298,13 @@ export async function exitHandler () {
  * If app is in ```applet``` mode, this little helper should take care plugin's applet boot process
  *
  * @async
+ * @fires [ns]:beforeAppletRun
+ * @fires [ns]:afterAppletRun
  */
 export async function runAsApplet () {
   const { isString, map, find } = this.app.lib._
   await this.eachPlugins(async function ({ file }) {
-    const { name: ns } = this
+    const { ns } = this
     const { alias } = this.constructor
     this.app.applets.push({ ns, file, alias })
   }, { glob: 'applet.js', prefix: 'bajoCli' })
@@ -311,8 +312,8 @@ export async function runAsApplet () {
   this.log.debug('appletModeActivated')
   this.print.info('appRunningAsApplet')
   if (this.app.applets.length === 0) this.print.fatal('noAppletLoaded')
-  let name = this.applet
-  if (!isString(this.applet)) {
+  let name = this.app.applet
+  if (!isString(name)) {
     const select = await this.importPkg('bajoCli:@inquirer/select')
     name = await select({
       message: this.t('Please select:'),
@@ -322,7 +323,24 @@ export async function runAsApplet () {
   const [ns, path] = name.split(':')
   const applet = find(this.app.applets, a => (a.ns === ns || a.alias === ns))
   if (!applet) this.print.fatal('notFound%s%s', this.app.t('applet'), name)
-  await this.runHook(`${this.app[applet.ns]}:beforeAppletRun`)
+
+  /**
+   * Emitted before applet is run. ```[ns]``` is applet's namespace
+   *
+   * @event [ns]:beforeAppletRun
+   * @param {...any} params
+   * @see {@tutorial hook}
+   * @see module:Helper/Bajo.runAsApplet
+   */
+  await this.runHook(`${this.app[applet.ns]}:beforeAppletRun`, ...this.app.args)
   await this.app.bajoCli.runApplet(applet, path, ...this.app.args)
-  await this.runHook(`${this.app[applet.ns]}:afterAppletRun`)
+  /**
+   * Emitted after applet is run. ```[ns]``` is applet's namespace
+   *
+   * @event [ns]:afterAppletRun
+   * @param {...any} params
+   * @see {@tutorial hook}
+   * @see module:Helper/Bajo.runAsApplet
+   */
+  await this.runHook(`${this.app[applet.ns]}:afterAppletRun`, ...this.app.args)
 }

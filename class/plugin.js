@@ -1,109 +1,170 @@
-import BasePlugin from './base/plugin.js'
 import lodash from 'lodash'
 import omittedPluginKeys from '../lib/omitted-plugin-keys.js'
-import readAllConfigs from '../lib/read-all-configs.js'
+import Err from './misc/err.js'
 
-const { pick, omit } = lodash
+const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
 /**
- * This is the class that your own plugin suppose to extend. Don't use {@link BasePlugin}
- * unless you know what you're doing.
+ * This is the **mother** of all plugin classes. All Bajo plugin classess inherit from this class
+ * respectfully.
+ *
+ * There are currently only two main plugins available:
+ * - {@link Bajo} - Core plugin class, responsible for system wide setup and boot process. You should not touch this obviously
+ * - {@link Base} - Base plugin class your own plugin should extend from
  *
  * @class
  */
-
-class Plugin extends BasePlugin {
+class Plugin {
   /**
-   * Dependencies to other plugins. Enter all plugin's package name your plugin dependent from.
+   * Package name, the one from package.json
    *
-   * Semver is also supported.
-   *
-   * @constant {string[]}
    * @memberof Plugin
+   * @constant {string}
    */
-  static dependencies = []
+  static pkgName
+
+  /**
+   * Namespace (ns) or plugin's name. Simply the camel cased version of plugin's package name
+   *
+   * @memberof Plugin
+   * @constant {string}
+   */
+  static ns
+
+  /**
+   * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
+   * Bajo will provide this automatically (by using the kebab-cased version of plugin name)
+   *
+   * @readonly
+   * @memberof Plugin
+   * @type {string}
+   */
+  static alias = ''
 
   /**
    * @param {string} pkgName - Package name (the one you use in package.json)
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
-    super(pkgName, app)
-    this.state = {}
-  }
+    this.constructor.pkgName = pkgName
+    this.constructor.ns = camelCase(pkgName)
 
-  /**
-   * Load config from file in data directory, program arguments and environment variables. Level of importance:
-   * ```Env Variables > Program Arguments > Config File```
-   *
-   * @method
-   * @async
-   */
-  loadConfig = async () => {
-    const { defaultsDeep } = this.app.lib.aneka
-    const { get, kebabCase } = this.app.lib._
-    const { log, readJson, parseObject, getModuleDir } = this.app.bajo
-    log.trace('- %s', this.name)
-    const dir = this.name === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
-    let cfg = await readAllConfigs.call(this.app, `${dir}/config`)
-    this.constructor.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.name.toLowerCase())
-    this.constructor.alias = kebabCase(this.alias)
+    /**
+     * Reference to app instance
+     *
+     * @type {Object}
+     */
+    this.app = app
 
-    this.dir = {
-      pkg: dir,
-      data: `${this.app.bajo.dir.data}/plugins/${this.name}`
+    /**
+     * Config object
+     *
+     * @type {Object}
+     * @see {@tutorial config}
+     */
+    this.config = {}
+
+    /**
+     * Shortcut to {@link App#log} with prefix parameter set to this plugin name.
+     *
+     * @type {Log}
+     */
+    this.log = {
+      trace: (...params) => this.app.log.trace(this.ns, ...params),
+      debug: (...params) => this.app.log.debug(this.ns, ...params),
+      info: (...params) => this.app.log.info(this.ns, ...params),
+      warn: (...params) => this.app.log.warn(this.ns, ...params),
+      error: (...params) => this.app.log.error(this.ns, ...params),
+      fatal: (...params) => this.app.log.fatal(this.ns, ...params),
+      silent: (...params) => this.app.log.silent(this.ns, ...params)
     }
-    const file = `${dir + (this.name === this.app.mainNs ? '/..' : '')}/package.json`
-    const pkgJson = await readJson(file)
-    this.pkg = pick(pkgJson,
-      ['name', 'version', 'description', 'author', 'license', 'homepage'])
-    if (this.name === this.app.mainNs) {
-      this.constructor.alias = this.app.mainNs
-      this.title = this.title ?? this.alias
-    }
-    // merge with config from datadir
-    try {
-      const altCfg = await readAllConfigs.call(this.app, `${this.app.bajo.dir.data}/config/${this.name}`)
-      cfg = defaultsDeep({}, omit(altCfg, omittedPluginKeys), cfg)
-    } catch (err) {}
-    const cfgEnv = omit(get(this, `app.env._.${this.name}`, {}), omittedPluginKeys) ?? {}
-    const cfgArgv = omit(get(this, `app.argv._.${this.name}`, {}), omittedPluginKeys) ?? {}
-    const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
-    cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
-    this.title = this.title ?? cfg.title ?? this.alias
-    this.config = parseObject(cfg, { parseValue: true })
   }
 
   /**
-   * After config is read, plugin will be initialized. You can still change your config here,
-   * because after plugin is initialized, config will be deep frozen.
+   * Get plugin's config value
    *
    * @method
-   * @async
+   * @param {string} [path] - dot separated config path (think of lodash's 'get'). If not provided, the full config will be given
+   * @param {Object} [options={}] - Options
+   * @param {any} [options.defValue={}] - Default value to use if returned object is undefined
+   * @param {string[]} [options.omit=[]] - Omit these keys from returned object
+   * @param {boolean} [options.noClone=false] - Set true to NOT clone returned object
+   * @returns {Object} Returned object. If no path provided, the whole config object is returned
    */
-  init = async () => {
+  getConfig = (path, options = {}) => {
+    let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue ?? {})
+    options.omit = options.omit ?? omittedPluginKeys
+    if (isPlainObject(obj) && !isEmpty(options.omit)) obj = omit(obj, options.omit)
+    if (!options.noClone) obj = cloneDeep(obj)
+    return obj
   }
 
   /**
-   * This method will be called after plugin's init
+   * Create an instance of {@link Err} object
    *
    * @method
-   * @async
+   * @param {msg} msg - Error message
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
+   * @returns {Object} Err instance
    */
-  start = async () => {
-  }
-
-  stop = async () => {
+  error = (msg, ...args) => {
+    if (!this.print) return new Error(msg, ...args)
+    const error = new Err(this, msg, ...args)
+    return error.write()
   }
 
   /**
-   * Upon app termination, this method will be called first. Mostly useful for system cleanup,
-   * delete temporary files, freeing resources etc.
+   * Create an instance of Err object, display it on screen and then force
+   * terminate the app process
    *
    * @method
-   * @async
+   * @param {msg} msg - Error message
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
    */
-  exit = async () => {
+  fatal = (msg, ...args) => {
+    if (!this.print) return new Error(msg, ...args)
+    const error = new Err(this, msg, ...args)
+    error.fatal()
+  }
+
+  /**
+   * Getter for plugin's package name
+   *
+   * @type {string}
+   */
+  get pkgName () {
+    return this.constructor.pkgName
+  }
+
+  /**
+   * Getter for plugin's ns
+   *
+   * @type {string}
+   */
+  get ns () {
+    return this.constructor.ns
+  }
+
+  /**
+   * Getter for plugin's alias
+   *
+   * @type {string}
+   */
+  get alias () {
+    return this.constructor.alias
+  }
+
+  /**
+   * Translate text and interpolate with given ```args```.
+   *
+   * Shortcut to {@link App#t} with ns parameter set to this plugin namespace.
+   *
+   * @param {string} text - Text to translate
+   * @param  {...any} params - Variables to interpolate to ```text```
+   * @returns {string}
+   */
+  t = (text, ...params) => {
+    return this.app.t(this.ns, text, ...params)
   }
 }
 

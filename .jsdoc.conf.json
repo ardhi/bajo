@@ -13,6 +13,7 @@
       "display-module-header": true,
       "title": "Bajo Framework",
       "homepageTitle": "Bajo Framework",
+      "sections": ["Tutorials", "Classes", "Events", "Modules", "Global"],
       "menu": [{
         "title": "Bajo.app",
         "link": "https://bajo.app"

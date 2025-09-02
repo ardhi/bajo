@@ -30,7 +30,7 @@ const { isEmpty, without, merge } = lodash
  * this.app.log.debug(...)
  * ```
  *
- * Shortcuts to log's methods are also available on every Bajo {@link BasePlugin|plugin}. Call on
+ * Shortcuts to log's methods are also available on every Bajo {@link Plugin|plugin}. Call on
  * these shortcuts will be prefixed with it's plugin name automatically:
  *
  * ```javascript

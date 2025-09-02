@@ -24,7 +24,7 @@ const { isPlainObject } = lodash
  */
 class Print {
   /**
-   * @param {BasePlugin} plugin - Plugin instance
+   * @param {Plugin} plugin - Plugin instance
    * @param {TPrintOptions} [options={}] - Options object
    */
   constructor (plugin, options = {}) {
@@ -36,7 +36,7 @@ class Print {
 
     /**
      * Attached plugin
-     * @type {BasePlugin}
+     * @type {Plugin}
      */
     this.plugin = plugin
 
