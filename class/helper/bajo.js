@@ -325,8 +325,9 @@ export async function runAsApplet () {
   if (!applet) this.print.fatal('notFound%s%s', this.app.t('applet'), name)
 
   /**
-   * Emitted before applet is run. ```[ns]``` is applet's namespace
+   * Run before applet is run. ```[ns]``` is applet's namespace
    *
+   * @global
    * @event {ns}:beforeAppletRun
    * @param {...any} params
    * @see {@tutorial hook}
@@ -335,8 +336,9 @@ export async function runAsApplet () {
   await this.runHook(`${this.app[applet.ns]}:beforeAppletRun`, ...this.app.args)
   await this.app.bajoCli.runApplet(applet, path, ...this.app.args)
   /**
-   * Emitted after applet is run. ```[ns]``` is applet's namespace
+   * Run after applet is run. ```[ns]``` is applet's namespace
    *
+   * @global
    * @event {ns}:afterAppletRun
    * @param {...any} params
    * @see {@tutorial hook}

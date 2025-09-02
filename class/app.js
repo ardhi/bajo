@@ -339,8 +339,9 @@ class App {
     const elapsed = new Date() - this.runAt
     this.bajo.log.info('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
     /**
-     * Emitted after boot process is completed
+     * Run after boot process is completed
      *
+     * @global
      * @event bajo:afterBootComplete
      * @see {@tutorial hook}
      * @see App#boot

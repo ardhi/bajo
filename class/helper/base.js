@@ -164,8 +164,9 @@ export async function collectHooks () {
   })
 
   /**
-   * Emitted after hooks are collected
+   * Run after hooks are collected
    *
+   * @global
    * @event bajo:afterCollectHooks
    * @param {Object[]} hooks - Array of hook objects
    * @see {@tutorial hook}
@@ -191,8 +192,9 @@ export async function run () {
   if (!me.applet) methods.push('start')
   for (const method of methods) {
     /**
-     * Emitted before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     * Run before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
      *
+     * @global
      * @event bajo:beforeAll{method}
      * @param {string} method - Accepted methods: ```Init```, ```Start```
      * @see module:Helper/Base.run
@@ -202,30 +204,33 @@ export async function run () {
       const { ns } = this
       if (method === 'start') freeze(me[ns].config)
       /**
-       * Emitted before ```{method}``` is executed within ```{ns}``` context
+       * Run before ```{method}``` is executed within ```{ns}``` context
        *
        * - ```{ns}``` - namespace
        * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
        *
+       * @global
        * @event {ns}:before{method}
        * @see module:Helper/Base.run
        */
       await runHook(`${ns}:${camelCase(`before ${method}`)}`)
       await me[ns][method]()
       /**
-       * Emitted after ```{method}``` is executed within ```{ns}``` context
+       * Run after ```{method}``` is executed within ```{ns}``` context
        *
        * - ```{ns}``` - namespace
        * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
        *
+       * @global
        * @event {ns}:after{method}
        * @see module:Helper/Base.run
        */
       await runHook(`${ns}:${camelCase(`after ${method}`)}`)
     })
     /**
-     * Emitted after all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     * Run after all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
      *
+     * @global
      * @event bajo:afterAll{method}
      * @see module:Helper/Base.run
      */

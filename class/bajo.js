@@ -113,7 +113,7 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Name based ```<ns>:<path>``` format
+   * Name based ```{ns}:{path}``` format
    * @typedef {string} TNsPathPairs
    * @see TNsPathResult
    * @see Bajo#buildNsPath
@@ -229,8 +229,9 @@ class Bajo extends Plugin {
     this.app[ns].log.trace('collecting%s', this.t(container))
 
     /**
-     * Emitted before collection is built
+     * Run before collection is built
      *
+     * @global
      * @event bajo:beforeBuildCollection
      * @param {string} container
      * @see {@tutorial hook}
@@ -264,8 +265,9 @@ class Bajo extends Plugin {
     }
 
     /**
-     * Emitted after collection is built
+     * Run after collection is built
      *
+     * @global
      * @event bajo:afterBuildCollection
      * @param {string} container
      * @param {Object[]} items
@@ -725,7 +727,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {...TNsPathPairs} pkgs - One or more packages in format ```<ns>:<packageName>```
+   * @param {...TNsPathPairs} pkgs - One or more packages in format ```{ns}:{packageName}```
    * @returns {(Object|Array)} Depends on how many parameters are provided, it should return the named package or an array of packages
    */
   importPkg = async (...pkgs) => {
