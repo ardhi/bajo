@@ -117,11 +117,25 @@ If you later decide to NOT load one or more plugins, you just need to remove tho
 
 > **Warning**: please do not confuse between ```{package}``` and ```{ns}```. Plugin package is the name of JS package listed on npm, while ```ns``` is namespace or plugin name which is it's camel-cased version of package name
 
-### Config Overrides
+### Environment Support
 
-You can override ANY settings on ANY config files with dotenv variables and program's argument switches easily.
+Configuration file support for different environment is also available. All you need todo
+is just create ```{ns}-{env}.json``` in the your ```{data-dir}```, where:
 
-Order of importance: dotenv variable > args switches > config files
+- ```{ns}```: plugin's name or ```bajo``` for app config
+- ```{env}```: your desired environment (```dev``` or ```prod```).
+
+Bajo is smart enough to select which config file is going to be used:
+
+- use ```{ns}-{env}.json``` if file exists
+- if not, use ```{ns}.json```
+- if it also doesn't exists, then use ```{ns}```'s default values
+
+### Runtime Override
+
+You can override ANY key-value pairs settings with environment variables and program's argument switches easily. Bajo also supports [dotenv](https://github.com/motdotla/dotenv) ```.env``` file.
+
+Order of importance: env variable > args switches > config files
 
 #### dotenv
 

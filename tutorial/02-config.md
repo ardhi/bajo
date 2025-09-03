@@ -1,5 +1,7 @@
 # Config Object
 
+The following table shows you the default app settings. To change these to your needs, please refer to [Getting Started](01-getting-started.md) documentation.
+
 | Key Name | Type | Default | Description |
 | ------- | ---- | ----- | ----------- |
 | ```log``` | ```object``` | | |
