@@ -70,6 +70,9 @@ const defConfig = {
 }
 
 /**
+ * Internal helpers called by Bajo that only used once for bootstrapping. It should remains
+ * hidden and not to be imported by any program.
+ *
  * @module Helper/Bajo
  */
 

@@ -683,31 +683,13 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Import file/module from any loaded plugins
+   * Import file/module from any loaded plugins.
    *
-   * Example: your plugin structure looks like this
-   * ```
-   * |- src
-   * |  |- lib
-   * |  |  |- my-module.js
-   * |- index.js
-   * |- package.json
-   * ```
-   *
-   * And now this is how to import ```my-module.js```:
-   * ```javascript
-   * const { importModule } = this.app.bajo
-   * const myModule = await importModule('myPlugin:/src/lib/my-module.js')
-   * ```
+   * Method proxy from {@link module:Lib.importModule}
    *
    * @method
    * @async
-   * @param {TNsPathPairs} file - File to import
-   * @param {Object} [options={}] - Options
-   * @param {boolean} [options.asDefaultImport=true] - If ```true``` (default), return default imported module
-   * @param {boolean} [options.asHandler] - If ```true```, return as a {@link HandlerType|handler}
-   * @param {boolean} [options.noCache] - If ```true```, always import as a fresh copy
-   * @returns {any}
+   * @see module:Lib.importModule
    */
   importModule = async (file, { asDefaultImport, asHandler, noCache } = {}) => {
     return await importModule.call(this, file, { asDefaultImport, asHandler, noCache })

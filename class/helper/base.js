@@ -21,6 +21,9 @@ const {
 } = lodash
 
 /**
+ * Internal helpers called by Bajo & plugins that only used once for bootstrapping purpose.
+ * It should remains hidden and not to be imported by any program.
+ *
  * @module Helper/Base
  */
 

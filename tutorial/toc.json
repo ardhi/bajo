@@ -1,23 +1,26 @@
 {
-  "getting-started": {
+  "00-welcome": {
+    "title": "Welcome"
+  },
+  "01-getting-started": {
     "title": "Getting Started"
   },
-  "user-guide": {
-    "title": "User Guide"
-  },
-  "plugin-dev": {
-    "title": "Plugin Development"
-  },
-  "ecosystem": {
-    "title": "Ecosystem"
-  },
-  "contribution": {
-    "title": "Contribution"
-  },
-  "config": {
+  "02-config": {
     "title": "Config Object"
   },
-  "hook": {
+  "03-hook": {
     "title": "System Hook"
+  },
+  "04-user-guide": {
+    "title": "User Guide"
+  },
+  "05-dev-guide": {
+    "title": "Developer Guide"
+  },
+  "06-ecosystem": {
+    "title": "Ecosystem"
+  },
+  "07-donations": {
+    "title": "Donations"
   }
 }

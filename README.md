@@ -4,17 +4,19 @@ The ultimate framework for whipping up massive apps in no time
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/ardhi/bajo) ![NPM Version](https://img.shields.io/npm/v/bajo)
 
-> <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](misc-docs/contribution.md))<br /><br />
+> <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](tutorial/00-welcome.md#contribution))<br /><br />
 
 <img src="docs/logo.png" width="300" height="300" alt="bajo">
 
 ## Documentations
 
-- [Getting Started](tutorial/getting-started.md)
-- [User Guide](tutorial/user-guide.md)
-- [Plugin Development](tutorial/plugin-dev.md)
-- [Ecosystem](tutorial/ecosystem.md)
-- [Contribution](tutorial/contribution.md)
+- [Getting Started](tutorial/01-getting-started.md)
+- [Config Object](tutorial/02-config.md)
+- [Hook System](tutorial/03-hook.md)
+- [User Guide](tutorial/04-user-guide.md)
+- [Developer Guide](tutorial/05-dev-guide.md)
+- [Ecosystem](tutorial/06-ecosystem.md)
+- [Contribution](tutorial/07-donations.md)
 - [API](https://ardhi.github.io/bajo)
 
 ## Donations
