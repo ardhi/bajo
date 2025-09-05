@@ -22,16 +22,5 @@
   },
   "07-donations": {
     "title": "Donations"
-  },
-  "08-test": {
-    "title": "test",
-    "children": {
-      "waks/child1": {
-        "title": "Child 1"
-      },
-      "waks/child2": {
-        "title": "Child 2"
-      }
-    }
   }
 }

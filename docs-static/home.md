@@ -1,4 +1,4 @@
-![bajo](../docs-asset/logo.png)
+![bajo](docs-static/logo.png)
 
 ## Sub Frameworks
 

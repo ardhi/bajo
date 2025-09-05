@@ -6,7 +6,7 @@ The ultimate framework for whipping up massive apps in no time
 
 > <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](tutorial/00-welcome.md#contribution))<br /><br />
 
-<img src="docs-asset/logo.png" width="300" height="300" alt="bajo">
+<img src="docs-static/logo.png" width="300" height="300" alt="bajo">
 
 ## Documentations
 
@@ -28,7 +28,7 @@ The ultimate framework for whipping up massive apps in no time
 ### Bitcoin
 
 Address: **bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f**
-<p><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="docs-asset/bitcoin.jpeg" width="150" height="150" /></p>
+<p><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="docs-static/bitcoin.jpeg" width="150" height="150" /></p>
 
 ## License
 
