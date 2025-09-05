@@ -1,56 +1,34 @@
 # Getting Started
 
-## Overview
-
-Before we go any further, below are some terminologies I use throughout these documentations:
-
-- ```{project-dir}```: project directory is where you write all your codes
-- ```{data-dir}```: data directory, defaults to ```{project-dir}/data``` if not specifically stated. But **you have to create it** manually first if it doesn't exist yet
-- ```{tmp-dir}```: temporary directory, defaults to OS temporary directory
-- ```{pkgName}```: plugin's package name as normally showed on npm listing
-- ```{ns}```: plugin name/namespace, which is the camel cased version of package name above
-
 ## Installation
 
-Open your terminal and type:
-
-```bash
-$ npm install bajo
-```
-
-## Fire up!
-
-Create a new empty directory, this will be your project directory or your ```{project-dir}```. Now goto your newly created directory, and type:
+Create a new empty directory named ```my-project```. This will become your project directory througout this tutorial. Now ```cd``` to your newly created directory, and type:
 
 ```bash
 $ npm init
 ```
 
-You'll be asked to name your project, description, author infos etc.
+You'll be asked to name your project, put description, author infos etc. Please continue until
+*package.json* file is created.
 
-After package.json is created, open it using your favorite editor, edit and insert the
-following entries:
+Open it using your favorite editor; edit and insert the following lines:
 
 ```javascript
 ...
-  {
-    "type": "module"
-  },
-  {
-    "bajo": {
-      "type": "app"
-    }
+  "type": "module",
+  "bajo": {
+    "type": "app"
   },
 ...
 ```
 
-After completing those steps, install Bajo first by hitting:
+After completing those steps, install Bajo by hitting:
 
 ```bash
 $ npm install bajo
 ```
 
-Now create application bootstrap ```index.js``` file and put these lines below:
+Now create application bootstrap file ```index.js``` and put these lines below:
 
 ```javascript
 // index.js file
@@ -58,109 +36,66 @@ import bajo from 'bajo'
 await bajo()
 ```
 
-A Bajo application **ALWAYS** needs a data directory (```{data-dir}```) to put config files, etc. This could be located inside or outside your ```{project-dir}```.
+A Bajo based app **ALWAYS** needs a data directory to put config files, etc. This could be located inside or outside your project directory. If this directory doesn't exist yet, Bajo will create
+one for you: directory ```data``` in the same location of your ```index.js``` file. Bajo then by default set this directory as your data directory.
 
-Lets assume you're going to put your data directory inside your ```{project-dir}```. So please
-create a new directory called ```data``` first.
+Bajo will also automatically create ```main``` directory that serves as your main plugin if it doesn't exist yet. A factory file named ```index.js``` will be added inside the ```main``` directory. More on this later in the next chapter.
 
-After that, just type in your terminal:
-
-```bash
-$ node index.js --dir-data=data
-```
-
-Or you could utilize [dotenv](https://github.com/motdotla/dotenv) by creating ```.env``` file in the same directory as ```index.js```, and put this inside:
-
-```text
-DIR__DATA = ./data
-```
-
-From now on you can omit calling node with arguments, you just need to type:
+Now run your app:
 
 ```bash
 $ node index.js
 ```
 
-## Configuration
+Congratulations! Your Bajo based app is up and running!
 
-### General rules
+## Playing arround
 
-- All configuration files must be placed in ```{data-dir}/config``` subfolder
-- Config files must be named after its plugin namespace
-- File format should be in ```.json``` or ```.js``` format. If  ```.js``` file is used,
-it should be in ES6 format and should export either plain javascript object or a function
-(sync or async both supported). If it returns a function, this function will be called within its plugin scope and should return a plain js object
-- Other formats (```.yml```, ```.yaml``` and ```.toml```) can also be used by installing & loading [bajoConfig](https://github.com/ardhi/bajo-config) plugin
-- Order of importance: ```.js``` > ```.json``` > ```.yml``` > ```.yaml``` > ```.toml```. Meaning,
-if ```.js``` exists, it will be used instead of ```.json``` or any other types
+By now your directory structure should look like this (excluding ```node_modules``` dir):
 
-### Installed Plugins
-
-Plugins are what make Bajo Framework so great and flexible: they extends app features & functionalities!
-
-To use plugins:
-
-1. Install with ```npm install {package}``` where ```{package}``` is plugin's package name. You can install as many plugins as you want
-2. Optionally create ```{data-dir}/config/{ns}.json``` to customize plugin settings, where ```{ns}``` is namespace or plugin's name
-3. Open/create ```{data-dir}/config/.plugins``` and put plugin's ```{package}``` in it, line by line
-
-Example below will load ```bajoConfig```, ```bajoExtra``` and ```bajoTemplate```:
-
-```text
-#.plugin file
-bajo-config
-bajo-extra
-bajo-template
+```
+|- my-project
+|  |- data
+|  |  |- config
+|  |- main
+|  |  |- index.js
+|  |- index.js
+|  |- package.json
+|  |- package-lock.json
 ```
 
-If you later decide to NOT load one or more plugins, you just need to remove those from ```.plugins``` file or put ```#``` hash mark in front of package name and restart your app.
+Your app by default runs in ```dev``` environment. In this environment, log level is set to ```debug```, which can be overridden by using program arguments:
 
-> **Warning**: please do not confuse between ```{package}``` and ```{ns}```. Plugin package is the name of JS package listed on npm, while ```ns``` is namespace or plugin name which is it's camel-cased version of package name
+```bash
+$ node index.js --log-level=trace --log-timeTaken --log-pretty
+```
 
-### Environment Support
+Now Bajo will show you bunch of pretty, colorful logs including time taken of each steps. This is very useful for debugging purpose or to find out which activity took time the most.
 
-Configuration file support for different environment is also available. All you need todo
-is just create ```{ns}-{env}.json``` in the your ```{data-dir}```, where:
+But typing program arguments is boring, lets use config file to do some magic. Create ```data/config/bajo.json``` and put these lines in it:
 
-- ```{ns}```: plugin's name or ```bajo``` for app config
-- ```{env}```: your desired environment (```dev``` or ```prod```).
+```json
+{
+  "env": "dev",
+  "log": {
+    "pretty": true,
+    "level": "trace",
+    "timeTaken": true
+  }
+}
+```
 
-Bajo is smart enough to select which config file is going to be used:
+Now try to simply run your app without any arguments:
 
-- use ```{ns}-{env}.json``` if file exists
-- if not, use ```{ns}.json```
-- if it also doesn't exists, then use ```{ns}```'s default values
+```bash
+$ node index.js
+```
 
-### Runtime Override
+Much better! And hassel free!!
 
-You can override ANY key-value pairs settings with environment variables and program's argument switches easily. Bajo also supports [dotenv](https://github.com/motdotla/dotenv) ```.env``` file.
+You can mix and match between config file and program arguments on any key-value pairs anytime anywhere. You even can laverage environment variables or using dotenv ```.env``` file if you really need to do. Please read [User Guide](04-user-guide.md) for more in-depth infos on this one.
 
-Order of importance: env variable > args switches > config files
 
-#### dotenv
+## Your First Project
 
-- Create/open ```{project-dir}/.env```
-- Use ```__``` (double underscores) as the replacement of the dot in object
-- ```DIR__DATA```: Set ```{data-dir}``` data directory
-- ```DIR__TMP```: Set ```{tmp-dir}``` temp directory
-- For every key in ```bajo.json```, use its snake cased, upper cased version, e.g:
-  - ```env``` → ```ENV```
-  - ```log.dateFormat``` → ```LOG__DATE_FORMAT```
-  - ```exitHandler``` → ```EXIT_HANDLER```
-- To override plugins config, prepend every key in plugin config with snake cased, upper cased version of the plugin name followed by a dot, e.g:
-  - ```key``` in ```myPlugin``` → ```MY_PLUGIN.KEY```
-  - ```key.subKey.subSubKey``` in ```myPlugin``` → ```MY_PLUGIN.KEY__SUB_KEY__SUB_SUB_KEY```
-
-#### Program argument switches
-- Use switches, e.g: ```node index.js --xxx=one --yyy=two```
-- Every switches must be prefixed with ```--```
-- Use ```-``` as the replacement of the dot in object
-- ```--dir-data```: Set ```{data-dir}``` data directory
-- ```--dir-tmp```: Set ```{tmp-dir}``` temp directory
-- For every key in ```bajo.json```, add prefix ```--``` e.g:
-  - ```env``` → ```--env=prod```
-  - ```log.dateFormat``` → ```--log-dateFormat=xxx```
-  - ```exitHandler``` → ```--exitHandler```
-- To override plugin's config, prepend every key in plugin config with the plugin name  followed by a colon ```:```, e.g:
-  - ```key``` in ```myPlugin``` → ```--myPlugin:key```
-  - ```key.subKey.subSubKey``` in ```myPlugin``` → ```--myPlugin:key-subKey-subSubKey```
+Let's start with **Hello World!**, the Bajo's style.

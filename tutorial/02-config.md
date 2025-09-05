@@ -6,6 +6,7 @@ The following table shows you the default app settings. To change these to your 
 | ------- | ---- | ----- | ----------- |
 | ```log``` | ```object``` | | |
 | &nbsp;&nbsp;&nbsp;&nbsp;```dateFormat``` | ```string``` | ```YYYY-MM-DDTHH:MM:ss.SSS[Z]```| See [dayjs string & format](https://day.js.org/docs/en/parse/string-format) for more info |
+| &nbsp;&nbsp;&nbsp;&nbsp;```timeTaken``` | ```boolean``` | ```false```| Show time taken from previous activity in ms |
 | &nbsp;&nbsp;&nbsp;&nbsp;```plain``` | ```boolean``` | ```false```| No color, simple styling |
 | &nbsp;&nbsp;&nbsp;&nbsp;```applet``` | ```boolean``` | ```false```| Activate log even in applet mode |
 | ```lang``` | ```string``` | Auto detected | Valid language code e.g: 'en-US', 'id', etc. |

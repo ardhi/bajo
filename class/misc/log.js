@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import logLevels from '../../lib/log-levels.js'
 import chalk from 'chalk'
 
-const { isEmpty, without, merge } = lodash
+const { isEmpty, without, merge, get } = lodash
 
 /**
  * Log output in stringified JSON format. Returned when app run in ```prod``` environment
@@ -45,6 +45,7 @@ class Log {
    * @param {App} app - App instance
    */
   constructor (app) {
+    this.lastDelta = 0
     /**
      * The app instance
      * @type {App}
@@ -56,7 +57,7 @@ class Log {
      * @type {string}
      */
     const { dateFormat } = this.app.bajo.config.log ?? {}
-    this.dateFormat = dateFormat ?? 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+    this.dateFormat = dateFormat ?? 'YYYY-MM-DDTHH:mm:ss.SSS'
   }
 
   /**
@@ -92,13 +93,30 @@ class Log {
     msg = this.app.t(prefix, msg, ...args)
     let text
     const dt = new Date()
+    let diff = null
+    const timeTaken = !!get(this, 'app.bajo.config.log.timeTaken')
+    if (timeTaken) {
+      const delta = dayjs(dt).diff(this.app.runAt, 'ms')
+      diff = delta - this.lastDelta
+      this.lastDelta = delta
+    }
     if (this.app.bajo.config.env === 'prod') {
       const json = { prefix, msg, level: logLevels[level].number, time: dt.valueOf(), pid: process.pid, hostname: os.hostname() }
       if (!isEmpty(data)) merge(json, { data })
+      if (timeTaken) merge(json, { timeTaken: diff })
       text = JSON.stringify(json)
     } else {
-      const date = dayjs(dt).utc(true).format(this.dateFormat)
-      const tdate = pretty ? chalk.cyan(date) : `[${date}]`
+      let dateFormat = get(this, 'app.bajo.config.log.dateFormat', this.dateFormat).replaceAll('[Z]', '')
+      const localDate = get(this, 'app.bajo.config.log.localDate', false)
+      let date = dayjs(dt)
+      if (!localDate) date = date.utc()
+      if (!(dateFormat.includes('L') || dateFormat.includes('l'))) dateFormat += '[Z]'
+      date = date.format(dateFormat)
+      let tdate = pretty ? chalk.cyan(date) : `[${date}]`
+      if (timeTaken) {
+        const tdiff = pretty ? chalk.cyan(`+${diff}ms`) : `[+${diff}ms]`
+        tdate += ` ${tdiff}`
+      }
       const tlevel = pretty ? `${chalk[logLevels[level].color](level.toUpperCase())}:` : `[${level.toUpperCase()}]`
       const tprefix = pretty ? chalk.bgBlue(`${prefix}`) : `[${prefix}]`
       text = `${tdate} ${tlevel} ${tprefix} ${msg}`

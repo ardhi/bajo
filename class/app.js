@@ -24,9 +24,11 @@ import {
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+import localizedFormat from 'dayjs/plugin/localizedFormat.js'
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
+dayjs.extend(localizedFormat)
 
 const { isPlainObject, get, reverse, map, isString, last, without, keys } = lodash
 let unknownLangWarning = false
@@ -47,7 +49,6 @@ function outmatchNs (source, pattern) {
 /**
  * @typedef {Object} TAppEnv
  * @property {string} dev=development
- * @property {string} staging=staging
  * @property {string} prod=production
  * @see App
  */
@@ -110,7 +111,7 @@ class App {
    * @memberof App
    * @constant {TAppEnv}
    */
-  static envs = { dev: 'development', staging: 'staging', prod: 'production' }
+  static envs = { dev: 'development', prod: 'production' }
 
   /**
    * @param {string} cwd - Current working dirctory
@@ -329,9 +330,9 @@ class App {
     this.applet = this.envVars._.applet ?? this.argv._.applet
 
     await buildBaseConfig.call(this.bajo)
-    await buildPlugins.call(this.bajo)
     await collectConfigHandlers.call(this.bajo)
     await buildExtConfig.call(this.bajo)
+    await buildPlugins.call(this.bajo)
     await bootOrder.call(this.bajo)
     await bootPlugins.call(this.bajo)
     await exitHandler.call(this.bajo)

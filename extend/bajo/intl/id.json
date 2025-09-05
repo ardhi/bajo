@@ -168,5 +168,11 @@
   "country": "Negara",
   "save": "Simpan",
   "local": "Lokal",
-  "global": "Global"
+  "global": "Global",
+  "unknownEnv%s%s": "Lingkungan '%s' tak dikenal, nilai yang dimungkinkan: %s",
+  "buildPluginsStart": "Mulai memuat plugin...",
+  "buildPluginsComplete": "Pemuatan plugin komplit",
+  "pluginPackageNotFound%s": "Berkas paket plugin '%s' tidak ditemukan!",
+  "pluginPackageInvalid%s": "Paket plugin '%s' harus berupa instan dari kelas Base",
+  "appletNeedsBajoCli": "Applet membutuhkan 'bajo-cli' yang harus termuat terlebih dahulu"
 }

@@ -168,5 +168,11 @@
   "country": "Country",
   "save": "Save",
   "local": "Local",
-  "global": "Global"
+  "global": "Global",
+  "unknownEnv%s%s": "Unknown environment '%s', accepted values: %s",
+  "buildPluginsStart": "Starting to build plugins...",
+  "buildPluginsComplete": "Building plugins completed",
+  "pluginPackageNotFound%s": "Plugin package '%s' file not found!",
+  "pluginPackageInvalid%s": "`Plugin package '%s' should be an instance of Base class`",
+  "appletNeedsBajoCli": "Applet needs to have 'bajo-cli' loaded"
 }

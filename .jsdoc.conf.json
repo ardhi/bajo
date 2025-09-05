@@ -7,8 +7,9 @@
     "destination": "./docs",
     "template": "node_modules/clean-jsdoc-theme",
     "tutorials": "./tutorial",
-    "readme": "./docs/home.md",
+    "readme": "./docs-asset/home.md",
     "theme_opts": {
+      "static_dir": ["./docs-asset"],
       "default_theme": "light",
       "display-module-header": true,
       "title": "Bajo Framework",

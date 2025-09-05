@@ -696,7 +696,17 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Import one or more packages belongs to a plugin
+   * Import one or more packages belongs to a plugin.
+   *
+   * If the last arguments passed is an object, this object serves as options object:
+   * - ```returnDefault```: should return package's default export. Defaults to ```true```
+   * - ```throwNotFound```: should throw if package is not found. Defaults to ```false```
+   * - ```noCache```: always use fresh import. Defaults to ```false```
+   * - ```asObject```: see below. Defaults to ```false```
+   *
+   * Return value:
+   * - if ```options.asObject``` is ```true``` (default ```false```), return as object with package's names as it's keys
+   * - Otherwise depends on how many parameters are provided, it should return the named package or an array of packages
    *
    * Example: you want to import ```delay``` and ```chalk``` from ```bajo``` plugin because you want to use it in your code
    * ```javascript
@@ -710,13 +720,13 @@ class Bajo extends Plugin {
    * @method
    * @async
    * @param {...TNsPathPairs} pkgs - One or more packages in format ```{ns}:{packageName}```
-   * @returns {(Object|Array)} Depends on how many parameters are provided, it should return the named package or an array of packages
+   * @returns {(Object|Array)} See above
    */
   importPkg = async (...pkgs) => {
     const { defaultsDeep } = this.app.lib.aneka
     const result = {}
     const notFound = []
-    let opts = { returnDefault: true, thrownNotFound: false }
+    let opts = { returnDefault: true, throwNotFound: false }
     if (isPlainObject(last(pkgs))) {
       opts = defaultsDeep(pkgs.pop(), opts)
     }
@@ -728,7 +738,7 @@ class Bajo extends Plugin {
         notFound.push(pkg)
         continue
       }
-      const p = this.readJson(`${dir}/package.json`, opts.thrownNotFound)
+      const p = this.readJson(`${dir}/package.json`, opts.throwNotFound)
       const mainFileOrg = dir + '/' + (p.main ?? get(p, 'exports.default', 'index.js'))
       let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
       if (isEmpty(path.extname(mainFile))) {
@@ -744,8 +754,8 @@ class Bajo extends Plugin {
       result[name] = mod
     }
     if (notFound.length > 0) throw this.error('cantFind%s', this.join(notFound))
-    if (pkgs.length === 1) return result[keys(result)[0]]
     if (opts.asObject) return result
+    if (pkgs.length === 1) return result[keys(result)[0]]
     return values(result)
   }
 

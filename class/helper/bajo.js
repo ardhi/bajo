@@ -41,7 +41,9 @@ const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 const defConfig = {
   env: 'dev',
   log: {
+    timeTaken: false,
     dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
+    localDate: false,
     pretty: false,
     applet: false,
     traceHook: false
@@ -69,6 +71,20 @@ const defConfig = {
   exitHandler: true
 }
 
+const defMain = `async function factory (pkgName) {
+  const me = this
+
+  return class Main extends this.app.pluginClass.base {
+    constructor () {
+      super(pkgName, me.app)
+      this.config = {}
+    }
+  }
+}
+
+export default factory
+`
+
 /**
  * Internal helpers called by Bajo that only used once for bootstrapping. It should remains
  * hidden and not to be imported by any program.
@@ -79,12 +95,15 @@ const defConfig = {
 /**
  * Building bajo base config. Mostly dealing with directory setups:
  * - determine base directory
- * - check whether data directory is valid
+ * - check whether data directory is valid. If not exist, create one inside project dir
  * - ensure data config directory is there
+ * - ensure tmp dir is there
+ * - read the list of plugins from ```.plugins``` file
  *
  * @async
  */
 export async function buildBaseConfig () {
+  // dirs
   const { defaultsDeep } = this.app.lib.aneka
   this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
@@ -101,17 +120,7 @@ export async function buildBaseConfig () {
     this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.ns}`
     fs.ensureDirSync(this.dir.tmp)
   }
-}
-
-/**
- * Building all plugins:
- * - read the list of plugins from ```.plugins``` file
- * - iterate through the list and build related plugins
- * - attach these plugins to the app instance
- *
- * @async
- */
-export async function buildPlugins () {
+  // collect list of plugins
   let pluginPkgs = []
   const pluginsFile = `${this.dir.data}/config/.plugins`
   if (fs.existsSync(pluginsFile)) {
@@ -123,22 +132,44 @@ export async function buildPlugins () {
     return trim(p.split('#')[0])
   })
   this.app.pluginPkgs.push(this.app.mainNs)
+}
+
+/**
+ * Building all plugins:
+ * - load from app's pluginPkgs
+ * - iterate through the list and build related plugins
+ * - making sure main plugin is there. If not, create from template
+ * - attach these plugins to the app instance
+ *
+ * @async
+ */
+export async function buildPlugins () {
+  this.log.trace('buildPluginsStart')
   for (const pkg of this.app.pluginPkgs) {
     const ns = camelCase(pkg)
     let dir
     if (ns === 'main') {
       dir = `${this.dir.base}/${this.app.mainNs}`
       fs.ensureDirSync(dir)
-      fs.ensureDirSync(`${dir}/plugin`)
+      if (!fs.existsSync(`${dir}/index.js`)) {
+        fs.writeFileSync(`${dir}/index.js`, defMain, 'utf8')
+      }
     } else dir = this.getModuleDir(pkg)
     const factory = `${dir}/index.js`
-    if (!fs.existsSync(factory)) throw new Error(`Plugin package '${pkg}' file not found!`)
+    if (!fs.existsSync(factory)) throw this.error('pluginPackageNotFound%s', pkg)
     const { default: builder } = await import(resolvePath(factory, true))
     const ClassDef = await builder.call(this, pkg)
     const plugin = new ClassDef()
-    if (!(plugin instanceof this.app.pluginClass.base)) throw new Error(`Plugin package '${pkg}' should be an instance of BajoPlugin`)
+    if (!(plugin instanceof this.app.pluginClass.base)) throw this.error('pluginPackageInvalid%s', pkg)
     this.app.addPlugin(plugin, ClassDef)
+    this.log.trace('- ' + pkg)
   }
+  if (this.app.applet) {
+    if (!this.app.pluginPkgs.includes('bajo-cli')) throw this.error('appletNeedsBajoCli')
+    if (!this.config.log.applet) this.config.log.level = 'silent'
+    this.config.exitHandler = false
+  }
+  this.log.debug('buildPluginsComplete')
 }
 
 /**
@@ -160,6 +191,7 @@ export async function collectConfigHandlers () {
     if (isPlainObject(mod)) mod = [mod]
     this.app.configHandlers = this.app.configHandlers.concat(mod)
   }
+  this.app.log = new Log(this.app)
 }
 
 /**
@@ -177,25 +209,19 @@ export async function buildExtConfig () {
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
   const envs = this.app.constructor.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
-  if (values(envs).includes(this.config.env)) this.config.env = this.app.lib.aneka.getKeyByValue(envs, this.config.env)
-  if (!keys(envs).includes(this.config.env)) throw new Error(`Unknown environment '${this.config.env}'. Supported: ${this.join(keys(envs))}`)
-  this.config.lang = this.config.lang.split('.')[0]
-  process.env.NODE_ENV = envs[this.config.env]
-  if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
-  if (this.config.silent) this.config.log.level = 'silent'
-  if (this.app.applet) {
-    if (!this.app.pluginPkgs.includes('bajo-cli')) throw new Error('Applet needs to have \'bajo-cli\' loaded first')
-    if (!this.config.log.applet) this.config.log.level = 'silent'
-    this.config.exitHandler = false
-  }
-  this.config = this.parseObject(pick(this.config, keys(defConfig)), { parseValue: true })
-  this.config.lang = this.config.lang.split('.')[0]
-
-  const exts = map(this.app.configHandlers, 'ext')
-  this.app.log = new Log(this.app)
-  this.log.debug(`Config handlers: ${this.join(exts)}`)
+  // language
+  this.config.lang = (this.config.lang ?? '').split('.')[0]
   this.app.loadIntl(this.ns)
   this.print = new Print(this)
+  // environment
+  if (values(envs).includes(this.config.env)) this.config.env = this.app.lib.aneka.getKeyByValue(envs, this.config.env)
+  if (!keys(envs).includes(this.config.env)) throw this.error('unknownEnv%s%s', this.config.env, this.join(keys(envs), { lastSeparator: this.t('or') }))
+  process.env.NODE_ENV = envs[this.config.env]
+  if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
+  // misc
+  this.config = this.parseObject(pick(this.config, keys(defConfig)), { parseValue: true })
+  const exts = map(this.app.configHandlers, 'ext')
+  this.log.debug('configHandlers%s', this.join(exts))
 }
 
 /**
