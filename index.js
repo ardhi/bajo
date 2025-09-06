@@ -4,18 +4,16 @@ import shim from './lib/shim.js'
 shim()
 
 /**
- * Main entry point of a Bajo app.
+ * Main entry point of a Bajo app. Returned value is the app instance itself.
  *
- * Returned value is the app instance itself.
+ * While you can code directly around it, you typically write your code the main plugin (```{mainNs}```) or
+ * writing your own custom plugin.
  *
- * You can code directly with it, but typically you code by writing inside main plugin or
- * writing custom plugin.
- *
- * I recommend the second method because of its portability.
+ * I recommend the second method for its portability.
  *
  * Example:
  * ```javascript
- * // index.js file. Ypur main package entry point
+ * // index.js file. Your main package entry point
  * import bajo from 'bajo'
  * await bajo()
  * ```
