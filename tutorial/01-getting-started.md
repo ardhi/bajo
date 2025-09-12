@@ -168,7 +168,7 @@ A couple of things to note:
 
 That's the lifecycle of all Bajo plugins, including the main plugin.
 
-But unfortunately, if you run it now, you'll get an error. That's because the root keys of the config object from the configuration file (firstName, lastName, and age) aren't defined in ```this.config``` and are ignored during initialization.
+But unfortunately, if you run it now, you'll get an error. That's because the root keys of the config object from the configuration file (```firstName```, ```lastName```, and ```age```) aren't defined in ```this.config``` and are ignored during initialization.
 
 That's why we need to fix it first:
 
@@ -185,7 +185,7 @@ That's why we need to fix it first:
 ...
 ```
 
-```this.config``` defined in the constructor serves as the default config object. During initialization, this will be merged with values from the configuration file. If one or more keys are missing from the configuration file, the default key-value pairs are used.
+```this.config``` defined in the constructor serves as the default config object. During initialization, this will be merged with values from the configuration file. If one or more keys are missing from the configuration file, the related default values are used.
 
 If you run this now, you'll get a bunch of logs. Let's filter it with:
 
@@ -197,4 +197,65 @@ $ node index.js --log-level=info
 
 Sweet!
 
-## Tapping The Hook System
+## The Hook System
+
+### Tapping an Existing Hook
+
+Bajo offers you a hook system in which you can tap certain actions anywhere in the system with your own code. Let's go through the simplest one: running your code just after the boot process is completed.
+
+First, create ```main/extend/bajo/hook/bajo@after-boot-complete.js```. If you're curious about the reason for the unusual file name, please refer to the *User Guide* on Hook's naming rules.
+
+```javascript
+async function afterBootComplete () {
+  this.log.info('Hook after boot complete')
+}
+
+export default afterBootComplete
+```
+
+Pretty easy, right?
+
+### Your Own Hook
+
+Now let's create your own hook. Even though it's silly to use a hook for such a simple program, its purpose is to demonstrate how easy it is to do it in Bajo.
+
+This time, we want to change the property ```lastName``` with hook.
+
+Open ```index.js``` and update it accordingly:
+
+```javascript
+...
+    init = async () => {
+      const { runHook } = this.app.bajo // add this line
+      this.firstName = this.config.firstName
+      this.lastName = this.config.lastName
+      this.age = this.config.age
+      await runHook('main:myHook') // and this line
+    }
+...
+```
+
+The above code should add a hook named ```main:myHook``` in the initialization step.
+
+Now, create a new file ```main/extend/bajo/hook/main@my-hook.js```:
+
+```javascript
+async function myHook () {
+  this.lastName = 'THE Daemon Slayer'
+}
+
+export default myHook
+```
+
+As every class method, hook, and function handler in Bajo is called within its own plugin scope, it is sufficient to set ```this.lastName``` directly inside a hook.
+
+Now run it. It should show you something like these:
+
+```bash
+2025-09-12T12:09:09.004Z +115ms INFO: main First name: Tanjiro, Last name: THE Daemon Slayer, age: 15
+2025-09-12T12:09:09.008Z +4ms INFO: main Hook after boot complete
+2025-09-12T12:09:09.009Z +1ms WARN: main Program aborted
+```
+
+## Using Plugins
+
