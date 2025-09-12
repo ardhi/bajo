@@ -253,7 +253,7 @@ export async function bootOrder () {
     result.push(item)
   })
   this.app.pluginPkgs = map(orderBy(result, ['v']), 'k')
-  this.log.info('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
+  this.log.debug('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
   // misc
   this.freeze(this.config)
 }
@@ -287,12 +287,29 @@ export async function bootPlugins () {
 export async function exitHandler () {
   if (!this.config.exitHandler) return
 
+  async function exit (signal) {
+    const { eachPlugins } = this
+    if (signal) this.log.warn('signalReceived%s', signal)
+    await eachPlugins(async function ({ ns }) {
+      try {
+        await this.exit()
+      } catch (err) {}
+      this.log.trace('exited')
+    })
+    this.log.debug('appShutdown')
+    process.exit(0)
+  }
+
   process.on('SIGINT', async () => {
-    await this.app.exit('SIGINT')
+    await exit.call(this, 'SIGINT')
   })
 
   process.on('SIGTERM', async () => {
-    await this.app.exit('SIGTERM')
+    await exit.call(this, 'SIGTERM')
+  })
+
+  process.on('beforeExit', async () => {
+    await exit.call(this)
   })
 
   process.on('uncaughtException', (error, origin) => {

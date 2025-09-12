@@ -193,6 +193,7 @@ export async function run () {
   const { freeze } = me.bajo
   const methods = ['init']
   if (!me.applet) methods.push('start')
+  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
   for (const method of methods) {
     /**
      * Run before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
@@ -239,5 +240,4 @@ export async function run () {
      */
     await runHook(`bajo:${camelCase(`after all ${method}`)}`)
   }
-  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
 }
