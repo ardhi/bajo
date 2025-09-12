@@ -340,7 +340,7 @@ class App {
     await exitHandler.call(this.bajo)
     // boot complete
     const elapsed = new Date() - this.runAt
-    this.bajo.log.info('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
+    this.bajo.log.debug('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
     /**
      * Run after boot process is completed
      *

@@ -68,7 +68,6 @@ class Base extends Plugin {
     const cfgArgv = get(this, `app.argv.${this.ns}`, {})
     const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
     cfg = pick(defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {}), defKeys)
-    // cfg = defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {})
     this.title = this.title ?? cfg.title ?? this.alias
     this.config = parseObject(cfg, { parseValue: true })
   }
