@@ -259,3 +259,24 @@ Now run it. It should show you something like these:
 
 ## Using Plugins
 
+Bajo is designed to be an ecosystem with many small plugins. Think of Lego blocks: you build a structure just by picking up the right ones and sticking them together to create your very own structure.
+
+In this series, we'll learn how to use such plugins to extend our app.
+
+### File Format
+
+We love YAML format so much so let's use it for our configuration file:
+
+1. YAML support is part of the ```bajo-config``` plugin, so we need to install it first
+   ```bash
+   $ npm install bajo-config
+   ```
+2. Now, open the ```data/config/.plugins``` file and put ```bajo-config``` in it, line by line. If it doesn't exist yet, create it first. Don't worry about the order; Bajo will figure it out automatically if you have many plugins.
+3. Delete your old configuration file ```data/config/main.json``` and create a new ```data/config/main.yml```. By the way, it doesn't matter whether you use ```.yml``` or ```.yaml```. Both are supported.
+4. Enter the following lines, it should be the same object as before, just in YAML format:
+   ```yaml
+   firstName: Tanjiro
+   lastName: Kamado
+   age: 15
+   ```
+5. Run and check the output. It should be the exact same output as before, except for the log's timestamps.
