@@ -368,7 +368,7 @@ $ npm install dobo dobo-knex sqlite3
 
 Don't forget to add ```dobo``` and ```dobo-knex``` to the ```data/config/.plugins``` file.
 
-### Database Model
+### Model
 
 Let's pretend we're building an address book with fields like name, age, phone, etc. This entity needs to be modeled with a schema and then "connected" to a database:
 
@@ -394,6 +394,8 @@ Let's pretend we're building an address book with fields like name, age, phone, 
      }
    }
    ```
+   You should notice here that in properties you can use either the full object, verbose syntax or the string-based one. Please visit the Dobo documentation to learn more.
+
 3. Create ```main/extend/dobo/fixture/address-book.json``` file. Fixtures allow you to quickly fill your database with predefined records. It's not required, but it helps a lot with prototyping.
    ```json
    [{
