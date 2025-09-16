@@ -222,8 +222,13 @@ class Print {
    * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
    */
   fatal = (text, ...args) => {
+    if (text instanceof Error) {
+      text = text.message
+      args = []
+    }
     this.setText(text, ...args)
     this.ora.fail()
+    if (text instanceof Error && this.app.bajo.config.log.level === 'trace') console.error(text)
     this.app.exit()
   }
 

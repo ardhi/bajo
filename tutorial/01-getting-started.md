@@ -280,3 +280,154 @@ We love YAML format so much so let's use it for our configuration file:
    age: 15
    ```
 5. Run and check the output. It should be the exact same output as before, except for the log's timestamps.
+
+### Applet Mode
+
+**Applets** are small tools embedded in plugins that can be invoked when Bajo is running in **applet mode**. Their lifecycle is totally independent of the main program, but they can reuse the same resources and config objects.
+
+You can run Bajo in applet mode by using the ```--applet``` or ```-a``` switches:
+
+```bash
+$ node index.js -a
+```
+
+But applet mode requires you to install ```bajo-cli``` beforehand. So, please install it first:
+
+```bash
+$ npm install bajo-cli
+```
+
+Don't forget to add ```bajo-cli``` to the ```data/config/.plugins``` file. Again, the order doesn't really matter here.
+
+If you run it now, you'll see something like this on your terminal:
+
+```bash
+ℹ App runs in applet mode
+? Please select: (Use arrow keys)
+❯ bajoConfig
+  bajoCli
+```
+
+The first thing to notice is the information that the app is running in applet mode. It's a normal command-line application with a pretty decent UI, and all the logs are gone!
+
+By default, logs are turned off in applet mode to give you a clear and distraction-free console. However, during debugging, you might want to turn them on. How? Simply add the ```--log-applet``` switch to your invocation, and your logs will be printed everywhere again.
+
+Applets are a way for a Bajo plugin developer to help you by providing small tools for everyday life. It's up to the plugin developer to provide such applets, so don't be surprised if you don't get any built-in applets with some plugins.
+
+### System Info
+
+Let's install one more plugin: ```bajo-sysinfo```. This plugin is a thin wrapper around [systeminformation](https://github.com/sebhildebrandt/systeminformation) with a few twists:
+
+- It can be called directly as an applet.
+- It is also exported as Waibu REST API endpoints. We'll cover this later in the tutorial.
+
+If you try to run your app as shown below (yes, you can have a value for the applet switch; for more details, please [see here](https://github.com/ardhi/bajo-cli)), you'll see something like this after the loading spinner stops:
+
+```bash
+$ node index.js -a bajoSysinfo:battery
+ℹ App runs in applet mode
+ℹ Done!
+┌──────────────────┬─────────────────────┐
+│ hasBattery       │ true                │
+├──────────────────┼─────────────────────┤
+│ cycleCount       │ 0                   │
+├──────────────────┼─────────────────────┤
+│ isCharging       │ true                │
+├──────────────────┼─────────────────────┤
+│ designedCapacity │ 61998               │
+├──────────────────┼─────────────────────┤
+│ maxCapacity      │ 51686               │
+├──────────────────┼─────────────────────┤
+...
+```
+
+## Sub Framework
+
+### Database System
+
+Bajo has its own sub-framework called **Dobo** for handling database management. In this tutorial, we'll go over how to install the necessary packages and interact with them. For more information about Dobo, please [click here](https://ardhi.github.io/dobo).
+
+Here is some basic knowledge about Dobo you need to know:
+
+- All record-related actions mimic REST API methods: *find* records, *get* a particular record by its ID, *create* a new record, *update* an existing record by ID and payload, and *remove* an existing record by its ID.
+- A Dobo model requires a predefined schema. Even if you use a NoSQL database, you still need to write a schema.
+- There are two main groups of methods to be familiar with:
+  - ```dobo.model{Action}``` methods manage everything related to model management, such as table creation or deletion.
+  - ```dobo.record{Action}``` methods handle record manipulation.
+- A record in Bajo always needs to have an ID. The ID can be alphanumeric characters or an integer, and it is defined by the underlying driver used by the model.
+
+For more info about Dobo, please [click here](https://ardhi.github.io/dobo).
+
+#### Installation
+
+As you might have guessed, Dobo and its drivers are normal Bajo plugins. Although [many drivers](https://github.com/ardhi/dobo/tutorials/drivers.md) exist, for this tutorial, we'll only use SQLite 3, which is provided by the dobo-knex driver.
+
+Now, please install the required plugins and SQLite drivers first:
+
+```bash
+$ npm install dobo dobo-knex sqlite3
+```
+
+Don't forget to add ```dobo``` and ```dobo-knex``` to the ```data/config/.plugins``` file.
+
+#### Database Model
+
+Let's pretend we're building an address book with fields like name, age, phone, etc. This entity needs to be modeled with a schema and then "connected" to a database:
+
+1. Create ```main/extend/dobo/schema/address-book.json``` file.
+2. Enter the following schema:
+   ```json
+   {
+     "properties": [{
+       "name": "firstName",
+       "type": "string",
+       "maxLength": 20,
+       "required": true,
+       "index": true
+     },
+       "lastName::20:true:true",
+       "age:smallint",
+       "phone::20:true:true",
+       "email::50:true"
+     ],
+     "feature": {
+       "createdAt": true,
+       "updatedAt": true
+     }
+   }
+  ```
+3. Create ```main/extend/dobo/fixture/address-book.json``` file. Fixtures allow you to quickly fill your database with predefined records. It's not required, but it helps a lot with prototyping.
+   ```json
+   [{
+     "firstName": "James",
+     "lastName": "Bond",
+     "phone": "+44-007"
+   }, {
+     "firstName": "Felix",
+     "lastName": "Leiter",
+     "age": 50,
+     "phone": "+1-0000001"
+   }]
+   ```
+4. By default, all schemas are connected to a database connection named ```default```. Now let's create this connection by creating ```data/config/dobo.json``` file:
+
+   ```json
+   {
+     "connections": [{
+       "name": "default",
+       "type": "knex:sqlite3",
+       "connection": {
+         "filename": "my-project.sqlite3"
+       }
+     }]
+   }
+   ```
+5. That's all there is to it. Now you need to build this model like this:
+   ```
+   $ node index.js -a dobo:modelRebuild MainAddressBook
+   ```
+6. Done!
+
+Note: Although you can use YAML or TOML for schemas/fixtures, it's recommended to stick with JSON because it's always supported and doesn't require an extra plugin.
+
+Dobo models are by default always named with ```{Alias}{ModelName}```, which is a pascal-cased plugin alias and base name from your schema file. For field names, Dobo use camel-cased names as a convention. You can change this behavior to match your needs, but it is suggested that you're keeping these conventions at least for this tutorial.

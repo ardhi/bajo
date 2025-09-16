@@ -19,7 +19,7 @@
   "oneOrMoreSharedTheSame%s%s": "Satu atau lebih %s berbagi '%s'",
   "bootCompleted%s": "Proses booting komplit dalam %s",
   "runInEnv%s": "Berjalan di lingkungan '%s'",
-  "appRunningAsApplet": "App berjalan sebagai applet...",
+  "appRunningAsApplet": "App berjalan di mode applet",
   "setupBootOrder": "Atur urutan booting",
   "configHandlers%s": "Pengatur konfigurasi: %s",
   "exited": "Exited",

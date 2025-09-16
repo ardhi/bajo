@@ -439,6 +439,15 @@ class App {
     })
     return sprintf(trans, ...values)
   }
+
+  /**
+   * Helper method to list all supported config formats
+   *
+   * @returns {string[]}
+   */
+  getConfigFormats = () => {
+    return map(this.configHandlers, 'ext')
+  }
 }
 
 export default App

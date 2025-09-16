@@ -19,7 +19,7 @@
   "oneOrMoreSharedTheSame%s%s": "One or more %s shared the same '%s'",
   "bootCompleted%s": "Boot process completed in %s",
   "runInEnv%s": "Run in '%s' environment",
-  "appRunningAsApplet": "App is running as applet...",
+  "appRunningAsApplet": "App runs in applet mode",
   "setupBootOrder": "Setup boot order",
   "configHandlers%s": "Config handlers: %s",
   "exited": "Exited",

@@ -166,11 +166,6 @@ export async function buildPlugins () {
     this.app.addPlugin(plugin, ClassDef)
     this.log.trace('- ' + pkg)
   }
-  if (this.app.applet) {
-    if (!this.app.pluginPkgs.includes('bajo-cli')) throw this.error('appletNeedsBajoCli')
-    if (!this.config.log.applet) this.config.log.level = 'silent'
-    this.config.exitHandler = false
-  }
   this.log.debug('buildPluginsComplete')
 }
 
@@ -222,7 +217,12 @@ export async function buildExtConfig () {
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
   // misc
   this.config = this.parseObject(pick(this.config, keys(defConfig)), { parseValue: true })
-  const exts = map(this.app.configHandlers, 'ext')
+  const exts = this.app.getConfigFormats()
+  if (this.app.applet) {
+    if (!this.app.pluginPkgs.includes('bajo-cli')) throw this.error('appletNeedsBajoCli')
+    if (!this.config.log.applet) this.config.log.level = 'silent'
+    this.config.exitHandler = false
+  }
   this.log.debug('configHandlers%s', this.join(exts))
 }
 

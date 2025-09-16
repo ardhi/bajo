@@ -53,7 +53,7 @@ class Bajo extends Plugin {
 
     app.configHandlers = [
       { ext: '.js', readHandler: this._defConfigHandler },
-      { ext: '.json', readHandler: this.readJson }
+      { ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
     ]
   }
 
@@ -1003,7 +1003,7 @@ class Bajo extends Plugin {
       const { readHandler } = find(this.app.configHandlers, { ext })
       return this.parseObject(await readHandler.call(this.app[ns], file, opts))
     }
-    if (ext === '.json') return await this.readJson(file)
+    if (ext === '.json') return await this.fromJson(file, null)
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
@@ -1026,7 +1026,7 @@ class Bajo extends Plugin {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
       }
-      config = await item.readHandler.call(this.app[ns], f, opts)
+      config = await item.readHandler.call(this.app[ns], f, null, opts)
       if (!isEmpty(config)) break
     }
     return this.parseObject(config)
@@ -1049,6 +1049,16 @@ class Bajo extends Plugin {
     } catch (err) {}
     if (isEmpty(resp)) return resp
     return this.parseObject(JSON.parse(resp))
+  }
+
+  fromJson (file, isContent) {
+    const content = isContent ? file : fs.readFileSync(file, 'utf8')
+    return JSON.parse(content)
+  }
+
+  toJson = (file, isContent, opts = 2) => {
+    const content = isContent ? file : JSON.parse(fs.readFileSync(file, 'utf8'))
+    return JSON.stringify(content, null, opts)
   }
 
   /**
