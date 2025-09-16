@@ -76,7 +76,7 @@ export default factory
 </code></pre><p><code>this.config</code> defined in the constructor serves as the default config object. During initialization, this will be merged with values from the configuration file. If one or more keys are missing from the configuration file, the related default values are used.</p><p>If you run this now, you'll get a bunch of logs. Let's filter it with:</p><pre class="prettyprint source lang-bash"><code>$ node index.js --log-level=info
 2025-09-12T00:09:38.946Z +97ms INFO: main First name: Tanjiro, Last name: Kamado, age: 15
 2025-09-12T00:09:38.949Z +3ms WARN: main Program aborted
-</code></pre><p>Sweet!</p><h2 id="the-hook-system">The Hook System</h2><h3 id="tapping-an-existing-hook">Tapping an Existing Hook</h3><p>Bajo offers you a hook system in which you can tap certain actions anywhere in the system with your own code. Let's go through the simplest one: running your code just after the boot process is completed.</p><p>First, create <code>main/extend/bajo/hook/bajo@after-boot-complete.js</code>. If you're curious about the reason for the unusual file name, please refer to the <em>User Guide</em> on Hook's naming rules.</p><pre class="prettyprint source lang-javascript"><code>async function afterBootComplete () {
+</code></pre><p>Sweet!</p><h2 id="the-hook-system">The Hook System</h2><h3 id="tapping-a-hook">Tapping a Hook</h3><p>Bajo offers you a hook system in which you can tap certain actions anywhere in the system with your own code. Let's go through the simplest one: running your code just after the boot process is completed.</p><p>First, create <code>main/extend/bajo/hook/bajo@after-boot-complete.js</code>. If you're curious about the reason for the unusual file name, please refer to the <em>User Guide</em> on Hook's naming rules.</p><pre class="prettyprint source lang-javascript"><code>async function afterBootComplete () {
   this.log.info('Hook after boot complete')
 }
 
@@ -123,8 +123,8 @@ age: 15
 │ maxCapacity      │ 51686               │
 ├──────────────────┼─────────────────────┤
 ...
-</code></pre><h2 id="sub-framework">Sub Framework</h2><h3 id="database-system">Database System</h3><p>Bajo has its own sub-framework called <strong>Dobo</strong> for handling database management. In this tutorial, we'll go over how to install the necessary packages and interact with them. For more information about Dobo, please <a href="https://ardhi.github.io/dobo">click here</a>.</p><p>Here is some basic knowledge about Dobo you need to know:</p><ul><li>All record-related actions mimic REST API methods: <em>find</em> records, <em>get</em> a particular record by its ID, <em>create</em> a new record, <em>update</em> an existing record by ID and payload, and <em>remove</em> an existing record by its ID.</li><li>A Dobo model requires a predefined schema. Even if you use a NoSQL database, you still need to write a schema.</li><li>There are two main groups of methods to be familiar with:<ul><li><code>dobo.model{Action}</code> methods manage everything related to model management, such as table creation or deletion.</li><li><code>dobo.record{Action}</code> methods handle record manipulation.</li></ul></li><li>A record in Bajo always needs to have an ID. The ID can be alphanumeric characters or an integer, and it is defined by the underlying driver used by the model.</li></ul><p>For more info about Dobo, please <a href="https://ardhi.github.io/dobo">click here</a>.</p><h4 id="installation-1">Installation</h4><p>As you might have guessed, Dobo and its drivers are normal Bajo plugins. Although <a href="https://github.com/ardhi/dobo/tutorials/drivers.md">many drivers</a> exist, for this tutorial, we'll only use SQLite 3, which is provided by the dobo-knex driver.</p><p>Now, please install the required plugins and SQLite drivers first:</p><pre class="prettyprint source lang-bash"><code>$ npm install dobo dobo-knex sqlite3
-</code></pre><p>Don't forget to add <code>dobo</code> and <code>dobo-knex</code> to the <code>data/config/.plugins</code> file.</p><h4 id="database-model">Database Model</h4><p>Let's pretend we're building an address book with fields like name, age, phone, etc. This entity needs to be modeled with a schema and then &quot;connected&quot; to a database:</p><ol><li>Create <code>main/extend/dobo/schema/address-book.json</code> file.</li><li>Enter the following schema:<pre class="prettyprint source lang-json"><code>{
+</code></pre><h2 id="database">Database</h2><p>Bajo has its own sub-framework called <strong>Dobo</strong> for handling database management. In this tutorial, we'll go over how to install the necessary packages and interact with them. For more information about Dobo, please <a href="https://ardhi.github.io/dobo">click here</a>.</p><p>Here is some basic knowledge about Dobo you need to be familiar with:</p><ul><li>All record-related actions mimic REST API methods: <em>find</em> records, <em>get</em> a particular record by its ID, <em>create</em> a new record, <em>update</em> an existing record by ID and payload, and <em>remove</em> an existing record by its ID.</li><li>A Dobo model requires a predefined schema. Even if you use a NoSQL database, you still need to write a schema.</li><li>There are two main groups of methods to be familiar with:<ul><li><code>dobo.model{Action}</code> methods manage everything related to model management, such as table creation or deletion.</li><li><code>dobo.record{Action}</code> methods handle record manipulation.</li></ul></li><li>A record in Bajo always needs to have an ID. The ID can be alphanumeric characters or an integer, and it is defined by the underlying driver used by the model.</li></ul><p>For more info about Dobo, please <a href="https://ardhi.github.io/dobo">click here</a>.</p><h3 id="installation-1">Installation</h3><p>As you might have guessed, Dobo and its drivers are normal Bajo plugins. Although <a href="https://github.com/ardhi/dobo/tutorials/drivers.md">many drivers</a> exist, for this tutorial, we'll only use SQLite 3, which is provided by the dobo-knex driver.</p><p>Now, please install the required plugins and SQLite drivers first:</p><pre class="prettyprint source lang-bash"><code>$ npm install dobo dobo-knex sqlite3
+</code></pre><p>Don't forget to add <code>dobo</code> and <code>dobo-knex</code> to the <code>data/config/.plugins</code> file.</p><h3 id="database-model">Database Model</h3><p>Let's pretend we're building an address book with fields like name, age, phone, etc. This entity needs to be modeled with a schema and then &quot;connected&quot; to a database:</p><ol><li><p>Create <code>main/extend/dobo/schema/address-book.json</code> file.</p></li><li><p>Enter the following schema:</p><pre class="prettyprint source lang-json"><code>{
   &quot;properties&quot;: [{
     &quot;name&quot;: &quot;firstName&quot;,
     &quot;type&quot;: &quot;string&quot;,
@@ -142,19 +142,17 @@ age: 15
     &quot;updatedAt&quot;: true
   }
 }
-</code></pre></li></ol><pre class="prettyprint source"><code>3. Create ```main/extend/dobo/fixture/address-book.json``` file. Fixtures allow you to quickly fill your database with predefined records. It's not required, but it helps a lot with prototyping.
- ```json
- [{
-   &quot;firstName&quot;: &quot;James&quot;,
-   &quot;lastName&quot;: &quot;Bond&quot;,
-   &quot;phone&quot;: &quot;+44-007&quot;
- }, {
-   &quot;firstName&quot;: &quot;Felix&quot;,
-   &quot;lastName&quot;: &quot;Leiter&quot;,
-   &quot;age&quot;: 50,
-   &quot;phone&quot;: &quot;+1-0000001&quot;
- }]
-</code></pre><ol start="4"><li><p>By default, all schemas are connected to a database connection named <code>default</code>. Now let's create this connection by creating <code>data/config/dobo.json</code> file:</p><pre class="prettyprint source lang-json"><code>{
+</code></pre></li><li><p>Create <code>main/extend/dobo/fixture/address-book.json</code> file. Fixtures allow you to quickly fill your database with predefined records. It's not required, but it helps a lot with prototyping.</p><pre class="prettyprint source lang-json"><code>[{
+  &quot;firstName&quot;: &quot;James&quot;,
+  &quot;lastName&quot;: &quot;Bond&quot;,
+  &quot;phone&quot;: &quot;+44-007&quot;
+}, {
+  &quot;firstName&quot;: &quot;Felix&quot;,
+  &quot;lastName&quot;: &quot;Leiter&quot;,
+  &quot;age&quot;: 50,
+  &quot;phone&quot;: &quot;+1-0000001&quot;
+}]
+</code></pre></li><li><p>By default, all schemas are connected to a database connection named <code>default</code>. Now let's create this connection by creating <code>data/config/dobo.json</code> file:</p><pre class="prettyprint source lang-json"><code>{
   &quot;connections&quot;: [{
     &quot;name&quot;: &quot;default&quot;,
     &quot;type&quot;: &quot;knex:sqlite3&quot;,

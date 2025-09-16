@@ -199,7 +199,7 @@ Sweet!
 
 ## The Hook System
 
-### Tapping an Existing Hook
+### Tapping a Hook
 
 Bajo offers you a hook system in which you can tap certain actions anywhere in the system with your own code. Let's go through the simplest one: running your code just after the boot process is completed.
 
@@ -341,13 +341,11 @@ $ node index.js -a bajoSysinfo:battery
 ...
 ```
 
-## Sub Framework
-
-### Database System
+## Database
 
 Bajo has its own sub-framework called **Dobo** for handling database management. In this tutorial, we'll go over how to install the necessary packages and interact with them. For more information about Dobo, please [click here](https://ardhi.github.io/dobo).
 
-Here is some basic knowledge about Dobo you need to know:
+Here is some basic knowledge about Dobo you need to be familiar with:
 
 - All record-related actions mimic REST API methods: *find* records, *get* a particular record by its ID, *create* a new record, *update* an existing record by ID and payload, and *remove* an existing record by its ID.
 - A Dobo model requires a predefined schema. Even if you use a NoSQL database, you still need to write a schema.
@@ -358,7 +356,7 @@ Here is some basic knowledge about Dobo you need to know:
 
 For more info about Dobo, please [click here](https://ardhi.github.io/dobo).
 
-#### Installation
+### Installation
 
 As you might have guessed, Dobo and its drivers are normal Bajo plugins. Although [many drivers](https://github.com/ardhi/dobo/tutorials/drivers.md) exist, for this tutorial, we'll only use SQLite 3, which is provided by the dobo-knex driver.
 
@@ -370,7 +368,7 @@ $ npm install dobo dobo-knex sqlite3
 
 Don't forget to add ```dobo``` and ```dobo-knex``` to the ```data/config/.plugins``` file.
 
-#### Database Model
+### Database Model
 
 Let's pretend we're building an address book with fields like name, age, phone, etc. This entity needs to be modeled with a schema and then "connected" to a database:
 
@@ -395,7 +393,7 @@ Let's pretend we're building an address book with fields like name, age, phone, 
        "updatedAt": true
      }
    }
-  ```
+   ```
 3. Create ```main/extend/dobo/fixture/address-book.json``` file. Fixtures allow you to quickly fill your database with predefined records. It's not required, but it helps a lot with prototyping.
    ```json
    [{
