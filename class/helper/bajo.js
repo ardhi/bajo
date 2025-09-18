@@ -214,7 +214,8 @@ export async function buildExtConfig () {
   process.env.NODE_ENV = envs[this.config.env]
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
   // misc
-  this.config = this.parseObject(pick(this.config, keys(defConfig)), { parseValue: true })
+  const obj = this.app.applet ? this.config : pick(this.config, keys(defConfig))
+  this.config = this.parseObject(obj, { parseValue: true })
   const exts = this.app.getConfigFormats()
   if (this.app.applet) {
     if (!this.app.pluginPkgs.includes('bajo-cli')) throw this.error('appletNeedsBajoCli')

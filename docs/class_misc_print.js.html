@@ -47,6 +47,10 @@ class Print {
      * @type {App}
      */
     this.app = plugin.app
+    if (this.app.applet) {
+      if (this.app.bajo.config.counter) this.options.showCounter = true
+      if (this.app.bajo.config.datetime) this.options.showDatetime = true
+    }
 
     /**
      * Time when instance is created
@@ -78,6 +82,24 @@ class Print {
   }
 
   /**
+   * Translate, prefixed with counter and/or datetime etc
+   *
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @returns {string}
+   */
+  buildText = (text, ...args) => {
+    text = this.plugin.t(text, ...args)
+    this.setOpts(args)
+    const prefixes = []
+    if (this.options.showDatetime) prefixes.push('[' + this.app.lib.dayjs().toISOString() + ']')
+    if (this.options.showCounter) prefixes.push('[' + this.getElapsed() + ']')
+    // if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
+    if (prefixes.length > 0) text = prefixes.join(' ') + ' ' + text
+    return text
+  }
+
+  /**
    * Set spinner's text
    *
    * @method
@@ -86,14 +108,7 @@ class Print {
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   setText = (text, ...args) => {
-    text = this.plugin.t(text, ...args)
-    this.setOpts(args)
-    const prefixes = []
-    const texts = []
-    if (this.options.showDatetime) prefixes.push('[' + this.app.lib.dayjs().toISOString() + ']')
-    if (this.options.showCounter) texts.push('[' + this.getElapsed() + ']')
-    if (prefixes.length > 0) this.ora.prefixText = this.ora.prefixText + prefixes.join(' ')
-    if (texts.length > 0) text = texts.join(' ') + ' ' + text
+    text = this.buildText(text, ...args)
     this.ora.text = text
     return this
   }
@@ -242,7 +257,9 @@ class Print {
    * @returns {Print} Return new print instance
    */
   spinner = (options) => {
-    return new Print(this.plugin, options ?? this.options)
+    const spin = new Print(this.plugin, options ?? this.options)
+    spin.startTime = this.startTime.clone()
+    return spin
   }
 }
 
