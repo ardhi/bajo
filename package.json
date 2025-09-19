@@ -1,7 +1,7 @@
 {
   "name": "bajo",
   "version": "2.0.1",
-  "description": "A framework to build a giant monstrous app rapidly",
+  "description": "The ultimate framework for whipping up massive apps in no time",
   "main": "index.js",
   "scripts": {
     "build-doc": "jsdoc -c .jsdoc.conf.json",
