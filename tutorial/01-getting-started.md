@@ -2,7 +2,7 @@
 
 ## Installation
 
-Create a new empty directory named ```my-project```. This will be your project directory throughout this tutorial. Now, ```cd``` into your newly created directory and type:
+Create a new empty directory named ```my-project```. This will be your app directory throughout this tutorial. Now, ```cd``` into your newly created directory and type:
 
 ```bash
 $ npm init
@@ -35,7 +35,7 @@ import bajo from 'bajo'
 await bajo()
 ```
 
-A Bajo-based app **ALWAYS** needs a data directory for its config files, etc. This directory can be located inside or outside your project directory. If this directory doesn't exist yet, Bajo will create a new one for you, named ```data```, in the same location as your ```index.js``` file. By default, Bajo will set this as your data directory.
+A Bajo-based app **ALWAYS** needs a data directory for its config files, etc. This directory can be located inside or outside your app directory. If this directory doesn't exist yet, Bajo will create a new one for you, named ```data```, in the same location as your ```index.js``` file. By default, Bajo will set this as your data directory.
 
 Bajo will also automatically create the ```main``` directory to serve as your main plugin if it doesn't already exist. A factory file named ```index.js``` will be added inside the ```main``` directory. More on this later in the next chapter.
 

@@ -95,7 +95,7 @@ export default factory
 /**
  * Building bajo base config. Mostly dealing with directory setups:
  * - determine base directory
- * - check whether data directory is valid. If not exist, create one inside project dir
+ * - check whether data directory is valid. If not exist, create one inside app dir
  * - ensure data config directory is there
  * - ensure tmp dir is there
  * - read the list of plugins from ```.plugins``` file

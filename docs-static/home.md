@@ -7,4 +7,4 @@ The ultimate framework for whipping up massive apps in no time!
 - [Dobo Database Management System](https://ardhi.github.io/dobo)
 - [Waibu Web Framework](https://ardhi.github.io/waibu)
 - [Sumba Biz Suite](https://ardhi.github.io/sumba)
-- [Masohi Messaging](https://ardhi.github.io/masohi) Messaging System
+- [Masohi Messaging](https://ardhi.github.io/masohi)

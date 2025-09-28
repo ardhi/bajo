@@ -6,19 +6,19 @@
 
 Before we go any further, here are some of the terminologies I use throughout this documentation:
 
-- ```{project-dir}```: The project directory is where you write all your code.
-- ```{data-dir}```: The data directory defaults to ```{project-dir}/data``` if not specifically stated. Bajo also creates this directory automatically if it doesn't already exist.
+- ```{app-dir}```: The app directory is where you write all your code (your project directory).
+- ```{data-dir}```: The data directory defaults to ```{app-dir}/data``` if not specifically stated. Bajo also creates this directory automatically if it doesn't already exist.
 - ```{tmp-dir}```: The temporary directory defaults to the OS temporary directory.
 - ```{pkgName}```: The plugin's package name, as it normally appears on an npm listing.
 - ```{ns}```: The plugin name or namespace, which is the camel-cased version of the package name.
-- ```{mainNs}```: The main namespace, a special plugin and directory named ```main``` located inside your ```{project-dir}``` where you should write all your code.
+- ```{mainNs}```: The main namespace, a special plugin and directory named ```main``` located inside your ```{app-dir}``` where you should write all your code.
 
 ### Directory Structure
 
 Your typical Bajo app directory structure should look like this:
 
 ```
-|- {project-dir}
+|- {app-dir}
 |  |- {data-dir}
 |  |  |- config
 |  |  |  |- .plugin
@@ -34,7 +34,7 @@ Your typical Bajo app directory structure should look like this:
 |  |  ...
 ```
 
-- You can move ```{data-dir}``` out of ```{project-dir}``` if you want, but you need to tell Bajo where to find it. For more on this, please follow along.
+- You can move ```{data-dir}``` out of ```{app-dir}``` if you want, but you need to tell Bajo where to find it. For more on this, please follow along.
 - ```{data-dir}``` should be the only place Bajo **writes** anything. Bajo and its plugins should **never** be allowed to write anything outside ```{data-dir}``` on their own.
 - ```config``` is a special directory within ```{data-dir}``` where your configuration files should reside. Inside this directory, you should find:
   - a special file named ```.plugins``` that tells Bajo which plugins should be loaded
@@ -49,13 +49,13 @@ Your typical Bajo app directory structure should look like this:
 
 To set your ```{data-dir}``` somewhere else, you need to tell Bajo where to find it by using an argument switch.
 
-Assuming your data directory is ```my-data-dir``` at the same level as your project directory, run your app like this:
+Assuming your data directory is ```my-data-dir``` at the same level as your app directory, run your app like this:
 
 ```bash
 $ node index.js --dir-data=../my-data-dir
 ```
 
-If using program arguments seems a bit like a hassle for you, just use Bajo's [dotenv](https://github.com/motdotla/dotenv) support. Create a ```.env``` file in your project directory and put this inside:
+If using program arguments seems a bit like a hassle for you, just use Bajo's [dotenv](https://github.com/motdotla/dotenv) support. Create a ```.env``` file in your app directory and put this inside:
 
 ```text
 DIR__DATA=../my-data-dir              # double underscores!!!
@@ -143,7 +143,7 @@ All values (whether they come from environment variables, argument switches, or 
 
 #### dotenv
 
-- Create or open ```{project-dir}/.env```
+- Create or open ```{app-dir}/.env```
 - Use ```__``` (double underscores) as replacement for dots in an object.
 - ```DIR__DATA```: Sets the ```{data-dir}``` data directory.
 - ```DIR__TMP```: Sets ```{tmp-dir}``` temporary directory.
@@ -201,7 +201,7 @@ Example:
   const { runHook } = this.app.bajo
   await runHook('main:sayHello', 'Don', 'Meri', { movie: 'Jumbo', year: 2025 })
   ````
-- Go to directory ```{project-dir}/main/extend/bajo/hook```. Create one if it doesn't exist yet.
+- Go to directory ```{app-dir}/main/extend/bajo/hook```. Create one if it doesn't exist yet.
 - Create file ```main@say-hello.js``` in the directory above.
 - Enter these lines:
   ```javascript
