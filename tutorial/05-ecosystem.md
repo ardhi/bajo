@@ -22,6 +22,7 @@
 | Package | Docs | NS | Alias | Description |
 | ------- | ---- | -- | ----- | ----------- |
 | [dobo](https://github.com/ardhi/dobo) | [Docs](https://ardhi.github.io/dobo) | dobo | db | Dobo DBMS |
+| [dobo-extra](https://github.com/ardhi/dobo-extra) | [Docs](https://ardhi.github.io/dobo-extra) | doboExtra | dbx | Dobo Extra Tools/Utility |
 | [dobo-couchdb](https://github.com/ardhi/dobo-couchdb) | [Docs](https://ardhi.github.io/dobo-couchdb) | doboCouchdb | dbcouch | CouchDB Driver |
 | [dobo-elasticsearch](https://github.com/ardhi/dobo-elasticsearch) | [Docs](https://ardhi.github.io/dobo-elasticsearch) | doboElasticsearch | dbes | Elasticsearch Driver |
 | [dobo-knex](https://github.com/ardhi/dobo-knex) | [Docs](https://ardhi.github.io/dobo-knex) | doboKnex | dbknex | Knex/SQL Driver |
