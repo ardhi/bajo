@@ -2,7 +2,7 @@
 
 ### The ultimate framework for whipping up massive apps in no time!
 
-<p style="display:flex; flex-wrap: wrap; justify-content: space-between; align-items: center">
+<p style="display:flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline">
   <a href="https://ardhi.github.io/dobo" style="text-align:center"><img src="https://ardhi.github.io/dobo/static/logo.png" width="200"><br/>Dobo DBMS</a>
   <a href="https://ardhi.github.io/waibu" style="text-align:center"><img src="https://ardhi.github.io/waibu/static/logo.png" width="200"><br/>Waibu Web Framework</a>
   <a href="https://ardhi.github.io/sumba" style="text-align:center"><img src="https://ardhi.github.io/sumba/static/logo.png" width="200"><br/>Sumba Biz Suite</a>
