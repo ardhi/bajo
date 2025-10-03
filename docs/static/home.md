@@ -1,3 +1,5 @@
+<p><img alt="Bajo Ecosystem" src="static/logo-ecosystem.png" width="200" height="200" /></p>
+
 ## Donations
 
 Please donate using the channels below. Your donation will motivate me to work faster and more diligently on future development.

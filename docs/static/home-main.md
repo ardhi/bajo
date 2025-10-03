@@ -1,13 +1,13 @@
 ![bajo](static/logo.png)
 
-The ultimate framework for whipping up massive apps in no time!
+### The ultimate framework for whipping up massive apps in no time!
 
-## Sub Frameworks
-
-- [Dobo Database Management System](https://ardhi.github.io/dobo)
-- [Waibu Web Framework](https://ardhi.github.io/waibu)
-- [Sumba Biz Suite](https://ardhi.github.io/sumba)
-- [Masohi Messaging](https://ardhi.github.io/masohi)
+<p style="display:flex; flex-wrap: wrap; justify-content: space-between; align-items: center">
+  <a href="https://ardhi.github.io/dobo" style="text-align:center"><img src="https://ardhi.github.io/dobo/static/logo.png" width="200"><br/>Dobo DBMS</a>
+  <a href="https://ardhi.github.io/waibu" style="text-align:center"><img src="https://ardhi.github.io/waibu/static/logo.png" width="200"><br/>Waibu Web Framework</a>
+  <a href="https://ardhi.github.io/sumba" style="text-align:center"><img src="https://ardhi.github.io/sumba/static/logo.png" width="200"><br/>Sumba Biz Suite</a>
+  <a href="https://ardhi.github.io/masohi" style="text-align:center"><img src="https://ardhi.github.io/masohi/static/logo.png" width="200"><br/>Masohi Messaging</a>
+</p>
 
 ## Donations
 
