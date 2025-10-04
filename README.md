@@ -6,7 +6,7 @@ The ultimate framework for whipping up massive apps in no time!
 
 > <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](tutorial/00-welcome.md#contribution))<br /><br />
 
-<img src="docs-static/logo.png" width="300" height="300" alt="bajo">
+<img src="docs/static/logo.png" width="300" alt="bajo">
 
 Bajo is one of a kind framework. Think of it as Lego blocks; you create your very own customized structure by attaching together only the needed blocks. This same principle for app building is now possible with Bajo: pick the right plugins, glue them together, and fire it up!
 
