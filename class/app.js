@@ -10,17 +10,7 @@ import Base from './base.js'
 import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
-import {
-  buildBaseConfig,
-  buildExtConfig,
-  buildPlugins,
-  collectConfigHandlers,
-  bootOrder,
-  bootPlugins,
-  exitHandler,
-  runAsApplet
-} from './helper/bajo.js'
-
+import { runAsApplet } from './helper/bajo.js'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
@@ -76,23 +66,6 @@ const lib = {
 
 /**
  * App class. This is the root. This is where all plugins call it home.
- *
- * Boot process:
- *
- * 1. Parsing {@link module:Lib.parseArgsArgv|program arguments, options} and {@link module:Lib.parseEnv|environment values}
- * 2. Create {@link Bajo|Bajo} instance
- * 3. Building {@link module:Helper/Bajo.buildBaseConfig|base config}
- * 4. {@link module:Helper/Bajo.buildPlugins|Building plugins}
- * 5. Collect all {@link module:Helper/Bajo.collectConfigHandlers|config handler}
- * 6. Building {@link module:Helper/Bajo.buildExtConfig|extra config}
- * 7. Setup {@link module:Helper/Bajo.bootOrder|boot order}
- * 8. {@link module:Helper/Bajo.bootPlugins|Boot loaded plugins}
- * 9. Attach {@link module:Helper/Bajo.exitHandler|exit handlers}
- * 10. {@link module:Helper/Bajo.runAsApplet|Run in applet mode} if ```-a``` or ```--applet``` is given
- *
- * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
- *
- * If app mode is ```applet```, it runs your choosen applet instead.
  *
  * @class
  */
@@ -313,7 +286,15 @@ class App {
   }
 
   /**
-   * Booting the app.
+   * Boot process:
+   *
+   * - Parsing {@link module:Lib.parseArgsArgv|program arguments, options} and {@link module:Lib.parseEnv|environment values}
+   * - Create {@link Bajo|Bajo} instance & initialize it
+   * - {@link module:Helper/Bajo.runAsApplet|Run in applet mode} if ```-a``` or ```--applet``` is given
+   *
+   * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
+   *
+   * If app mode is ```applet```, it runs your choosen applet instead.
    *
    * @method
    * @async
@@ -321,21 +302,14 @@ class App {
    * @fires bajo:afterBootComplete
    */
   boot = async () => {
-    this.bajo = new Bajo(this)
     // argv/args/env
+    this.bajo = new Bajo(this)
     const { argv, args } = await parseArgsArgv.call(this) ?? {}
     this.args = args
     this.argv = argv
     this.envVars = parseEnv.call(this)
     this.applet = this.envVars._.applet ?? this.argv._.applet
-
-    await buildBaseConfig.call(this.bajo)
-    await collectConfigHandlers.call(this.bajo)
-    await buildExtConfig.call(this.bajo)
-    await buildPlugins.call(this.bajo)
-    await bootOrder.call(this.bajo)
-    await bootPlugins.call(this.bajo)
-    await exitHandler.call(this.bajo)
+    await this.bajo.init()
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.debug('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
@@ -447,6 +421,14 @@ class App {
    */
   getConfigFormats = () => {
     return map(this.configHandlers, 'ext')
+  }
+
+  startPlugin = (ns, ...args) => {
+    this[ns].start(...args)
+  }
+
+  stopPlugin = (ns, ...args) => {
+    this[ns].stop(...args)
   }
 }
 

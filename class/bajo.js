@@ -18,6 +18,15 @@ import resolvePath from '../lib/resolve-path.js'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
 import { types as formatTypes, formats } from '../lib/formats.js'
+import {
+  buildBaseConfig,
+  buildExtConfig,
+  buildPlugins,
+  collectConfigHandlers,
+  bootOrder,
+  bootPlugins,
+  exitHandler
+} from './helper/bajo.js'
 
 const require = createRequire(import.meta.url)
 
@@ -60,6 +69,30 @@ class Bajo extends Plugin {
     let mod = await importModule(file)
     if (isFunction(mod)) mod = await mod.call(this, opts)
     return mod
+  }
+
+  /**
+   * Initialization:
+   *
+   * 1. Building {@link module:Helper/Bajo.buildBaseConfig|base config}
+   * 2. {@link module:Helper/Bajo.buildPlugins|Building plugins}
+   * 3. Collect all {@link module:Helper/Bajo.collectConfigHandlers|config handler}
+   * 4. Building {@link module:Helper/Bajo.buildExtConfig|extra config}
+   * 5. Setup {@link module:Helper/Bajo.bootOrder|boot order}
+   * 6. {@link module:Helper/Bajo.bootPlugins|Boot loaded plugins}
+   * 7. Attach {@link module:Helper/Bajo.exitHandler|exit handlers}
+   *
+   * @method
+   * @async
+   */
+  init = async () => {
+    await buildBaseConfig.call(this)
+    await collectConfigHandlers.call(this)
+    await buildExtConfig.call(this)
+    await buildPlugins.call(this)
+    await bootOrder.call(this)
+    await bootPlugins.call(this)
+    await exitHandler.call(this)
   }
 
   /**
