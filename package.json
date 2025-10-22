@@ -49,10 +49,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.9.0",
-    "chai": "^6.0.0",
     "clean-jsdoc-theme": "^4.3.0",
-    "docdash": "^2.0.2",
-    "sinon": "^21.0.0"
+    "docdash": "^2.0.2"
   }
 }

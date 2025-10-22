@@ -1,5 +1,13 @@
-<p><img alt="Bajo Ecosystem" src="static/logo-ecosystem.png" width="200" height="200" /></p>
-- [Contributing](CONTRIBUTING.md)
+![bajo](static/logo.png)
+
+### The ultimate framework for whipping up a massive app in no time!
+
+<p style="display:flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline">
+  <a href="https://dobo.bajo.app/" style="text-align:center"><img src="https://ardhi.github.io/dobo/static/logo.png" width="200"><br/>Dobo DBMS</a>
+  <a href="https://waibu.bajo.app/" style="text-align:center"><img src="https://ardhi.github.io/waibu/static/logo.png" width="200"><br/>Waibu Web Framework</a>
+  <a href="https://sumba.bajo.app/" style="text-align:center"><img src="https://ardhi.github.io/sumba/static/logo.png" width="200"><br/>Sumba Biz Suite</a>
+  <a href="https://masohi.bajo.app/" style="text-align:center"><img src="https://ardhi.github.io/masohi/static/logo.png" width="200"><br/>Masohi Messaging</a>
+</p>
 
 ## Hire Me
 

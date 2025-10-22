@@ -343,9 +343,9 @@ $ node index.js -a bajoSysinfo:battery
 
 ## More
 
-Surprisingly fast and easy, right? But wait, Bajo has a lot more to offer. Get ready to dive deeper by continuing your journey with Bajo's sub-frameworks:
+Bajo has a lot more to offer. Get ready to dive deeper by continuing your journey with Bajo's sub-frameworks:
 
-- [Dobo Database Management System](https://ardhi.github.io/dobo/tutorial-01-getting-started.html)
-- [Waibu Web Framework](https://ardhi.github.io/waibu/tutorial-01-getting-started.html)
-- [Sumba Biz Suites](https://ardhi.github.io/sumba/tutorial-01-getting-started.html)
-- [Masohi Messaging](https://ardhi.github.io/masohi/tutorial-01-getting-started.html)
+- [Dobo Database Management System](https://github.com/ardhi/dobo/wiki/GETTING-STARTED.md)
+- [Waibu Web Framework](https://github.com/ardhi/waibu/wiki/GETTING-STARTED.md)
+- [Sumba Biz Suites](https://github.com/ardhi/sumba/wiki/GETTING-STARTED.md)
+- [Masohi Messaging](https://github.com/ardhi/masohi/wiki/GETTING-STARTED.md)

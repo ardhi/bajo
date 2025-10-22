@@ -1,6 +1,6 @@
 # Config Object
 
-The following table shows the default app settings. To change these to suit your needs, please refer to **Getting Started**
+The following table shows the default app settings. To change these to suit your needs, please refer to [Getting Started](GETTING-STARTED.md)
 
 | Key Name | Type | Default | Description |
 | ------- | ---- | ----- | ----------- |
@@ -16,7 +16,7 @@ The following table shows the default app settings. To change these to suit your
 | &nbsp;&nbsp;&nbsp;&nbsp;```fallback``` | ```string``` | ```en-US``` | Language to use if the selected one isn't valid |
 | &nbsp;&nbsp;&nbsp;&nbsp;```format``` | ```object``` | | |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```emptyValue``` | ```string``` | ```''``` | Value to use if value is ```null``` or ```undefined``` |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```datetime``` | ```object``` | ```{ dateStyle: 'medium', timeStyle: 'short' }``` | See [this link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) for more |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```datetime``` | ```object``` | ```{ dateStyle: 'medium', timeStyle: 'short' }``` | See [this link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) for more info |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```date``` | ```object``` | ```{ dateStyle: 'medium' }``` | See above |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```time``` | ```object``` | ```{ dateStyle: 'short' }``` | See above |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```float``` | ```object``` | ```{ maximumFractionDigits: 2 }``` | See above |

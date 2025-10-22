@@ -74,7 +74,7 @@
 | [sumba-nominatim](https://github.com/ardhi/sumba-nominatim) | [Docs](https://ardhi.github.io/sumba-nominatim) | sumbaNominatim | nominatim | Sumba OSM Nominatim |
 | [sumba-oauth](https://github.com/ardhi/sumba-oauth) | [Docs](https://ardhi.github.io/sumba-oauth) | sumbaOauth | oauth | Sumba OAuth Providers |
 
-## Sumba Premium Plugins
+## Sumba Biz Suite Premium Plugins
 
 | Package | Docs | NS | Alias | Description |
 | ------- | ---- | -- | ----- | ----------- |
