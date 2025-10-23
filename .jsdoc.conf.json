@@ -14,14 +14,14 @@
       "homepageTitle": "Bajo API",
       "sections": ["Classes", "Events", "Modules", "Global"],
       "menu": [{
-        "title": "Bajo.app",
-        "link": "https://bajo.app"
-      }, {
         "title": "NPM",
         "link": "https://www.npmjs.com/package/bajo"
       }, {
         "title": "Github",
         "link": "https://github.com/ardhi/bajo"
+      }, {
+        "title": "Bajo",
+        "link": "https://bajo.app"
       }]
     }
   },
