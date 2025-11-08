@@ -52,16 +52,17 @@ Congratulations! Your Bajo-based app is up and running!
 By now, your directory structure should look like this:
 
 ```
-|- my-project
-|  |- data
-|  |  |- config
-|  |- main
-|  |  |- index.js
-|  |- node_modules
-|  |  |- ...
-|  |- index.js
-|  |- package.json
-|  |- package-lock.json
+.
+└── my-project
+    ├── data
+    │   └── config
+    ├── main
+    │   └── index.js
+    ├── node_modules
+    │   └── ...
+    ├── index.js
+    ├── package.json
+    └── package-lock.json
 ```
 Your app runs in the ```dev``` environment by default. In this environment, the log level is set to ```debug```, which can be overridden using program arguments:
 
@@ -120,7 +121,7 @@ Enter these lines:
 }
 ```
 
-Each Bajo plugin can be configured through the configuration file located at ```{data-dir}/config/{ns}.json```, where ```{data-dir}``` is the data directory location and ```{ns}``` is the namespace or plugin name. Please visit *Getting Started* for more info.
+Each Bajo plugin can be configured through the configuration file located at ```{dataDir}/config/{ns}.json```, where ```{dataDir}``` is the data directory location and ```{ns}``` is the namespace or plugin name. Please visit *Getting Started* for more info.
 
 As you may know now, in Bajo, you create everything through plugins. If your project is small or not very complicated, you can use the main plugin that's always ready and available. But over time, as your app gets bigger and bigger, you'll need to start thinking about breaking things into small pieces through independent plugins.
 
