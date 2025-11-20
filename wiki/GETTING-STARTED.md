@@ -1,5 +1,7 @@
 # Getting Started
 
+This is the quickstart guide for getting started with Bajo, a framework for building robust and scalable applications. This section covers essential steps for beginners, including installation, setting up your project structure, and understanding basic configurations. You will be introduced to the core concepts of Bajo's plugin system and lifecycle, learning how to build your first "Hello World!" application and utilize the powerful hook system for custom extensions. This foundation will prepare you to dive into Bajo's specialized sub-frameworks, such as Dobo and Waibu, to further develop your application's capabilities.
+
 ## Installation
 
 Create a new empty directory named ```my-project```. This will be your app directory throughout this tutorial. Now, ```cd``` into your newly created directory and type:
@@ -100,10 +102,10 @@ You can mix and match config file and program arguments on any key-value pairs a
 Let's start with **Hello World!**, the Bajo way.
 
 The objectives of this short course are:
-- reading values ​​from the configuration
-- copying those values ​​into properties in the main plugin during initialization
-- displaying values ​​while the program is running
-- notifying if the program terminates
+1. reading values ​​from the configuration
+2. copying those values ​​into properties in the main plugin during initialization
+3. displaying values ​​while the program is running
+4. notifying if the program terminates
 
 Let's go!
 
@@ -121,9 +123,11 @@ Enter these lines:
 }
 ```
 
-Each Bajo plugin can be configured through the configuration file located at ```{dataDir}/config/{ns}.json```, where ```{dataDir}``` is the data directory location and ```{ns}``` is the namespace or plugin name. Please visit *Getting Started* for more info.
+Each Bajo plugin can be configured through the configuration file located at ```{dataDir}/config/{ns}.json```, where ```{dataDir}``` is the data directory location and ```{ns}``` is the namespace or plugin name. Please visit [User Guide](USER-GUIDE.md) for more info.
 
 As you may know now, in Bajo, you create everything through plugins. If your project is small or not very complicated, you can use the main plugin that's always ready and available. But over time, as your app gets bigger and bigger, you'll need to start thinking about breaking things into small pieces through independent plugins.
+
+If you intend to create your own customized plugin, refer to the [Developer Guide](DEV-GUIDE.md).
 
 ### Plugin Factory
 
@@ -204,7 +208,7 @@ Sweet!
 
 Bajo offers you a hook system in which you can tap certain actions anywhere in the system with your own code. Let's go through the simplest one: running your code just after the boot process is completed.
 
-First, create ```main/extend/bajo/hook/bajo@after-boot-complete.js```. If you're curious about the reason for the unusual file name, please refer to the *User Guide* on Hook's naming rules.
+First, create ```main/extend/bajo/hook/bajo@after-boot-complete.js```. If you're curious about the reason for the unusual file name, please refer to the [User Guide](USER-GUIDE.md) on Hook's naming rules.
 
 ```javascript
 async function afterBootComplete () {

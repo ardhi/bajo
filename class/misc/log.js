@@ -1,6 +1,7 @@
 import os from 'os'
 import lodash from 'lodash'
 import dayjs from 'dayjs'
+import fs from 'fs-extra'
 import logLevels from '../../lib/log-levels.js'
 import chalk from 'chalk'
 
@@ -123,6 +124,10 @@ class Log {
       if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
     }
     console.log(text)
+    if (this.app.bajo.config.log.save) {
+      fs.ensureDirSync(`${this.app.bajo.dir.data}/log`)
+      // TODO: log write, rotation, etc
+    }
     if (data instanceof Error && level === 'trace') console.error(data)
   }
 
