@@ -42,11 +42,18 @@ const defConfig = {
   env: 'dev',
   log: {
     timeTaken: false,
-    dateFormat: 'YYYY-MM-DDTHH:MM:ss.SSS[Z]',
-    localDate: false,
+    dateFormat: 'YYYY-MM-DDTHH:mm:ss.SSS',
+    useUtc: false,
     pretty: false,
     applet: false,
-    traceHook: false
+    traceHook: false,
+    save: false,
+    rotation: {
+      cycle: 'none', // none, daily, weekly, monthly
+      compressOld: true,
+      byPlugin: false,
+      retain: 5
+    }
   },
   lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
   intl: {
@@ -109,12 +116,9 @@ export async function buildBaseConfig () {
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
   set(this, 'dir.pkg', this.resolvePath(path))
+  if (get(this, 'config.dir.data')) set(this, 'dir.data', this.config.dir.data)
   if (!get(this, 'dir.data')) set(this, 'dir.data', `${this.dir.base}/data`)
   this.dir.data = this.resolvePath(this.dir.data)
-  if (!fs.existsSync(this.dir.data)) {
-    console.log('Data directory (%s) doesn\'t exist yet', this.dir.data)
-    process.exit(1)
-  }
   fs.ensureDirSync(`${this.dir.data}/config`)
   if (!this.dir.tmp) {
     this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.ns}`
@@ -222,6 +226,7 @@ export async function buildExtConfig () {
     if (!this.config.log.applet) this.config.log.level = 'silent'
     this.config.exitHandler = false
   }
+  this.log.trace('dataDir%s', this.dir.data)
   this.log.debug('configHandlers%s', this.join(exts))
 }
 
