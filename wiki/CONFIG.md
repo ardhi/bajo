@@ -7,9 +7,15 @@ The following table shows the default app settings. To change these to suit your
 | ```log``` | ```object``` | | |
 | &nbsp;&nbsp;&nbsp;&nbsp;```dateFormat``` | ```string``` | ```YYYY-MM-DDTHH:MM:ss.SSS[Z]```| See [dayjs string & format](https://day.js.org/docs/en/parse/string-format) for more info |
 | &nbsp;&nbsp;&nbsp;&nbsp;```timeTaken``` | ```boolean``` | ```false```| Show time taken from previous activity in ms |
-| &nbsp;&nbsp;&nbsp;&nbsp;```localDate``` | ```boolean``` | ```false```| Use local date, defaults: UTC |
+| &nbsp;&nbsp;&nbsp;&nbsp;```useUtc``` | ```boolean``` | ```false```| Use UTC, defaults: local date/time |
 | &nbsp;&nbsp;&nbsp;&nbsp;```pretty``` | ```boolean``` | ```false```| Colorful, pretty styling |
 | &nbsp;&nbsp;&nbsp;&nbsp;```applet``` | ```boolean``` | ```false```| Show log even in applet mode |
+| &nbsp;&nbsp;&nbsp;&nbsp;```save``` | ```boolean``` | ```false```| Save log in '{dataDir}/log' |
+| &nbsp;&nbsp;&nbsp;&nbsp;```rotation``` | ```object``` | | Log rotation config if ```save``` is true  |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```cycle``` | ```string``` | ```none``` | Available values: ```none```, ```daily```, ```weekly```, ```monthly``` |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```compressOld``` | ```boolean``` | ```false``` | Set to ```true``` to compress old logs |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```byPlugin``` | ```boolean``` | ```false``` | Split log by plugin's name |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```retain``` | ```integer``` | ```5``` | How many old logs will be kept/retained |
 | ```lang``` | ```string``` | Auto detected | Valid language code e.g: 'en-US', 'id', etc. |
 | ```intl``` | ```object``` | | Internationalization settings |
 | &nbsp;&nbsp;&nbsp;&nbsp;```supported``` | ```array``` | ```['en-US', 'id']``` | Supported languages |
