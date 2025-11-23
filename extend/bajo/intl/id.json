@@ -22,6 +22,7 @@
   "appRunningAsApplet": "App berjalan di mode applet",
   "setupBootOrder": "Atur urutan booting",
   "configHandlers%s": "Pengatur konfigurasi: %s",
+  "dataDir%s": "Dir data: %s",
   "exited": "Exited",
   "appShutdown": "Aplikasi ditutup",
   "appletModeActivated": "Mode applet diaktifkan",

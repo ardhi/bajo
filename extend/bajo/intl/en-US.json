@@ -22,6 +22,7 @@
   "appRunningAsApplet": "App runs in applet mode",
   "setupBootOrder": "Setup boot order",
   "configHandlers%s": "Config handlers: %s",
+  "dataDir%s": "Data dir: %s",
   "exited": "Exited",
   "appShutdown": "App shutdown",
   "appletModeActivated": "Applet mode activated",
