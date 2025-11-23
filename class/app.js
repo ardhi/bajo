@@ -15,10 +15,12 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 import localizedFormat from 'dayjs/plugin/localizedFormat.js'
+import weekOfYear from 'dayjs/plugin/weekOfYear.js'
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
+dayjs.extend(weekOfYear)
 
 const { isPlainObject, get, reverse, map, isString, last, without, keys } = lodash
 let unknownLangWarning = false
