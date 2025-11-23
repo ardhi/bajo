@@ -1,11 +1,8 @@
 import os from 'os'
-import lodash from 'lodash'
-import dayjs from 'dayjs'
-import fs from 'fs-extra'
 import logLevels from '../../lib/log-levels.js'
 import chalk from 'chalk'
-
-const { isEmpty, without, merge, get } = lodash
+import { stripVTControlCharacters } from 'node:util'
+import dayjs from 'dayjs'
 
 /**
  * Log output in stringified JSON format. Returned when app run in ```prod``` environment
@@ -53,12 +50,9 @@ class Log {
      */
     this.app = app
 
-    /**
-     * Date format to use in {@link https://day.js.org/docs/en/parse/string-format|dayjs} format. See {@tutorial config} for more info.
-     * @type {string}
-     */
-    const { dateFormat } = this.app.bajo.config.log ?? {}
-    this.dateFormat = dateFormat ?? 'YYYY-MM-DDTHH:mm:ss.SSS'
+    const { fs } = this.app.lib
+    this.logDir = `${this.app.bajo.dir.data}/log`
+    if (this.app.bajo.config.log.save) fs.ensureDirSync(this.logDir)
   }
 
   /**
@@ -77,9 +71,12 @@ class Log {
    * @see TLogJson
    */
   formatMsg = (level, prefix, ...params) => {
+    const { dayjs } = this.app.lib
+    const { isEmpty, merge, without } = this.app.lib._
+
     if (this.app.bajo.config.log.level === 'silent') return
     if (!this.app.bajo.isLogInRange(level)) return
-    const pretty = this.app.bajo.config.log.pretty
+    const { useUtc, timeTaken, dateFormat, pretty } = this.app.bajo.config.log
     let [data, msg, ...args] = params
     if (typeof data === 'string') {
       args.unshift(msg)
@@ -93,11 +90,10 @@ class Log {
     }
     msg = this.app.t(prefix, msg, ...args)
     let text
-    const dt = new Date()
+    const dt = dayjs()
     let diff = null
-    const timeTaken = !!get(this, 'app.bajo.config.log.timeTaken')
     if (timeTaken) {
-      const delta = dayjs(dt).diff(this.app.runAt, 'ms')
+      const delta = dt.diff(this.app.runAt, 'ms')
       diff = delta - this.lastDelta
       this.lastDelta = delta
     }
@@ -107,11 +103,8 @@ class Log {
       if (timeTaken) merge(json, { timeTaken: diff })
       text = JSON.stringify(json)
     } else {
-      let dateFormat = get(this, 'app.bajo.config.log.dateFormat', this.dateFormat).replaceAll('[Z]', '')
-      const localDate = get(this, 'app.bajo.config.log.localDate', false)
-      let date = dayjs(dt)
-      if (!localDate) date = date.utc()
-      if (!(dateFormat.includes('L') || dateFormat.includes('l'))) dateFormat += '[Z]'
+      let date = dt.clone()
+      if (useUtc) date = dayjs.utc(dt)
       date = date.format(dateFormat)
       let tdate = pretty ? chalk.cyan(date) : `[${date}]`
       if (timeTaken) {
@@ -124,11 +117,61 @@ class Log {
       if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
     }
     console.log(text)
-    if (this.app.bajo.config.log.save) {
-      fs.ensureDirSync(`${this.app.bajo.dir.data}/log`)
-      // TODO: log write, rotation, etc
-    }
     if (data instanceof Error && level === 'trace') console.error(data)
+    if (this.app.bajo.config.log.save) this.save(text, prefix)
+  }
+
+  /**
+   * Calculate pattern used for log rotation
+   *
+   * @method
+   * @param {boolean} isPrev - If true, calculate previous rotation pattern
+   * @returns {string} Calculated pattern
+   */
+  getRotationPattern = (isPrev) => {
+    const { dayjs } = this.app.lib
+    const { cycle } = this.app.bajo.config.log.rotation
+    if (cycle === 'none') return
+    let pattern
+    const now = dayjs()
+    switch (cycle) {
+      case 'monthly': {
+        const dt = isPrev ? now.subtract(1, 'month') : now
+        pattern = dt.format('YYYY-MM')
+        break
+      }
+      case 'weekly': {
+        const dt = isPrev ? now.subtract(1, 'week') : now
+        pattern = dt.format(`YYYY-W${dt.week()}`)
+        break
+      }
+      case 'daily': {
+        const dt = isPrev ? now.subtract(1, 'day') : now
+        pattern = dt.format('YYYY-MM-DD')
+        break
+      }
+    }
+    return pattern
+  }
+
+  /**
+   * Save log to file in {dataDir}/log
+   *
+   * @method
+   * @param {string} text - Log message to save
+   * @param {string} prefix - Use prefix as basename. Defaults to 'bajo'
+   */
+  save = (text, prefix = 'bajo') => {
+    const { fs } = this.app.lib
+    let fname = this.app.bajo.config.log.rotation.byPlugin ? prefix : 'bajo'
+    let file = `${this.logDir}/${fname}.log`
+    const content = stripVTControlCharacters(text)
+    const pattern = this.getRotationPattern()
+    if (pattern) {
+      file = `${this.logDir}/${fname}.${pattern}.log`
+    }
+    fs.appendFileSync(file, `${content}\n`, 'utf8')
+    // TODO: symlink bajo.log to target
   }
 
   /**
