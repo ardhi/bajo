@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-doc": "jsdoc -c .jsdoc.conf.json",
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "type": "module",
   "repository": {
@@ -49,6 +49,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
+    "chai": "^6.2.1",
     "clean-jsdoc-theme": "^4.3.0",
     "docdash": "^2.0.2"
   }
