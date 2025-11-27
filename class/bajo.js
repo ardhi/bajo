@@ -670,6 +670,7 @@ class Bajo extends Plugin {
    *
    * - local/absolute file
    * - TNsPath (```myPlugin:/path/to/file.txt```)
+   * - file under node_modules, e.g. ```myPlugin:node_modules/some-package/file.txt```
    *
    * @method
    * @param {string} file - File path, see above for supported types
@@ -683,6 +684,11 @@ class Bajo extends Plugin {
       const { ns, path } = this.breakNsPath(file)
       if (ns !== 'file' && this && this.app && this.app[ns] && ns.length > 1) {
         file = `${this.app[ns].dir.pkg}${path}`
+        if (path.startsWith('node_modules/')) {
+          if (!fs.existsSync(file)) {
+            file = `${this.app[ns].dir.pkg}/../${path.slice('node_modules/'.length)}`
+          }
+        }
       }
     }
     return file
