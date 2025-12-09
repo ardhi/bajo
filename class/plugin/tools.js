@@ -4,7 +4,7 @@
  * @class
  */
 
-class Base {
+class Tools {
   constructor (plugin) {
     /**
      * Attached plugin
@@ -20,4 +20,4 @@ class Base {
   }
 }
 
-export default Base
+export default Tools

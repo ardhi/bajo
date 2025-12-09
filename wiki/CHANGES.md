@@ -2,9 +2,9 @@
 
 ## 2025-12-09
 
-- [2.1.1] Upgrade to ```aneka@0.2.2```
+- [2.1.1] Upgrade to ```aneka@0.2.3```
 - [2.1.1] Some organizatory file location changes
--
+- [2.1.1] Typo on class ```Tools```
 
 ## 2025-12-05
 
