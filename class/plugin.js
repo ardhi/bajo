@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import Err from './misc/err.js'
+import Err from './plugin/err.js'
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
@@ -77,6 +77,21 @@ class Plugin {
       fatal: (...params) => this.app.log.fatal(this.ns, ...params),
       silent: (...params) => this.app.log.silent(this.ns, ...params)
     }
+  }
+
+  /**
+   * Get package info
+   *
+   * @method
+   * @param {string} [dir] - Package directory. Defaults to the current plugin's package dir
+   * @param {Array} [keys=['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']] - Field keys to be use. Set empty to use all keys.
+   */
+  getPkgInfo = async (dir, keys = ['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']) => {
+    const { readJson } = this.app.bajo
+    const { pick, isEmpty } = this.app.lib._
+    const file = `${dir ?? this.dir.pkg}/package.json`
+    const pkgJson = await readJson(file)
+    return isEmpty(keys) ? pkgJson : pick(pkgJson, keys)
   }
 
   /**

@@ -1,5 +1,6 @@
 import App from './class/app.js'
 import shim from './lib/shim.js'
+import fs from 'fs-extra'
 
 shim()
 
@@ -25,6 +26,13 @@ shim()
  * @returns {App}
  */
 async function boot (cwd) {
+  if (!cwd) cwd = process.cwd()
+  const pkgFile = `${cwd}/package.json`
+  const pkg = fs.readJsonSync(pkgFile)
+  if (pkg.type !== 'module') {
+    console.error(`Please turn on ES6 parsing by adding "type": "module" to ${pkgFile}!`)
+    process.exit(1)
+  }
   const app = new App(cwd)
   return await app.boot()
 }

@@ -37,7 +37,7 @@ class Base extends Plugin {
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
     const { get, kebabCase, keys, pick } = this.app.lib._
-    const { log, readJson, parseObject, getModuleDir, readAllConfigs } = this.app.bajo
+    const { log, parseObject, getModuleDir, readAllConfigs } = this.app.bajo
     const defKeys = keys(this.config)
     log.trace('- %s', this.ns)
     const dir = this.ns === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
@@ -49,10 +49,7 @@ class Base extends Plugin {
       pkg: dir,
       data: `${this.app.bajo.dir.data}/plugins/${this.ns}`
     }
-    const file = `${dir + (this.ns === this.app.mainNs ? '/..' : '')}/package.json`
-    const pkgJson = await readJson(file)
-    this.pkg = pick(pkgJson,
-      ['name', 'version', 'description', 'author', 'license', 'homepage'])
+    this.pkg = await this.getPkgInfo()
     if (this.ns === this.app.mainNs) {
       this.constructor.alias = this.app.mainNs
       this.title = this.title ?? this.alias

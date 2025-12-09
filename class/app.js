@@ -11,6 +11,7 @@ import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
 import { runAsApplet } from './helper/bajo.js'
+import Tools from './plugin/tools.js'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
@@ -54,6 +55,7 @@ function outmatchNs (source, pattern) {
  * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
  * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
  * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+ * @property {Object} Tools - Tools class
  * @see App
  */
 const lib = {
@@ -63,7 +65,8 @@ const lib = {
   sprintf,
   outmatch,
   dayjs,
-  aneka
+  aneka,
+  Tools
 }
 
 /**

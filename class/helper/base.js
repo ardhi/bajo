@@ -1,6 +1,6 @@
 import semver from 'semver'
 import lodash from 'lodash'
-import Print from '../misc/print.js'
+import Print from '../plugin/print.js'
 import path from 'path'
 import resolvePath from '../../lib/resolve-path.js'
 

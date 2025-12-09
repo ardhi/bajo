@@ -1,7 +1,7 @@
 import currentLoc from '../../lib/current-loc.js'
 import resolvePath from '../../lib/resolve-path.js'
-import Print from '../misc/print.js'
-import Log from '../misc/log.js'
+import Print from '../plugin/print.js'
+import Log from '../app/log.js'
 import omitDeep from 'omit-deep'
 import os from 'os'
 import fs from 'fs-extra'
@@ -124,11 +124,15 @@ export async function buildBaseConfig () {
     this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.ns}`
     fs.ensureDirSync(this.dir.tmp)
   }
+  this.pkg = await this.getPkgInfo()
   // collect list of plugins
-  let pluginPkgs = []
-  const pluginsFile = `${this.dir.data}/config/.plugins`
-  if (fs.existsSync(pluginsFile)) {
-    pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
+  const mainPkg = await this.getPkgInfo(this.app.dir)
+  let pluginPkgs = get(mainPkg, 'bajo.plugins', [])
+  if (isEmpty(pluginPkgs)) {
+    const pluginsFile = `${this.dir.data}/config/.plugins`
+    if (fs.existsSync(pluginsFile)) {
+      pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
+    }
   }
   this.app.pluginPkgs = map(filter(without(uniq(pluginPkgs), this.app.mainNs), p => {
     return p[0] !== '#'
@@ -190,7 +194,6 @@ export async function collectConfigHandlers () {
     if (isPlainObject(mod)) mod = [mod]
     this.app.configHandlers = this.app.configHandlers.concat(mod)
   }
-  this.app.log = new Log(this.app)
 }
 
 /**
@@ -226,6 +229,7 @@ export async function buildExtConfig () {
     if (!this.config.log.applet) this.config.log.level = 'silent'
     this.config.exitHandler = false
   }
+  this.app.log = new Log(this.app)
   this.log.trace('dataDir%s', this.dir.data)
   this.log.debug('configHandlers%s', this.join(exts))
 }
