@@ -26,7 +26,7 @@
   "exited": "Exited",
   "appShutdown": "Aplikasi ditutup",
   "appletModeActivated": "Mode applet diaktifkan",
-  "collected%s%d": "%s terkoleksi: %d",
+  "collected%s%d": "%s|upperFirst terkoleksi: %d",
   "attachMethods": "Tempelkan metode",
   "readConfigs": "Baca konfigurasi",
   "checkAliasNameClash": "Cek bentrokan nama dan alias",
@@ -175,5 +175,6 @@
   "buildPluginsComplete": "Pemuatan plugin komplit",
   "pluginPackageNotFound%s": "Berkas paket plugin '%s' tidak ditemukan!",
   "pluginPackageInvalid%s": "Paket plugin '%s' harus berupa instan dari kelas Base",
-  "appletNeedsBajoCli": "Applet membutuhkan 'bajo-cli' yang harus termuat terlebih dahulu"
+  "appletNeedsBajoCli": "Applet membutuhkan 'bajo-cli' yang harus termuat terlebih dahulu",
+  "unknown%s%s": "%s|upperFirst '%s' tidak dikenal"
 }

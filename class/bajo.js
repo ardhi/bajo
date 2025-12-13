@@ -3,17 +3,14 @@ import increment from 'add-filename-increment'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
-import ms from 'ms'
 import dotenvParseVariables from 'dotenv-parse-variables'
 import emptyDir from 'empty-dir'
 import lodash from 'lodash'
 import currentLoc from '../lib/current-loc.js'
 import { createRequire } from 'module'
 import getGlobalPath from 'get-global-path'
-import { customAlphabet } from 'nanoid'
 import fastGlob from 'fast-glob'
 import querystring from 'querystring'
-import deepFreeze from 'deep-freeze-strict'
 import resolvePath from '../lib/resolve-path.js'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
@@ -32,7 +29,7 @@ const require = createRequire(import.meta.url)
 
 const {
   isFunction, map, isObject,
-  trim, filter, isEmpty, orderBy, pullAt, find, camelCase, isNumber,
+  trim, filter, isEmpty, orderBy, pullAt, find, camelCase,
   cloneDeep, isPlainObject, isArray, isString, set, omit, keys, indexOf,
   last, get, has, values, dropRight, pick
 } = lodash
@@ -95,35 +92,29 @@ class Bajo extends Plugin {
     await exitHandler.call(this)
   }
 
-  /**
-   * Resolve file name to filesystem's path. Windows path separator ```\```
-   * is normalized to Unix's ```/```
-   *
-   * @method
-   * @param {string} file - File to resolve
-   * @param {boolean} [asFileUrl=false] - Return as file URL format ```file:///<name>```
-   * @returns {string}
-   */
+  // Proxied methods
   resolvePath = (file, asFileUrl) => {
-    return resolvePath(file, asFileUrl)
+    return this.app.lib.resolvePath(file, asFileUrl)
   }
 
-  /**
-   * Freeze object
-   *
-   * @method
-   * @param {Object} obj - Object to freeze
-   * @param {boolean} [shallow=false] - If ```false``` (default), deep freeze object
-   */
   freeze = (obj, shallow = false) => {
-    if (shallow) Object.freeze(obj)
-    else deepFreeze(obj)
+    this.app.lib.freeze(obj, shallow)
   }
 
   setImmediate = async () => {
-    return new Promise((resolve) => {
-      setImmediate(() => resolve())
-    })
+    return await this.app.lib.setImmediate()
+  }
+
+  generateId = (options = {}) => {
+    return this.app.lib.generateId(options)
+  }
+
+  parseDur = (dur) => {
+    return this.app.lib.parseDur(dur)
+  }
+
+  parseDt = (dt) => {
+    return this.app.lib.parseDt(dt)
   }
 
   breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
@@ -534,35 +525,12 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Generate unique random characters that can be used as ID. Use {@link https://github.com/ai/nanoid|nanoid} under the hood
+   * Format text according using sprintf with extra ability to run its arguments through a serie of modifiers
    *
-   * @method
-   * @param {(boolean|string|Object)} [options={}] - Options. If set to ```true``` or ```alpha```, it will generate alphaphet only characters. If set to ```int```, it will generate integer only characters. Otherwise:
-   * @param {string} [options.pattern] - Character pattern to use. Defaults to all available alphanumeric characters
-   * @param {number} [options.length=13] - Length of resulted characters
-   * @param {string} [options.case] - If set to ```lower``` to use lower cased pattern only. For upper cased pattern, set it to ```upper```
-   * @param {boolean} [options.returnInstance] - Set to ```true``` to return {@link https://github.com/ai/nanoid|nanoid} instance instead of string
-   * @returns {(string|Object)} Return string or instance of {@link https://github.com/ai/nanoid|nanoid}
+   * @param {string} text - Text to be formatted
+   * @param  {...any} args - Argumennts
+   * @returns {string} Formatted text
    */
-  generateId = (options = {}) => {
-    let type
-    if (options === true) options = 'alpha'
-    if (options === 'int') {
-      type = options
-      options = { pattern: '0123456789', length: 15 }
-    } else if (options === 'alpha') {
-      type = options
-      options = { pattern: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', length: 15 }
-    }
-    let { pattern, length = 13, returnInstance } = options
-    pattern = pattern ?? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    if (options.case === 'lower') pattern = pattern.toLowerCase()
-    else if (options.case === 'upper') pattern = pattern.toUpperCase()
-    const nid = customAlphabet(pattern, length)
-    if (returnInstance) return nid
-    const value = nid()
-    return type === 'int' ? parseInt(value) : value
-  }
 
   /**
    * Get NPM global module directory
@@ -608,26 +576,6 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Find item deep in paths
-   *
-   * @method
-   * @param {string} item - Item to find
-   * @param {Array} paths - Array of path to look for
-   * @returns {string}
-   */
-  findDeep = (item, paths) => {
-    let dir
-    for (const p of paths) {
-      const d = `${p}/${item}`
-      if (fs.existsSync(d)) {
-        dir = d
-        break
-      }
-    }
-    return dir
-  }
-
-  /**
    * Get module directory, locally and globally
    *
    * @method
@@ -636,6 +584,7 @@ class Bajo extends Plugin {
    * @returns {string} Return absolute package directory
    */
   getModuleDir = (pkgName, base) => {
+    const { findDeep } = this.app.lib
     if (pkgName === 'main') return resolvePath(this.app.dir)
     if (base === 'main') base = this.app.dir
     else if (this && this.app && this.app[base]) base = this.app[base].pkgName
@@ -644,8 +593,8 @@ class Bajo extends Plugin {
     const gdir = this.getGlobalModuleDir()
     paths.unshift(gdir)
     paths.unshift(resolvePath(path.join(this.app.dir, 'node_modules')))
-    let dir = this.findDeep(pkgPath, paths)
-    if (base && !dir) dir = this.findDeep(`${base}/node_modules/${pkgPath}`, paths)
+    let dir = findDeep(pkgPath, paths)
+    if (base && !dir) dir = findDeep(`${base}/node_modules/${pkgPath}`, paths)
     if (!dir) return null
     return resolvePath(path.dirname(dir))
   }
@@ -906,32 +855,6 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Parse duration to its millisecond value. Use {@link https://github.com/vercel/ms|ms} under the hood
-   *
-   * @method
-   * @param {(number|string)} dur - If string is given, parse this to its millisecond value. Otherwise returns as is
-   * @returns {number}
-   * @see {@link https://github.com/vercel/ms|ms}
-   */
-  parseDur = (dur) => {
-    return isNumber(dur) ? dur : ms(dur)
-  }
-
-  /**
-   * Parse datetime string as Javascript date object. Please visit {@link https://day.js.org|dayjs} for valid formats and more infos
-   *
-   * @method
-   * @param {string} dt - Datetime string
-   * @returns {Object} Javascript date object
-   * @see {@link https://day.js.org|dayjs}
-   */
-  parseDt = (dt) => {
-    const value = this.app.lib.dayjs(dt)
-    if (!value.isValid()) throw this.error('dtUnparsable%s', dt)
-    return value.toDate()
-  }
-
-  /**
    * Parse an object and optionally normalize its values recursively. Use {@link https://github.com/ladjs/dotenv-parse-variables}
    * to parse values, so please have a visit to know how it works
    *
@@ -1000,17 +923,6 @@ class Bajo extends Plugin {
     })
     if (mutated.length > 0) obj = omit(obj, mutated)
     return obj
-  }
-
-  pick = (obj, items, excludeUnset) => {
-    const { isSet } = this.app.lib.aneka
-    const result = {}
-    for (const item of items) {
-      const [k, nk] = item.split(':')
-      if (excludeUnset && !isSet(obj[k])) continue
-      result[nk ?? k] = obj[k]
-    }
-    return result
   }
 
   /**

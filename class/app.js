@@ -10,6 +10,9 @@ import Base from './base.js'
 import resolvePath from '../lib/resolve-path.js'
 import parseArgsArgv from '../lib/parse-args-argv.js'
 import parseEnv from '../lib/parse-env.js'
+import formatText from '../lib/format-text.js'
+import freeze from '../lib/freeze.js'
+import setImmediate from '../lib/set-immediate.js'
 import { runAsApplet } from './helper/bajo.js'
 import Tools from './plugin/tools.js'
 import dayjs from 'dayjs'
@@ -17,13 +20,17 @@ import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 import localizedFormat from 'dayjs/plugin/localizedFormat.js'
 import weekOfYear from 'dayjs/plugin/weekOfYear.js'
+import generateId from '../lib/generate-id.js'
+import findDeep from '../lib/find-deep.js'
+import parseDt from '../lib/parse-dt.js'
+import parseDur from '../lib/parse-dur.js'
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
 dayjs.extend(weekOfYear)
 
-const { isPlainObject, get, reverse, map, isString, last, without, keys } = lodash
+const { isPlainObject, get, reverse, map, last, without, keys } = lodash
 let unknownLangWarning = false
 
 function outmatchNs (source, pattern) {
@@ -55,6 +62,12 @@ function outmatchNs (source, pattern) {
  * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
  * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
  * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+ * @property {Object} formatText
+ * @property {Object} resolvePath
+ * @property {Object} freeze
+ * @property {Object} setImmediate
+ * @property {Object} generateId
+ * @property {Object} findDeep
  * @property {Object} Tools - Tools class
  * @see App
  */
@@ -66,6 +79,14 @@ const lib = {
   outmatch,
   dayjs,
   aneka,
+  formatText,
+  resolvePath,
+  freeze,
+  setImmediate,
+  generateId,
+  findDeep,
+  parseDt,
+  parseDur,
   Tools
 }
 
@@ -412,11 +433,7 @@ class App {
       }
     }
     if (!trans) trans = text
-    const values = map(params, a => {
-      if (!isString(a)) return a
-      return a
-    })
-    return sprintf(trans, ...values)
+    return formatText(trans, ...params)
   }
 
   /**
