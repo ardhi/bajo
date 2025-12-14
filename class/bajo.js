@@ -3,18 +3,16 @@ import increment from 'add-filename-increment'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
-import dotenvParseVariables from 'dotenv-parse-variables'
 import emptyDir from 'empty-dir'
 import lodash from 'lodash'
-import currentLoc from '../lib/current-loc.js'
 import { createRequire } from 'module'
 import getGlobalPath from 'get-global-path'
 import fastGlob from 'fast-glob'
 import querystring from 'querystring'
-import resolvePath from '../lib/resolve-path.js'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
 import { types as formatTypes, formats } from '../lib/formats.js'
+import aneka from 'aneka'
 import {
   buildBaseConfig,
   buildExtConfig,
@@ -30,9 +28,11 @@ const require = createRequire(import.meta.url)
 const {
   isFunction, map, isObject,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase,
-  cloneDeep, isPlainObject, isArray, isString, set, omit, keys, indexOf,
+  cloneDeep, isPlainObject, isArray, isString, omit, keys, indexOf,
   last, get, has, values, dropRight, pick
 } = lodash
+
+const { resolvePath, currentLoc } = aneka
 
 /**
  * The Core. The main engine. The one and only plugin that control app's boot process and
@@ -94,27 +94,15 @@ class Bajo extends Plugin {
 
   // Proxied methods
   resolvePath = (file, asFileUrl) => {
-    return this.app.lib.resolvePath(file, asFileUrl)
+    return this.app.lib.aneka.resolvePath(file, asFileUrl)
   }
 
   freeze = (obj, shallow = false) => {
     this.app.lib.freeze(obj, shallow)
   }
 
-  setImmediate = async () => {
-    return await this.app.lib.setImmediate()
-  }
-
   generateId = (options = {}) => {
     return this.app.lib.generateId(options)
-  }
-
-  parseDur = (dur) => {
-    return this.app.lib.parseDur(dur)
-  }
-
-  parseDt = (dt) => {
-    return this.app.lib.parseDt(dt)
   }
 
   breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
@@ -855,77 +843,6 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Parse an object and optionally normalize its values recursively. Use {@link https://github.com/ladjs/dotenv-parse-variables}
-   * to parse values, so please have a visit to know how it works
-   *
-   * If ```options.parseValue``` is ```true```, any key ends with ```Dur``` and ```Dt``` will
-   * also be parsed as millisecond and Javascript date time accordingly.
-   *
-   * @method
-   * @param {(Object|string)} input - If string is given, parse it first using JSON.parse
-   * @param {Object} [options={}] - Options
-   * @param {boolean} [options.silent=true] - If ```true``` (default), exception are not thrown and silently ignored
-   * @param {boolean} [options.parseValue=false] - If ```true```, values will be parsed & normalized
-   * @param {string} [options.lang] - If provided, use this language instead of the one in config
-   * @returns {Object}
-   * @see {@link https://github.com/ladjs/dotenv-parse-variables}
-   */
-  parseObject = (input, options = {}) => {
-    const { silent = true, parseValue = false, lang, ns } = options
-    const { isSet } = this.app.lib.aneka
-    const translate = (item) => {
-      const scope = ns ? this.app[ns] : this
-      const [text, ...args] = item.split('|')
-      return scope.t(text, ...args, { lang })
-    }
-    const statics = ['*']
-    if (isString(input)) {
-      try {
-        input = JSON.parse(input)
-      } catch (err) {
-        if (silent) input = {}
-        else throw err
-      }
-    }
-    let obj = cloneDeep(input)
-    const keys = Object.keys(obj)
-    const mutated = []
-    keys.forEach(k => {
-      let v = obj[k]
-      if (isPlainObject(v)) obj[k] = this.parseObject(v, options)
-      else if (isArray(v)) {
-        v.forEach((i, idx) => {
-          if (isPlainObject(i)) obj[k][idx] = this.parseObject(i, options)
-          else if (statics.includes(i)) obj[k][idx] = i
-          else if (parseValue) obj[k][idx] = dotenvParseVariables(set({}, 'item', obj[k][idx]), { assignToProcessEnv: false }).item
-          if (isArray(obj[k][idx])) obj[k][idx] = obj[k][idx].map(item => typeof item === 'string' ? item.trim() : item)
-        })
-      } else if (isSet(v)) {
-        if (isString(v) && v.startsWith('t:') && lang) v = translate(v.slice(2))
-        try {
-          if (statics.includes(v)) obj[k] = v
-          else if (k.startsWith('t:') && isString(v)) {
-            const newK = k.slice(2)
-            if (lang) obj[newK] = translate(v)
-            else obj[newK] = v
-            mutated.push(k)
-          } else if (parseValue) {
-            obj[k] = dotenvParseVariables(set({}, 'item', v), { assignToProcessEnv: false }).item
-            if (isArray(obj[k])) obj[k] = obj[k].map(item => typeof item === 'string' ? item.trim() : item)
-          }
-          if (k.slice(-3) === 'Dur') obj[k] = this.parseDur(v)
-          if (k.slice(-2) === 'Dt') obj[k] = this.parseDt(v)
-        } catch (err) {
-          obj[k] = undefined
-          if (!silent) throw err
-        }
-      }
-    })
-    if (mutated.length > 0) obj = omit(obj, mutated)
-    return obj
-  }
-
-  /**
    * Read and parse file as config object. Supported types: ```.js``` and ```.json```.
    * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for ```.yml```, ```.yaml``` and ```.toml``` file
    *
@@ -944,6 +861,7 @@ class Bajo extends Plugin {
    * @returns {Object}
    */
   readConfig = async (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) => {
+    const { parseObject } = this.app.lib
     if (!ns) ns = this.ns
     file = resolvePath(this.getPluginFile(file))
     let ext = path.extname(file)
@@ -951,22 +869,22 @@ class Bajo extends Plugin {
     ext = ext.toLowerCase()
     if (ext === '.js') {
       const { readHandler } = find(this.app.configHandlers, { ext })
-      return this.parseObject(await readHandler.call(this.app[ns], file, opts))
+      return parseObject(await readHandler.call(this.app[ns], file, opts))
     }
     if (ext === '.json') return await this.fromJson(file, null)
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
-        return this.parseObject(defValue)
+        return parseObject(defValue)
       }
-      return this.parseObject(await item.readHandler.call(this.app[ns], file, opts))
+      return parseObject(await item.readHandler.call(this.app[ns], file, opts))
     }
     const item = pattern ?? `${fname}.{${map(map(this.app.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
     const files = await fastGlob(item, globOptions)
     if (files.length === 0) {
       if (!ignoreError) throw this.error('noConfigFileFound', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
-      return this.parseObject(defValue)
+      return parseObject(defValue)
     }
     let config = defValue
     for (const f of files) {
@@ -979,7 +897,7 @@ class Bajo extends Plugin {
       config = await item.readHandler.call(this.app[ns], f, null, opts)
       if (!isEmpty(config)) break
     }
-    return this.parseObject(config)
+    return parseObject(config)
   }
 
   /**
@@ -991,6 +909,7 @@ class Bajo extends Plugin {
    * @returns {Object}
    */
   readJson = (file, thrownNotFound = false) => {
+    const { parseObject } = this.app.lib
     if (isPlainObject(thrownNotFound)) thrownNotFound = false
     if (!fs.existsSync(file) && thrownNotFound) throw this.error('notFound%s%s', this.t('file'), file)
     let resp
@@ -998,7 +917,7 @@ class Bajo extends Plugin {
       resp = fs.readFileSync(file, 'utf8')
     } catch (err) {}
     if (isEmpty(resp)) return resp
-    return this.parseObject(JSON.parse(resp))
+    return parseObject(JSON.parse(resp))
   }
 
   fromJson (file, isContent) {

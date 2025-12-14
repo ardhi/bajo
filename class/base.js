@@ -37,7 +37,9 @@ class Base extends Plugin {
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
     const { get, kebabCase, keys, pick } = this.app.lib._
-    const { log, parseObject, getModuleDir, readAllConfigs } = this.app.bajo
+    const { log, getModuleDir, readAllConfigs } = this.app.bajo
+    const { parseObject } = this.app.lib
+
     const defKeys = keys(this.config)
     log.trace('- %s', this.ns)
     const dir = this.ns === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)

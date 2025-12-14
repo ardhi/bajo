@@ -1,5 +1,5 @@
 import App from './class/app.js'
-import shim from './lib/shim.js'
+import { shim } from 'aneka'
 import fs from 'fs-extra'
 
 shim()

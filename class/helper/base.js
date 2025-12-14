@@ -2,8 +2,9 @@ import semver from 'semver'
 import lodash from 'lodash'
 import Print from '../plugin/print.js'
 import path from 'path'
-import resolvePath from '../../lib/resolve-path.js'
+import aneka from 'aneka'
 
+const { resolvePath } = aneka
 const {
   isFunction,
   merge,

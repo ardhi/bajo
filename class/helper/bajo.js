@@ -1,5 +1,3 @@
-import currentLoc from '../../lib/current-loc.js'
-import resolvePath from '../../lib/resolve-path.js'
 import Print from '../plugin/print.js'
 import Log from '../app/log.js'
 import omitDeep from 'omit-deep'
@@ -14,6 +12,9 @@ import {
   collectHooks,
   run
 } from './base.js'
+import aneka from 'aneka'
+
+const { currentLoc, resolvePath } = aneka
 
 const {
   reduce,
@@ -207,6 +208,8 @@ export async function collectConfigHandlers () {
 export async function buildExtConfig () {
   // config merging
   const { defaultsDeep } = this.app.lib.aneka
+  const { parseObject } = this.app.lib
+
   let resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
   const envs = this.app.constructor.envs
@@ -222,7 +225,7 @@ export async function buildExtConfig () {
   if (!this.config.log.level) this.config.log.level = this.config.env === 'dev' ? 'debug' : 'info'
   // misc
   const obj = this.app.applet ? this.config : pick(this.config, keys(defConfig))
-  this.config = this.parseObject(obj, { parseValue: true })
+  this.config = parseObject(obj, { parseValue: true })
   const exts = this.app.getConfigFormats()
   if (this.app.applet) {
     if (!this.app.pluginPkgs.includes('bajo-cli')) throw this.error('appletNeedsBajoCli')

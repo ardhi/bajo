@@ -7,12 +7,7 @@ import outmatch from 'outmatch'
 import fs from 'fs-extra'
 import aneka from 'aneka/index.js'
 import Base from './base.js'
-import resolvePath from '../lib/resolve-path.js'
-import parseArgsArgv from '../lib/parse-args-argv.js'
-import parseEnv from '../lib/parse-env.js'
-import formatText from '../lib/format-text.js'
 import freeze from '../lib/freeze.js'
-import setImmediate from '../lib/set-immediate.js'
 import { runAsApplet } from './helper/bajo.js'
 import Tools from './plugin/tools.js'
 import dayjs from 'dayjs'
@@ -22,8 +17,6 @@ import localizedFormat from 'dayjs/plugin/localizedFormat.js'
 import weekOfYear from 'dayjs/plugin/weekOfYear.js'
 import generateId from '../lib/generate-id.js'
 import findDeep from '../lib/find-deep.js'
-import parseDt from '../lib/parse-dt.js'
-import parseDur from '../lib/parse-dur.js'
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
@@ -62,10 +55,7 @@ function outmatchNs (source, pattern) {
  * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
  * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
  * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
- * @property {Object} formatText
- * @property {Object} resolvePath
  * @property {Object} freeze
- * @property {Object} setImmediate
  * @property {Object} generateId
  * @property {Object} findDeep
  * @property {Object} Tools - Tools class
@@ -79,14 +69,9 @@ const lib = {
   outmatch,
   dayjs,
   aneka,
-  formatText,
-  resolvePath,
   freeze,
-  setImmediate,
   generateId,
   findDeep,
-  parseDt,
-  parseDur,
   Tools
 }
 
@@ -169,6 +154,20 @@ class App {
      */
     this.lib = lib
     this.lib.outmatchNs = outmatchNs.bind(this)
+    this.lib.parseObject = (obj, options = {}) => {
+      const me = this
+      const { ns, lang } = options
+      options.translator = {
+        lang,
+        prefix: 't:',
+        handler: val => {
+          const scope = ns ? me.app[ns] : me
+          const [text, ...args] = val.split('|')
+          return scope.t(text, ...args, { lang })
+        }
+      }
+      return aneka.parseObject(obj, options)
+    }
 
     /**
      * Instance of system log
@@ -264,7 +263,7 @@ class App {
       const parts = l.split('=')
       cwd = parts[1]
     }
-    this.dir = resolvePath(cwd)
+    this.dir = aneka.resolvePath(cwd)
     process.env.APPDIR = this.dir
   }
 
@@ -330,15 +329,15 @@ class App {
   boot = async () => {
     // argv/args/env
     this.bajo = new Bajo(this)
-    const { argv, args } = await parseArgsArgv.call(this) ?? {}
+    const { argv, args } = aneka.parseObject(await aneka.parseArgsArgv() ?? {}, { parseValue: true })
     this.args = args
     this.argv = argv
-    this.envVars = parseEnv.call(this)
+    this.envVars = aneka.parseObject(aneka.parseEnv(), { parseValue: true })
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.init()
     // boot complete
     const elapsed = new Date() - this.runAt
-    this.bajo.log.debug('bootCompleted%s', this.lib.aneka.secToHms(elapsed, true))
+    this.bajo.log.debug('bootCompleted%s', aneka.secToHms(elapsed, true))
     /**
      * Run after boot process is completed
      *
@@ -433,7 +432,7 @@ class App {
       }
     }
     if (!trans) trans = text
-    return formatText(trans, ...params)
+    return aneka.formatText(trans, ...params)
   }
 
   /**
