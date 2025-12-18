@@ -92,19 +92,6 @@ class Bajo extends Plugin {
     await exitHandler.call(this)
   }
 
-  // Proxied methods
-  resolvePath = (file, asFileUrl) => {
-    return this.app.lib.aneka.resolvePath(file, asFileUrl)
-  }
-
-  freeze = (obj, shallow = false) => {
-    this.app.lib.freeze(obj, shallow)
-  }
-
-  generateId = (options = {}) => {
-    return this.app.lib.generateId(options)
-  }
-
   breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
     let item = file.replace(dir + suffix, '')
     let type

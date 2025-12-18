@@ -18,6 +18,14 @@ class Tools {
      */
     this.app = plugin.app
   }
+
+  /**
+   * Dispose internal references
+   */
+  dispose = () => {
+    this.app = null
+    this.plugin = null
+  }
 }
 
 export default Tools

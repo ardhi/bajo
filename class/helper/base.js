@@ -191,7 +191,7 @@ export async function collectHooks () {
 export async function run () {
   const me = this
   const { runHook, eachPlugins, join } = me.bajo
-  const { freeze } = me.bajo
+  const { freeze } = me.lib
   const methods = ['init']
   if (!me.applet) methods.push('start')
   me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))

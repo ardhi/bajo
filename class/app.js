@@ -15,7 +15,6 @@ import utc from 'dayjs/plugin/utc.js'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 import localizedFormat from 'dayjs/plugin/localizedFormat.js'
 import weekOfYear from 'dayjs/plugin/weekOfYear.js'
-import generateId from '../lib/generate-id.js'
 import findDeep from '../lib/find-deep.js'
 
 dayjs.extend(utc)
@@ -56,7 +55,6 @@ function outmatchNs (source, pattern) {
  * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
  * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
  * @property {Object} freeze
- * @property {Object} generateId
  * @property {Object} findDeep
  * @property {Object} Tools - Tools class
  * @see App
@@ -70,7 +68,6 @@ const lib = {
   dayjs,
   aneka,
   freeze,
-  generateId,
   findDeep,
   Tools
 }
@@ -317,14 +314,14 @@ class App {
    * - Create {@link Bajo|Bajo} instance & initialize it
    * - {@link module:Helper/Bajo.runAsApplet|Run in applet mode} if ```-a``` or ```--applet``` is given
    *
-   * After boot process is completed, event ```bajo:afterBootComplete``` is emitted.
+   * After boot process is completed, event ```bajo:afterBootCompleted``` is emitted.
    *
    * If app mode is ```applet```, it runs your choosen applet instead.
    *
    * @method
    * @async
    * @returns {App}
-   * @fires bajo:afterBootComplete
+   * @fires bajo:afterBootCompleted
    */
   boot = async () => {
     // argv/args/env
@@ -346,7 +343,7 @@ class App {
      * @see {@tutorial hook}
      * @see App#boot
      */
-    await this.bajo.runHook('bajo:afterBootComplete')
+    await this.bajo.runHook('bajo:afterBootCompleted')
     if (this.applet) await runAsApplet.call(this.bajo)
     return this
   }

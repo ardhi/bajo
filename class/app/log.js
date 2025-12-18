@@ -249,6 +249,13 @@ class Log {
   silent = (prefix, ...params) => {
     this.formatMsg('silent', prefix, ...params)
   }
+
+  /**
+   * Dispose internal references
+   */
+  dispose = () => {
+    this.app = null
+  }
 }
 
 export default Log

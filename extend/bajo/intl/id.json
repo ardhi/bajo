@@ -127,7 +127,7 @@
   "offlineL": "offline",
   "reconnectingL": "mencoba menghubung kembali",
   "connMustHave%s": "Koneksi harus memiliki '%s'",
-  "notFound%s%s": "%s '%s' tidak ditemukan",
+  "notFound%s%s": "%s|upperFirst '%s' tidak ditemukan",
   "connection": "Koneksi",
   "file": "Berkas",
   "applet": "Applet",
@@ -176,5 +176,8 @@
   "pluginPackageNotFound%s": "Berkas paket plugin '%s' tidak ditemukan!",
   "pluginPackageInvalid%s": "Paket plugin '%s' harus berupa instan dari kelas Base",
   "appletNeedsBajoCli": "Applet membutuhkan 'bajo-cli' yang harus termuat terlebih dahulu",
-  "unknown%s%s": "%s|upperFirst '%s' tidak dikenal"
+  "unknown%s%s": "%s|upperFirst '%s' tidak dikenal",
+  "notImplemented%s%s": "%s|upperFirst '%s' belum diimplementasikan",
+  "method": "Metode",
+  "exist%s%s": "%s|upperFirst '%s' sudah ada"
 }

@@ -180,6 +180,14 @@ class Plugin {
   t = (text, ...params) => {
     return this.app.t(this.ns, text, ...params)
   }
+
+  /**
+   * Dispose internal references
+   */
+  dispose = () => {
+    this.app = null
+    this.config = null
+  }
 }
 
 export default Plugin

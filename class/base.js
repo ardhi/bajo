@@ -100,6 +100,14 @@ class Base extends Plugin {
    */
   exit = async () => {
   }
+
+  /**
+   * Dispose internal references
+   */
+  dispose = () => {
+    super.dispose()
+    this.state = null
+  }
 }
 
 export default Base

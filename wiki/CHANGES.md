@@ -3,7 +3,7 @@
 ## 2025-12-13
 
 - [2.2.0] Add ```app.lib.formatText()```
-- [2.2.0] Move most bajo methods that doesn't relate to Bajo to app.lib functions. This will breaks a lot of things, so in the mean time those methods still exist but proxied. In the next major version, this will be removed for good
+- [2.2.0] Move most bajo methods that doesn't relate to Bajo to app.lib functions
 
 ## 2025-12-11
 

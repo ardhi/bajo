@@ -116,13 +116,13 @@ export async function buildBaseConfig () {
   this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
-  set(this, 'dir.pkg', this.resolvePath(path))
+  set(this, 'dir.pkg', resolvePath(path))
   if (get(this, 'config.dir.data')) set(this, 'dir.data', this.config.dir.data)
   if (!get(this, 'dir.data')) set(this, 'dir.data', `${this.dir.base}/data`)
-  this.dir.data = this.resolvePath(this.dir.data)
+  this.dir.data = resolvePath(this.dir.data)
   fs.ensureDirSync(`${this.dir.data}/config`)
   if (!this.dir.tmp) {
-    this.dir.tmp = `${this.resolvePath(os.tmpdir())}/${this.ns}`
+    this.dir.tmp = `${resolvePath(os.tmpdir())}/${this.ns}`
     fs.ensureDirSync(this.dir.tmp)
   }
   this.pkg = await this.getPkgInfo()
@@ -243,6 +243,7 @@ export async function buildExtConfig () {
  * @async
  */
 export async function bootOrder () {
+  const { freeze } = this.app.lib
   this.log.debug('setupBootOrder')
   const order = reduce(this.app.pluginPkgs, (o, k, i) => {
     const key = map(k.split(':'), m => trim(m))
@@ -268,7 +269,7 @@ export async function bootOrder () {
   this.app.pluginPkgs = map(orderBy(result, ['v']), 'k')
   this.log.debug('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
   // misc
-  this.freeze(this.config)
+  freeze(this.config)
 }
 
 /**

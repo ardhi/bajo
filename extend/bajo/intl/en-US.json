@@ -127,7 +127,7 @@
   "offlineL": "offline",
   "reconnectingL": "reconnecting",
   "connMustHave%s": "Connection must have '%s'",
-  "notFound%s%s": "%s '%s' not found",
+  "notFound%s%s": "%s|upperFirst '%s' not found",
   "connection": "Connection",
   "file": "File",
   "applet": "Applet",
@@ -176,5 +176,8 @@
   "pluginPackageNotFound%s": "Plugin package '%s' file not found!",
   "pluginPackageInvalid%s": "`Plugin package '%s' should be an instance of Base class`",
   "appletNeedsBajoCli": "Applet needs to have 'bajo-cli' loaded",
-  "unknown%s%s": "Unknown %s '%s'"
+  "unknown%s%s": "Unknown %s '%s'",
+  "notImplemented%s%s": "%s|upperFirst '%s' not implemented yet",
+  "method": "Method",
+  "exist%s%s": "%s|upperFirst '%s' exists already"
 }
