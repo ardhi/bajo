@@ -1,5 +1,9 @@
 # Changes
 
+## 2025-12-19
+
+- Upgrade to ```aneka@0.9.0```
+
 ## 2025-12-13
 
 - [2.2.0] Add ```app.lib.formatText()```
