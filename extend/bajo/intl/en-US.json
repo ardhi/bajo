@@ -27,7 +27,6 @@
   "appShutdown": "App shutdown",
   "appletModeActivated": "Applet mode activated",
   "collected%s%d": "Collected %s: %d",
-  "attachMethods": "Attach methods",
   "readConfigs": "Read configurations",
   "checkAliasNameClash": "Checking alias & name clashes",
   "checkDeps": "Checking dependencies",

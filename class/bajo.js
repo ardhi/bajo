@@ -954,7 +954,13 @@ class Bajo extends Plugin {
    * @returns {Array} Array of hook execution results
    */
   runHook = async (hookName, ...args) => {
-    const [ns, path] = (hookName ?? '').split(':')
+    let ns
+    let path
+    try {
+      [ns, path] = this.breakNsPath(hookName ?? '')
+    } catch (err) {
+      return
+    }
     let fns = filter(this.app.bajo.hooks, { ns, path })
     if (isEmpty(fns)) return []
     fns = orderBy(fns, ['level'])

@@ -1,5 +1,14 @@
 # Changes
 
+## 2025-12-21
+
+- ```runHook()``` now accept both ```alias``` & ```ns``` prefixed name
+- In case of unknown plugin or plugin isn't loaded, ```runHook``` simply exit silently
+
+## 2025-12-20
+
+- Removing dynamically attached methods because its problematic and leads to confusion
+
 ## 2025-12-19
 
 - Upgrade to ```aneka@0.9.0```

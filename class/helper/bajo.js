@@ -8,7 +8,6 @@ import {
   buildConfigs,
   checkDependencies,
   checkNameAliases,
-  attachMethods,
   collectHooks,
   run
 } from './base.js'
@@ -278,9 +277,8 @@ export async function bootOrder () {
  * 1. {@link module:Helper/Base.buildConfigs|build configs}
  * 2. {@link module:Helper/Base.checkNameAliases|ensure names & aliases uniqueness}
  * 3. {@link module:Helper/Base.checkDependencies|ensure dependencies are met}
- * 4. {@link module:Helper/Base.attachMethods|build and attach dynamic methods}
- * 5. {@link module:Helper/Base.collectHooks|collect hooks}
- * 6. {@link module:Helper/Base.run|run plugins}
+ * 4. {@link module:Helper/Base.collectHooks|collect hooks}
+ * 5. {@link module:Helper/Base.run|run plugins}
  *
  * @async
  */
@@ -288,7 +286,6 @@ export async function bootPlugins () {
   await buildConfigs.call(this.app)
   await checkNameAliases.call(this.app)
   await checkDependencies.call(this.app)
-  await attachMethods.call(this.app)
   await collectHooks.call(this.app)
   await run.call(this.app)
 }

@@ -304,7 +304,8 @@ class App {
       const result = util.inspect(arg, { depth: 10, colors: true })
       console.log(result)
     }
-    if (terminate) process.kill(process.pid, 'SIGINT')
+    // if (terminate) process.kill(process.pid, 'SIGINT')
+    if (terminate) process.exit('1')
   }
 
   /**

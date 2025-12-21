@@ -1,12 +1,8 @@
 import semver from 'semver'
 import lodash from 'lodash'
 import Print from '../plugin/print.js'
-import path from 'path'
-import aneka from 'aneka'
 
-const { resolvePath } = aneka
 const {
-  isFunction,
   merge,
   forOwn,
   groupBy,
@@ -27,41 +23,6 @@ const {
  *
  * @module Helper/Base
  */
-
-/**
- * Scan plugins ```method``` directories, and turn + attach its found files as methods dynamically.
- *
- * @async
- */
-export async function attachMethods () {
-  const { fastGlob } = this.lib
-
-  async function createMethod (dir) {
-    dir = resolvePath(dir)
-    const files = await fastGlob([`!${dir}/**/_*.{js,json}`, `${dir}/**/*.{js,json}`])
-    for (const f of files) {
-      const ext = path.extname(f)
-      const base = f.replace(dir, '').slice(0, -ext.length)
-      const name = camelCase(base)
-      let mod
-      if (ext === '.json') mod = this.app.bajo.readJson(f)
-      else mod = await this.app.bajo.importModule(f)
-      if (isFunction(mod)) mod = mod.bind(this)
-      this[name] = mod
-    }
-    return files.length
-  }
-
-  const { eachPlugins } = this.bajo
-  const me = this // the app
-  me.bajo.log.debug('attachMethods')
-  await eachPlugins(async function () {
-    const { ns, pkgName } = this
-    const dir = ns === me.mainNs ? (`${me.bajo.dir.base}/${me.mainNs}`) : me.bajo.getModuleDir(pkgName)
-    const num = await createMethod.call(me[ns], `${dir}/method`, pkgName)
-    me.bajo.log.trace('- %s (%d)', ns, num)
-  })
-}
 
 /**
  * Build configurations
