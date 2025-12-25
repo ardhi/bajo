@@ -609,9 +609,8 @@ class Bajo extends Plugin {
       if (ns !== 'file' && this && this.app && this.app[ns] && ns.length > 1) {
         file = `${this.app[ns].dir.pkg}${path}`
         if (path.startsWith('node_modules/')) {
-          if (!fs.existsSync(file)) {
-            file = `${this.app[ns].dir.pkg}/../${path.slice('node_modules/'.length)}`
-          }
+          file = `${this.app[ns].dir.pkg}/${path}`
+          if (!fs.existsSync(file)) file = `${this.app[ns].dir.pkg}/../${path.slice('node_modules/'.length)}`
         }
       }
     }
@@ -717,7 +716,7 @@ class Bajo extends Plugin {
       }
       result[name] = mod
     }
-    if (notFound.length > 0) throw this.error('cantFind%s', this.join(notFound))
+    if (notFound.length > 0 && opts.throwNotFound) throw this.error('cantFind%s', this.join(notFound))
     if (opts.asObject) return result
     if (pkgs.length === 1) return result[keys(result)[0]]
     return values(result)
@@ -957,7 +956,7 @@ class Bajo extends Plugin {
     let ns
     let path
     try {
-      [ns, path] = this.breakNsPath(hookName ?? '')
+      ({ ns, path } = this.breakNsPath(hookName ?? ''))
     } catch (err) {
       return
     }

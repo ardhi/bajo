@@ -139,7 +139,7 @@ This file is the main plugin factory. It gets created automatically if it's not 
 async function factory (pkgName) {
   const me = this
 
-  return class Main extends this.app.pluginClass.base {
+  return class Main extends this.app.baseClass.Base {
     constructor () {
       super(pkgName, me.app)
       this.config = {}

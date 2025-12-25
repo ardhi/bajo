@@ -42,7 +42,6 @@ class Err extends Tools {
      * @type {string}
      */
     this.message = this.payload.noTrans ? msg : this.plugin.t(msg, ...args)
-    this.write()
   }
 
   /**
@@ -61,10 +60,12 @@ class Err extends Tools {
     stacks.splice(1, 1)
     err.stack = stacks.join('\n')
     const values = {}
+    let detailsMessage
     for (const key in this.payload) {
       const value = this.payload[key]
       if (key === 'details' && isArray(value)) {
-        const result = this.formatErrorDetails(value)
+        const { result, detailsMessage: dm } = this.formatErrorDetails(value)
+        if (!isEmpty(dm)) detailsMessage = dm
         if (result) merge(values, result)
       }
       err[key] = value
@@ -72,6 +73,7 @@ class Err extends Tools {
     if (!isEmpty(values)) err.values = values
     err.ns = this.plugin.ns
     err.orgMessage = this.orgMessage
+    if (detailsMessage) err.detailsMessage = detailsMessage
     return err
   }
 
@@ -83,7 +85,7 @@ class Err extends Tools {
   fatal = () => {
     const err = this.write()
     console.error(err)
-    this.app.exit()
+    this.app.exit(true)
   }
 
   /**
@@ -97,6 +99,7 @@ class Err extends Tools {
     const { isString } = this.app.lib._
     const result = {}
     const me = this
+    const detailsMessage = []
     each(value, (v, i) => {
       if (isString(v)) v = { error: v }
       if (!v.context) return undefined
@@ -110,8 +113,12 @@ class Err extends Tools {
         value: val,
         ext: { type: v.type, context: v.context }
       }
+      detailsMessage.push(me.plugin.t('fieldError%s%s', field, value[i].error))
     })
-    return result
+    return {
+      result,
+      detailsMessage: detailsMessage.length > 0 ? (me.plugin.t('error') + ': ' + detailsMessage.join(', ')) : ''
+    }
   }
 }
 

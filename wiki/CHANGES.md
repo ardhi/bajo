@@ -1,9 +1,17 @@
 # Changes
 
+## 2025-12-24
+
+- Pass ```true``` to ```this.app.exit()``` to exit abruptly. Defaults to ```SIGINT```
+- Add ```detailsMessage``` to ```Err``` class if error object has ```details``` in payload
+- Upgrade ```aneka@0.10.0```
+- Bugfix: program arguments should not parsed as object
+
 ## 2025-12-21
 
 - ```runHook()``` now accept both ```alias``` & ```ns``` prefixed name
 - In case of unknown plugin or plugin isn't loaded, ```runHook``` simply exit silently
+- ```this.app.pluginClass``` is now ```this.app.baseClass``` and all containing class definition keys are pascal cased to match with their constructor names
 
 ## 2025-12-20
 

@@ -1,6 +1,7 @@
 import semver from 'semver'
 import lodash from 'lodash'
 import Print from '../plugin/print.js'
+import { pascalCase } from 'aneka'
 
 const {
   merge,
@@ -68,7 +69,7 @@ export async function checkDependencies () {
     const { ns, pkgName } = this
     const { join } = this.app.bajo
     this.app.bajo.log.trace('- %s', ns)
-    const { dependencies } = this.app.pluginClass[this.ns]
+    const { dependencies } = this.app.baseClass[pascalCase(this.ns)]
     const odep = reduce(dependencies, (o, k) => {
       const item = map(k.split('@'), m => trim(m))
       if (k[0] === '@') o['@' + item[1]] = item[2]

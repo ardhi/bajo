@@ -178,5 +178,6 @@
   "unknown%s%s": "%s|upperFirst '%s' tidak dikenal",
   "notImplemented%s%s": "%s|upperFirst '%s' belum diimplementasikan",
   "method": "Metode",
-  "exist%s%s": "%s|upperFirst '%s' sudah ada"
+  "exist%s%s": "%s|upperFirst '%s' sudah ada",
+  "fieldError%s%s": "'%s': %s|lowerFirst"
 }

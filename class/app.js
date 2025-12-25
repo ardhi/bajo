@@ -22,7 +22,8 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
 dayjs.extend(weekOfYear)
 
-const { isPlainObject, get, reverse, map, last, without, keys } = lodash
+const { camelCase, isPlainObject, get, reverse, map, last, without, keys } = lodash
+const { pascalCase } = aneka
 let unknownLangWarning = false
 
 function outmatchNs (source, pattern) {
@@ -56,7 +57,6 @@ function outmatchNs (source, pattern) {
  * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
  * @property {Object} freeze
  * @property {Object} findDeep
- * @property {Object} Tools - Tools class
  * @see App
  */
 const lib = {
@@ -68,8 +68,7 @@ const lib = {
   dayjs,
   aneka,
   freeze,
-  findDeep,
-  Tools
+  findDeep
 }
 
 /**
@@ -174,16 +173,16 @@ class App {
     this.log = {}
 
     /**
-     * All plugin's class definitions are saved here as key-value pairs with plugin name as its key.
-     * The special key ```base``` is for {@link Base}'s class so anytime you want to
+     * All plugin's base class are saved here as key-value pairs with plugin name as its key.
+     * The special key ```Base``` && ```Tools``` is for {@link Base} & {@link Tools} class so anytime you want to
      * create your own plugin, just use something like this:
      *
      * ```javascript
-     * class MyPlugin extends this.app.pluginClass.base {
+     * class MyPlugin extends this.app.baseClass.Base {
      *   ... your class
      * }
      */
-    this.pluginClass = { base: Base }
+    this.baseClass = { Base, Tools }
 
     /**
      * If app runs in applet mode, this will be the applet's name
@@ -269,26 +268,26 @@ class App {
   }
 
   /**
-   * Add and save plugin and it's class definition (if provided)
+   * Add and save plugin and it's base class definition (if provided)
    *
    * @method
    * @param {TPlugin} plugin - A valid bajo plugin
-   * @param {Object} [pluginClass] - Plugin's class definition
+   * @param {Object} [baseClass] - Base class definition
    */
-  addPlugin = (plugin, pluginClass) => {
+  addPlugin = (plugin, baseClass) => {
     if (this[plugin.ns]) throw new Error(`Plugin '${plugin.ns}' added already`)
     this[plugin.ns] = plugin
-    if (pluginClass) this.pluginClass[plugin.ns] = pluginClass
+    if (baseClass) this.baseClass[pascalCase(plugin.ns)] = baseClass
   }
 
   /**
-   * Get all loaded plugin namesspaces
+   * Get all loaded plugin namespaces
    *
    * @method
    * @returns {string[]}
    */
   getAllNs = () => {
-    return without(keys(this.pluginClass), 'base')
+    return without(keys(this.baseClass), 'Base', 'Tools').map(name => camelCase(name))
   }
 
   /**
@@ -327,9 +326,9 @@ class App {
   boot = async () => {
     // argv/args/env
     this.bajo = new Bajo(this)
-    const { argv, args } = aneka.parseObject(await aneka.parseArgsArgv() ?? {}, { parseValue: true })
+    const { argv, args } = await aneka.parseArgsArgv() ?? {}
     this.args = args
-    this.argv = argv
+    this.argv = aneka.parseObject(argv, { parseValue: true })
     this.envVars = aneka.parseObject(aneka.parseEnv(), { parseValue: true })
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.init()
@@ -356,7 +355,8 @@ class App {
    * @param {string} [signal=SIGINT] - Signal to send
    */
   exit = (signal = 'SIGINT') => {
-    process.kill(process.pid, 'SIGINT')
+    if (signal === true) process.exit('1')
+    process.kill(process.pid, signal)
   }
 
   /**

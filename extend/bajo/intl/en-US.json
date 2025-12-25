@@ -175,8 +175,9 @@
   "pluginPackageNotFound%s": "Plugin package '%s' file not found!",
   "pluginPackageInvalid%s": "`Plugin package '%s' should be an instance of Base class`",
   "appletNeedsBajoCli": "Applet needs to have 'bajo-cli' loaded",
-  "unknown%s%s": "Unknown %s '%s'",
+  "unknown%s%s": "Unknown %s|toLower '%s'",
   "notImplemented%s%s": "%s|upperFirst '%s' not implemented yet",
   "method": "Method",
-  "exist%s%s": "%s|upperFirst '%s' exists already"
+  "exist%s%s": "%s|upperFirst '%s' exists already",
+  "fieldError%s%s": "'%s': %s|lowerFirst"
 }

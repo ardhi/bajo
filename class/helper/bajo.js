@@ -81,7 +81,7 @@ const defConfig = {
 const defMain = `async function factory (pkgName) {
   const me = this
 
-  return class Main extends this.app.pluginClass.base {
+  return class Main extends this.app.baseClass.Base {
     constructor () {
       super(pkgName, me.app)
       this.config = {}
@@ -168,7 +168,7 @@ export async function buildPlugins () {
     const { default: builder } = await import(resolvePath(factory, true))
     const ClassDef = await builder.call(this, pkg)
     const plugin = new ClassDef()
-    if (!(plugin instanceof this.app.pluginClass.base)) throw this.error('pluginPackageInvalid%s', pkg)
+    if (!(plugin instanceof this.app.baseClass.Base)) throw this.error('pluginPackageInvalid%s', pkg)
     this.app.addPlugin(plugin, ClassDef)
     this.log.trace('- ' + pkg)
   }
@@ -390,7 +390,7 @@ export async function runAsApplet () {
    * @see {@tutorial hook}
    * @see module:Helper/Bajo.runAsApplet
    */
-  await this.runHook(`${this.app[applet.ns]}:beforeAppletRun`, ...this.app.args)
+  await this.runHook(`${applet.ns}:beforeAppletRun`, ...this.app.args)
   await this.app.bajoCli.runApplet(applet, path, ...this.app.args)
   /**
    * Run after applet is run. ```[ns]``` is applet's namespace
@@ -401,5 +401,5 @@ export async function runAsApplet () {
    * @see {@tutorial hook}
    * @see module:Helper/Bajo.runAsApplet
    */
-  await this.runHook(`${this.app[applet.ns]}:afterAppletRun`, ...this.app.args)
+  await this.runHook(`${applet.ns}:afterAppletRun`, ...this.app.args)
 }

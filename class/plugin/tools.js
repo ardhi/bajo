@@ -20,9 +20,20 @@ class Tools {
   }
 
   /**
+   * Force bind properties to self (```this```)
+   *
+   * @param {string[]} names
+   */
+  selfBind (names) {
+    for (const name of names) {
+      this[name] = this[name].bind(this)
+    }
+  }
+
+  /**
    * Dispose internal references
    */
-  dispose = () => {
+  dispose () {
     this.app = null
     this.plugin = null
   }
