@@ -40,6 +40,9 @@ const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
 
 const defConfig = {
   env: 'dev',
+  runtime: {
+    noWarning: false
+  },
   log: {
     timeTaken: false,
     dateFormat: 'YYYY-MM-DDTHH:mm:ss.SSS',
@@ -210,7 +213,7 @@ export async function buildExtConfig () {
   const { parseObject } = this.app.lib
 
   let resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
-  resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env']), omitted)
+  resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
   const envs = this.app.constructor.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
   // language
@@ -231,6 +234,7 @@ export async function buildExtConfig () {
     if (!this.config.log.applet) this.config.log.level = 'silent'
     this.config.exitHandler = false
   }
+  if (this.config.runtime.noWarning) process.removeAllListeners('warning')
   this.app.log = new Log(this.app)
   this.log.trace('dataDir%s', this.dir.data)
   this.log.debug('configHandlers%s', this.join(exts))

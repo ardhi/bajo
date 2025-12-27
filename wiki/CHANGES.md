@@ -1,5 +1,9 @@
 # Changes
 
+## 2025-12-27
+
+- Add config object ```this.config.runtime``` to adjust some runtime settings
+
 ## 2025-12-24
 
 - Pass ```true``` to ```this.app.exit()``` to exit abruptly. Defaults to ```SIGINT```
