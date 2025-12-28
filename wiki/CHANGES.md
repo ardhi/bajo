@@ -1,5 +1,9 @@
 # Changes
 
+## 2025-12-29
+
+- [2.2.0] Add ```this.selfBind()``` to class ```Plugin```
+
 ## 2025-12-27
 
 - [2.2.0] Add some translations

@@ -20,9 +20,9 @@ class Tools {
   }
 
   /**
-   * Force bind properties to self (```this```)
+   * Force bind methods to self (```this```)
    *
-   * @param {string[]} names
+   * @param {string[]} names - Method's names
    */
   selfBind (names) {
     for (const name of names) {
