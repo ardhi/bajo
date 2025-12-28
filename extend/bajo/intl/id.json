@@ -179,5 +179,6 @@
   "notImplemented%s%s": "%s|upperFirst '%s' belum diimplementasikan",
   "method": "Metode",
   "exist%s%s": "%s|upperFirst '%s' sudah ada",
-  "fieldError%s%s": "'%s': %s|lowerFirst"
+  "fieldError%s%s": "'%s': %s|lowerFirst",
+  "reservedName%s%s": "Nama %s|lowerFirst '%s' adalah nama tang di reserve. Silahkan gunakan nama lainnya"
 }

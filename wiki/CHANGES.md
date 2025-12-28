@@ -2,28 +2,32 @@
 
 ## 2025-12-27
 
-- Add config object ```this.config.runtime``` to adjust some runtime settings
+- [2.2.0] Add some translations
+
+## 2025-12-27
+
+- [2.2.0] Add config object ```this.config.runtime``` to adjust some runtime settings
 
 ## 2025-12-24
 
-- Pass ```true``` to ```this.app.exit()``` to exit abruptly. Defaults to ```SIGINT```
-- Add ```detailsMessage``` to ```Err``` class if error object has ```details``` in payload
-- Upgrade ```aneka@0.10.0```
-- Bugfix: program arguments should not parsed as object
+- [2.2.0] Pass ```true``` to ```this.app.exit()``` to exit abruptly. Defaults to ```SIGINT```
+- [2.2.0] Add ```detailsMessage``` to ```Err``` class if error object has ```details``` in payload
+- [2.2.0] Upgrade ```aneka@0.10.0```
+- [2.2.0] Bugfix: program arguments should not parsed as object
 
 ## 2025-12-21
 
-- ```runHook()``` now accept both ```alias``` & ```ns``` prefixed name
-- In case of unknown plugin or plugin isn't loaded, ```runHook``` simply exit silently
-- ```this.app.pluginClass``` is now ```this.app.baseClass``` and all containing class definition keys are pascal cased to match with their constructor names
+- [2.2.0] ```runHook()``` now accept both ```alias``` & ```ns``` prefixed name
+- [2.2.0] In case of unknown plugin or plugin isn't loaded, ```runHook``` simply exit silently
+- [2.2.0] ```this.app.pluginClass``` is now ```this.app.baseClass``` and all containing class definition keys are pascal cased to match with their constructor names
 
 ## 2025-12-20
 
-- Removing dynamically attached methods because its problematic and leads to confusion
+- [2.2.0] Removing dynamically attached methods because its problematic and leads to confusion
 
 ## 2025-12-19
 
-- Upgrade to ```aneka@0.9.0```
+- [2.2.0] Upgrade to ```aneka@0.9.0```
 
 ## 2025-12-13
 

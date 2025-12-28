@@ -179,5 +179,6 @@
   "notImplemented%s%s": "%s|upperFirst '%s' not implemented yet",
   "method": "Method",
   "exist%s%s": "%s|upperFirst '%s' exists already",
-  "fieldError%s%s": "'%s': %s|lowerFirst"
+  "fieldError%s%s": "'%s': %s|lowerFirst",
+  "reservedName%s%s": "%s|upperFirst name '%s' is a reserved name. Please rename to something else"
 }
