@@ -99,6 +99,7 @@ class Base extends Plugin {
    * @async
    */
   exit = async () => {
+    this.dispose()
   }
 
   /**

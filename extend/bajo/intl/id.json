@@ -23,7 +23,7 @@
   "setupBootOrder": "Atur urutan booting",
   "configHandlers%s": "Pengatur konfigurasi: %s",
   "dataDir%s": "Dir data: %s",
-  "exited": "Exited",
+  "exited%s": "- %s keluar",
   "appShutdown": "Aplikasi ditutup",
   "appletModeActivated": "Mode applet diaktifkan",
   "collected%s%d": "%s|upperFirst terkoleksi: %d",

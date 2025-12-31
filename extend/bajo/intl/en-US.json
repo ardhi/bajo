@@ -23,7 +23,7 @@
   "setupBootOrder": "Setup boot order",
   "configHandlers%s": "Config handlers: %s",
   "dataDir%s": "Data dir: %s",
-  "exited": "Exited",
+  "exited%s": "- %s exited",
   "appShutdown": "App shutdown",
   "appletModeActivated": "Applet mode activated",
   "collected%s%d": "Collected %s: %d",

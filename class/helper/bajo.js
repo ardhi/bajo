@@ -305,11 +305,12 @@ export async function exitHandler () {
   async function exit (signal) {
     const { eachPlugins } = this
     if (signal) this.log.warn('signalReceived%s', signal)
+    const me = this
     await eachPlugins(async function ({ ns }) {
       try {
         await this.exit()
       } catch (err) {}
-      this.log.trace('exited')
+      me.log.trace('exited%s', this.ns)
     })
     this.log.debug('appShutdown')
     process.exit(0)
