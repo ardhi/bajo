@@ -109,7 +109,7 @@ export async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo
   const me = this
   me.bajo.hooks = this.bajo.hooks ?? []
-  me.bajo.log.debug('collectHooks')
+  me.bajo.log.trace('collecting%s', this.t('hooks'))
   // collects
   await eachPlugins(async function ({ dir, file }) {
     const { ns } = this
@@ -120,14 +120,15 @@ export async function collectHooks () {
     me.bajo.hooks.push(mod)
   }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only
-  if (!isLogInRange('trace')) return
-  const items = groupBy(me.bajo.hooks, 'ns')
-  forOwn(items, (v, k) => {
-    const hooks = groupBy(v, 'path')
-    forOwn(hooks, (v1, k1) => {
-      me.bajo.log.trace('- %s:%s (%d)', k, k1, v1.length)
+  if (isLogInRange('trace')) {
+    const items = groupBy(me.bajo.hooks, 'ns')
+    forOwn(items, (v, k) => {
+      const hooks = groupBy(v, 'path')
+      forOwn(hooks, (v1, k1) => {
+        me.bajo.log.trace('- %s:%s (%d)', k, k1, v1.length)
+      })
     })
-  })
+  }
 
   /**
    * Run after hooks are collected
@@ -139,6 +140,7 @@ export async function collectHooks () {
    * @see module:Helper/Base.collectHooks
    */
   await runHook('bajo:afterCollectHooks', this.bajo.hooks)
+  me.bajo.log.debug('collected%s%d', this.t('hooks'), me.bajo.hooks.length)
 }
 
 /**
@@ -156,7 +158,6 @@ export async function run () {
   const { freeze } = me.lib
   const methods = ['init']
   if (!me.applet) methods.push('start')
-  me.bajo.log.debug('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
   for (const method of methods) {
     /**
      * Run before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
@@ -202,5 +203,7 @@ export async function run () {
      * @see module:Helper/Base.run
      */
     await runHook(`bajo:${camelCase(`after all ${method}`)}`)
+    if (me.bajo.config.log.level === 'trace') me.bajo.log.trace('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
+    else me.bajo.log.debug('loadedPlugins%s', me.bajo.app.pluginPkgs.length)
   }
 }
