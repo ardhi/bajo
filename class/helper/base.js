@@ -112,11 +112,11 @@ export async function collectHooks () {
   me.bajo.log.trace('collecting%s', this.t('hooks'))
   // collects
   await eachPlugins(async function ({ dir, file }) {
-    const { ns } = this
-    const { fullNs, path } = breakNsPathFromFile({ file, dir, baseNs: ns, suffix: '/hook/' })
+    const { ns: baseNs } = this
+    const { ns, subNs, path } = breakNsPathFromFile({ file, dir, baseNs, suffix: '/hook/' })
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
-    merge(mod, { ns: fullNs, path, src: ns })
+    merge(mod, { ns, subNs, path, src: baseNs })
     me.bajo.hooks.push(mod)
   }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only

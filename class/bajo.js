@@ -955,12 +955,13 @@ class Bajo extends Plugin {
   runHook = async (hookName, ...args) => {
     let ns
     let path
+    let subNs
     try {
-      ({ ns, path } = this.breakNsPath(hookName ?? ''))
+      ({ ns, subNs, path } = this.breakNsPath(hookName ?? ''))
     } catch (err) {
       return
     }
-    let fns = filter(this.app.bajo.hooks, { ns, path })
+    let fns = filter(this.app.bajo.hooks, { ns, subNs, path })
     if (isEmpty(fns)) return []
     fns = orderBy(fns, ['level'])
     const results = []
