@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Base from '../class/base.js'
 
-function makeMockApp({ mainNs = 'app-main', throwOnDataConfig = false } = {}) {
+function makeMockApp ({ mainNs = 'app-main', throwOnDataConfig = false } = {}) {
   // small lodash-like helpers used by Base.loadConfig
   const _ = {
     get: (obj, path, defVal) => {
@@ -41,7 +41,7 @@ function makeMockApp({ mainNs = 'app-main', throwOnDataConfig = false } = {}) {
 
   return {
     mainNs,
-    lib: { aneka: { defaultsDeep }, _: _ },
+    lib: { aneka: { defaultsDeep }, _ },
     bajo: {
       dir: { base: '/base', data: '/data' },
       readAllConfigs,
