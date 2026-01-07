@@ -96,7 +96,7 @@ class Err extends Tools {
    * @returns {Object}
    */
   formatErrorDetails = (value) => {
-    const { isString } = this.app.lib._
+    const { isString, last } = this.app.lib._
     const result = {}
     const me = this
     const detailsMessage = []
@@ -107,9 +107,15 @@ class Err extends Tools {
       if (v.type === 'any.only') v.context.ref = get(v, 'context.valids', []).join(', ')
       const field = get(v, 'context.key')
       const val = get(v, 'context.value')
+      let error = me.plugin.t(`validation.${v.type}`, v.context ?? {}, {})
+      if (error.includes(' ref:')) {
+        const item = last(error.split(' '))
+        const [, rfield] = item.split(':')
+        error = error.replace(item, `'${me.plugin.t('field.' + rfield)}'`)
+      }
       value[i] = {
         field,
-        error: me.plugin.t(`validation.${v.type}`, v.context ?? {}, {}),
+        error,
         value: val,
         ext: { type: v.type, context: v.context }
       }

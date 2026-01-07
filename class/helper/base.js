@@ -121,7 +121,7 @@ export async function collectHooks () {
   }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only
   if (isLogInRange('trace')) {
-    const items = groupBy(me.bajo.hooks, 'ns')
+    const items = groupBy(me.bajo.hooks, item => item.ns + (item.subNs ? `.${item.subNs}` : ''))
     forOwn(items, (v, k) => {
       const hooks = groupBy(v, 'path')
       forOwn(hooks, (v1, k1) => {
