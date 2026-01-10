@@ -176,7 +176,6 @@ export async function buildPlugins () {
       plugin.constructor.dependencies = get(pkgInfo, 'bajo.dependencies', [])
       plugin.constructor.bootorder = get(pkgInfo, 'bajo.bootorder')
     }
-    console.log(plugin.constructor.alias)
     this.app.addPlugin(plugin, ClassDef)
     this.log.trace('- ' + pkg)
   }
