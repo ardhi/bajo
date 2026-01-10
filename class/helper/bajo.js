@@ -16,9 +16,6 @@ import aneka from 'aneka'
 const { currentLoc, resolvePath } = aneka
 
 const {
-  reduce,
-  isNaN,
-  forOwn,
   orderBy,
   isFunction,
   isPlainObject,
@@ -172,6 +169,14 @@ export async function buildPlugins () {
     const ClassDef = await builder.call(this, pkg)
     const plugin = new ClassDef()
     if (!(plugin instanceof this.app.baseClass.Base)) throw this.error('pluginPackageInvalid%s', pkg)
+    if (ns === 'main') plugin.constructor.alias = this.app.mainNs
+    else {
+      const pkgInfo = plugin.getPkgInfo(dir)
+      plugin.constructor.alias = get(pkgInfo, 'bajo.alias', (pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5) : ns).toLowerCase())
+      plugin.constructor.dependencies = get(pkgInfo, 'bajo.dependencies', [])
+      plugin.constructor.bootorder = get(pkgInfo, 'bajo.bootorder')
+    }
+    console.log(plugin.constructor.alias)
     this.app.addPlugin(plugin, ClassDef)
     this.log.trace('- ' + pkg)
   }
@@ -247,29 +252,20 @@ export async function buildExtConfig () {
  */
 export async function bootOrder () {
   const { freeze } = this.app.lib
+  const { isNumber } = this.app.lib._
   this.log.debug('setupBootOrder')
-  const order = reduce(this.app.pluginPkgs, (o, k, i) => {
-    const key = map(k.split(':'), m => trim(m))
-    if (key[1] && !isNaN(Number(key[1]))) o[key[0]] = Number(key[1])
-    else o[key[0]] = 10000 + i
-    return o
-  }, {})
-  const norder = {}
-  for (let n of this.app.pluginPkgs) {
-    n = map(n.split(':'), m => trim(m))[0]
-    const dir = n === this.app.mainNs ? (`${this.dir.base}/${this.app.mainNs}`) : this.getModuleDir(n)
-    if (n !== this.app.mainNs && !fs.existsSync(dir)) throw this.error('packageNotFoundOrNotBajo%s', n)
-    norder[n] = NaN
-    try {
-      norder[n] = Number(trim(await fs.readFile(`${dir}/.bootorder`, 'utf8')))
-    } catch (err) {}
+  let counter = 1000
+  const orders = []
+  for (const ns of this.app.getAllNs()) {
+    const item = { ns }
+    if (isNumber(this.app[ns].constructor.bootorder)) item.val = this.app[ns].constructor.bootorder
+    else {
+      item.val = counter
+      counter++
+    }
+    orders.push(item)
   }
-  const result = []
-  forOwn(order, (v, k) => {
-    const item = { k, v: isNaN(norder[k]) ? v : norder[k] }
-    result.push(item)
-  })
-  this.app.pluginPkgs = map(orderBy(result, ['v']), 'k')
+  this.app.pluginPkgs = map(orderBy(orders, ['val']), 'ns')
   this.log.debug('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
   // misc
   freeze(this.config)

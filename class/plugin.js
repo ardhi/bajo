@@ -38,7 +38,7 @@ class Plugin {
    * @memberof Plugin
    * @type {string}
    */
-  static alias = ''
+  static alias
 
   /**
    * @param {string} pkgName - Package name (the one you use in package.json)
@@ -86,12 +86,12 @@ class Plugin {
    * @param {string} [dir] - Package directory. Defaults to the current plugin's package dir
    * @param {Array} [keys=['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']] - Field keys to be use. Set empty to use all keys.
    */
-  getPkgInfo = async (dir, keys = ['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']) => {
-    const { readJson } = this.app.bajo
+  getPkgInfo = (dir, keys = ['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']) => {
     const { pick, isEmpty } = this.app.lib._
+    const { fs } = this.app.lib
     const file = `${dir ?? this.dir.pkg}/package.json`
-    const pkgJson = await readJson(file)
-    return isEmpty(keys) ? pkgJson : pick(pkgJson, keys)
+    const pkg = fs.readJsonSync(file)
+    return isEmpty(keys) ? pkg : pick(pkg, keys)
   }
 
   /**

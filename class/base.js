@@ -36,7 +36,7 @@ class Base extends Plugin {
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
-    const { get, kebabCase, keys, pick } = this.app.lib._
+    const { get, keys, pick } = this.app.lib._
     const { log, getModuleDir, readAllConfigs } = this.app.bajo
     const { parseObject } = this.app.lib
 
@@ -44,17 +44,10 @@ class Base extends Plugin {
     log.trace('- %s', this.ns)
     const dir = this.ns === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs(`${dir}/config`)
-    this.constructor.alias = this.alias ?? (this.pkgName.slice(0, 5) === 'bajo-' ? this.pkgName.slice(5).toLowerCase() : this.ns.toLowerCase())
-    this.constructor.alias = kebabCase(this.alias)
 
     this.dir = {
       pkg: dir,
       data: `${this.app.bajo.dir.data}/plugins/${this.ns}`
-    }
-    this.pkg = await this.getPkgInfo()
-    if (this.ns === this.app.mainNs) {
-      this.constructor.alias = this.app.mainNs
-      this.title = this.title ?? this.alias
     }
     // merge with config from datadir
     try {

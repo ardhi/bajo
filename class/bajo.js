@@ -90,6 +90,9 @@ class Bajo extends Plugin {
     await bootOrder.call(this)
     await bootPlugins.call(this)
     await exitHandler.call(this)
+    if (this.app.bajoSpatial) {
+      this.anekaSpatial = await this.importPkg('bajoSpatial:aneka-spatial')
+    }
   }
 
   breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
@@ -342,10 +345,9 @@ class Bajo extends Plugin {
    */
   eachPlugins = async (handler, options = {}) => {
     if (typeof options === 'string') options = { glob: options }
-    const result = {}
-    const pluginPkgs = cloneDeep(this.app.pluginPkgs) ?? []
     const { glob, useBajo, prefix = '', noUnderscore = true, returnItems } = options
-    if (useBajo) pluginPkgs.unshift('bajo')
+    const pluginPkgs = useBajo ? [cloneDeep(this.app.pluginPkgs), 'bajo'] : this.app.pluginPkgs
+    const result = {}
     for (const pkgName of pluginPkgs) {
       const ns = camelCase(pkgName)
       let r
@@ -464,8 +466,8 @@ class Bajo extends Plugin {
     if (type === 'auto') {
       if (value instanceof Date) type = 'datetime'
     }
-    if (['float', 'double'].includes(type) && this.app.bajoSpatial) {
-      const { latToDms, lngToDms } = this.app.lib.anekaSpatial
+    if (['float', 'double'].includes(type) && this.anekaSpatial) {
+      const { latToDms, lngToDms } = this.anekaSpatial
       if (options.latitude) return latToDms(value)
       if (options.longitude) return lngToDms(value)
     }

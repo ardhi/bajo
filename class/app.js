@@ -22,7 +22,7 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
 dayjs.extend(weekOfYear)
 
-const { camelCase, isPlainObject, get, reverse, map, last, without, keys } = lodash
+const { camelCase, isPlainObject, get, reverse, map, last, without } = lodash
 const { pascalCase } = aneka
 let unknownLangWarning = false
 
@@ -287,7 +287,7 @@ class App {
    * @returns {string[]}
    */
   getAllNs = () => {
-    return without(keys(this.baseClass), 'Base', 'Tools').map(name => camelCase(name))
+    return this.pluginPkgs.map(pkg => camelCase(pkg))
   }
 
   /**
