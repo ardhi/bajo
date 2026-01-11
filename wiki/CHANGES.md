@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-01-11
+
+- [2.2.0] Simplify numerous things by putting most of static properties back as normal class properties
+
 ## 2025-12-29
 
 - [2.2.0] Add ```this.selfBind()``` to class ```Plugin```

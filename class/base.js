@@ -9,22 +9,24 @@ import Plugin from './plugin.js'
 
 class Base extends Plugin {
   /**
-   * Dependencies to other plugins. Enter all plugin's package name your plugin dependent from.
-   *
-   * Semver is also supported.
-   *
-   * @constant {string[]}
-   * @memberof Base
-   */
-  static dependencies = []
-
-  /**
    * @param {string} pkgName - Package name (the one you use in package.json)
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
     super(pkgName, app)
+
+    /**
+     * Dependencies to other plugins. Enter all plugin's package name your plugin dependent from.
+     *
+     * Semver is also supported.
+     *
+     * @constant {string[]}
+     * @memberof Base
+     */
+    this.dependencies = []
+
     this.state = {}
+    this.pkg = {}
   }
 
   /**

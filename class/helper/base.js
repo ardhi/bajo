@@ -1,7 +1,6 @@
 import semver from 'semver'
 import lodash from 'lodash'
 import Print from '../plugin/print.js'
-import { pascalCase } from 'aneka'
 
 const {
   merge,
@@ -45,18 +44,17 @@ export async function buildConfigs () {
  * @async
  */
 export async function checkNameAliases () {
-  const { eachPlugins } = this.bajo
   this.bajo.log.debug('checkAliasNameClash')
   const refs = []
-  await eachPlugins(async function () {
-    const { ns, pkgName } = this
-    const { alias } = this.constructor
+  for (const pkg of this.bajo.app.pluginPkgs) {
+    const plugin = this.bajo.app[camelCase(pkg)]
+    const { ns, alias } = plugin
     let item = find(refs, { ns })
-    if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkgName, item.ns, item.pkgName, { code: 'BAJO_NAME_CLASH' })
+    if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkg, item.ns, item.pkg, { code: 'BAJO_NAME_CLASH' })
     item = find(refs, { alias })
-    if (item) throw this.error('pluginNameClash%s%s%s%s', alias, pkgName, item.alias, item.pkgName, { code: 'BAJO_ALIAS_CLASH' })
-    refs.push({ ns, alias, pkgName })
-  })
+    if (item) throw this.error('pluginNameClash%s%s%s%s', alias, pkg, item.alias, item.pkg, { code: 'BAJO_ALIAS_CLASH' })
+    refs.push({ ns, alias, pkg })
+  }
 }
 
 /**
@@ -65,11 +63,12 @@ export async function checkNameAliases () {
  * @async
  */
 export async function checkDependencies () {
-  async function runner () {
-    const { ns, pkgName } = this
-    const { join } = this.app.bajo
-    this.app.bajo.log.trace('- %s', ns)
-    const { dependencies } = this.app.baseClass[pascalCase(this.ns)]
+  const { join } = this.bajo
+  this.bajo.log.debug('checkDeps')
+  for (const pkg of this.bajo.app.pluginPkgs) {
+    const plugin = this.bajo.app[camelCase(pkg)]
+    const { ns, dependencies } = plugin
+    this.bajo.log.trace('- %s', ns)
     const odep = reduce(dependencies, (o, k) => {
       const item = map(k.split('@'), m => trim(m))
       if (k[0] === '@') o['@' + item[1]] = item[2]
@@ -78,25 +77,19 @@ export async function checkDependencies () {
     }, {})
     const deps = keys(odep)
     if (deps.length > 0) {
-      if (intersection(this.app.pluginPkgs, deps).length !== deps.length) {
-        throw this.error('dependencyUnfulfilled%s%s', pkgName, join(deps), { code: 'BAJO_DEPENDENCY' })
+      if (intersection(this.bajo.app.pluginPkgs, deps).length !== deps.length) {
+        throw this.error('dependencyUnfulfilled%s%s', pkg, join(deps), { code: 'BAJO_DEPENDENCY' })
       }
       each(deps, d => {
         if (!odep[d]) return
-        const ver = get(this.app[camelCase(d)], 'config.pkg.version')
+        const ver = get(this.bajo.app[camelCase(d)], 'pkg.version')
         if (!ver) return
         if (!semver.satisfies(ver, odep[d])) {
-          throw this.error('semverCheckFailed%s%s', pkgName, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
+          throw this.error('semverCheckFailed%s%s', pkg, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
         }
       })
     }
   }
-
-  const { eachPlugins } = this.bajo
-  this.bajo.log.debug('checkDeps')
-  await eachPlugins(async function () {
-    await runner.call(this)
-  })
 }
 
 /**

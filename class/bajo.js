@@ -41,12 +41,12 @@ const { resolvePath, currentLoc } = aneka
  * @class
  */
 class Bajo extends Plugin {
-  static alias = 'bajo'
   /**
    * @param {App} app - App instance. Usefull to call app method inside a plugin
    */
   constructor (app) {
     super('bajo', app)
+    this.alias = 'bajo'
     this.whiteSpace = [' ', '\t', '\n', '\r']
     /**
      * Config object

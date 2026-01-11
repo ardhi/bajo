@@ -15,38 +15,35 @@ const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
  */
 class Plugin {
   /**
-   * Package name, the one from package.json
-   *
-   * @memberof Plugin
-   * @constant {string}
-   */
-  static pkgName
-
-  /**
-   * Namespace (ns) or plugin's name. Simply the camel cased version of plugin's package name
-   *
-   * @memberof Plugin
-   * @constant {string}
-   */
-  static ns
-
-  /**
-   * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
-   * Bajo will provide this automatically (by using the kebab-cased version of plugin name)
-   *
-   * @readonly
-   * @memberof Plugin
-   * @type {string}
-   */
-  static alias
-
-  /**
    * @param {string} pkgName - Package name (the one you use in package.json)
    * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
-    this.constructor.pkgName = pkgName
-    this.constructor.ns = camelCase(pkgName)
+    /**
+     * Package name, the one from package.json
+     *
+     * @memberof Plugin
+     * @constant {string}
+     */
+    this.pkgName = pkgName
+
+    /**
+     * Namespace (ns) or plugin's name. Simply the camel cased version of plugin's package name
+     *
+     * @memberof Plugin
+     * @constant {string}
+     */
+    this.ns = camelCase(pkgName)
+
+    /**
+     * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
+     * Bajo will provide this automatically (by using the kebab-cased version of plugin name)
+     *
+     * @readonly
+     * @memberof Plugin
+     * @type {string}
+     */
+    this.alias = null
 
     /**
      * Reference to app instance
@@ -139,33 +136,6 @@ class Plugin {
     if (!this.print) return new Error(msg, ...args)
     const error = new Err(this, msg, ...args)
     error.fatal()
-  }
-
-  /**
-   * Getter for plugin's package name
-   *
-   * @type {string}
-   */
-  get pkgName () {
-    return this.constructor.pkgName
-  }
-
-  /**
-   * Getter for plugin's ns
-   *
-   * @type {string}
-   */
-  get ns () {
-    return this.constructor.ns
-  }
-
-  /**
-   * Getter for plugin's alias
-   *
-   * @type {string}
-   */
-  get alias () {
-    return this.constructor.alias
   }
 
   /**

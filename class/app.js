@@ -78,25 +78,25 @@ const lib = {
  */
 class App {
   /**
-   * Your main namespace. And yes, you suppose to NOT CHANGE this
-   *
-   * @memberof App
-   * @constant {string}
-   * @default 'main'
-   */
-  static mainNs = 'main'
-
-  /**
-   * App environments
-   * @memberof App
-   * @constant {TAppEnv}
-   */
-  static envs = { dev: 'development', prod: 'production' }
-
-  /**
    * @param {string} cwd - Current working dirctory
    */
   constructor (cwd) {
+    /**
+     * Your main namespace. And yes, you suppose to NOT CHANGE this
+     *
+     * @memberof App
+     * @constant {string}
+     * @default 'main'
+     */
+    this.mainNs = 'main'
+
+    /**
+     * App environments
+     * @memberof App
+     * @constant {TAppEnv}
+     */
+    this.envs = { dev: 'development', prod: 'production' }
+
     /**
      * Date/time when your app start
      * @type {Date}
@@ -261,10 +261,6 @@ class App {
     }
     this.dir = aneka.resolvePath(cwd)
     process.env.APPDIR = this.dir
-  }
-
-  get mainNs () {
-    return this.constructor.mainNs
   }
 
   /**

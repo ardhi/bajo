@@ -169,13 +169,9 @@ export async function buildPlugins () {
     const ClassDef = await builder.call(this, pkg)
     const plugin = new ClassDef()
     if (!(plugin instanceof this.app.baseClass.Base)) throw this.error('pluginPackageInvalid%s', pkg)
-    if (ns === 'main') plugin.constructor.alias = this.app.mainNs
-    else {
-      const pkgInfo = plugin.getPkgInfo(dir)
-      plugin.constructor.alias = get(pkgInfo, 'bajo.alias', (pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5) : ns).toLowerCase())
-      plugin.constructor.dependencies = get(pkgInfo, 'bajo.dependencies', [])
-      plugin.constructor.bootorder = get(pkgInfo, 'bajo.bootorder')
-    }
+    plugin.pkg = plugin.getPkgInfo(ns === 'main' ? this.dir.base : dir)
+    plugin.alias = ns === 'main' ? this.app.mainNs : get(plugin.pkg, 'bajo.alias', (pkg.slice(0, 5) === 'bajo-' ? pkg.slice(5) : ns).toLowerCase())
+    plugin.dependencies = get(plugin.pkg, 'bajo.dependencies', [])
     this.app.addPlugin(plugin, ClassDef)
     this.log.trace('- ' + pkg)
   }
@@ -218,7 +214,7 @@ export async function buildExtConfig () {
 
   let resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
-  const envs = this.app.constructor.envs
+  const envs = this.app.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
   // language
   this.config.lang = (this.config.lang ?? '').split('.')[0]
@@ -255,17 +251,19 @@ export async function bootOrder () {
   this.log.debug('setupBootOrder')
   let counter = 1000
   const orders = []
-  for (const ns of this.app.getAllNs()) {
-    const item = { ns }
-    if (isNumber(this.app[ns].constructor.bootorder)) item.val = this.app[ns].constructor.bootorder
+  for (const pkg of this.app.pluginPkgs) {
+    const item = { pkg }
+    const ns = camelCase(pkg)
+    const order = get(this.app[ns], 'pkg.bajo.bootorder')
+    if (isNumber(order)) item.val = order
     else {
       item.val = counter
       counter++
     }
     orders.push(item)
   }
-  this.app.pluginPkgs = map(orderBy(orders, ['val']), 'ns')
-  this.log.debug('runInEnv%s', this.t(this.app.constructor.envs[this.config.env]))
+  this.app.pluginPkgs = map(orderBy(orders, ['val']), 'pkg')
+  this.log.debug('runInEnv%s', this.t(this.app.envs[this.config.env]))
   // misc
   freeze(this.config)
 }
@@ -361,8 +359,7 @@ export async function exitHandler () {
 export async function runAsApplet () {
   const { isString, map, find } = this.app.lib._
   await this.eachPlugins(async function ({ file }) {
-    const { ns } = this
-    const { alias } = this.constructor
+    const { ns, alias } = this
     this.app.applets.push({ ns, file, alias })
   }, { glob: 'applet.js', prefix: 'bajoCli' })
 
