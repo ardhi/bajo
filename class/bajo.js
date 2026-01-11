@@ -346,7 +346,7 @@ class Bajo extends Plugin {
   eachPlugins = async (handler, options = {}) => {
     if (typeof options === 'string') options = { glob: options }
     const { glob, useBajo, prefix = '', noUnderscore = true, returnItems } = options
-    const pluginPkgs = useBajo ? [cloneDeep(this.app.pluginPkgs), 'bajo'] : this.app.pluginPkgs
+    const pluginPkgs = useBajo ? [...cloneDeep(this.app.pluginPkgs), 'bajo'] : this.app.pluginPkgs
     const result = {}
     for (const pkgName of pluginPkgs) {
       const ns = camelCase(pkgName)
