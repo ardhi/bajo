@@ -152,14 +152,14 @@ class App {
     this.lib.outmatchNs = outmatchNs.bind(this)
     this.lib.parseObject = (obj, options = {}) => {
       const me = this
-      const { ns, lang } = options
+      const { ns = 'bajo', lang } = options
       options.translator = {
         lang,
         prefix: 't:',
         handler: val => {
-          const scope = ns ? me.app[ns] : me
           const [text, ...args] = val.split('|')
-          return scope.t(text, ...args, { lang })
+          args.push({ lang })
+          return me[ns].t(text, ...args)
         }
       }
       return aneka.parseObject(obj, options)

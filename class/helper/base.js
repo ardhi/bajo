@@ -196,7 +196,10 @@ export async function run () {
      * @see module:Helper/Base.run
      */
     await runHook(`bajo:${camelCase(`after all ${method}`)}`)
-    if (me.bajo.config.log.level === 'trace') me.bajo.log.trace('loadedPlugins%s', join(map(me.bajo.app.pluginPkgs, b => camelCase(b))))
-    else me.bajo.log.debug('loadedPlugins%s', me.bajo.app.pluginPkgs.length)
   }
+  if (me.bajo.config.log.level === 'trace') {
+    let text = join(map(me.bajo.app.pluginPkgs, b => camelCase(b)))
+    text += ` (${me.bajo.app.pluginPkgs.length})`
+    me.bajo.log.trace('loadedPlugins%s', text)
+  } else me.bajo.log.debug('loadedPlugins%s', me.bajo.app.pluginPkgs.length)
 }

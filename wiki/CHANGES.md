@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-01-16
+
+- [2.2.1] Bug fix on multiple appearance of loaded plugins info
+- [2.2.1] Bug fix on ```app.lib.parseObject()``` wrapper
+
 ## 2026-01-11
 
 - [2.2.0] Simplify numerous things by putting most of static properties back as normal class properties
