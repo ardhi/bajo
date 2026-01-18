@@ -1,6 +1,5 @@
 import Print from '../plugin/print.js'
 import Log from '../app/log.js'
-import omitDeep from 'omit-deep'
 import os from 'os'
 import fs from 'fs-extra'
 import lodash from 'lodash'
@@ -25,8 +24,6 @@ const {
   keys,
   set,
   get,
-  filter,
-  trim,
   without,
   uniq,
   camelCase,
@@ -125,20 +122,24 @@ export async function buildBaseConfig () {
     fs.ensureDirSync(this.dir.tmp)
   }
   this.pkg = await this.getPkgInfo()
-  // collect list of plugins
-  const mainPkg = await this.getPkgInfo(this.app.dir)
-  let pluginPkgs = get(mainPkg, 'bajo.plugins', [])
+  let pluginPkgs = this.app.pluginPkgs
   if (isEmpty(pluginPkgs)) {
-    const pluginsFile = `${this.dir.data}/config/.plugins`
-    if (fs.existsSync(pluginsFile)) {
-      pluginPkgs = pluginPkgs.concat(filter(map(trim(fs.readFileSync(pluginsFile, 'utf8')).split('\n'), p => trim(p)), b => !isEmpty(b)))
+    // collect list of plugins
+    const mainPkg = await this.getPkgInfo(this.app.dir)
+    pluginPkgs = get(mainPkg, 'bajo.plugins', [])
+    if (isEmpty(pluginPkgs)) {
+      const pluginsFile = `${this.dir.data}/config/.plugins`
+      if (fs.existsSync(pluginsFile)) {
+        let lines = fs.readFileSync(pluginsFile, 'utf8')
+        lines = lines.trim().split('\n').map(p => p.trim())
+        pluginPkgs = lines.filter(c => {
+          const line = c.split('#')[0].trim()
+          return !isEmpty(line)
+        })
+      }
     }
   }
-  this.app.pluginPkgs = map(filter(without(uniq(pluginPkgs), this.app.mainNs), p => {
-    return p[0] !== '#'
-  }), p => {
-    return trim(p.split('#')[0])
-  })
+  this.app.pluginPkgs = without(uniq(pluginPkgs), this.app.mainNs)
   this.app.pluginPkgs.push(this.app.mainNs)
 }
 
@@ -210,9 +211,11 @@ export async function collectConfigHandlers () {
 export async function buildExtConfig () {
   // config merging
   const { defaultsDeep } = this.app.lib.aneka
-  const { parseObject } = this.app.lib
+  const { parseObject, omitDeep } = this.app.lib
+  const { isEmpty, get } = this.app.lib._
 
-  let resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
+  let resp = get(this, `app.options.config.${this.ns}`, {})
+  if (isEmpty(resp)) resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
   resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
   const envs = this.app.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)

@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-01-18
+
+- [2.3.0] ```App``` constructor now accept an object as its parameter. For details, please see documentation
+
 ## 2026-01-16
 
 - [2.2.1] Bug fix on multiple appearance of loaded plugins info

@@ -1,43 +1,14 @@
 import util from 'util'
-import lodash from 'lodash'
 import Bajo from './bajo.js'
-import fastGlob from 'fast-glob'
-import { sprintf } from 'sprintf-js'
-import outmatch from 'outmatch'
-import fs from 'fs-extra'
-import aneka from 'aneka/index.js'
 import Base from './base.js'
-import freeze from '../lib/freeze.js'
 import { runAsApplet } from './helper/bajo.js'
 import Tools from './plugin/tools.js'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc.js'
-import customParseFormat from 'dayjs/plugin/customParseFormat.js'
-import localizedFormat from 'dayjs/plugin/localizedFormat.js'
-import weekOfYear from 'dayjs/plugin/weekOfYear.js'
-import findDeep from '../lib/find-deep.js'
 
-dayjs.extend(utc)
-dayjs.extend(customParseFormat)
-dayjs.extend(localizedFormat)
-dayjs.extend(weekOfYear)
+import { outmatchNs, parseObject, lib } from './helper/app.js'
 
-const { camelCase, isPlainObject, get, reverse, map, last, without } = lodash
-const { pascalCase } = aneka
+const { camelCase, isPlainObject, get, reverse, map, last, without } = lib._
+const { pascalCase } = lib.aneka
 let unknownLangWarning = false
-
-function outmatchNs (source, pattern) {
-  const { breakNsPath } = this.bajo
-  const [src, subSrc] = source.split(':')
-  if (!subSrc) return pattern === src
-  try {
-    const { fullNs, path } = breakNsPath(pattern)
-    const isMatch = outmatch(path)
-    return src === fullNs && isMatch(subSrc)
-  } catch (err) {
-    return false
-  }
-}
 
 /**
  * @typedef {Object} TAppEnv
@@ -47,40 +18,25 @@ function outmatchNs (source, pattern) {
  */
 
 /**
- * @typedef {Object} TAppLib
- * @property {Object} _ - Access to {@link https://lodash.com|lodash}
- * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
- * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
- * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
- * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
- * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
- * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
- * @property {Object} freeze
- * @property {Object} findDeep
- * @see App
- */
-const lib = {
-  _: lodash,
-  fs,
-  fastGlob,
-  sprintf,
-  outmatch,
-  dayjs,
-  aneka,
-  freeze,
-  findDeep
-}
-
-/**
  * App class. This is the root. This is where all plugins call it home.
  *
  * @class
  */
 class App {
   /**
-   * @param {string} cwd - Current working dirctory
+   * @param {Object} [options] - App options
+   * @param {string} [options.cwd] - Set current working directory. Defaults to the script directory
+   * @param {string[]} [options.plugins] - Array of plugins to load. If provided, it override the list in ```package.json``` and ```.plugins``` file
+   * @param {Object} [options.config] - Plugin's config object. If provided, plugin configs will no longer be read from its config files
    */
-  constructor (cwd) {
+  constructor (options = {}) {
+    /**
+     * Copy of provided options
+     *
+     * @type {Object}
+     */
+    this.options = options
+
     /**
      * Your main namespace. And yes, you suppose to NOT CHANGE this
      *
@@ -115,7 +71,7 @@ class App {
      *
      * @type {Array}
      */
-    this.pluginPkgs = []
+    this.pluginPkgs = options.plugins ?? []
 
     /**
      * @typedef {Object} TAppConfigHandler
@@ -150,20 +106,7 @@ class App {
      */
     this.lib = lib
     this.lib.outmatchNs = outmatchNs.bind(this)
-    this.lib.parseObject = (obj, options = {}) => {
-      const me = this
-      const { ns = 'bajo', lang } = options
-      options.translator = {
-        lang,
-        prefix: 't:',
-        handler: val => {
-          const [text, ...args] = val.split('|')
-          args.push({ lang })
-          return me[ns].t(text, ...args)
-        }
-      }
-      return aneka.parseObject(obj, options)
-    }
+    this.lib.parseObject = parseObject.bind(this)
 
     /**
      * Instance of system log
@@ -253,13 +196,13 @@ class App {
      */
     this.envVars = {}
 
-    if (!cwd) cwd = process.cwd()
+    if (!options.cwd) options.cwd = process.cwd()
     const l = last(process.argv)
     if (l.startsWith('--cwd')) {
       const parts = l.split('=')
-      cwd = parts[1]
+      options.cwd = parts[1]
     }
-    this.dir = aneka.resolvePath(cwd)
+    this.dir = this.lib.aneka.resolvePath(options.cwd)
     process.env.APPDIR = this.dir
   }
 
@@ -320,17 +263,20 @@ class App {
    * @fires bajo:afterBootCompleted
    */
   boot = async () => {
-    // argv/args/env
     this.bajo = new Bajo(this)
-    const { argv, args } = await aneka.parseArgsArgv() ?? {}
+    // argv/args/env
+    const { parseArgsArgv, parseEnv, secToHms } = this.lib.aneka
+    const { parseObject } = this.lib
+    const { argv, args } = await parseArgsArgv() ?? {}
+
     this.args = args
-    this.argv = aneka.parseObject(argv, { parseValue: true })
-    this.envVars = aneka.parseObject(aneka.parseEnv(), { parseValue: true })
+    this.argv = parseObject(argv, { parseValue: true })
+    this.envVars = parseObject(parseEnv(), { parseValue: true })
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.init()
     // boot complete
     const elapsed = new Date() - this.runAt
-    this.bajo.log.debug('bootCompleted%s', aneka.secToHms(elapsed, true))
+    this.bajo.log.debug('bootCompleted%s', secToHms(elapsed, true))
     /**
      * Run after boot process is completed
      *
@@ -362,6 +308,8 @@ class App {
    * @param {string} ns - Plugin name
    */
   loadIntl = (ns) => {
+    const { fs } = this.lib
+
     this[ns].intl = {}
     for (const l of this.bajo.config.intl.supported) {
       this[ns].intl[l] = {}
@@ -393,6 +341,8 @@ class App {
    * @returns {string}
    */
   t = (ns, text, ...params) => {
+    const { formatText } = this.lib.aneka
+
     if (!text) {
       text = ns
       ns = 'bajo'
@@ -426,7 +376,7 @@ class App {
       }
     }
     if (!trans) trans = text
-    return aneka.formatText(trans, ...params)
+    return formatText(trans, ...params)
   }
 
   /**

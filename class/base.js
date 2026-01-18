@@ -38,7 +38,7 @@ class Base extends Plugin {
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
-    const { get, keys, pick } = this.app.lib._
+    const { get, keys, pick, isEmpty } = this.app.lib._
     const { log, getModuleDir, readAllConfigs } = this.app.bajo
     const { parseObject } = this.app.lib
 
@@ -53,14 +53,14 @@ class Base extends Plugin {
     }
     // merge with config from datadir
     try {
-      const altCfg = await readAllConfigs(`${this.app.bajo.dir.data}/config/${this.ns}`)
+      let altCfg = get(this, `app.options.config.${this.ns}`, {})
+      if (isEmpty(altCfg)) altCfg = await readAllConfigs(`${this.app.bajo.dir.data}/config/${this.ns}`)
       cfg = defaultsDeep({}, altCfg, cfg)
     } catch (err) {}
     const cfgEnv = get(this, `app.env.${this.ns}`, {})
     const cfgArgv = get(this, `app.argv.${this.ns}`, {})
     const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
     cfg = pick(defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {}), defKeys)
-    this.title = this.title ?? cfg.title ?? this.alias
     this.config = parseObject(cfg, { parseValue: true })
   }
 
