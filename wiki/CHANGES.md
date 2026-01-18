@@ -4,6 +4,7 @@
 
 - [2.3.0] ```App``` constructor now accept an object as its parameter. For details, please see documentation
 - [2.3.0] Package upgrade to ```aneka@0.11.0```
+- [2.3.0] Bug fix on ```checkDependencies()```
 
 ## 2026-01-16
 

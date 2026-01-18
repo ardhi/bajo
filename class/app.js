@@ -267,7 +267,7 @@ class App {
     // argv/args/env
     const { parseArgsArgv, parseEnv, secToHms } = this.lib.aneka
     const { parseObject } = this.lib
-    const { argv, args } = await parseArgsArgv() ?? {}
+    const { argv, args } = await parseArgsArgv({ cwd: this.options.cwd })
 
     this.args = args
     this.argv = parseObject(argv, { parseValue: true })

@@ -78,14 +78,14 @@ export async function checkDependencies () {
     const deps = keys(odep)
     if (deps.length > 0) {
       if (intersection(this.bajo.app.pluginPkgs, deps).length !== deps.length) {
-        throw this.error('dependencyUnfulfilled%s%s', pkg, join(deps), { code: 'BAJO_DEPENDENCY' })
+        throw this.bajo.error('dependencyUnfulfilled%s%s', pkg, join(deps), { code: 'BAJO_DEPENDENCY' })
       }
       each(deps, d => {
         if (!odep[d]) return
         const ver = get(this.bajo.app[camelCase(d)], 'pkg.version')
         if (!ver) return
         if (!semver.satisfies(ver, odep[d])) {
-          throw this.error('semverCheckFailed%s%s', pkg, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
+          throw this.bajo.error('semverCheckFailed%s%s', pkg, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
         }
       })
     }
