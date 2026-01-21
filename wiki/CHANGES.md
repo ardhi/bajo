@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-01-21
+
+- [2.3.1] Bug fix on keys that needs to be used while reading plugin's config files
+
 ## 2026-01-18
 
 - [2.3.0] ```App``` constructor now accept an object as its parameter. For details, please see documentation

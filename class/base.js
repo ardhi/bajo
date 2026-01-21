@@ -42,7 +42,8 @@ class Base extends Plugin {
     const { log, getModuleDir, readAllConfigs } = this.app.bajo
     const { parseObject } = this.app.lib
 
-    const defKeys = keys(this.config)
+    const defKeys = keys(this.config).concat(this.app.getAllNs())
+    defKeys.push('title')
     log.trace('- %s', this.ns)
     const dir = this.ns === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
     let cfg = await readAllConfigs(`${dir}/config`)
