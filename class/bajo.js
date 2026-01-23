@@ -970,11 +970,14 @@ class Bajo extends Plugin {
     for (const i in fns) {
       const fn = fns[i]
       const scope = this.app[fn.src]
-      const res = await fn.handler.call(scope, ...args)
-      results.push({
-        hook: hookName,
-        resp: res
-      })
+      if (fn.noWait) fn.handler.call(scope, ...args)
+      else {
+        const res = await fn.handler.call(scope, ...args)
+        results.push({
+          hook: hookName,
+          resp: res
+        })
+      }
       if (this.config.log.traceHook) scope.log.trace('hookExecuted%s', hookName)
     }
     return results

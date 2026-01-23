@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-01-24
+
+- [2.3.2] Hook now can be executed without waiting if property ```noWait``` is ```true```
+
 ## 2026-01-21
 
 - [2.3.1] Bug fix on keys that needs to be used while reading plugin's config files
