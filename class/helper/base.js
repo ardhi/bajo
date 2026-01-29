@@ -101,7 +101,6 @@ export async function checkDependencies () {
 export async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo
   const me = this
-  me.bajo.hooks = this.bajo.hooks ?? []
   me.bajo.log.trace('collecting%s', this.t('hooks'))
   // collects
   await eachPlugins(async function ({ dir, file }) {

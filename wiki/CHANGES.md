@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-01-29
+
+- [2.4.0] Hooks can now be added through ```config``` object. This is specially usefull if you provide a custom config object on app boot
+
 ## 2026-01-24
 
 - [2.3.2] Hook now can be executed without waiting if property ```noWait``` is ```true```

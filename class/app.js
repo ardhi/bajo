@@ -264,6 +264,8 @@ class App {
    */
   boot = async () => {
     this.bajo = new Bajo(this)
+    this.bajo.hooks.push(...(this.options.hooks ?? []))
+    delete this.options.hooks
     // argv/args/env
     const { parseArgsArgv, parseEnv, secToHms } = this.lib.aneka
     const { parseObject } = this.lib
@@ -273,6 +275,7 @@ class App {
     this.argv = parseObject(argv, { parseValue: true })
     this.envVars = parseObject(parseEnv(), { parseValue: true })
     this.applet = this.envVars._.applet ?? this.argv._.applet
+    await this.bajo.runHook('bajo:beforeBoot')
     await this.bajo.init()
     // boot complete
     const elapsed = new Date() - this.runAt
@@ -285,7 +288,7 @@ class App {
      * @see {@tutorial hook}
      * @see App#boot
      */
-    await this.bajo.runHook('bajo:afterBootCompleted')
+    await this.bajo.runHook('bajo:afterBoot')
     if (this.applet) await runAsApplet.call(this.bajo)
     return this
   }

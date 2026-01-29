@@ -60,6 +60,8 @@ class Bajo extends Plugin {
       { ext: '.js', readHandler: this._defConfigHandler },
       { ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
     ]
+
+    this.hooks = []
   }
 
   async _defConfigHandler (file, opts = {}) {
@@ -969,7 +971,7 @@ class Bajo extends Plugin {
     const results = []
     for (const i in fns) {
       const fn = fns[i]
-      const scope = this.app[fn.src]
+      const scope = this.app[fn.src ?? 'main']
       if (fn.noWait) fn.handler.call(scope, ...args)
       else {
         const res = await fn.handler.call(scope, ...args)
@@ -978,7 +980,6 @@ class Bajo extends Plugin {
           resp: res
         })
       }
-      if (this.config.log.traceHook) scope.log.trace('hookExecuted%s', hookName)
     }
     return results
   }
