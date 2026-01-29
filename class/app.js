@@ -6,7 +6,7 @@ import Tools from './plugin/tools.js'
 
 import { outmatchNs, parseObject, lib } from './helper/app.js'
 
-const { camelCase, isPlainObject, get, reverse, map, last, without } = lib._
+const { camelCase, isPlainObject, get, reverse, map, last, without, set } = lib._
 const { pascalCase } = lib.aneka
 let unknownLangWarning = false
 
@@ -274,6 +274,7 @@ class App {
     this.args = args
     this.argv = parseObject(argv, { parseValue: true })
     this.envVars = parseObject(parseEnv(), { parseValue: true })
+    if (get(this, 'envVars._.env') === '[object Object]') set(this, 'envVars._.env', 'dev')
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.runHook('bajo:beforeBoot')
     await this.bajo.init()
