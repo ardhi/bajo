@@ -3,6 +3,7 @@
 ## 2026-01-29
 
 - [2.4.0] Hooks can now be added through ```config``` object. This is specially usefull if you provide a custom config object on app boot
+- [2.4.1] Bug fix on ```runHook()``` resolver. Source defaults to ```main``` if not provided. Scope defaults to ```bajo``` if not found/initialized yet
 
 ## 2026-01-24
 

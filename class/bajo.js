@@ -965,13 +965,13 @@ class Bajo extends Plugin {
     } catch (err) {
       return
     }
-    let fns = filter(this.app.bajo.hooks, { ns, subNs, path })
+    let fns = filter(this.hooks, { ns, subNs, path })
     if (isEmpty(fns)) return []
     fns = orderBy(fns, ['level'])
     const results = []
     for (const i in fns) {
       const fn = fns[i]
-      const scope = this.app[fn.src ?? 'main']
+      const scope = this.app[fn.src ?? 'main'] ?? this
       if (fn.noWait) fn.handler.call(scope, ...args)
       else {
         const res = await fn.handler.call(scope, ...args)
