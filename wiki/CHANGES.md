@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-02-08
+
+- [2.5.0] Bug fix on handling log for ```error``` level
+- [2.5.0] Add ```log.getErrorMessage()``` to get the right value of error message
+- [2.5.0] Add ```timeZone``` in config for datetime data type
+
 ## 2026-01-29
 
 - [2.4.0] Hooks can now be added through ```config``` object. This is specially usefull if you provide a custom config object on app boot

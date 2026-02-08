@@ -59,9 +59,9 @@ const defConfig = {
     lookupOrder: [],
     format: {
       emptyValue: '',
-      datetime: { dateStyle: 'medium', timeStyle: 'short' },
-      date: { dateStyle: 'medium' },
-      time: { timeStyle: 'short' },
+      datetime: { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' },
+      date: { dateStyle: 'medium', timeZone: 'UTC' },
+      time: { timeStyle: 'short', timeZone: 'UTC' },
       float: { maximumFractionDigits: 2 },
       double: { maximumFractionDigits: 5 },
       smallint: {},

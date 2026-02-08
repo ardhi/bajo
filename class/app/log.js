@@ -77,16 +77,17 @@ class Log {
     if (!this.app.bajo.isLogInRange(level)) return
     const { useUtc, timeTaken, dateFormat, pretty } = this.app.bajo.config.log
     let [data, msg, ...args] = params
+    if (data instanceof Error) {
+      msg = 'error%s'
+      args = [this.getErrorMessage(data)]
+      console.error(data)
+    }
     if (typeof data === 'string') {
       args.unshift(msg)
       msg = data
       data = null
     }
     args = without(args, undefined)
-    if (data instanceof Error) {
-      msg = 'error%s'
-      args = [data.message]
-    }
     msg = this.app.t(prefix, msg, ...args)
     let text
     const dt = dayjs()
@@ -113,11 +114,15 @@ class Log {
       const tlevel = pretty ? `${chalk[logLevels[level].color](level.toUpperCase())}:` : `[${level.toUpperCase()}]`
       const tprefix = pretty ? chalk.bgBlue(`${prefix}`) : `[${prefix}]`
       text = `${tdate} ${tlevel} ${tprefix} ${msg}`
-      if (!isEmpty(data)) text += '\n' + JSON.stringify(data)
+      if (!isEmpty(data) && !(data instanceof Error)) text += '\n' + JSON.stringify(data)
     }
     console.log(text)
-    if (data instanceof Error && level === 'trace') console.error(data)
     if (this.app.bajo.config.log.save) this.save(text, prefix)
+  }
+
+  getErrorMessage = error => {
+    const { isEmpty } = this.app.lib._
+    return isEmpty(error.message) ? (error.code ?? error.statusCode) : error.message
   }
 
   /**
