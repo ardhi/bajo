@@ -326,6 +326,41 @@ class App {
     }
   }
 
+  _prepTrans = (ns, text, params) => {
+    const { fallback, supported } = this.bajo.config.intl
+    if (!text) {
+      text = ns
+      ns = 'bajo'
+    }
+    const opts = last(params)
+    let lang = this.bajo.config.lang
+    if (isPlainObject(opts)) {
+      params.pop()
+      if (opts.lang) lang = opts.lang
+    }
+    if (!unknownLangWarning && !supported.includes(lang)) {
+      unknownLangWarning = true
+      this.bajo.log.warn(`Unsupported language, fallback to '${fallback}'`)
+    }
+    const plugins = reverse(without([...this.getAllNs()], ns))
+    plugins.unshift(ns)
+    plugins.push('bajo')
+    let trans
+    for (const p of plugins) {
+      const store = get(this, `${p}.intl.${lang}`, {})
+      trans = get(store, text)
+      if (trans) break
+    }
+    if (!trans) {
+      for (const p of plugins) {
+        const store = get(this, `${p}.intl.${fallback}`, {})
+        trans = get(store, text)
+        if (trans) break
+      }
+    }
+    return { ns, text, lang, params, plugins, trans }
+  }
+
   /**
    * Translate text and interpolate with given ```args```.
    *
@@ -346,41 +381,23 @@ class App {
    */
   t = (ns, text, ...params) => {
     const { formatText } = this.lib.aneka
+    let { text: newText, trans, params: args } = this._prepTrans(ns, text, params)
+    if (!trans) trans = newText
+    return formatText(trans, ...args)
+  }
 
-    if (!text) {
-      text = ns
-      ns = 'bajo'
-    }
-    const opts = last(params)
-    let lang = this.bajo.config.lang
-    if (isPlainObject(opts)) {
-      params.pop()
-      if (opts.lang) lang = opts.lang
-    }
-    const { fallback, supported } = this.bajo.config.intl
-    if (!unknownLangWarning && !supported.includes(lang)) {
-      unknownLangWarning = true
-      this.bajo.log.warn(`Unsupported language, fallback to '${fallback}'`)
-    }
-    const plugins = reverse(without([...this.getAllNs()], ns))
-    plugins.unshift(ns)
-    plugins.push('bajo')
+  /**
+   * Check whether translation text/key exists
+   *
+   * @method
+   * @param {string} ns - Namespace
+   * @param {string} text - Text to translate
+   * @returns {boolean}
+   */
 
-    let trans
-    for (const p of plugins) {
-      const store = get(this, `${p}.intl.${lang}`, {})
-      trans = get(store, text)
-      if (trans) break
-    }
-    if (!trans) {
-      for (const p of plugins) {
-        const store = get(this, `${p}.intl.${fallback}`, {})
-        trans = get(store, text)
-        if (trans) break
-      }
-    }
-    if (!trans) trans = text
-    return formatText(trans, ...params)
+  te = (ns, text, ...params) => {
+    const { trans } = this._prepTrans(ns, text, params)
+    return !!trans
   }
 
   /**

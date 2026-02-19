@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-02-20
+
+- [2.6.0] Upgrade to ```aneka@0.12.0```
+- [2.6.0] Add ```te()```
+- [2.6.0] Bug fix on ```formatErrorDetails()``` in ```Err``` class
+
 ## 2026-02-08
 
 - [2.5.0] Bug fix on handling log for ```error``` level

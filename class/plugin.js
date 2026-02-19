@@ -152,6 +152,19 @@ class Plugin {
   }
 
   /**
+   * Check whether translation text/key exists.
+   *
+   * Shortcut to {@link App#te} with ns parameter set to this plugin namespace.
+   *
+   * @param {string} text - Text to translate
+   * @param  {...any} params - Variables to interpolate to ```text```
+   * @returns {string}
+   */
+  te = (text, ...params) => {
+    return this.app.te(this.ns, text, ...params)
+  }
+
+  /**
    * Force bind methods to self (```this```)
    *
    * @param {string[]} names - Method's names

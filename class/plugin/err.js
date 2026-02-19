@@ -97,6 +97,7 @@ class Err extends Tools {
    */
   formatErrorDetails = (value) => {
     const { isString, last } = this.app.lib._
+    const { without } = this.app.lib.aneka
     const result = {}
     const me = this
     const detailsMessage = []
@@ -104,10 +105,13 @@ class Err extends Tools {
       if (isString(v)) v = { error: v }
       if (!v.context) return undefined
       v.context.message = v.message
-      if (v.type === 'any.only') v.context.ref = get(v, 'context.valids', []).join(', ')
+      if (v.type === 'any.only') {
+        const items = without(get(v, 'context.valids', []))
+        v.context.ref = items.join(', ')
+      }
       const field = get(v, 'context.key')
       const val = get(v, 'context.value')
-      let error = me.plugin.t(`validation.${v.type}`, v.context ?? {}, {})
+      let error = me.plugin.t(v.message[0] === '~' ? v.message.slice(1) : `validation.${v.type}`, v.context ?? {}, {})
       if (error.includes(' ref:')) {
         const item = last(error.split(' '))
         const [, rfield] = item.split(':')
