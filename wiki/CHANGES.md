@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-02-23
+
+- [2.6.1] Bug fix on ```readConfig()```
+- [2.6.1] Bug fix on ```base.loadConfig()```
+
 ## 2026-02-20
 
 - [2.6.0] Upgrade to ```aneka@0.12.0```

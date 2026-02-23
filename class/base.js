@@ -46,7 +46,7 @@ class Base extends Plugin {
     defKeys.push('title')
     log.trace('- %s', this.ns)
     const dir = this.ns === this.app.mainNs ? (`${this.app.bajo.dir.base}/${this.app.mainNs}`) : getModuleDir(this.pkgName)
-    let cfg = await readAllConfigs(`${dir}/config`)
+    let cfg = {}
 
     this.dir = {
       pkg: dir,
