@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-02-26
+
+- [2.6.2] Bug fix on ```getMethod()```
+
 ## 2026-02-23
 
 - [2.6.1] Bug fix on ```readConfig()```
