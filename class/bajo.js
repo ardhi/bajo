@@ -225,8 +225,7 @@ class Bajo extends Plugin {
    * @returns {Object[]} The collection
    */
   buildCollections = async (options = {}) => {
-    let { ns, handler, dupChecks = [], container, useDefaultName } = options
-    useDefaultName = useDefaultName ?? true
+    let { ns, handler, dupChecks = [], container, useDefaultName = true, noDefault = true } = options
     if (!ns) ns = this.ns
     const cfg = this.app[ns].getConfig()
     let items = get(cfg, container, [])
@@ -268,6 +267,8 @@ class Bajo extends Plugin {
         if (checkers.includes(checker)) this.app[ns].fatal('oneOrMoreSharedTheSame%s%s', container, this.join(dupChecks.filter(i => !isFunction(i))))
       }
     }
+
+    if (!noDefault && !items.find(item => item.name === 'default')) this.app[ns].fatal('missing%s%s', 'default', container)
 
     /**
      * Run after collection is built

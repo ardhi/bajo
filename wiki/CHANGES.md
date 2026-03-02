@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-03-02
+
+- [2.7.0] Add ```useDefaultName``` parameter to ```buildCollection()```
+- [2.7.0] Add some translations
+
 ## 2026-02-26
 
 - [2.6.2] Bug fix on ```getMethod()```
