@@ -170,6 +170,7 @@ class Plugin {
    * @param {string[]} names - Method's names
    */
   selfBind (names) {
+    if (!Array.isArray(names)) names = [names]
     for (const name of names) {
       this[name] = this[name].bind(this)
     }

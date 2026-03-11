@@ -38,7 +38,7 @@ class Base extends Plugin {
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
-    const { get, keys, pick, isEmpty } = this.app.lib._
+    const { get, keys, pick, isEmpty, upperFirst } = this.app.lib._
     const { log, getModuleDir, readAllConfigs } = this.app.bajo
     const { parseObject } = this.app.lib
 
@@ -60,8 +60,7 @@ class Base extends Plugin {
     } catch (err) {}
     const cfgEnv = get(this, `app.env.${this.ns}`, {})
     const cfgArgv = get(this, `app.argv.${this.ns}`, {})
-    const envArgv = defaultsDeep({}, cfgEnv, cfgArgv)
-    cfg = pick(defaultsDeep({}, envArgv ?? {}, cfg ?? {}, this.config ?? {}), defKeys)
+    cfg = pick(defaultsDeep({}, cfgEnv ?? {}, cfgArgv ?? {}, cfg ?? {}, this[`config${upperFirst(this.app.bajo.config.env)}`] ?? {}, this.config ?? {}), defKeys)
     this.config = parseObject(cfg, { parseValue: true })
   }
 

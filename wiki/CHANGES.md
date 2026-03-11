@@ -1,5 +1,14 @@
 # Changes
 
+## 2026-03-11
+
+- [2.7.2] Bug fix in env dependent config building
+- [2.7.2] ```selfBind()``` now also accept string for single method
+
+## 2026-03-10
+
+- [2.7.1] Using ```textToArray()``` from ```aneka``` instead of custom function to parse text into array
+
 ## 2026-03-02
 
 - [2.7.0] Add ```useDefaultName``` parameter to ```buildCollection()```

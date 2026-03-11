@@ -10,9 +10,6 @@ import {
   collectHooks,
   run
 } from './base.js'
-import aneka from 'aneka'
-
-const { currentLoc, resolvePath } = aneka
 
 const {
   orderBy,
@@ -108,7 +105,7 @@ export default factory
  */
 export async function buildBaseConfig () {
   // dirs
-  const { defaultsDeep } = this.app.lib.aneka
+  const { defaultsDeep, textToArray, currentLoc, resolvePath } = this.app.lib.aneka
   this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
@@ -130,12 +127,7 @@ export async function buildBaseConfig () {
     if (isEmpty(pluginPkgs)) {
       const pluginsFile = `${this.dir.data}/config/.plugins`
       if (fs.existsSync(pluginsFile)) {
-        let lines = fs.readFileSync(pluginsFile, 'utf8')
-        lines = lines.trim().split('\n').map(p => p.trim())
-        pluginPkgs = lines.filter(c => {
-          const line = c.split('#')[0].trim()
-          return !isEmpty(line)
-        })
+        pluginPkgs = textToArray(fs.readFileSync(pluginsFile, 'utf8'))
       }
     }
   }
@@ -153,6 +145,7 @@ export async function buildBaseConfig () {
  * @async
  */
 export async function buildPlugins () {
+  const { resolvePath } = this.app.lib.aneka
   this.log.trace('buildPluginsStart')
   for (const pkg of this.app.pluginPkgs) {
     const ns = camelCase(pkg)
