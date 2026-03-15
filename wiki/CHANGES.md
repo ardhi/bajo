@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-03-15
+
+- [2.7.3] Bug fix in checking plugin dependency handler
+
 ## 2026-03-11
 
 - [2.7.2] Bug fix in env dependent config building

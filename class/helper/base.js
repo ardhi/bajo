@@ -50,9 +50,9 @@ export async function checkNameAliases () {
     const plugin = this.bajo.app[camelCase(pkg)]
     const { ns, alias } = plugin
     let item = find(refs, { ns })
-    if (item) throw this.error('pluginNameClash%s%s%s%s', ns, pkg, item.ns, item.pkg, { code: 'BAJO_NAME_CLASH' })
+    if (item) throw this.bajo.error('pluginNameClash%s%s%s%s', ns, pkg, item.ns, item.pkg, { code: 'BAJO_NAME_CLASH' })
     item = find(refs, { alias })
-    if (item) throw this.error('pluginNameClash%s%s%s%s', alias, pkg, item.alias, item.pkg, { code: 'BAJO_ALIAS_CLASH' })
+    if (item) throw this.bajo.error('pluginNameClash%s%s%s%s', alias, pkg, item.alias, item.pkg, { code: 'BAJO_ALIAS_CLASH' })
     refs.push({ ns, alias, pkg })
   }
 }
