@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-03-22
+
+- [2.8.0] Add ```options.readFromFile``` in ```readConfig()```
+- [2.8.0] Bug fix in ```readConfig()``` while reading ```json``` file
+- [2.8.0] Bug fix in ```fromJson()```
+- [2.8.0] Bug fix in ```toJson()```
+
 ## 2026-03-15
 
 - [2.7.3] Bug fix in checking plugin dependency handler
