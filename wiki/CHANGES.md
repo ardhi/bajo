@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-03-25
+
+- [2.9.0] Add ```dump()``` now available through out plugins
+- [2.9.0] Bug fix in ```buildCollections()```, now items to be collected are parsed with ```aneka.parseObject()```
+
 ## 2026-03-22
 
 - [2.8.0] Add ```options.readFromFile``` in ```readConfig()```

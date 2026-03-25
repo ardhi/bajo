@@ -225,6 +225,7 @@ class Bajo extends Plugin {
    * @returns {Object[]} The collection
    */
   buildCollections = async (options = {}) => {
+    const { parseObject } = this.app.lib
     let { ns, handler, dupChecks = [], container, useDefaultName = true, noDefault = true } = options
     if (!ns) ns = this.ns
     const cfg = this.app[ns].getConfig()
@@ -244,7 +245,7 @@ class Bajo extends Plugin {
     await this.runHook(`${ns}:beforeBuildCollection`, container)
     const deleted = []
     for (const index in items) {
-      const item = items[index]
+      const item = parseObject(items[index])
       if (useDefaultName) {
         if (!has(item, 'name')) {
           if (find(items, { name: 'default' })) throw this.app[ns].error('collExists%s', 'default')

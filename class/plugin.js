@@ -177,6 +177,16 @@ class Plugin {
   }
 
   /**
+   * Alias to ```this.app.dump()```
+   *
+   * @param {...any} args
+   * @returns
+   */
+  dump = (...args) => {
+    this.app.dump(...args)
+  }
+
+  /**
    * Dispose internal references
    */
   dispose = () => {
