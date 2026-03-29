@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-03-30
+
+- [2.10.0] Add ability to pass options of ```configHandlers``` with type ```.js```
+- [2.10.0] Freezing config object now occurs ```{ns}:afterStart()```
+- [2.10.0] Bug fix on ```print.fatal()``` when argument is an Error object
+
 ## 2026-03-25
 
 - [2.9.0] Add ```dump()``` now available through out plugins

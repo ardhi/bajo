@@ -229,12 +229,12 @@ class Print extends Tools {
    */
   fatal = (text, ...args) => {
     if (text instanceof Error) {
+      console.error(text)
       text = text.message
       args = []
     }
     this.setText(text, ...args)
     this.ora.fail()
-    if (text instanceof Error && this.app.bajo.config.log.level === 'trace') console.error(text)
     this.app.exit()
   }
 

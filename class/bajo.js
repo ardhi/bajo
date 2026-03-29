@@ -57,17 +57,11 @@ class Bajo extends Plugin {
     this.config = {}
 
     app.configHandlers = [
-      { ext: '.js', readHandler: this._defConfigHandler },
+      { ext: '.js', readHandler: this.fromJs },
       { ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
     ]
 
     this.hooks = []
-  }
-
-  async _defConfigHandler (file, opts = {}) {
-    let mod = await importModule(file)
-    if (isFunction(mod)) mod = await mod.call(this, opts)
-    return mod
   }
 
   /**
@@ -852,9 +846,9 @@ class Bajo extends Plugin {
    * @param {Object} [options.opts={}] - Parser setting
    * @returns {Object}
    */
-  readConfig = async (file, { ns, pattern, globOptions = {}, ignoreError, defValue = {}, opts = {} } = {}) => {
+  readConfig = async (file, { ns, pattern, ignoreError = true, defValue = {}, options = {} } = {}) => {
     const { parseObject } = this.app.lib
-    opts.readFromFile = true
+    options.readFromFile = true
     if (!ns) ns = this.ns
     file = resolvePath(this.getPluginFile(file))
     let ext = path.extname(file)
@@ -862,19 +856,19 @@ class Bajo extends Plugin {
     ext = ext.toLowerCase()
     if (ext === '.js') {
       const { readHandler } = find(this.app.configHandlers, { ext })
-      return parseObject(await readHandler.call(this.app[ns], file, opts))
+      return parseObject(await readHandler.call(this.app[ns], file, options))
     }
-    if (ext === '.json') return await this.fromJson(file, opts)
+    if (ext === '.json') return await this.fromJson(file, options)
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
         return parseObject(defValue)
       }
-      return parseObject(await item.readHandler.call(this.app[ns], file, opts))
+      return parseObject(await item.readHandler.call(this.app[ns], file, options))
     }
     const item = pattern ?? `${fname}.{${map(map(this.app.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
-    const files = await fastGlob(item, globOptions)
+    const files = await fastGlob(item, options.glob ?? {})
     if (files.length === 0) {
       if (!ignoreError) throw this.error('noConfigFileFound', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
       return parseObject(defValue)
@@ -887,7 +881,7 @@ class Bajo extends Plugin {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
       }
-      config = await item.readHandler.call(this.app[ns], f, opts)
+      config = await item.readHandler.call(this.app[ns], f, options)
       if (!isEmpty(config)) break
     }
     return parseObject(config)
@@ -913,15 +907,22 @@ class Bajo extends Plugin {
     return parseObject(JSON.parse(resp))
   }
 
-  fromJson (data, opts = {}) {
-    const content = opts.readFromFile ? fs.readFileSync(data, 'utf8') : data
+  fromJs = async (file, options = {}) => {
+    const args = options.args ?? []
+    let mod = await importModule(file)
+    if (isFunction(mod)) mod = await mod.call(this, ...args)
+    return mod
+  }
+
+  fromJson (data, options = {}) {
+    const content = options.readFromFile ? fs.readFileSync(data, 'utf8') : data
     return JSON.parse(content)
   }
 
-  toJson = (data, opts = {}) => {
-    const content = JSON.stringify(data, null, omit(opts, ['writeToFile']))
-    if (opts.writeToFile) {
-      fs.writeFileSync(opts.saveAsFile, content, 'utf8')
+  toJson = (data, options = {}) => {
+    const content = JSON.stringify(data, null, omit(options, ['writeToFile']))
+    if (options.writeToFile) {
+      fs.writeFileSync(options.saveAsFile, content, 'utf8')
       return
     }
     return content

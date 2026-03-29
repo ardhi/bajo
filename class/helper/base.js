@@ -162,7 +162,6 @@ export async function run () {
     await runHook(`bajo:${camelCase(`before all ${method}`)}`)
     await eachPlugins(async function () {
       const { ns } = this
-      if (method === 'start') freeze(me[ns].config)
       /**
        * Run before ```{method}``` is executed within ```{ns}``` context
        *
@@ -186,6 +185,7 @@ export async function run () {
        * @see module:Helper/Base.run
        */
       await runHook(`${ns}:${camelCase(`after ${method}`)}`)
+      if (method === 'start') freeze(me[ns].config)
     })
     /**
      * Run after all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
