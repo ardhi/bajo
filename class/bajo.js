@@ -907,7 +907,7 @@ class Bajo extends Plugin {
     return parseObject(JSON.parse(resp))
   }
 
-  fromJs = async (file, options = {}) => {
+  async fromJs (file, options = {}) {
     const args = options.args ?? []
     let mod = await importModule(file)
     if (isFunction(mod)) mod = await mod.call(this, ...args)
