@@ -94,14 +94,14 @@ class Base extends Plugin {
    * @async
    */
   exit = async () => {
-    this.dispose()
+    await this.dispose()
   }
 
   /**
    * Dispose internal references
    */
-  dispose = () => {
-    super.dispose()
+  dispose = async () => {
+    await super.dispose()
     this.state = null
   }
 }

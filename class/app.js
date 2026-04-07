@@ -328,6 +328,7 @@ class App {
 
   _prepTrans = (ns, text, params) => {
     const { fallback, supported } = this.bajo.config.intl
+    const { isSet } = this.lib.aneka
     if (!text) {
       text = ns
       ns = 'bajo'
@@ -349,13 +350,13 @@ class App {
     for (const p of plugins) {
       const store = get(this, `${p}.intl.${lang}`, {})
       trans = get(store, text)
-      if (trans) break
+      if (isSet(trans)) break
     }
-    if (!trans) {
+    if (!isSet(trans)) {
       for (const p of plugins) {
         const store = get(this, `${p}.intl.${fallback}`, {})
         trans = get(store, text)
-        if (trans) break
+        if (isSet(trans)) break
       }
     }
     return { ns, text, lang, params, plugins, trans }
@@ -380,9 +381,9 @@ class App {
    * @returns {string}
    */
   t = (ns, text, ...params) => {
-    const { formatText } = this.lib.aneka
+    const { formatText, isSet } = this.lib.aneka
     let { text: newText, trans, params: args } = this._prepTrans(ns, text, params)
-    if (!trans) trans = newText
+    if (!isSet(trans)) trans = newText
     return formatText(trans, ...args)
   }
 

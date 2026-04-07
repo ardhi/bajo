@@ -1,11 +1,16 @@
 # Changes
 
+## 2026-04-07
+
+- [2.11.0] Change ```dispose()``` to be an async function
+- [2.11.0] Bug fix in ```_prepTrans()```
+
 ## 2026-03-30
 
 - [2.10.0] Add ability to pass options of ```configHandlers``` with type ```.js```
 - [2.10.0] Freezing config object now occurs ```{ns}:afterStart()```
-- [2.10.0] Bug fix on ```print.fatal()``` when argument is an Error object
-- [2.10.1] Bug fix on ```fromJs()```
+- [2.10.0] Bug fix in ```print.fatal()``` when argument is an Error object
+- [2.10.1] Bug fix in ```fromJs()```
 
 ## 2026-03-25
 
@@ -39,30 +44,30 @@
 
 ## 2026-02-26
 
-- [2.6.2] Bug fix on ```getMethod()```
+- [2.6.2] Bug fix in ```getMethod()```
 
 ## 2026-02-23
 
-- [2.6.1] Bug fix on ```readConfig()```
-- [2.6.1] Bug fix on ```base.loadConfig()```
+- [2.6.1] Bug fix in ```readConfig()```
+- [2.6.1] Bug fix in ```base.loadConfig()```
 
 ## 2026-02-20
 
 - [2.6.0] Upgrade to ```aneka@0.12.0```
 - [2.6.0] Add ```te()```
-- [2.6.0] Bug fix on ```formatErrorDetails()``` in ```Err``` class
+- [2.6.0] Bug fix in ```formatErrorDetails()``` in ```Err``` class
 
 ## 2026-02-08
 
-- [2.5.0] Bug fix on handling log for ```error``` level
+- [2.5.0] Bug fix in handling log for ```error``` level
 - [2.5.0] Add ```log.getErrorMessage()``` to get the right value of error message
 - [2.5.0] Add ```timeZone``` in config for datetime data type
 
 ## 2026-01-29
 
 - [2.4.0] Hooks can now be added through ```config``` object. This is specially usefull if you provide a custom config object on app boot
-- [2.4.1] Bug fix on ```runHook()``` resolver. Source defaults to ```main``` if not provided. Scope defaults to ```bajo``` if not found/initialized yet
-- [2.4.2] Bug fix on getting wrongly parsed ```env``` value
+- [2.4.1] Bug fix in ```runHook()``` resolver. Source defaults to ```main``` if not provided. Scope defaults to ```bajo``` if not found/initialized yet
+- [2.4.2] Bug fix in getting wrongly parsed ```env``` value
 
 ## 2026-01-24
 
@@ -70,18 +75,18 @@
 
 ## 2026-01-21
 
-- [2.3.1] Bug fix on keys that needs to be used while reading plugin's config files
+- [2.3.1] Bug fix in keys that needs to be used while reading plugin's config files
 
 ## 2026-01-18
 
 - [2.3.0] ```App``` constructor now accept an object as its parameter. For details, please see documentation
 - [2.3.0] Package upgrade to ```aneka@0.11.0```
-- [2.3.0] Bug fix on ```checkDependencies()```
+- [2.3.0] Bug fix in ```checkDependencies()```
 
 ## 2026-01-16
 
-- [2.2.1] Bug fix on multiple appearance of loaded plugins info
-- [2.2.1] Bug fix on ```app.lib.parseObject()``` wrapper
+- [2.2.1] Bug fix in multiple appearance of loaded plugins info
+- [2.2.1] Bug fix in ```app.lib.parseObject()``` wrapper
 
 ## 2026-01-11
 

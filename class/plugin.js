@@ -189,7 +189,7 @@ class Plugin {
   /**
    * Dispose internal references
    */
-  dispose = () => {
+  dispose = async () => {
     this.app = null
     this.config = null
   }

@@ -258,7 +258,7 @@ class Log {
   /**
    * Dispose internal references
    */
-  dispose = () => {
+  dispose = async () => {
     this.app = null
   }
 }
