@@ -182,5 +182,7 @@
   "fieldError%s%s": "'%s': %s|lowerFirst",
   "reservedName%s%s": "Nama %s|lowerFirst '%s' adalah nama tang di reserve. Silahkan gunakan nama lainnya",
   "missing%s%s": "%s|upperFirst '%s' tidak ditemukan",
-  "processing...": "Memroses..."
+  "processing...": "Memroses...",
+  "true": "Benar",
+  "false": "Salah"
 }

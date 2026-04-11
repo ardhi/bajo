@@ -301,15 +301,14 @@ class Bajo extends Plugin {
       scope = item
       item = args.shift()
     }
-    const bajo = scope.app.bajo
     if (isString(item)) {
-      if (item.startsWith('applet:') && bajo.app.applets.length > 0) {
+      if (item.startsWith('applet:') && this.app.applets.length > 0) {
         const [, ns, path] = item.split(':')
-        const applet = find(bajo.app.applets, a => (a.ns === ns || a.alias === ns))
-        if (applet && scope.app.bajoCli) result = await scope.app.bajoCli.runApplet(applet, path, ...args)
+        const applet = find(this.app.applets, a => (a.ns === ns || a.alias === ns))
+        if (applet && this.app.bajoCli) result = await this.app.bajoCli.runApplet(applet, path, ...args)
       } else {
         const [ns, method, ...params] = item.split(':')
-        const fn = bajo.getMethod(`${ns}:${method}`)
+        const fn = this.getMethod(`${ns}:${method}`)
         if (fn) {
           if (params.length > 0) args.unshift(...params)
           result = await fn(...args)
@@ -454,7 +453,7 @@ class Bajo extends Plugin {
    * @returns {string} Formatted value
    */
   format = (value, type, options = {}) => {
-    const { defaultsDeep } = this.app.lib.aneka
+    const { defaultsDeep, isSet } = this.app.lib.aneka
     const { format } = this.config.intl
     const { emptyValue = format.emptyValue } = options
     const lang = options.lang ?? this.config.lang
@@ -496,6 +495,7 @@ class Bajo extends Plugin {
     }
     if (['array'].includes(type)) return value.join(', ')
     if (['object'].includes(type)) return JSON.stringify(value)
+    if (['boolean'].includes(type) && isSet(value)) return value ? this.t('true', { lang }) : this.t('false', { lang })
     return value
   }
 
@@ -800,15 +800,17 @@ class Bajo extends Plugin {
    * @param {string} [options.lastSeparator=and] - Text to use as the last separator
    * @returns {string}
    */
-  join = (array, options) => {
-    const { isSet } = this.app.lib.aneka
-    const translate = val => {
-      return this.t(val).toLowerCase()
+  join = (array, options = {}) => {
+    let separator = ', '
+    let lastSeparator = 'and'
+    let lang
+    if (isString(options)) separator = options
+    else ({ separator, lastSeparator, lang } = options)
+    const translate = (val) => {
+      return this.t(val, { lang }).toLowerCase()
     }
     if (array.length === 0) return translate('none')
     if (array.length === 1) return array[0]
-    if (isSet(options) && !isPlainObject(options)) return array.join(options)
-    let { separator = ', ', lastSeparator = 'and' } = options ?? {}
     lastSeparator = translate(lastSeparator)
     const last = (array.pop() ?? '').trim()
     return array.map(a => (a + '').trim()).join(separator) + ` ${lastSeparator} ${last}`

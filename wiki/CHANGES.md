@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-04-11
+
+- [2.11.1] Bug fix in ```join()```
+- [2.11.1] Bug fix in ```format()```
+
 ## 2026-04-07
 
 - [2.11.0] Change ```dispose()``` to be an async function
