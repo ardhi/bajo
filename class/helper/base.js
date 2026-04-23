@@ -99,16 +99,17 @@ export async function checkDependencies () {
  * @fires bajo:afterCollectHooks
  */
 export async function collectHooks () {
-  const { eachPlugins, runHook, isLogInRange, importModule, breakNsPathFromFile } = this.bajo
+  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
   const me = this
   me.bajo.log.trace('collecting%s', this.t('hooks'))
   // collects
   await eachPlugins(async function ({ dir, file }) {
-    const { ns: baseNs } = this
-    const { ns, subNs, path } = breakNsPathFromFile({ file, dir, baseNs, suffix: '/hook/' })
+    const _file = file.replace(dir + '/hook/', '').replace('.js', '')
+    const [names, path] = _file.split('@')
+    const [ns, subNs] = names.split('.').map(n => camelCase(n))
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
-    merge(mod, { ns, subNs, path, src: baseNs })
+    merge(mod, { ns, subNs, path: camelCase(path), src: this.ns })
     me.bajo.hooks.push(mod)
   }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only

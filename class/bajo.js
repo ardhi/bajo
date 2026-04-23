@@ -91,7 +91,7 @@ class Bajo extends Plugin {
     }
   }
 
-  breakNsPathFromFile = ({ file, dir, baseNs, suffix = '', getType } = {}) => {
+  breakNsPathFromFile = ({ file = '', dir = '', ns, suffix = '', getType } = {}) => {
     let item = file.replace(dir + suffix, '')
     let type
     if (getType) {
@@ -103,12 +103,12 @@ class Bajo extends Plugin {
     let [name, _path] = item.split('@')
     if (!_path) {
       _path = name
-      name = baseNs
+      name = ns
     }
     _path = camelCase(_path)
     const names = map(name.split('.'), n => camelCase(n))
-    const [ns, subNs] = names
-    return { ns, subNs, path: _path, fullNs: names.join('.'), type }
+    const [_ns, subNs] = names
+    return { ns: _ns, subNs, path: _path, fullNs: names.join('.'), type }
   }
 
   /**
@@ -843,14 +843,53 @@ class Bajo extends Plugin {
    * @param {boolean} [options.ignoreError] - Any exception will be silently discarded
    * @param {string} [options.ns] - If given, use this as the scope
    * @param {string} [options.pattern] - If given and auto detection is on (extension is ```.*```), it will be used for instead the default one
-   * @param {Object} [options.globOptions={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options
    * @param {Object} [options.defValue={}] - Default value to use if value returned empty
-   * @param {Object} [options.opts={}] - Parser setting
+   * @param {Object} [options.parserOpts={}] - Parser setting
+   * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options
    * @returns {Object}
    */
-  readConfig = async (file, { ns, pattern, ignoreError = true, defValue = {}, options = {} } = {}) => {
+  readConfig = async (file, options = {}) => {
     const { parseObject } = this.app.lib
-    options.readFromFile = true
+    const { defaultsDeep } = this.app.lib.aneka
+    const { uniq, isString, isArray, findIndex, isPlainObject } = this.app.lib._
+    let { ns, baseNs, extend, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
+
+    const output = async (obj) => {
+      const orig = parseObject(obj)
+      if (!baseNs || extend === false) return orig
+      const { suffix = '', keys = [] } = options
+      let bases = this.app.getAllNs()
+      if (isString(extend)) extend = extend.split(',').map(i => i.trim)
+      if (isArray(extend)) bases = [...extend, 'main']
+      bases = uniq(bases)
+      let ext = isArray(obj) ? [] : {}
+      const dir = this.app[ns].dir.pkg
+      let [names, _path] = file.split(':')
+      if (file.slice(0, names.length + 1) !== `${ns}:`) _path = file.slice(dir.length + 1)
+      if (_path.startsWith('extend/')) _path = _path.slice(7)
+      if (_path.startsWith(`${baseNs}/`)) _path = _path.slice(baseNs.length + 1)
+      _path = _path.slice(0, -(path.extname(_path).length)) + '.*'
+      const opts = omit(options, ['suffix', 'keys', 'extend'])
+      opts.parserOpts = opts.parserOpts ?? {}
+      opts.parserOpts.args = opts.parserOpts.args ?? []
+      const idx = findIndex(opts.parserOpts.args, item => {
+        return isPlainObject(item) && Object.keys(item)[0] === '_orig'
+      })
+      if (idx > -1) opts.parserOpts.args[idx] = { _orig: orig }
+      else opts.parserOpts.args.push({ _orig: orig })
+
+      for (const base of bases) {
+        if (!this.app[base]) continue
+        const fileExt = `${this.app[base].dir.pkg}/extend/${baseNs}/extend/${ns}${suffix}/${_path}`
+        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false }))
+        if (isEmpty(result)) continue
+        if (isArray(result)) ext = [...result, ...ext]
+        else ext = defaultsDeep({}, result, ext)
+      }
+      return isArray(orig) ? [...orig, ...ext] : defaultsDeep({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
+    }
+
+    parserOpts.readFromFile = true
     if (!ns) ns = this.ns
     file = resolvePath(this.getPluginFile(file))
     let ext = path.extname(file)
@@ -858,22 +897,22 @@ class Bajo extends Plugin {
     ext = ext.toLowerCase()
     if (ext === '.js') {
       const { readHandler } = find(this.app.configHandlers, { ext })
-      return parseObject(await readHandler.call(this.app[ns], file, options))
+      return await output(await readHandler.call(this.app[ns], file, parserOpts))
     }
-    if (ext === '.json') return await this.fromJson(file, options)
+    if (ext === '.json') return await output(await this.fromJson(file, parserOpts))
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
-        return parseObject(defValue)
+        return await output(defValue)
       }
-      return parseObject(await item.readHandler.call(this.app[ns], file, options))
+      return await output(await item.readHandler.call(this.app[ns], file, parserOpts))
     }
     const item = pattern ?? `${fname}.{${map(map(this.app.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
-    const files = await fastGlob(item, options.glob ?? {})
+    const files = await fastGlob(item, globOpts ?? {})
     if (files.length === 0) {
       if (!ignoreError) throw this.error('noConfigFileFound', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
-      return parseObject(defValue)
+      return await output(defValue)
     }
     let config = defValue
     for (const f of files) {
@@ -883,10 +922,10 @@ class Bajo extends Plugin {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
       }
-      config = await item.readHandler.call(this.app[ns], f, options)
+      config = await item.readHandler.call(this.app[ns], f, parserOpts)
       if (!isEmpty(config)) break
     }
-    return parseObject(config)
+    return await output(config)
   }
 
   /**

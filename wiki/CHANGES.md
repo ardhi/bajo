@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-04-23
+
+- [2.12.0] Remove ```breakNsPathFromFile()```
+- [2.12.0] Add feature to read in extended path ```readConfig()```
+
 ## 2026-04-11
 
 - [2.11.1] Bug fix in ```join()```
