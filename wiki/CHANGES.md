@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-04-25
+
+- [2.12.1] Bug fix in ```readConfig()```
+
 ## 2026-04-23
 
 - [2.12.0] Remove ```breakNsPathFromFile()```

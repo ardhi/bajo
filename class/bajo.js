@@ -852,24 +852,9 @@ class Bajo extends Plugin {
     const { parseObject } = this.app.lib
     const { defaultsDeep } = this.app.lib.aneka
     const { uniq, isString, isArray, findIndex, isPlainObject } = this.app.lib._
-    let { ns, baseNs, extend, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
+    let { ns, baseNs, extend, checkOverride, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
 
-    const output = async (obj) => {
-      const orig = parseObject(obj)
-      if (!baseNs || extend === false) return orig
-      const { suffix = '', keys = [] } = options
-      let bases = this.app.getAllNs()
-      if (isString(extend)) extend = extend.split(',').map(i => i.trim)
-      if (isArray(extend)) bases = [...extend, 'main']
-      bases = uniq(bases)
-      let ext = isArray(obj) ? [] : {}
-      const dir = this.app[ns].dir.pkg
-      let [names, _path] = file.split(':')
-      if (file.slice(0, names.length + 1) !== `${ns}:`) _path = file.slice(dir.length + 1)
-      if (_path.startsWith('extend/')) _path = _path.slice(7)
-      if (_path.startsWith(`${baseNs}/`)) _path = _path.slice(baseNs.length + 1)
-      _path = _path.slice(0, -(path.extname(_path).length)) + '.*'
-      const opts = omit(options, ['suffix', 'keys', 'extend'])
+    const getParseOptsArgs = (opts, orig) => {
       opts.parserOpts = opts.parserOpts ?? {}
       opts.parserOpts.args = opts.parserOpts.args ?? []
       const idx = findIndex(opts.parserOpts.args, item => {
@@ -877,7 +862,32 @@ class Bajo extends Plugin {
       })
       if (idx > -1) opts.parserOpts.args[idx] = { _orig: orig }
       else opts.parserOpts.args.push({ _orig: orig })
+    }
 
+    const output = async (obj) => {
+      let orig = parseObject(obj)
+      if (!baseNs || extend === false) return orig
+      const { suffix = '', keys = [] } = options
+      let bases = this.app.getAllNs()
+      if (isString(extend)) extend = extend.split(',').map(i => i.trim)
+      if (isArray(extend)) bases = [...extend, 'main']
+      bases = uniq(bases)
+      let ext = isArray(orig) ? [] : {}
+      const dir = this.app[ns].dir.pkg
+      let [names, _path] = file.split(':')
+      if (file.slice(0, names.length + 1) !== `${ns}:`) _path = file.slice(dir.length + 1)
+      if (_path.startsWith('extend/')) _path = _path.slice(7)
+      if (_path.startsWith(`${baseNs}/`)) _path = _path.slice(baseNs.length + 1)
+      _path = _path.slice(0, -(path.extname(_path).length)) + '.*'
+      // check for override? Override only exists in main plugin
+      const opts = omit(options, ['suffix', 'keys', 'extend'])
+      if (checkOverride) {
+        getParseOptsArgs(opts, orig)
+        const fileExt = `${this.app.main.dir.pkg}/extend/${baseNs}/override/${ns}${suffix}/${_path}`
+        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, checkOverride: false }))
+        if (!isEmpty(result)) orig = result
+      }
+      getParseOptsArgs(opts, orig)
       for (const base of bases) {
         if (!this.app[base]) continue
         const fileExt = `${this.app[base].dir.pkg}/extend/${baseNs}/extend/${ns}${suffix}/${_path}`
@@ -983,13 +993,13 @@ class Bajo extends Plugin {
     let ext = {}
     // default config file
     try {
-      cfg = await this.readConfig(`${path}.*`, { ignoreError: true })
+      cfg = await this.readConfig(`${path}.*`)
     } catch (err) {
       if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
     }
     // env based config file
     try {
-      ext = await this.readConfig(`${path}-${this.config.env}.*`, { ignoreError: true })
+      ext = await this.readConfig(`${path}-${this.config.env}.*`)
     } catch (err) {
       if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
     }
