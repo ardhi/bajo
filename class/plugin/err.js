@@ -103,7 +103,10 @@ class Err extends Tools {
     const detailsMessage = []
     each(value, (v, i) => {
       if (isString(v)) v = { error: v }
-      if (!v.context) return undefined
+      if (!v.context) {
+        v.error = me.plugin.t(v.error)
+        return undefined
+      }
       v.context.message = v.message
       if (v.type === 'any.only') {
         const items = without(get(v, 'context.valids', []))

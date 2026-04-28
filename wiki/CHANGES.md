@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-04-28
+
+- [2.13.0] Add ```options.merge``` to ```readConfig()```
+- [2.13.0] Bug fix in ```err.js```
+
 ## 2026-04-25
 
 - [2.12.1] Bug fix in ```readConfig()```

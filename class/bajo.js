@@ -851,8 +851,8 @@ class Bajo extends Plugin {
   readConfig = async (file, options = {}) => {
     const { parseObject } = this.app.lib
     const { defaultsDeep } = this.app.lib.aneka
-    const { uniq, isString, isArray, findIndex, isPlainObject } = this.app.lib._
-    let { ns, baseNs, extend, checkOverride, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
+    const { uniq, isString, isArray, findIndex, isPlainObject, merge } = this.app.lib._
+    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
 
     const getParseOptsArgs = (opts, orig) => {
       opts.parserOpts = opts.parserOpts ?? {}
@@ -884,19 +884,22 @@ class Bajo extends Plugin {
       if (checkOverride) {
         getParseOptsArgs(opts, orig)
         const fileExt = `${this.app.main.dir.pkg}/extend/${baseNs}/override/${ns}${suffix}/${_path}`
-        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, checkOverride: false }))
+        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, checkOverride: false, merge: false }))
         if (!isEmpty(result)) orig = result
       }
       getParseOptsArgs(opts, orig)
+      const binder = merged ? merge : defaultsDeep
       for (const base of bases) {
         if (!this.app[base]) continue
         const fileExt = `${this.app[base].dir.pkg}/extend/${baseNs}/extend/${ns}${suffix}/${_path}`
-        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false }))
+        const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, merge: false }))
         if (isEmpty(result)) continue
         if (isArray(result)) ext = [...result, ...ext]
-        else ext = defaultsDeep({}, result, ext)
+        else ext = binder({}, result, ext)
       }
-      return isArray(orig) ? [...orig, ...ext] : defaultsDeep({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
+      if (isArray(orig)) return [...orig, ...ext]
+      const item = keys.length > 0 ? pick(ext, keys) : ext
+      return binder({}, item, orig)
     }
 
     parserOpts.readFromFile = true
