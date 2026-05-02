@@ -800,12 +800,10 @@ class Bajo extends Plugin {
    * @param {string} [options.lastSeparator=and] - Text to use as the last separator
    * @returns {string}
    */
-  join = (array, options = {}) => {
-    let separator = ', '
-    let lastSeparator = 'and'
-    let lang
-    if (isString(options)) separator = options
-    else ({ separator, lastSeparator, lang } = options)
+  join = (input = [], options = {}) => {
+    const array = [...input]
+    if (isString(options)) options = { separator: options }
+    let { separator = ', ', lastSeparator = 'and', lang } = options
     const translate = (val) => {
       return this.t(val, { lang }).toLowerCase()
     }

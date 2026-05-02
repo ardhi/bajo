@@ -382,8 +382,15 @@ class App {
    */
   t = (ns, text, ...params) => {
     const { formatText, isSet } = this.lib.aneka
+    const { isArray, last } = this.lib._
+    const { join } = this.bajo
     let { text: newText, trans, params: args } = this._prepTrans(ns, text, params)
     if (!isSet(trans)) trans = newText
+    const lang = isPlainObject(last(args)) ? last(args).lang : undefined
+    for (const idx in args) {
+      const arg = args[idx]
+      if (isArray(arg)) args[idx] = join(arg, { lang })
+    }
     return formatText(trans, ...args)
   }
 

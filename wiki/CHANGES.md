@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-05-02
+
+- [2.13.1] Bug fix in ```app.t()```
+- [2.13.1] Bug fix in ```bajo.join()```
+
 ## 2026-04-28
 
 - [2.13.0] Add ```options.merge``` to ```readConfig()```
