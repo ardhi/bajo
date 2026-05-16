@@ -1,5 +1,14 @@
 # Changes
 
+## 2026-05-16
+
+- [2.14.0] Add ```bajo:beforeReadConfig()``` hook
+- [2.14.0] Add ```bajo.override:beforeReadConfig()``` hook
+- [2.14.0] Add ```bajo.extend:beforeReadConfig()``` hook
+- [2.14.0] Add ```bajo:afterReadConfig()``` hook
+- [2.14.0] Add ```bajo.override:afterReadConfig()``` hook
+- [2.14.0] Add ```bajo.extend:afterReadConfig()``` hook
+
 ## 2026-05-02
 
 - [2.13.1] Bug fix in ```app.t()```

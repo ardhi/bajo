@@ -850,7 +850,7 @@ class Bajo extends Plugin {
     const { parseObject } = this.app.lib
     const { defaultsDeep } = this.app.lib.aneka
     const { uniq, isString, isArray, findIndex, isPlainObject, merge } = this.app.lib._
-    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {} } = options
+    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {}, handler } = options
 
     const getParseOptsArgs = (opts, orig) => {
       opts.parserOpts = opts.parserOpts ?? {}
@@ -864,7 +864,10 @@ class Bajo extends Plugin {
 
     const output = async (obj) => {
       let orig = parseObject(obj)
-      if (!baseNs || extend === false) return orig
+      if (!baseNs || extend === false) {
+        await this.runHook('bajo:afterReadConfig', file, orig, options)
+        return orig
+      }
       const { suffix = '', keys = [] } = options
       let bases = this.app.getAllNs()
       if (isString(extend)) extend = extend.split(',').map(i => i.trim)
@@ -882,24 +885,32 @@ class Bajo extends Plugin {
       if (checkOverride) {
         getParseOptsArgs(opts, orig)
         const fileExt = `${this.app.main.dir.pkg}/extend/${baseNs}/override/${ns}${suffix}/${_path}`
+        await this.runHook('bajo.override:beforeReadConfig', fileExt, options)
         const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, checkOverride: false, merge: false }))
+        await this.runHook('bajo.override:afterReadConfig', fileExt, result, options)
         if (!isEmpty(result)) orig = result
       }
       getParseOptsArgs(opts, orig)
       const binder = merged ? merge : defaultsDeep
       for (const base of bases) {
         if (!this.app[base]) continue
+        options.sourceNs = base
         const fileExt = `${this.app[base].dir.pkg}/extend/${baseNs}/extend/${ns}${suffix}/${_path}`
+        await this.runHook('bajo.extend:beforeReadConfig', fileExt, options)
         const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, merge: false }))
+        await this.runHook('bajo.extend:afterReadConfig', fileExt, result, options)
         if (isEmpty(result)) continue
         if (isArray(result)) ext = [...result, ...ext]
         else ext = binder({}, result, ext)
       }
-      if (isArray(orig)) return [...orig, ...ext]
-      const item = keys.length > 0 ? pick(ext, keys) : ext
-      return binder({}, item, orig)
+      delete options.sourceNs
+      let result = isArray(orig) ? [...orig, ...ext] : binder({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
+      if (handler) result = await this.callHandler(this.app[ns], handler, result)
+      await this.runHook('bajo:afterReadConfig', file, result, options)
+      return result
     }
 
+    await this.runHook('bajo:beforeReadConfig', file, options)
     parserOpts.readFromFile = true
     if (!ns) ns = this.ns
     file = resolvePath(this.getPluginFile(file))
