@@ -100,17 +100,20 @@ export async function checkDependencies () {
  */
 export async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
-  const me = this
+  const me = this // "this" is "app"
   me.bajo.log.trace('collecting%s', this.t('hooks'))
-  // collects
   await eachPlugins(async function ({ dir, file }) {
-    const _file = file.replace(dir + '/hook/', '').replace('.js', '')
-    const [names, path] = _file.split('@')
-    const [ns, subNs] = names.split('.').map(n => camelCase(n))
     const mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
-    merge(mod, { ns, subNs, path: camelCase(path), src: this.ns })
-    me.bajo.hooks.push(mod)
+    const _file = file.replace(dir + '/hook/', '').replace('.js', '')
+    let [names, path] = _file.split('@')
+    names = names.split('$').map(n => trim(n))
+    for (const name of names) {
+      let [ns, subNs, subSubNs] = name.split('.').map(n => camelCase(n))
+      if (subSubNs) subNs = `${subNs}.${subSubNs}`
+      const m = merge({}, mod, { ns, subNs, path: camelCase(path), src: this.ns })
+      me.bajo.hooks.push(m)
+    }
   }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
   // for log trace purpose only
   if (isLogInRange('trace')) {

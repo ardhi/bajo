@@ -106,7 +106,7 @@ export default factory
 export async function buildBaseConfig () {
   // dirs
   const { defaultsDeep, textToArray, currentLoc, resolvePath } = this.app.lib.aneka
-  this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
+  this.config = defaultsDeep({}, this.app.argv._, this.app.envVars._)
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/../..'
   set(this, 'dir.pkg', resolvePath(path))

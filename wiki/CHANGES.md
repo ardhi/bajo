@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-05-22
+
+- [2.14.1] Bug fix in ```helper.buildBaseConfig()```
+- [2.14.1] Bug fix in ```helper.collectHooks()```
+
 ## 2026-05-16
 
 - [2.14.0] Add ```bajo:beforeReadConfig()``` hook
