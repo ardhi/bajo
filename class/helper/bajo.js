@@ -69,7 +69,11 @@ const defConfig = {
       id: 'metric'
     }
   },
-  exitHandler: true
+  exitHandler: true,
+  cache: {
+    purge: [],
+    purgeIntvDur: '5m'
+  }
 }
 
 const defMain = `async function factory (pkgName) {
@@ -203,9 +207,9 @@ export async function collectConfigHandlers () {
  */
 export async function buildExtConfig () {
   // config merging
-  const { defaultsDeep } = this.app.lib.aneka
+  const { defaultsDeep, includes } = this.app.lib.aneka
   const { parseObject, omitDeep } = this.app.lib
-  const { isEmpty, get } = this.app.lib._
+  const { isEmpty, get, isString, without } = this.app.lib._
 
   let resp = get(this, `app.options.config.${this.ns}`, {})
   if (isEmpty(resp)) resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
@@ -231,6 +235,16 @@ export async function buildExtConfig () {
     this.config.exitHandler = false
   }
   if (this.config.runtime.noWarning) process.removeAllListeners('warning')
+  if (isString(this.config.cache.purge)) this.config.cache.purge = [this.config.cache.purge]
+  this.config.cache.purge = without(this.config.cache.purge, '', null, undefined)
+  if (this.config.cache.purge.length > 0) {
+    if (includes(['all', '*'], this.config.cache.purge)) this.app.cache.purge('*')
+    else {
+      for (const name of this.config.cache.purge) {
+        this.app.cache.purge(name)
+      }
+    }
+  }
   this.app.log = new Log(this.app)
   this.log.trace('dataDir%s', this.dir.data)
   this.log.debug('configHandlers%s', this.join(exts))

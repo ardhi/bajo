@@ -341,23 +341,20 @@ class Bajo extends Plugin {
    * @returns {any}
    */
   eachPlugins = async (handler, options = {}) => {
-    if (typeof options === 'string') options = { glob: options }
-    const { glob, useBajo, prefix = '', noUnderscore = true, returnItems } = options
+    if (isString(options)) options = { glob: options }
+    const { glob = [], useBajo, prefix = '', noUnderscore = true, returnItems, opts = {} } = options
+    const globs = isString(glob) ? [glob] : [...glob]
     const pluginPkgs = useBajo ? [...cloneDeep(this.app.pluginPkgs), 'bajo'] : this.app.pluginPkgs
     const result = {}
     for (const pkgName of pluginPkgs) {
       const ns = camelCase(pkgName)
       let r
-      if (glob) {
+      if (globs.length > 0) {
         const base = prefix === '' ? `${this.app[ns].dir.pkg}/extend` : `${this.app[ns].dir.pkg}/extend/${prefix}`
-        let opts = isString(glob) ? { pattern: [glob] } : glob
-        let pattern = opts.pattern ?? []
-        if (isString(pattern)) pattern = [pattern]
-        opts = omit(opts, ['pattern'])
-        for (const i in pattern) {
-          if (!path.isAbsolute(pattern[i])) pattern[i] = `${base}/${pattern[i]}`
-        }
-        const files = await fastGlob(pattern, opts)
+        const patterns = globs.map(glob => {
+          return !path.isAbsolute(glob) ? `${base}/${glob}` : glob
+        })
+        const files = await fastGlob.glob(patterns, opts)
         for (const f of files) {
           if (path.basename(f)[0] === '_' && noUnderscore) continue
           const resp = await handler.call(this.app[ns], { file: f, dir: base })
@@ -850,7 +847,7 @@ class Bajo extends Plugin {
     const { parseObject } = this.app.lib
     const { defaultsDeep } = this.app.lib.aneka
     const { uniq, isString, isArray, findIndex, isPlainObject, merge } = this.app.lib._
-    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {}, handler } = options
+    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {}, handler, cache = {} } = options
 
     const getParseOptsArgs = (opts, orig) => {
       opts.parserOpts = opts.parserOpts ?? {}
@@ -866,6 +863,7 @@ class Bajo extends Plugin {
       let orig = parseObject(obj)
       if (!baseNs || extend === false) {
         await this.runHook('bajo:afterReadConfig', file, orig, options)
+        if (cache.name) await this.app.cache.save(cache.name, orig, cache.ttlDur)
         return orig
       }
       const { suffix = '', keys = [] } = options
@@ -907,9 +905,13 @@ class Bajo extends Plugin {
       let result = isArray(orig) ? [...orig, ...ext] : binder({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
       if (handler) result = await this.callHandler(this.app[ns], handler, result)
       await this.runHook('bajo:afterReadConfig', file, result, options)
+      if (cache.name) await this.app.cache.save(cache.name, result, cache.ttlDur)
       return result
     }
 
+    let result
+    if (cache.name) result = await this.app.cache.load(cache.name, cache.ttlDur)
+    if (result) return result
     await this.runHook('bajo:beforeReadConfig', file, options)
     parserOpts.readFromFile = true
     if (!ns) ns = this.ns
@@ -999,19 +1001,19 @@ class Bajo extends Plugin {
    * @param {string} path - Base path to start looking config files
    * @returns {Object}
    */
-  readAllConfigs = async (path) => {
+  readAllConfigs = async (path, options) => {
     const { defaultsDeep } = this.app.lib.aneka
     let cfg = {}
     let ext = {}
     // default config file
     try {
-      cfg = await this.readConfig(`${path}.*`)
+      cfg = await this.readConfig(`${path}.*`, options)
     } catch (err) {
       if (['BAJO_CONFIG_NO_PARSER'].includes(err.code)) throw err
     }
     // env based config file
     try {
-      ext = await this.readConfig(`${path}-${this.config.env}.*`)
+      ext = await this.readConfig(`${path}-${this.config.env}.*`, options)
     } catch (err) {
       if (!['BAJO_CONFIG_FILE_NOT_FOUND'].includes(err.code)) throw err
     }
@@ -1028,15 +1030,7 @@ class Bajo extends Plugin {
    * @returns {Array} Array of hook execution results
    */
   runHook = async (hookName, ...args) => {
-    let ns
-    let path
-    let subNs
-    try {
-      ({ ns, subNs, path } = this.breakNsPath(hookName ?? ''))
-    } catch (err) {
-      return
-    }
-    let fns = filter(this.hooks, { ns, subNs, path })
+    let fns = filter(this.hooks, { name: hookName })
     if (isEmpty(fns)) return []
     fns = orderBy(fns, ['level'])
     const results = []

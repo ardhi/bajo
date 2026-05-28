@@ -100,29 +100,43 @@ export async function checkDependencies () {
  */
 export async function collectHooks () {
   const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
+  const { isArray, isPlainObject } = this.lib._
   const me = this // "this" is "app"
   me.bajo.log.trace('collecting%s', this.t('hooks'))
   await eachPlugins(async function ({ dir, file }) {
-    const mod = await importModule(file, { asHandler: true })
+    let mod = await importModule(file, { asHandler: true })
     if (!mod) return undefined
-    const _file = file.replace(dir + '/hook/', '').replace('.js', '')
-    let [names, path] = _file.split('@')
-    names = names.split('$').map(n => trim(n))
-    for (const name of names) {
-      let [ns, subNs, subSubNs] = name.split('.').map(n => camelCase(n))
-      if (subSubNs) subNs = `${subNs}.${subSubNs}`
-      const m = merge({}, mod, { ns, subNs, path: camelCase(path), src: this.ns })
-      me.bajo.hooks.push(m)
+    if (file.includes('hook.js')) mod = await mod.handler.call(this)
+    if (isArray(mod)) {
+      for (const m of mod) {
+        if (!isPlainObject(m)) continue
+        if (!m.name) throw me.bajo.error('missing%s%s', 'name', file)
+        if (isArray(m.name)) {
+          for (const name of m.name) {
+            me.bajo.hooks.push(merge({}, m, { name, src: this.ns }))
+          }
+        } else {
+          m.src = this.ns
+          me.bajo.hooks.push(m)
+        }
+      }
+    } else {
+      const _file = file.replace(dir + '/hook/', '').replace('.js', '')
+      let [names, path] = _file.split('@')
+      names = names.split('$').map(n => trim(n))
+      for (let name of names) {
+        name = name.split('.').map(n => camelCase(n)).join('.')
+        const m = merge({}, mod, { name: `${name}:${camelCase(path)}`, src: this.ns })
+        me.bajo.hooks.push(m)
+      }
     }
-  }, { glob: 'hook/**/*.js', prefix: me.bajo.ns })
+  }, { glob: ['hook/*.js', 'hook.js'], prefix: me.bajo.ns })
   // for log trace purpose only
   if (isLogInRange('trace')) {
-    const items = groupBy(me.bajo.hooks, item => item.ns + (item.subNs ? `.${item.subNs}` : ''))
+    const items = groupBy(me.bajo.hooks, item => item.name)
     forOwn(items, (v, k) => {
-      const hooks = groupBy(v, 'path')
-      forOwn(hooks, (v1, k1) => {
-        me.bajo.log.trace('- %s:%s (%d)', k, k1, v1.length)
-      })
+      const [name, path] = k.split(':')
+      me.bajo.log.trace('- %s:%s (%d)', name, path, v.length)
     })
   }
 

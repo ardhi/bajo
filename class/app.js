@@ -2,6 +2,7 @@ import util from 'util'
 import Bajo from './bajo.js'
 import Base from './base.js'
 import { runAsApplet } from './helper/bajo.js'
+import Cache from './app/cache.js'
 import Tools from './plugin/tools.js'
 
 import { outmatchNs, parseObject, lib } from './helper/app.js'
@@ -196,6 +197,8 @@ class App {
      */
     this.envVars = {}
 
+    this.cache = new Cache(this)
+
     if (!options.cwd) options.cwd = process.cwd()
     const l = last(process.argv)
     if (l.startsWith('--cwd')) {
@@ -278,6 +281,9 @@ class App {
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.runHook('bajo:beforeBoot')
     await this.bajo.init()
+    // cache
+    this.cache.purge()
+    setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur)
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.debug('bootCompleted%s', secToHms(elapsed, true))

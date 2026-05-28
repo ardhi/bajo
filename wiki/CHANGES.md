@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-05-28
+
+- [2.15.0] Add built-in cache feature through ```app.cache``` instance
+- [2.15.0] Bug fix in ```eachPlugins()```
+- [2.15.0] Add cache feature to ```readConfig()```
+- [2.15.0] Add feature to read many hooks as one file
+
 ## 2026-05-22
 
 - [2.14.1] Bug fix in ```helper.buildBaseConfig()```
