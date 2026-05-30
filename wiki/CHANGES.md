@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-05-30
+
+- [2.15.1] Bug fix in ```app.boot()```
+
 ## 2026-05-28
 
 - [2.15.0] Add built-in cache feature through ```app.cache``` instance

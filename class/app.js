@@ -267,7 +267,11 @@ class App {
    */
   boot = async () => {
     this.bajo = new Bajo(this)
-    this.bajo.hooks.push(...(this.options.hooks ?? []))
+    const hooks = (this.options.hooks ?? []).map(item => {
+      item.src = item.src ?? 'bajo'
+      return item
+    })
+    this.bajo.hooks.push(...hooks)
     delete this.options.hooks
     // argv/args/env
     const { parseArgsArgv, parseEnv, secToHms } = this.lib.aneka
