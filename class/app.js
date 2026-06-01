@@ -4,11 +4,11 @@ import Base from './base.js'
 import { runAsApplet } from './helper/bajo.js'
 import Cache from './app/cache.js'
 import Tools from './plugin/tools.js'
-
 import { outmatchNs, parseObject, lib } from './helper/app.js'
+import { fileURLToPath } from 'url'
 
 const { camelCase, isPlainObject, get, reverse, map, last, without, set } = lib._
-const { pascalCase } = lib.aneka
+const { pascalCase, getCallerFilename } = lib.aneka
 let unknownLangWarning = false
 
 /**
@@ -197,6 +197,11 @@ class App {
      */
     this.envVars = {}
 
+    /**
+     * Placeholder for boxen that will get imported from ```bajoCli``` later during boot process.
+     */
+    this.boxen = null
+
     this.cache = new Cache(this)
 
     if (!options.cwd) options.cwd = process.cwd()
@@ -239,13 +244,19 @@ class App {
    * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
    */
   dump = (...args) => {
+    let caller = getCallerFilename()
+    caller = caller ? fileURLToPath(caller) : 'Unavailable'
     const terminate = last(args) === true
     if (terminate) args.pop()
-    for (const arg of args) {
-      const result = util.inspect(arg, { depth: 10, colors: true })
+    const value = args.length === 1 ? args[0] : args
+    if (this.boxen) {
+      const result = util.inspect(value, { depth: 10, colors: true })
+      const info = this.boxen(result, { title: `Caller: ${caller}`, titleAlignment: 'center', padding: 1, margin: 1, borderStyle: 'round' })
+      console.log(info)
+    } else {
+      const result = util.inspect([caller, value], { depth: 10, colors: true })
       console.log(result)
     }
-    // if (terminate) process.kill(process.pid, 'SIGINT')
     if (terminate) process.exit('1')
   }
 
@@ -285,6 +296,7 @@ class App {
     this.applet = this.envVars._.applet ?? this.argv._.applet
     await this.bajo.runHook('bajo:beforeBoot')
     await this.bajo.init()
+    if (this.bajoCli) this.boxen = await this.bajo.importPkg('bajoCli:boxen')
     // cache
     this.cache.purge()
     setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur)

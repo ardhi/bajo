@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-01
+
+- [2.16.0] Upgrade ```aneka@0.14.0```
+- [2.16.0] Adding caller filename to the ```app.dump()```
+- [2.16.0] Formatting ```app.dump()``` to be more catchy when ```bajoCli``` is loaded
+
 ## 2026-05-30
 
 - [2.15.1] Bug fix in ```app.boot()```
