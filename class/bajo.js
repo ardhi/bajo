@@ -1,3 +1,4 @@
+import Tools from './tools.js'
 import Plugin from './plugin.js'
 import increment from 'add-filename-increment'
 import fs from 'fs-extra'
@@ -21,7 +22,7 @@ import {
   bootOrder,
   bootPlugins,
   exitHandler
-} from './helper/bajo.js'
+} from './_helper.js'
 
 const require = createRequire(import.meta.url)
 
@@ -297,7 +298,7 @@ class Bajo extends Plugin {
   callHandler = async (item, ...args) => {
     let result
     let scope = this
-    if (item instanceof Plugin) {
+    if (item instanceof Tools || item instanceof Plugin) {
       scope = item
       item = args.shift()
     }

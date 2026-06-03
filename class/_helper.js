@@ -1,30 +1,32 @@
-import Print from '../plugin/print.js'
-import Log from '../app/log.js'
+import Print from './print.js'
+import Log from './log.js'
 import os from 'os'
 import fs from 'fs-extra'
 import lodash from 'lodash'
-import {
-  buildConfigs,
-  checkDependencies,
-  checkNameAliases,
-  collectHooks,
-  run
-} from './base.js'
+import semver from 'semver'
+import aneka from 'aneka/index.js'
+import outmatch from 'outmatch'
+import fastGlob from 'fast-glob'
+import { sprintf } from 'sprintf-js'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc.js'
+import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+import localizedFormat from 'dayjs/plugin/localizedFormat.js'
+import weekOfYear from 'dayjs/plugin/weekOfYear.js'
+import freeze from '../lib/freeze.js'
+import findDeep from '../lib/find-deep.js'
+import omitDeep from 'omit-deep'
+
+/**
+ * Internal helpers called by Bajo and other classes. It should remains
+ * hidden and not to be imported by any program.
+ *
+ * @module Helper
+ */
 
 const {
-  orderBy,
-  isFunction,
-  isPlainObject,
-  map,
-  pick,
-  values,
-  keys,
-  set,
-  get,
-  without,
-  uniq,
-  camelCase,
-  isEmpty
+  merge, forOwn, groupBy, find, reduce, map, trim, keys, intersection, each,
+  camelCase, get, orderBy, isFunction, isPlainObject, pick, values, set, without, uniq, isEmpty
 } = lodash
 
 const omitted = ['spawn', 'cwd', 'name', 'alias', 'applet', 'a', 'plugins']
@@ -47,6 +49,19 @@ const defConfig = {
       compressOld: true,
       byPlugin: false,
       retain: 5
+    }
+  },
+  dump: {
+    depth: 2,
+    compact: false,
+    colors: true,
+    breakLength: 80,
+    caller: true,
+    frame: {
+      titleAllignment: 'center',
+      padding: 1,
+      margin: 1,
+      borderStyle: 'round'
     }
   },
   lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
@@ -90,12 +105,64 @@ const defMain = `async function factory (pkgName) {
 export default factory
 `
 
+export function outmatchNs (source, pattern) {
+  const { breakNsPath } = this.bajo
+  const [src, subSrc] = source.split(':')
+  if (!subSrc) return pattern === src
+  try {
+    const { fullNs, path } = breakNsPath(pattern)
+    const isMatch = outmatch(path)
+    return src === fullNs && isMatch(subSrc)
+  } catch (err) {
+    return false
+  }
+}
+
+export function parseObject (obj, options = {}) {
+  const me = this
+  const { ns = 'bajo', lang } = options
+  options.translator = {
+    lang,
+    prefix: 't:',
+    handler: val => {
+      const [text, ...args] = val.split('|')
+      args.push({ lang })
+      return me[ns].t(text, ...args)
+    }
+  }
+  return aneka.parseObject(obj, options)
+}
+
+dayjs.extend(utc)
+dayjs.extend(customParseFormat)
+dayjs.extend(localizedFormat)
+dayjs.extend(weekOfYear)
+
 /**
- * Internal helpers called by Bajo that only used once for bootstrapping. It should remains
- * hidden and not to be imported by any program.
- *
- * @module Helper/Bajo
+ * @typedef {Object} TAppLib
+ * @property {Object} _ - Access to {@link https://lodash.com|lodash}
+ * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
+ * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
+ * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
+ * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
+ * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
+ * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+ * @property {Object} freeze
+ * @property {Object} findDeep
+ * @see App
  */
+export const lib = {
+  _: lodash,
+  fs,
+  fastGlob,
+  sprintf,
+  outmatch,
+  dayjs,
+  aneka,
+  freeze,
+  findDeep,
+  omitDeep
+}
 
 /**
  * Building bajo base config. Mostly dealing with directory setups:
@@ -112,7 +179,7 @@ export async function buildBaseConfig () {
   const { defaultsDeep, textToArray, currentLoc, resolvePath } = this.app.lib.aneka
   this.config = defaultsDeep({}, this.app.argv._, this.app.envVars._)
   set(this, 'dir.base', this.app.dir)
-  const path = currentLoc(import.meta).dir + '/../..'
+  const path = currentLoc(import.meta).dir + '/..'
   set(this, 'dir.pkg', resolvePath(path))
   if (get(this, 'config.dir.data')) set(this, 'dir.data', this.config.dir.data)
   if (!get(this, 'dir.data')) set(this, 'dir.data', `${this.dir.base}/data`)
@@ -276,6 +343,203 @@ export async function bootOrder () {
   this.log.debug('runInEnv%s', this.t(this.app.envs[this.config.env]))
   // misc
   freeze(this.config)
+}
+
+/**
+ * Build configurations
+ *
+ * @async
+ */
+export async function buildConfigs () {
+  this.bajo.log.debug('readConfigs')
+  for (const ns of this.getAllNs()) {
+    await this[ns].loadConfig()
+    this[ns].print = new Print(this[ns])
+    this.loadIntl(ns)
+  }
+}
+
+/**
+ * Ensure for names and aliases to be unique and no clashes with other plugins
+ *
+ * @async
+ */
+export async function checkNameAliases () {
+  this.bajo.log.debug('checkAliasNameClash')
+  const refs = []
+  for (const pkg of this.bajo.app.pluginPkgs) {
+    const plugin = this.bajo.app[camelCase(pkg)]
+    const { ns, alias } = plugin
+    let item = find(refs, { ns })
+    if (item) throw this.bajo.error('pluginNameClash%s%s%s%s', ns, pkg, item.ns, item.pkg, { code: 'BAJO_NAME_CLASH' })
+    item = find(refs, { alias })
+    if (item) throw this.bajo.error('pluginNameClash%s%s%s%s', alias, pkg, item.alias, item.pkg, { code: 'BAJO_ALIAS_CLASH' })
+    refs.push({ ns, alias, pkg })
+  }
+}
+
+/**
+ * Ensure dependencies are met
+ *
+ * @async
+ */
+export async function checkDependencies () {
+  const { join } = this.bajo
+  this.bajo.log.debug('checkDeps')
+  for (const pkg of this.bajo.app.pluginPkgs) {
+    const plugin = this.bajo.app[camelCase(pkg)]
+    const { ns, dependencies } = plugin
+    this.bajo.log.trace('- %s', ns)
+    const odep = reduce(dependencies, (o, k) => {
+      const item = map(k.split('@'), m => trim(m))
+      if (k[0] === '@') o['@' + item[1]] = item[2]
+      else o[item[0]] = item[1]
+      return o
+    }, {})
+    const deps = keys(odep)
+    if (deps.length > 0) {
+      if (intersection(this.bajo.app.pluginPkgs, deps).length !== deps.length) {
+        throw this.bajo.error('dependencyUnfulfilled%s%s', pkg, join(deps), { code: 'BAJO_DEPENDENCY' })
+      }
+      each(deps, d => {
+        if (!odep[d]) return
+        const ver = get(this.bajo.app[camelCase(d)], 'pkg.version')
+        if (!ver) return
+        if (!semver.satisfies(ver, odep[d])) {
+          throw this.bajo.error('semverCheckFailed%s%s', pkg, `${d}@${odep[d]}`, { code: 'BAJO_DEPENDENCY_SEMVER' })
+        }
+      })
+    }
+  }
+}
+
+/**
+ * Collect and build hooks and push them to the bajo's hook system
+ *
+ * @async
+ * @fires bajo:afterCollectHooks
+ */
+export async function collectHooks () {
+  const { eachPlugins, runHook, isLogInRange, importModule } = this.bajo
+  const { isArray, isPlainObject } = this.lib._
+  const me = this // "this" is "app"
+  me.bajo.log.trace('collecting%s', this.t('hooks'))
+  await eachPlugins(async function ({ dir, file }) {
+    let mod = await importModule(file, { asHandler: true })
+    if (!mod) return undefined
+    if (file.includes('hook.js')) mod = await mod.handler.call(this)
+    if (isArray(mod)) {
+      for (const m of mod) {
+        if (!isPlainObject(m)) continue
+        if (!m.name) throw me.bajo.error('missing%s%s', 'name', file)
+        if (isArray(m.name)) {
+          for (const name of m.name) {
+            me.bajo.hooks.push(merge({}, m, { name, src: this.ns }))
+          }
+        } else {
+          m.src = this.ns
+          me.bajo.hooks.push(m)
+        }
+      }
+    } else {
+      const _file = file.replace(dir + '/hook/', '').replace('.js', '')
+      let [names, path] = _file.split('@')
+      names = names.split('$').map(n => trim(n))
+      for (let name of names) {
+        name = name.split('.').map(n => camelCase(n)).join('.')
+        const m = merge({}, mod, { name: `${name}:${camelCase(path)}`, src: this.ns })
+        me.bajo.hooks.push(m)
+      }
+    }
+  }, { glob: ['hook/*.js', 'hook.js'], prefix: me.bajo.ns })
+  // for log trace purpose only
+  if (isLogInRange('trace')) {
+    const items = groupBy(me.bajo.hooks, item => item.name)
+    forOwn(items, (v, k) => {
+      const [name, path] = k.split(':')
+      me.bajo.log.trace('- %s:%s (%d)', name, path, v.length)
+    })
+  }
+
+  /**
+   * Run after hooks are collected
+   *
+   * @global
+   * @event bajo:afterCollectHooks
+   * @param {Object[]} hooks - Array of hook objects
+   * @see {@tutorial hook}
+   * @see module:Helper/Base.collectHooks
+   */
+  await runHook('bajo:afterCollectHooks', this.bajo.hooks)
+  me.bajo.log.debug('collected%s%d', this.t('hooks'), me.bajo.hooks.length)
+}
+
+/**
+ * Finally, run all plugins
+ *
+ * @async
+ * @fires bajo:beforeAll{method}
+ * @fires {ns}:before{method}
+ * @fires {ns}:after{method}
+ * @fires bajo:afterAll{method}
+ */
+export async function run () {
+  const me = this
+  const { runHook, eachPlugins, join } = me.bajo
+  const { freeze } = me.lib
+  const methods = ['init']
+  if (!me.applet) methods.push('start')
+  for (const method of methods) {
+    /**
+     * Run before all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     *
+     * @global
+     * @event bajo:beforeAll{method}
+     * @param {string} method - Accepted methods: ```Init```, ```Start```
+     * @see module:Helper/Base.run
+     */
+    await runHook(`bajo:${camelCase(`before all ${method}`)}`)
+    await eachPlugins(async function () {
+      const { ns } = this
+      /**
+       * Run before ```{method}``` is executed within ```{ns}``` context
+       *
+       * - ```{ns}``` - namespace
+       * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
+       *
+       * @global
+       * @event {ns}:before{method}
+       * @see module:Helper/Base.run
+       */
+      await runHook(`${ns}:${camelCase(`before ${method}`)}`)
+      await me[ns][method]()
+      /**
+       * Run after ```{method}``` is executed within ```{ns}``` context
+       *
+       * - ```{ns}``` - namespace
+       * - ```{method}``` - Accepted methods: ```Init``` or ```Start```
+       *
+       * @global
+       * @event {ns}:after{method}
+       * @see module:Helper/Base.run
+       */
+      await runHook(`${ns}:${camelCase(`after ${method}`)}`)
+      if (method === 'start') freeze(me[ns].config)
+    })
+    /**
+     * Run after all ```{method}``` executed. Accepted ```{method}```: ```Init``` or ```Start```
+     *
+     * @global
+     * @event bajo:afterAll{method}
+     * @see module:Helper/Base.run
+     */
+    await runHook(`bajo:${camelCase(`after all ${method}`)}`)
+  }
+  if (me.bajo.config.log.level === 'trace') {
+    let text = join(map(me.bajo.app.pluginPkgs, b => camelCase(b)))
+    text += ` (${me.bajo.app.pluginPkgs.length})`
+    me.bajo.log.trace('loadedPlugins%s', text)
+  } else me.bajo.log.debug('loadedPlugins%s', me.bajo.app.pluginPkgs.length)
 }
 
 /**

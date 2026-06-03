@@ -1,15 +1,33 @@
 import util from 'util'
 import Bajo from './bajo.js'
 import Base from './base.js'
-import { runAsApplet } from './helper/bajo.js'
-import Cache from './app/cache.js'
-import Tools from './plugin/tools.js'
-import { outmatchNs, parseObject, lib } from './helper/app.js'
+import Cache from './cache.js'
+import Tools from './tools.js'
+import { outmatchNs, parseObject, lib, runAsApplet } from './_helper.js'
 import { fileURLToPath } from 'url'
 
 const { camelCase, isPlainObject, get, reverse, map, last, without, set } = lib._
-const { pascalCase, getCallerFilename } = lib.aneka
+const { pascalCase } = lib.aneka
 let unknownLangWarning = false
+
+function getCallerFilename () {
+  const originalFunc = Error.prepareStackTrace
+  let callerfile
+
+  try {
+    const err = new Error()
+    Error.prepareStackTrace = (_, stack) => stack
+    const currentfile = err.stack.shift().getFileName()
+
+    while (err.stack.length) {
+      callerfile = err.stack.shift().getFileName()
+      if (currentfile !== callerfile) break
+    }
+  } catch (e) {}
+
+  Error.prepareStackTrace = originalFunc
+  return callerfile
+}
 
 /**
  * @typedef {Object} TAppEnv
@@ -238,10 +256,19 @@ class App {
   }
 
   /**
-   * Dumping variable on screen. Like ```console.log``` but with max 10 depth.
+   * Dumping variable on screen. Like ```console.log``` with configurable options. Useful for quick debugging and testing. You can also use it to dump variables in production without worrying about performance because it is using Bajo's built-in cache to store the result of util's inspect, so it will only be processed once for each unique variable.
+   *
+   * Any argument passed to this method will be displayed on screen.
+   * If the last argument is a boolean ```true```, app will quit rightaway after dumping.
+   *
+   * If you have ```bajoCli``` plugin installed, variables will be displayed in a nice box using ```boxen``` package.
+   * Otherwise, it will fallback to ```console.log``` with util's inspect result.
+   *
+   * To have more control on how the variable is displayed, you can set options in Bajo's config under ```dump``` key.
+   * See {@link Bajo#config} for details.
    *
    * @method
-   * @param  {...any} args - any arguments passed will be displayed on screen. If the last argument is a boolean 'true', app will quit rightaway
+   * @param  {...any} args - Variables to dump
    */
   dump = (...args) => {
     let caller = getCallerFilename()
@@ -249,12 +276,14 @@ class App {
     const terminate = last(args) === true
     if (terminate) args.pop()
     const value = args.length === 1 ? args[0] : args
+    const options = { ...this.bajo.config.dump }
     if (this.boxen) {
-      const result = util.inspect(value, { depth: 10, colors: true })
-      const info = this.boxen(result, { title: `Caller: ${caller}`, titleAlignment: 'center', padding: 1, margin: 1, borderStyle: 'round' })
-      console.log(info)
+      const result = util.inspect(value, options)
+      const opts = { ...this.bajo.config.dump.frame }
+      if (options.caller) opts.title = `Caller: ${caller}`
+      console.log(this.boxen(result, opts))
     } else {
-      const result = util.inspect([caller, value], { depth: 10, colors: true })
+      const result = util.inspect(options.caller ? [caller, value] : value, options)
       console.log(result)
     }
     if (terminate) process.exit('1')

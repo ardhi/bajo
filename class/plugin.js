@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import Err from './plugin/err.js'
+import Err from './err.js'
 
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 

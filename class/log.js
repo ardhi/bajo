@@ -1,5 +1,5 @@
 import os from 'os'
-import logLevels from '../../lib/log-levels.js'
+import logLevels from '../lib/log-levels.js'
 import chalk from 'chalk'
 import { stripVTControlCharacters } from 'node:util'
 

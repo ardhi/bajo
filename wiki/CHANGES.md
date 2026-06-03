@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-03
+
+- [2.17.0] Combine all helpers to ```_helper.js```
+- [2.17.0] ```callHandler()``` now can accept an instance of ```Tools``` as its scope too
+- [2.17.0] Bug fix in ```app.dump()```
+
 ## 2026-06-01
 
 - [2.16.0] Upgrade ```aneka@0.14.0```
