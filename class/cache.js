@@ -4,8 +4,7 @@ class Cache {
   }
 
   getRootDir = () => {
-    const { getPluginDataDir } = this.app.bajo
-    return `${getPluginDataDir('bajo')}/cache`
+    return `${this.app.getPluginDataDir('bajo')}/cache`
   }
 
   prep = (name, ttlDur = 0) => {

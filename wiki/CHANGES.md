@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-12
+
+- [2.18.0] Move plugin related methods to ```app```
+- [2.18.0] Last argument of ```app.dump()``` serves as options if it a plain object with certain keys
+
 ## 2026-06-03
 
 - [2.17.0] Combine all helpers to ```_helper.js```

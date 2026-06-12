@@ -3,6 +3,7 @@ import Bajo from './bajo.js'
 import Base from './base.js'
 import Cache from './cache.js'
 import Tools from './tools.js'
+import Plugin from './plugin.js'
 import { outmatchNs, parseObject, lib, runAsApplet } from './_helper.js'
 import { fileURLToPath } from 'url'
 
@@ -256,6 +257,103 @@ class App {
   }
 
   /**
+   * Get loaded plugins
+   *
+   * @method
+   * @param {string[]} [nss] - Array of namespaces. If empty, it returns all loaded plugins
+   * @returns {TPlugin[]}
+   */
+  getPlugins = (nss) => {
+    const allNs = nss ?? this.getAllNs()
+    return allNs.map(ns => this[ns])
+  }
+
+  /**
+   * Get all plugins loaded plugins
+   *
+   * @method
+   * @returns {TPlugin[]}
+   */
+  getAllPlugins = () => {
+    return this.getPlugins()
+  }
+
+  /**
+   * Get plugin by name
+   *
+   * @method
+   * @param {string} name - Plugin name/namespace or alias
+   * @param {boolean} [silent] - If ```true```, silently return undefined even on error
+   * @returns {Object} Plugin object
+   */
+  getPlugin = (name, silent) => {
+    if (!this[name]) {
+      // alias?
+      let plugin
+      for (const key in this) {
+        const item = this[key]
+        if (item instanceof Plugin && (item.alias === name || item.pkgName === name)) {
+          plugin = item
+          break
+        }
+      }
+      if (!plugin) {
+        if (silent) return false
+        throw this.bajo.error('pluginWithNameAliasNotLoaded%s', name)
+      }
+      name = plugin.ns
+    }
+    return this[name]
+  }
+
+  /**
+   * Get plugin data directory
+   *
+   * @method
+   * @param {string} name - Plugin name (namespace) or alias
+   * @param {boolean} [ensureDir=true] - Set ```true``` (default) to ensure directory is existed
+   * @returns {string}
+   */
+  getPluginDataDir = (name, ensureDir = true) => {
+    const { fs } = this.lib
+    const plugin = this.getPlugin(name)
+    const dir = `${this.bajo.dir.data}/plugins/${plugin.ns}`
+    if (ensureDir) fs.ensureDirSync(dir)
+    return dir
+  }
+
+  /**
+   * Resolve file path from:
+   *
+   * - local/absolute file
+   * - TNsPath (```myPlugin:/path/to/file.txt```)
+   * - file under node_modules, e.g. ```myPlugin:node_modules/some-package/file.txt```
+   *
+   * @method
+   * @param {string} file - File path, see above for supported types
+   * @returns {string} Resolved file path
+   */
+  getPluginFile = (file) => {
+    const { currentLoc } = this.lib.aneka
+    const { fs } = this.lib
+    const { trim } = this.lib._
+    if (!this) return file
+    if (file[0] === '.') file = `${currentLoc(import.meta).dir}/${trim(file.slice(1), '/')}`
+    if (file.includes(':')) {
+      if (file.slice(1, 2) === ':') return file // windows fs
+      const { ns, path } = this.bajo.breakNsPath(file, false)
+      if (ns !== 'file' && this && this[ns] && ns.length > 1) {
+        file = `${this[ns].dir.pkg}${path}`
+        if (path.startsWith('node_modules/')) {
+          file = `${this[ns].dir.pkg}/${path}`
+          if (!fs.existsSync(file)) file = `${this[ns].dir.pkg}/../${path.slice('node_modules/'.length)}`
+        }
+      }
+    }
+    return file
+  }
+
+  /**
    * Dumping variable on screen. Like ```console.log``` with configurable options. Useful for quick debugging and testing. You can also use it to dump variables in production without worrying about performance because it is using Bajo's built-in cache to store the result of util's inspect, so it will only be processed once for each unique variable.
    *
    * Any argument passed to this method will be displayed on screen.
@@ -273,7 +371,8 @@ class App {
   dump = (...args) => {
     let caller = getCallerFilename()
     caller = caller ? fileURLToPath(caller) : 'Unavailable'
-    const terminate = last(args) === true
+    const opts = last(args)
+    const terminate = isPlainObject(opts) && opts.abort
     if (terminate) args.pop()
     const value = args.length === 1 ? args[0] : args
     const options = { ...this.bajo.config.dump }

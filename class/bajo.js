@@ -33,7 +33,7 @@ const {
   last, get, has, values, dropRight, pick
 } = lodash
 
-const { resolvePath, currentLoc } = aneka
+const { resolvePath } = aneka
 
 /**
  * The Core. The main engine. The one and only plugin that control app's boot process and
@@ -172,7 +172,7 @@ class Bajo extends Plugin {
     [ns, subNs, subSubNs] = ns.split('.')
     if (checkNs) {
       if (!this.app[ns]) {
-        const plugin = this.getPlugin(ns)
+        const plugin = this.app.getPlugin(ns)
         if (plugin) ns = plugin.ns
       }
       if (!this.app[ns]) throw this.error('unknownPluginOrNotLoaded%s')
@@ -573,77 +573,6 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Get plugin data directory
-   *
-   * @method
-   * @param {string} name - Plugin name (namespace) or alias
-   * @param {boolean} [ensureDir=true] - Set ```true``` (default) to ensure directory is existed
-   * @returns {string}
-   */
-  getPluginDataDir = (name, ensureDir = true) => {
-    const plugin = this.getPlugin(name)
-    const dir = `${this.app.bajo.dir.data}/plugins/${plugin.ns}`
-    if (ensureDir) fs.ensureDirSync(dir)
-    return dir
-  }
-
-  /**
-   * Resolve file path from:
-   *
-   * - local/absolute file
-   * - TNsPath (```myPlugin:/path/to/file.txt```)
-   * - file under node_modules, e.g. ```myPlugin:node_modules/some-package/file.txt```
-   *
-   * @method
-   * @param {string} file - File path, see above for supported types
-   * @returns {string} Resolved file path
-   */
-  getPluginFile = (file) => {
-    if (!this) return file
-    if (file[0] === '.') file = `${currentLoc(import.meta).dir}/${trim(file.slice(1), '/')}`
-    if (file.includes(':')) {
-      if (file.slice(1, 2) === ':') return file // windows fs
-      const { ns, path } = this.breakNsPath(file)
-      if (ns !== 'file' && this && this.app && this.app[ns] && ns.length > 1) {
-        file = `${this.app[ns].dir.pkg}${path}`
-        if (path.startsWith('node_modules/')) {
-          file = `${this.app[ns].dir.pkg}/${path}`
-          if (!fs.existsSync(file)) file = `${this.app[ns].dir.pkg}/../${path.slice('node_modules/'.length)}`
-        }
-      }
-    }
-    return file
-  }
-
-  /**
-   * Get plugin by name
-   *
-   * @method
-   * @param {string} name - Plugin name/namespace or alias
-   * @param {boolean} [silent] - If ```true```, silently return undefined even on error
-   * @returns {Object} Plugin object
-   */
-  getPlugin = (name, silent) => {
-    if (!this.app[name]) {
-      // alias?
-      let plugin
-      for (const key in this.app) {
-        const item = this.app[key]
-        if (item instanceof Plugin && (item.alias === name || item.pkgName === name)) {
-          plugin = item
-          break
-        }
-      }
-      if (!plugin) {
-        if (silent) return false
-        throw this.error('pluginWithNameAliasNotLoaded%s', name)
-      }
-      name = plugin.ns
-    }
-    return this.app[name]
-  }
-
-  /**
    * Import file/module from any loaded plugins.
    *
    * Method proxy from {@link module:Lib.importModule}
@@ -730,7 +659,7 @@ class Bajo extends Plugin {
    * @returns {boolean}
    */
   isEmptyDir = async (dir, filterFn) => {
-    dir = resolvePath(this.getPluginFile(dir))
+    dir = resolvePath(this.app.getPluginFile(dir))
     await fs.exists(dir)
     return await emptyDir(dir, filterFn)
   }
@@ -916,7 +845,7 @@ class Bajo extends Plugin {
     await this.runHook('bajo:beforeReadConfig', file, options)
     parserOpts.readFromFile = true
     if (!ns) ns = this.ns
-    file = resolvePath(this.getPluginFile(file))
+    file = resolvePath(this.app.getPluginFile(file))
     let ext = path.extname(file)
     const fname = path.dirname(file) + '/' + path.basename(file, ext)
     ext = ext.toLowerCase()
@@ -1065,8 +994,8 @@ class Bajo extends Plugin {
    * @returns {string} Full file path
    */
   saveAsDownload = async (file, item, printSaved = true) => {
-    const { print, getPluginDataDir } = this.app.bajo
-    const fname = increment(`${getPluginDataDir(this.ns)}/download/${trim(file, '/')}`, { fs: true })
+    const { print } = this.app.bajo
+    const fname = increment(`${this.app.getPluginDataDir(this.ns)}/download/${trim(file, '/')}`, { fs: true })
     const dir = path.dirname(fname)
     if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
     await fs.writeFile(fname, item, 'utf8')
