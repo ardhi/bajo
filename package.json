@@ -44,6 +44,7 @@
   "devDependencies": {
     "chai": "^6.2.1",
     "clean-jsdoc-theme": "^4.3.0",
-    "docdash": "^2.0.2"
+    "docdash": "^2.0.2",
+    "mocha": "^11.7.6"
   }
 }
