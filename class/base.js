@@ -9,8 +9,8 @@ import Plugin from './plugin.js'
 
 class Base extends Plugin {
   /**
-   * @param {string} pkgName - Package name (the one you use in package.json)
-   * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
+   * @param {string} pkgName - Package name (the one you use in package.json).
+   * @param {Object} app - App instance reference. Useful to call app method inside a plugin.
    */
   constructor (pkgName, app) {
     super(pkgName, app)
@@ -98,7 +98,7 @@ class Base extends Plugin {
   }
 
   /**
-   * Dispose internal references
+   * Dispose internal references.
    */
   dispose = async () => {
     await super.dispose()

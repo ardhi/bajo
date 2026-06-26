@@ -4,16 +4,16 @@ import chalk from 'chalk'
 import { stripVTControlCharacters } from 'node:util'
 
 /**
- * Log output in stringified JSON format. Returned when app run in ```prod``` environment
+ * Log output in stringified JSON format. Returned when app run in ```prod``` environment.
  *
  * @typedef TLogJson
- * @property {string} prefix - Message prefix
- * @property {string} message - The message itself
- * @property {string} level - Log level
- * @property {number} time - Time in millisecond
- * @property {number} pid - Process ID
- * @property {string} hostname - Hostname
- * @property {Object} [data] - Payload data, if any
+ * @property {string} prefix Message prefix.
+ * @property {string} message The message itself.
+ * @property {string} level Log level.
+ * @property {number} time Time in millisecond.
+ * @property {number} pid Process ID.
+ * @property {string} hostname Hostname.
+ * @property {Object} [data] Payload data, if any.
  * @see Log#formatMsg
  */
 
@@ -44,7 +44,8 @@ class Log {
   constructor (app) {
     this.lastDelta = 0
     /**
-     * The app instance
+     * The app instance.
+     *
      * @type {App}
      */
     this.app = app
@@ -63,9 +64,9 @@ class Log {
    * In ```prod``` environment, log will be delivered as JSON stringified object. See {@link TLogJson} for more info
    *
    * @method
-   * @param {string} level - Log level to use
-   * @param {string} prefix - Prefix to the message
-   * @param {...any} params - See format above
+   * @param {string} level Log level to use.
+   * @param {string} prefix Prefix to the message.
+   * @param {...any} params See format above.
    * @see Err
    * @see TLogJson
    */
@@ -126,11 +127,11 @@ class Log {
   }
 
   /**
-   * Calculate pattern used for log rotation
+   * Calculate pattern used for log rotation.
    *
    * @method
-   * @param {boolean} isPrev - If true, calculate previous rotation pattern
-   * @returns {string} Calculated pattern
+   * @param {boolean} isPrev If true, calculate previous rotation pattern.
+   * @returns {string} Calculated pattern.
    */
   getRotationPattern = (isPrev) => {
     const { dayjs } = this.app.lib
@@ -159,11 +160,11 @@ class Log {
   }
 
   /**
-   * Save log to file in {dataDir}/log
+   * Save log to file in {dataDir}/log.
    *
    * @method
-   * @param {string} text - Log message to save
-   * @param {string} prefix - Use prefix as basename. Defaults to 'bajo'
+   * @param {string} text Log message to save.
+   * @param {string} prefix Use prefix as basename. Defaults to 'bajo'.
    */
   save = (text, prefix = 'bajo') => {
     const { fs } = this.app.lib
@@ -179,84 +180,84 @@ class Log {
   }
 
   /**
-   * Display & format message in ```trace``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```trace``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   trace = (prefix, ...params) => {
     this.formatMsg('trace', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```debug``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```debug``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   debug = (prefix, ...params) => {
     this.formatMsg('debug', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```info``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```info``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   info = (prefix, ...params) => {
     this.formatMsg('info', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```warn``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```warn``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   warn = (prefix, ...params) => {
     this.formatMsg('warn', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```error``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```error``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   error = (prefix, ...params) => {
     this.formatMsg('error', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```fatal``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```fatal``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   fatal = (prefix, ...params) => {
     this.formatMsg('fatal', prefix, ...params)
   }
 
   /**
-   * Display & format message in ```silent``` level. See {@link Log#formatMsg|formatMsg} for details
+   * Display & format message in ```silent``` level. See {@link Log#formatMsg|formatMsg} for details.
    *
    * @method
-   * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {string} prefix Message prefix.
+   * @param {...any} params Parameters.
    */
   silent = (prefix, ...params) => {
     this.formatMsg('silent', prefix, ...params)
   }
 
   /**
-   * Dispose internal references
+   * Dispose internal references.
    */
   dispose = async () => {
     this.app = null

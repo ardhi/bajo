@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-26
+
+- [2.19.0] Documentation overhaul
+- [2.19.0] Make much needed tests
+
 ## 2026-06-12
 
 - [2.18.0] Move plugin related methods to ```app```

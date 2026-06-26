@@ -36,6 +36,24 @@ const {
 const { resolvePath } = aneka
 
 /**
+ * Name based ```{ns}:{path}``` format.
+ *
+ * @typedef {string} TNsPathPairs
+ * @see TNsPathResult
+ * @see Bajo#buildNsPath
+ * @see Bajo#breakNsPath
+ */
+
+/**
+ * Object returned by {@link Bajo#getUnitFormat|bajo:getUnitFormat}.
+ *
+ * @typedef {Object} TBajoFormatResult
+ * @property {string} unitSys - Unit system.
+ * @property {Object} format - Format object.
+ * @see Bajo#getUnitFormat
+ */
+
+/**
  * The Core. The main engine. The one and only plugin that control app's boot process and
  * making sure all other plugins working nicely.
  *
@@ -43,20 +61,21 @@ const { resolvePath } = aneka
  */
 class Bajo extends Plugin {
   /**
-   * @param {App} app - App instance. Usefull to call app method inside a plugin
+   * @param {App} app - App instance. Usefull to call app method inside a plugin.
    */
   constructor (app) {
     super('bajo', app)
     this.alias = 'bajo'
     this.whiteSpace = [' ', '\t', '\n', '\r']
     /**
-     * Config object
+     * Config object.
      *
      * @type {Object}
      * @see {@tutorial config}
      */
     this.config = {}
 
+    // by defaualt, only these config formats below are supported.
     app.configHandlers = [
       { ext: '.js', readHandler: this.fromJs },
       { ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
@@ -113,23 +132,15 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Name based ```{ns}:{path}``` format
-   * @typedef {string} TNsPathPairs
-   * @see TNsPathResult
-   * @see Bajo#buildNsPath
-   * @see Bajo#breakNsPath
-   */
-
-  /**
-   * Build ns/path pairs
+   * Build ns/path pairs.
    *
    * @method
-   * @param {object} [options={}] - Options object
-   * @param {string} [options.ns=''] - Namespace
-   * @param {string} [options.subNs] - Sub namespace
-   * @param {string} [options.subSubNs] - Sub sub namespace
-   * @param {string} [options.path] - Path
-   * @returns {TNsPathPairs} - Ns/path pairs
+   * @param {object} [options={}] - Options object.
+   * @param {string} [options.ns=''] - Namespace.
+   * @param {string} [options.subNs] - Sub namespace.
+   * @param {string} [options.subSubNs] - Sub sub namespace.
+   * @param {string} [options.path] - Path.
+   * @returns {TNsPathPairs} Ns/path pairs.
    */
   buildNsPath = ({ ns = '', subNs, subSubNs, path } = {}) => {
     if (subNs) ns += '.' + subNs
@@ -138,21 +149,21 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}
+   * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}.
    *
    * @typedef {Object} TNsPathResult
-   * @property {string} ns - Namespace
-   * @property {string} [subNs] - Sub namespace
-   * @property {string} [subSubNs] - Sub of sub namespace
-   * @property {string} path - Path without query string or hash
-   * @property {string} fullPath - Full path, including query string and hash
+   * @property {string} ns - Namespace.
+   * @property {string} [subNs] - Sub namespace.
+   * @property {string} [subSubNs] - Sub of sub namespace.
+   * @property {string} path - Path without query string or hash.
+   * @property {string} fullPath - Full path, including query string and hash.
    * @see TNsPathPairs
    * @see Bajo#buildNsPath
    * @see Bajo#breakNsPath
    */
 
   /**
-   * Break name to its namespace & path infos
+   * Break name to its namespace & path infos.
    *
    * @method
    * @param {(TNsPathPairs|string)} name - Name to break
@@ -209,12 +220,12 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {Object} options - Options
+   * @param {Object} options - Options.
    * @param {string} [options.ns] - Namespace. If not provided, defaults to ```bajo```
-   * @param {function} [options.handler] - Handler to call while building the collection item
-   * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates
-   * @param {string} options.container - Key used as container name
-   * @param {boolean} [options.useDefaultName=true] - If true (default) and ```name``` key is not provided, returned collection will be named ```default```
+   * @param {function} [options.handler] - Handler to call while building the collection item.
+   * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates.
+   * @param {string} options.container - Key used as container name.
+   * @param {boolean} [options.useDefaultName=true] - If true (default) and ```name``` key is not provided, returned collection will be named ```default```.
    * @fires bajo:beforeBuildCollection
    * @fires bajo:afterBuildCollection
    * @returns {Object[]} The collection
@@ -229,7 +240,7 @@ class Bajo extends Plugin {
     this.app[ns].log.trace('collecting%s', this.t(container))
 
     /**
-     * Run before collection is built
+     * Run before collection is built.
      *
      * @global
      * @event bajo:beforeBuildCollection
@@ -291,9 +302,9 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {(TNsPathPairs|Object|function)} name - Method's name, function handler, plain object or plugin instance
-   * @param  {...any} [args] - One or more arguments passed as parameter to the handler
-   * @returns {any} Returned value
+   * @param {(TNsPathPairs|Object|function)} name - Method's name, function handler, plain object or plugin instance.
+   * @param  {...any} [args] - One or more arguments passed as parameter to the handler.
+   * @returns {any} Returned value.
    */
   callHandler = async (item, ...args) => {
     let result
@@ -332,13 +343,13 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin
+   * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin.
    * @param {(string|Object)} [options={}] - Options. If a string is provided, it serves as the glob pattern, otherwise:
    * @param {(string|string[])} [options.glob] - Glob pattern. If provided,
-   * @param {boolean} [options.useBajo=false] - If true, add ```bajo``` to the running plugins too
-   * @param {string} [options.prefix=''] - Prepend glob pattern with prefix
-   * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored
-   * @param {any} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys
+   * @param {boolean} [options.useBajo=false] - If true, add ```bajo``` to the running plugins too.
+   * @param {string} [options.prefix=''] - Prepend glob pattern with prefix.
+   * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored.
+   * @param {any} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys.
    * @returns {any}
    */
   eachPlugins = async (handler, options = {}) => {
@@ -386,22 +397,13 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Object returned by {@link Bajo#getUnitFormat|bajo:getUnitFormat}
-   *
-   * @typedef {Object} TBajoFormatResult
-   * @property {string} unitSys - Unit system
-   * @property {Object} format - Format object
-   * @see Bajo#getUnitFormat
-   */
-
-  /**
-   * Get unit format
+   * Get unit format.
    *
    * @method
-   * @param {Object} [options={}] - Options
-   * @param {string} [options.lang] - Language to use. Defaults to the one you set in config
-   * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or ```metric``` if unspecified
-   * @returns {TBajoFormatResult} - Returned value
+   * @param {Object} [options={}] - Options.
+   * @param {string} [options.lang] - Language to use. Defaults to the one you set in config.
+   * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or ```metric``` if unspecified.
+   * @returns {TBajoFormatResult} Returned value.
    */
   getUnitFormat = (options = {}) => {
     const lang = options.lang ?? this.config.lang
@@ -411,16 +413,16 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Format value by type
+   * Format value by type.
    *
    * @method
-   * @param {string} type - Format type. See {@link TBajoFormatType} for acceptable values
-   * @param {any} value - Value to format
-   * @param {string} [dataType] - Value's data type. See {@link TBajoDataType} for acceptable values
-   * @param {Object} [options={}] - Options
-   * @param {boolean} [options.withUnit=true] - Return with its unit appended
-   * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config
-   * @returns {(Array|string)} Return string if ```withUnit``` is true. Otherwise is an array of ```[value, unit, separator]```
+   * @param {string} type - Format type. See {@link TBajoFormatType} for acceptable values.
+   * @param {any} value - Value to format.
+   * @param {string} [dataType] - Value's data type. See {@link TBajoDataType} for acceptable values.
+   * @param {Object} [options={}] - Options.
+   * @param {boolean} [options.withUnit=true] - Return with its unit appended.
+   * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config.
+   * @returns {(Array|string)} Return string if ```withUnit``` is true. Otherwise is an array of ```[value, unit, separator]```.
    */
   formatByType = (type, value, dataType, options = {}) => {
     const { defaultsDeep } = this.app.lib.aneka
@@ -437,18 +439,18 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Format value
+   * Format value.
    *
    * @method
-   * @param {any} value - Value to format
-   * @param {string} [type] - Data type to use. See {@link TBajoDataType} for acceptable values. If not provided, return the untouched value
-   * @param {Object} [options={}] - Options
-   * @param {string} [options.emptyValue=''] - Empty value to use if function resulted empty. Defaults to the one from your config
-   * @param {boolean} [options.withUnit=true] - Return with its unit appended
-   * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config
-   * @param {string} [options.latitude] - If Bajo Spatial is loaded and data type is a double or float, then format it as latitude in degree, minute, second
-   * @param {string} [options.longitude] - If Bajo Spatial is loaded and data type is a double or float, then format it as longitude in degree, minute, second
-   * @returns {string} Formatted value
+   * @param {any} value - Value to format.
+   * @param {string} [type] - Data type to use. See {@link TBajoDataType} for acceptable values. If not provided, return the untouched value.
+   * @param {Object} [options={}] - Options.
+   * @param {string} [options.emptyValue=''] - Empty value to use if function resulted empty. Defaults to the one from your config.
+   * @param {boolean} [options.withUnit=true] - Return with its unit appended.
+   * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config.
+   * @param {string} [options.latitude] - If Bajo Spatial is loaded and data type is a double or float, then format it as latitude in degree, minute, second.
+   * @param {string} [options.longitude] - If Bajo Spatial is loaded and data type is a double or float, then format it as longitude in degree, minute, second.
+   * @returns {string} Formatted value.
    */
   format = (value, type, options = {}) => {
     const { defaultsDeep, isSet } = this.app.lib.aneka
@@ -498,19 +500,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Format text according using sprintf with extra ability to run its arguments through a serie of modifiers
-   *
-   * @param {string} text - Text to be formatted
-   * @param  {...any} args - Argumennts
-   * @returns {string} Formatted text
-   */
-
-  /**
-   * Get NPM global module directory
+   * Get NPM global module directory.
    *
    * @method
-   * @param {string} [pkgName] - If provided, return this package global directory. Otherwise the npm global module directory
-   * @param {boolean} [silent=true] - Set to ```false``` to throw exception in case of error. Otherwise silently returns undefined
+   * @param {string} [pkgName] - If provided, return this package global directory. Otherwise the npm global module directory.
+   * @param {boolean} [silent=true] - Set to ```false``` to throw exception in case of error. Otherwise silently returns undefined.
    * @returns {string}
    */
   getGlobalModuleDir = (pkgName, silent = true) => {
@@ -534,12 +528,12 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Get class method by name
+   * Get class method by name.
    *
    * @method
-   * @param {string} name - Name in format ```ns:methodName```
-   * @param {boolean} [thrown=true] - If ```true``` (default), throw exceptiom in case of error
-   * @returns {function} Class method
+   * @param {string} name - Name in format ```ns:methodName```.
+   * @param {boolean} [thrown=true] - If ```true``` (default), throw exception in case of error.
+   * @returns {function} Class method.
    */
   getMethod = (name = '', thrown = true) => {
     const { ns, path } = this.breakNsPath(name, thrown)
@@ -549,12 +543,12 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Get module directory, locally and globally
+   * Get module directory, locally and globally.
    *
    * @method
-   * @param {string} pkgName - Package name to find
-   * @param {string} base - Provide base name if ```pkgName``` is a module under ```base```'s package name
-   * @returns {string} Return absolute package directory
+   * @param {string} pkgName - Package name to find.
+   * @param {string} base - Provide base name if ```pkgName``` is a module under ```base```'s package name.
+   * @returns {string} Return absolute package directory.
    */
   getModuleDir = (pkgName, base) => {
     const { findDeep } = this.app.lib
@@ -609,8 +603,8 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {...TNsPathPairs} pkgs - One or more packages in format ```{ns}:{packageName}```
-   * @returns {(Object|Array)} See above
+   * @param {...TNsPathPairs} pkgs - One or more packages in format ```{ns}:{packageName}```.
+   * @returns {(Object|Array)} See above.
    */
   importPkg = async (...pkgs) => {
     const { defaultsDeep } = this.app.lib.aneka
@@ -654,7 +648,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {(string|TNsPathPairs)} dir - Directory to check
+   * @param {(string|TNsPathPairs)} dir - Directory to check.
    * @param {function} filterFn - Filter function to filter out files that cause false positives.
    * @returns {boolean}
    */
@@ -665,10 +659,10 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Check whether log level is within log's app current level
+   * Check whether log level is within log's app current level.
    *
    * @method
-   * @param {string} level - Level to check. See {@link TLogLevels} for more
+   * @param {string} level - Level to check. See {@link TLogLevels} for more.
    * @returns {boolean}
    */
   isLogInRange = (level) => {
@@ -692,11 +686,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Check whether directory is a valid Bajo app
+   * Check whether directory is a valid Bajo app.
    *
    * @method
-   * @param {string} dir - Directory to check
-   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content
+   * @param {string} dir - Directory to check.
+   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content.
    * @returns {(boolean|Object)}
    */
   isValidApp = (dir, returnPkg) => {
@@ -705,11 +699,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Check whether directory is a valid Bajo plugin
+   * Check whether directory is a valid Bajo plugin.
    *
    * @method
-   * @param {string} dir - Directory to check
-   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content
+   * @param {string} dir - Directory to check.
+   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content.
    * @returns {(boolean|Object)}
    */
   isValidPlugin = (dir, returnPkg) => {
@@ -722,9 +716,9 @@ class Bajo extends Plugin {
    *
    * @method
    * @param {any[]} array - Array to join
-   * @param {(string|Object)} options - If provided and is a string, it will be used as separator
-   * @param {string} [options.separator=', '] - Separator to use
-   * @param {string} [options.lastSeparator=and] - Text to use as the last separator
+   * @param {(string|Object)} options - If provided and is a string, it will be used as separator.
+   * @param {string} [options.separator=', '] - Separator to use.
+   * @param {string} [options.lastSeparator=and] - Text to use as the last separator.
    * @returns {string}
    */
   join = (input = [], options = {}) => {
@@ -742,11 +736,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Return its numeric portion of a value
+   * Return its numeric portion of a value.
    *
    * @method
-   * @param {string} [value=''] - Value to get its numeric portion
-   * @param {string} [defUnit=''] - Default unit if value doesn't have one
+   * @param {string} [value=''] - Value to get its numeric portion.
+   * @param {string} [defUnit=''] - Default unit if value doesn't have one.
    * @returns {string}
    */
   numUnit = (value = '', defUnit = '') => {
@@ -757,20 +751,20 @@ class Bajo extends Plugin {
 
   /**
    * Read and parse file as config object. Supported types: ```.js``` and ```.json```.
-   * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for ```.yml```, ```.yaml``` and ```.toml``` file
+   * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for ```.yml```, ```.yaml``` and ```.toml``` file.
    *
    * If file extension is ```.*```, it will be auto detected and parsed accordingly
    *
    * @method
    * @async
-   * @param {string} file - File to read and parse
-   * @param {Object} [options={}] - Options
-   * @param {boolean} [options.ignoreError] - Any exception will be silently discarded
-   * @param {string} [options.ns] - If given, use this as the scope
-   * @param {string} [options.pattern] - If given and auto detection is on (extension is ```.*```), it will be used for instead the default one
-   * @param {Object} [options.defValue={}] - Default value to use if value returned empty
-   * @param {Object} [options.parserOpts={}] - Parser setting
-   * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options
+   * @param {string} file - File to read and parse.
+   * @param {Object} [options={}] - Options.
+   * @param {boolean} [options.ignoreError] - Any exception will be silently discarded.
+   * @param {string} [options.ns] - If given, use this as the scope.
+   * @param {string} [options.pattern] - If given and auto detection is on (extension is ```.*```), it will be used for instead the default one.
+   * @param {Object} [options.defValue={}] - Default value to use if value returned empty.
+   * @param {Object} [options.parserOpts={}] - Parser setting.
+   * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options.
    * @returns {Object}
    */
   readConfig = async (file, options = {}) => {
@@ -883,11 +877,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Read and parse json file
+   * Read and parse json file.
    *
    * @method
-   * @param {string} file - File to read
-   * @param {boolean} [thrownNotFound=false] - If ```true```, silently ignore if file is not found
+   * @param {string} file - File to read.
+   * @param {boolean} [thrownNotFound=false] - If ```true```, silently ignore if file is not found.
    * @returns {Object}
    */
   readJson = (file, thrownNotFound = false) => {
@@ -902,6 +896,15 @@ class Bajo extends Plugin {
     return parseObject(JSON.parse(resp))
   }
 
+  /**
+   * Read and parse JavaScript file.
+   *
+   * @async
+   * @method
+   * @param {string} file - File to read and parse.
+   * @param {Object} [options={}] - Options.
+   * @returns {Object} Parsed JavaScript object.
+   */
   async fromJs (file, options = {}) {
     const args = options.args ?? []
     let mod = await importModule(file)
@@ -909,11 +912,28 @@ class Bajo extends Plugin {
     return mod
   }
 
+  /**
+   * Read and parse JSON string or object.
+   *
+   * @param {string} data - Filename to load from or JSON string to parse.
+   * @param {Object} [options={}] - Options.
+   * @returns {Object} Parsed JSON object.
+   */
   fromJson (data, options = {}) {
     const content = options.readFromFile ? fs.readFileSync(data, 'utf8') : data
     return JSON.parse(content)
   }
 
+  /**
+   * Convert data to JSON string.
+   *
+   * @method
+   * @param {Object} data - Data to convert to JSON string.
+   * @param {Object} [options={}] - Options.
+   * @param {boolean} [options.writeToFile=false] - If true, write the JSON string to a file.
+   * @param {string} [options.saveAsFile] - The file path to save the JSON string if writeToFile is true.
+   * @returns {string} JSON string
+   */
   toJson = (data, options = {}) => {
     const content = JSON.stringify(data, null, omit(options, ['writeToFile']))
     if (options.writeToFile) {
@@ -924,12 +944,13 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Read all config files by path
+   * Read all config files from path.
    *
    * @method
    * @async
-   * @param {string} path - Base path to start looking config files
-   * @returns {Object}
+   * @param {string} path - Base path to start looking config files.
+   * @param {Object} [options={}] - Options.
+   * @returns {Object} Merged configuration object.
    */
   readAllConfigs = async (path, options) => {
     const { defaultsDeep } = this.app.lib.aneka
@@ -951,13 +972,13 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Run named hook/event
+   * Run named hook/event.
    *
    * @method
    * @async
-   * @param {TNsPathPairs} hookName
-   * @param  {...any} [args] - Argument passed to the hook function
-   * @returns {Array} Array of hook execution results
+   * @param {TNsPathPairs} hookName - Name of the hook to run.
+   * @param {...any} [args] - Argument passed to the hook function.
+   * @returns {Array} Array of hook execution results.
    */
   runHook = async (hookName, ...args) => {
     let fns = filter(this.hooks, { name: hookName })
@@ -988,10 +1009,10 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {string} file - File name
-   * @param {Object} item - Item to save
-   * @param {boolean} [printSaved=true] - Print info on screen
-   * @returns {string} Full file path
+   * @param {string} file - File name.
+   * @param {Object} item - Item to save.
+   * @param {boolean} [printSaved=true] - Print info on screen.
+   * @returns {string} Full file path.
    */
   saveAsDownload = async (file, item, printSaved = true) => {
     const { print } = this.app.bajo

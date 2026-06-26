@@ -18,37 +18,40 @@ Error.stackTraceLimit = 15
  */
 class Err extends Tools {
   /**
-   * @param {Plugin} plugin - Plugin instance
-   * @param {string} msg - Error message
-   * @param  {...any} [args] - Variables to interpolate with error message. Payload object can be pushed at the very last argument
+   * @param {Plugin} plugin Plugin instance.
+   * @param {string} msg Error message.
+   * @param  {...any} [args] Variables to interpolate with error message. Payload object can be pushed at the very last argument
    */
   constructor (plugin, msg, ...args) {
     super(plugin)
 
     /**
-     * Error payload extracted from the last arguments
+     * Error payload extracted from the last arguments.
+     *
      * @type {Object}
      */
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
 
     /**
-     * Original message before translation
+     * Original message before translation.
+     *
      * @type {string}
      */
     this.orgMessage = msg
 
     /**
-     * Translated message
+     * Translated message.
+     *
      * @type {string}
      */
     this.message = this.payload.noTrans ? msg : this.plugin.t(msg, ...args)
   }
 
   /**
-   * Write message to the console
+   * Write message to the console.
    *
    * @method
-   * @returns {Err} Error object, usefull for chaining
+   * @returns {Err} Error object, useful for chaining.
    */
   write = () => {
     let err
@@ -78,7 +81,7 @@ class Err extends Tools {
   }
 
   /**
-   * Print instance on console and terminate process
+   * Print instance on console and terminate process.
    *
    * @method
    */
@@ -89,10 +92,10 @@ class Err extends Tools {
   }
 
   /**
-   * Pretty format error details
+   * Pretty format error details.
    *
    * @method
-   * @param {Object} value - Value to format
+   * @param {Object} value Value to format.
    * @returns {Object}
    */
   formatErrorDetails = (value) => {

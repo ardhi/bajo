@@ -1,9 +1,8 @@
 /**
- * Base tools class
+ * Tools class.
  *
  * @class
  */
-
 class Tools {
   constructor (plugin) {
     /**
@@ -20,7 +19,7 @@ class Tools {
   }
 
   /**
-   * Force bind methods to self (```this```)
+   * Force bind methods to self (```this```).
    *
    * @param {string[]} names - Method's names
    */
@@ -31,7 +30,7 @@ class Tools {
   }
 
   /**
-   * Dispose internal references
+   * Dispose internal references.
    */
   dispose = async () => {
     this.app = null

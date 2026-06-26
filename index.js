@@ -12,20 +12,17 @@ shim()
  *
  * I recommend the second method for its portability.
  *
- * Example:
- * ```javascript
+ * @global
+ * @async
+ * @param {Object} [options] App options.
+ * @param {string} [options.cwd] Set current working directory. Defaults to the script directory.
+ * @param {string[]} [options.plugins] Array of plugins to load. If provided, it override the list in ```package.json``` and ```.plugins``` file.
+ * @param {Object} [options.config] Plugin's config object. If provided, plugin configs will no longer be read from its config files.
+ * @returns {App}
+ * @example
  * // index.js file. Your main package entry point
  * import bajo from 'bajo'
  * await bajo()
- * ```
- *
- * @global
- * @async
- * @param {Object} [options] - App options
- * @param {string} [options.cwd] - Set current working directory. Defaults to the script directory
- * @param {string[]} [options.plugins] - Array of plugins to load. If provided, it override the list in ```package.json``` and ```.plugins``` file
- * @param {Object} [options.config] - Plugin's config object. If provided, plugin configs will no longer be read from its config files
- * @returns {App}
  */
 async function boot (options = {}) {
   if (!options.cwd) options.cwd = process.cwd()

@@ -44,21 +44,21 @@ function getCallerFilename () {
  */
 class App {
   /**
-   * @param {Object} [options] - App options
-   * @param {string} [options.cwd] - Set current working directory. Defaults to the script directory
-   * @param {string[]} [options.plugins] - Array of plugins to load. If provided, it override the list in ```package.json``` and ```.plugins``` file
-   * @param {Object} [options.config] - Plugin's config object. If provided, plugin configs will no longer be read from its config files
+   * @param {Object} [options] - App options.
+   * @param {string} [options.cwd] - Set current working directory. Defaults to the script directory.
+   * @param {string[]} [options.plugins] - Array of plugins to load. If provided, it override the list in ```package.json``` and ```.plugins``` file.
+   * @param {Object} [options.config] - Plugin's config object. If provided, plugin configs will no longer be read from its config files.
    */
   constructor (options = {}) {
     /**
-     * Copy of provided options
+     * Copy of provided options.
      *
      * @type {Object}
      */
     this.options = options
 
     /**
-     * Your main namespace. And yes, you suppose to NOT CHANGE this
+     * Your main namespace. And yes, you suppose to NOT CHANGE this.
      *
      * @memberof App
      * @constant {string}
@@ -67,27 +67,29 @@ class App {
     this.mainNs = 'main'
 
     /**
-     * App environments
+     * App environments.
+     *
      * @memberof App
      * @constant {TAppEnv}
      */
     this.envs = { dev: 'development', prod: 'production' }
 
     /**
-     * Date/time when your app start
+     * Date/time when your app start.
+     *
      * @type {Date}
      */
     this.runAt = new Date()
 
     /**
-     * Applets
+     * Applets container.
      *
      * @type {Array}
      */
     this.applets = []
 
     /**
-     * List of all loaded plugin's package names
+     * Plugin's package names container. This is the list of plugins to load. It is read from ```package.json``` and ```.plugins``` file by default, but you can override it by providing ```options.plugins``` at constructor.
      *
      * @type {Array}
      */
@@ -95,9 +97,9 @@ class App {
 
     /**
      * @typedef {Object} TAppConfigHandler
-     * @property {string} ext - File extension
-     * @property {function} [readHandler] - Function to call for reading
-     * @property {function} [writeHandler] - Function to call for writing
+     * @property {string} ext - File extension.
+     * @property {function} [readHandler] - Function to call for reading.
+     * @property {function} [writeHandler] - Function to call for writing.
      * @see App#configHandlers
      */
 
@@ -106,7 +108,7 @@ class App {
      *
      * By default, there are two built-in handlers available: ```.js```
      * and ```.json```. Use plugins to add more, e.g {@link https://github.com/ardhi/bajo-config|bajo-config}
-     * lets you to use ```.yaml/.yml``` and ```.toml```
+     * lets you to use ```.yaml/.yml``` and ```.toml```.
      *
      * @type {TAppConfigHandler[]}
      */
@@ -129,7 +131,7 @@ class App {
     this.lib.parseObject = parseObject.bind(this)
 
     /**
-     * Instance of system log
+     * Instance of system log.
      *
      * @type {Log}
      */
@@ -148,14 +150,14 @@ class App {
     this.baseClass = { Base, Tools }
 
     /**
-     * If app runs in applet mode, this will be the applet's name
+     * If app runs in applet mode, this will be the applet's name.
      *
      * @type {string}
      */
     this.applet = undefined
 
     /**
-     * Program arguments
+     * Program arguments.
      *
      * ```
      * $ node index.js arg1 arg2
@@ -234,11 +236,11 @@ class App {
   }
 
   /**
-   * Add and save plugin and it's base class definition (if provided)
+   * Add and save plugin and it's base class definition (if provided).
    *
    * @method
-   * @param {TPlugin} plugin - A valid bajo plugin
-   * @param {Object} [baseClass] - Base class definition
+   * @param {TPlugin} plugin - A valid bajo plugin.
+   * @param {Object} [baseClass] - Base class definition.
    */
   addPlugin = (plugin, baseClass) => {
     if (this[plugin.ns]) throw new Error(`Plugin '${plugin.ns}' added already`)
@@ -247,7 +249,7 @@ class App {
   }
 
   /**
-   * Get all loaded plugin namespaces
+   * Get all loaded plugin namespaces.
    *
    * @method
    * @returns {string[]}
@@ -257,10 +259,10 @@ class App {
   }
 
   /**
-   * Get loaded plugins
+   * Get loaded plugins.
    *
    * @method
-   * @param {string[]} [nss] - Array of namespaces. If empty, it returns all loaded plugins
+   * @param {string[]} [nss] - Array of namespaces. If empty, it returns all loaded plugins.
    * @returns {TPlugin[]}
    */
   getPlugins = (nss) => {
@@ -269,7 +271,7 @@ class App {
   }
 
   /**
-   * Get all plugins loaded plugins
+   * Get all plugins loaded plugins.
    *
    * @method
    * @returns {TPlugin[]}
@@ -279,12 +281,12 @@ class App {
   }
 
   /**
-   * Get plugin by name
+   * Get plugin by its namespace.
    *
    * @method
-   * @param {string} name - Plugin name/namespace or alias
-   * @param {boolean} [silent] - If ```true```, silently return undefined even on error
-   * @returns {Object} Plugin object
+   * @param {string} name - Plugin name/namespace or alias.
+   * @param {boolean} [silent] - If ```true```, silently return undefined even on error.
+   * @returns {Object} Plugin object.
    */
   getPlugin = (name, silent) => {
     if (!this[name]) {
@@ -310,8 +312,8 @@ class App {
    * Get plugin data directory
    *
    * @method
-   * @param {string} name - Plugin name (namespace) or alias
-   * @param {boolean} [ensureDir=true] - Set ```true``` (default) to ensure directory is existed
+   * @param {string} name - Plugin name (namespace) or alias.
+   * @param {boolean} [ensureDir=true] - Set ```true``` (default) to ensure directory is existed.
    * @returns {string}
    */
   getPluginDataDir = (name, ensureDir = true) => {
@@ -330,8 +332,8 @@ class App {
    * - file under node_modules, e.g. ```myPlugin:node_modules/some-package/file.txt```
    *
    * @method
-   * @param {string} file - File path, see above for supported types
-   * @returns {string} Resolved file path
+   * @param {string} file - File path, see above for supported types.
+   * @returns {string} Resolved file path.
    */
   getPluginFile = (file) => {
     const { currentLoc } = this.lib.aneka
@@ -366,7 +368,7 @@ class App {
    * See {@link Bajo#config} for details.
    *
    * @method
-   * @param  {...any} args - Variables to dump
+   * @param  {...any} args - Variables to dump.
    */
   dump = (...args) => {
     let caller = getCallerFilename()
@@ -445,10 +447,10 @@ class App {
   }
 
   /**
-   * Terminate the app and back to console
+   * Terminate the app and back to console.
    *
    * @method
-   * @param {string} [signal=SIGINT] - Signal to send
+   * @param {string} [signal=SIGINT] - Signal to send.
    */
   exit = (signal = 'SIGINT') => {
     if (signal === true) process.exit('1')
@@ -456,10 +458,10 @@ class App {
   }
 
   /**
-   * Load internationalization & languages files for particular plugin
+   * Load internationalization & languages files for particular plugin.
    *
    * @method
-   * @param {string} ns - Plugin name
+   * @param {string} ns - Plugin name.
    */
   loadIntl = (ns) => {
     const { fs } = this.lib
@@ -525,9 +527,9 @@ class App {
    * const translated = this.t('My cute cat is %s', 'purring')
    * ```
    * @method
-   * @param {string} ns - Namespace
-   * @param {string} text - Text to translate
-   * @param  {...any} params - Arguments
+   * @param {string} ns - Namespace.
+   * @param {string} text - Text to translate.
+   * @param  {...any} params - Arguments.
    * @returns {string}
    */
   t = (ns, text, ...params) => {
@@ -548,18 +550,17 @@ class App {
    * Check whether translation text/key exists
    *
    * @method
-   * @param {string} ns - Namespace
-   * @param {string} text - Text to translate
+   * @param {string} ns - Namespace.
+   * @param {string} text - Text to translate.
    * @returns {boolean}
    */
-
   te = (ns, text, ...params) => {
     const { trans } = this._prepTrans(ns, text, params)
     return !!trans
   }
 
   /**
-   * Helper method to list all supported config formats
+   * Helper method to list all supported config formats.
    *
    * @returns {string[]}
    */
@@ -567,12 +568,25 @@ class App {
     return map(this.configHandlers, 'ext')
   }
 
+  /**
+   * Start a plugin.
+   *
+   * @param {string} ns - Plugin namespace.
+   * @param  {...any} args - Arguments to pass to the plugin's start method.
+   */
   startPlugin = (ns, ...args) => {
     this[ns].start(...args)
   }
 
+  /**
+   * Stop a plugin.
+   *
+   * @param {string} ns - Plugin namespace.
+   * @param  {...any} args - Arguments to pass to the plugin's stop method.
+   */
   stopPlugin = (ns, ...args) => {
-    this[ns].stop(...args)
+    // Disabled for now, reserved for future use. It is not a good idea to stop a plugin because other plugins might be dependent on it.
+    // this[ns].stop(...args)
   }
 }
 

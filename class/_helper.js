@@ -140,13 +140,13 @@ dayjs.extend(weekOfYear)
 
 /**
  * @typedef {Object} TAppLib
- * @property {Object} _ - Access to {@link https://lodash.com|lodash}
- * @property {Object} fs - Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}
- * @property {Object} fastGlob - Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}
- * @property {Object} sprintf - Access to {@link https://github.com/alexei/sprintf.js|sprintf}
- * @property {Object} aneka - Access to {@link https://github.com/ardhi/aneka|aneka}
- * @property {Object} outmatch - Access to {@link https://github.com/axtgr/outmatch|outmatch}
- * @property {Object} dayjs - Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied
+ * @property {Object} _ Access to {@link https://lodash.com|lodash}.
+ * @property {Object} fs Access to {@link https://github.com/jprichardson/node-fs-extra|fs-extra}.
+ * @property {Object} fastGlob Access to {@link https://github.com/mrmlnc/fast-glob|fast-glob}.
+ * @property {Object} sprintf Access to {@link https://github.com/alexei/sprintf.js|sprintf}.
+ * @property {Object} aneka Access to {@link https://github.com/ardhi/aneka|aneka}.
+ * @property {Object} outmatch Access to {@link https://github.com/axtgr/outmatch|outmatch}.
+ * @property {Object} dayjs Access to {@link https://day.js.org|dayjs} with utc & customParseFormat plugin already applied.
  * @property {Object} freeze
  * @property {Object} findDeep
  * @see App
@@ -173,6 +173,8 @@ export const lib = {
  * - read the list of plugins from ```.plugins``` file
  *
  * @async
+ * @method
+ * @memberof module:Helper
  */
 export async function buildBaseConfig () {
   // dirs
@@ -214,6 +216,7 @@ export async function buildBaseConfig () {
  * - attach these plugins to the app instance
  *
  * @async
+ * @memberof module:Helper
  */
 export async function buildPlugins () {
   const { resolvePath } = this.app.lib.aneka
@@ -247,6 +250,7 @@ export async function buildPlugins () {
  * Collect all config handlers, including the one provided by plugins
  *
  * @async
+ * @memberof module:Helper
  */
 export async function collectConfigHandlers () {
   for (const pkg of this.app.pluginPkgs) {
@@ -271,6 +275,7 @@ export async function collectConfigHandlers () {
  * - Set environment (```dev``` or ```prod```)
  *
  * @async
+ * @memberof module:Helper
  */
 export async function buildExtConfig () {
   // config merging
@@ -321,6 +326,7 @@ export async function buildExtConfig () {
  * Setup plugins boot orders by reading plugin's ```.bootorder``` file if provided.
  *
  * @async
+ * @memberof module:Helper
  */
 export async function bootOrder () {
   const { freeze } = this.app.lib
@@ -349,6 +355,7 @@ export async function bootOrder () {
  * Build configurations
  *
  * @async
+ * @memberof module:Helper
  */
 export async function buildConfigs () {
   this.bajo.log.debug('readConfigs')
@@ -363,6 +370,7 @@ export async function buildConfigs () {
  * Ensure for names and aliases to be unique and no clashes with other plugins
  *
  * @async
+ * @memberof module:Helper
  */
 export async function checkNameAliases () {
   this.bajo.log.debug('checkAliasNameClash')
@@ -382,6 +390,7 @@ export async function checkNameAliases () {
  * Ensure dependencies are met
  *
  * @async
+ * @memberof module:Helper
  */
 export async function checkDependencies () {
   const { join } = this.bajo
@@ -417,6 +426,7 @@ export async function checkDependencies () {
  * Collect and build hooks and push them to the bajo's hook system
  *
  * @async
+ * @memberof module:Helper
  * @fires bajo:afterCollectHooks
  */
 export async function collectHooks () {
@@ -482,6 +492,7 @@ export async function collectHooks () {
  * @fires {ns}:before{method}
  * @fires {ns}:after{method}
  * @fires bajo:afterAll{method}
+ * @memberof module:Helper
  */
 export async function run () {
   const me = this
@@ -552,6 +563,7 @@ export async function run () {
  * 5. {@link module:Helper/Base.run|run plugins}
  *
  * @async
+ * @memberof module:Helper
  */
 export async function bootPlugins () {
   await buildConfigs.call(this.app)
@@ -565,6 +577,7 @@ export async function bootPlugins () {
  * Attach plugins exit handlers and make sure the app shutdowns gracefully
  *
  * @async
+ * @memberof module:Helper
  */
 export async function exitHandler () {
   if (!this.config.exitHandler) return
@@ -629,6 +642,7 @@ export async function exitHandler () {
  * @async
  * @fires {ns}:beforeAppletRun
  * @fires {ns}:afterAppletRun
+ * @memberof module:Helper
  */
 export async function runAsApplet () {
   const { isString, map, find } = this.app.lib._
@@ -671,6 +685,7 @@ export async function runAsApplet () {
    * @param {...any} params
    * @see {@tutorial hook}
    * @see module:Helper/Bajo.runAsApplet
+   * @memberof module:Helper
    */
   await this.runHook(`${applet.ns}:afterAppletRun`, ...this.app.args)
 }
