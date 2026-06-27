@@ -264,6 +264,7 @@ export async function collectConfigHandlers () {
     if (!mod) continue
     if (isFunction(mod)) mod = await mod.call(this.app[camelCase(pkg)])
     if (isPlainObject(mod)) mod = [mod]
+    mod.forEach(m => set(m, 'ns', camelCase(pkg)))
     this.app.configHandlers = this.app.configHandlers.concat(mod)
   }
 }

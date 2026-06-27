@@ -77,8 +77,8 @@ class Bajo extends Plugin {
 
     // by defaualt, only these config formats below are supported.
     app.configHandlers = [
-      { ext: '.js', readHandler: this.fromJs },
-      { ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
+      { ns: 'bajo', ext: '.js', readHandler: this.fromJs },
+      { ns: 'bajo', ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
     ]
 
     this.hooks = []
@@ -843,20 +843,20 @@ class Bajo extends Plugin {
     let ext = path.extname(file)
     const fname = path.dirname(file) + '/' + path.basename(file, ext)
     ext = ext.toLowerCase()
-    if (ext === '.js') {
-      const { readHandler } = find(this.app.configHandlers, { ext })
-      return await output(await readHandler.call(this.app[ns], file, parserOpts))
+    if (['.js', '.json'].includes(ext)) {
+      const item = find(this.app.configHandlers, { ext })
+      return await output(await item.readHandler.call(this.app[item.ns], file, parserOpts))
     }
-    if (ext === '.json') return await output(await this.fromJson(file, parserOpts))
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
         return await output(defValue)
       }
-      return await output(await item.readHandler.call(this.app[ns], file, parserOpts))
+      return await output(await item.readHandler.call(this.app[item.ns], file, parserOpts))
     }
-    const item = pattern ?? `${fname}.{${map(map(this.app.configHandlers, 'ext'), k => k.slice(1)).join(',')}}`
+    const formats = this.app.getConfigFormats(true)
+    const item = pattern ?? `${fname}.{${formats.join(',')}}`
     const files = await fastGlob(item, globOpts ?? {})
     if (files.length === 0) {
       if (!ignoreError) throw this.error('noConfigFileFound', { code: 'BAJO_CONFIG_FILE_NOT_FOUND' })
@@ -870,7 +870,7 @@ class Bajo extends Plugin {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
       }
-      config = await item.readHandler.call(this.app[ns], f, parserOpts)
+      config = await item.readHandler.call(this.app[item.ns], f, parserOpts)
       if (!isEmpty(config)) break
     }
     return await output(config)
@@ -1022,6 +1022,29 @@ class Bajo extends Plugin {
     await fs.writeFile(fname, item, 'utf8')
     if (printSaved) print.succeed('savedAs%s', path.resolve(fname), { skipSilence: true })
     return fname
+  }
+
+  /**
+   * Read config using all registered config handlers. The first handler that returns a
+   * valid object or array will be used.
+   *
+   * @param {string} input - The input string to be processed by the config handlers.
+   * @param {string[]} [exts] - Optional array of extensions to filter the config handlers. If provided, only handlers with matching extensions will be used.
+   * @param {object} [options={}] - Options to be passed to the config handlers.
+   * @returns {Object|Array|null} The result from the first successful config handler, or null if none succeed.
+   */
+  readAsConfig = async (input, exts, options = {}) => {
+    let result
+    const handlers = exts ? this.app.configHandlers.filter(h => exts.includes(h.ext)) : this.app.configHandlers
+    for (const handler of handlers) {
+      if (result) break
+      try {
+        const resp = await handler.readHandler.call(this.app[handler.ns], input, options)
+        if (isPlainObject(resp) || isArray(resp)) result = resp
+      } catch (err) {
+      }
+    }
+    return result
   }
 }
 

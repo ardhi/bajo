@@ -562,10 +562,13 @@ class App {
   /**
    * Helper method to list all supported config formats.
    *
+   * @method
+   * @param {boolean} [noDot] - If ```true```, it will return the list without dot prefix.
    * @returns {string[]}
    */
-  getConfigFormats = () => {
-    return map(this.configHandlers, 'ext')
+  getConfigFormats = (noDot) => {
+    const formats = map(this.configHandlers, 'ext')
+    return noDot ? formats.map(f => f.slice(1)) : formats
   }
 
   /**

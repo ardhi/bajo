@@ -2,6 +2,13 @@
 
 ## 2026-06-26
 
+- [2.20.0] Add source ```ns``` to the config handlers
+- [2.20.0] Bug fix in ```bajo.readConfig()```
+- [2.20.0] Add ```bajo.readAsConfig()```
+- [2.20.0] Add ```params.noDot``` to the ```app.getConfigFormats()```
+
+## 2026-06-26
+
 - [2.19.0] Documentation overhaul
 - [2.19.0] Make much needed tests
 
