@@ -845,7 +845,7 @@ class Bajo extends Plugin {
     ext = ext.toLowerCase()
     if (['.js', '.json'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
-      return await output(await item.readHandler.call(this.app[item.ns], file, parserOpts))
+      return await output(await item.readHandler.call(this.app[ns], file, parserOpts))
     }
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
@@ -870,7 +870,8 @@ class Bajo extends Plugin {
         if (!ignoreError) throw this.error('cantParse%s', f, { code: 'BAJO_CONFIG_NO_PARSER' })
         continue
       }
-      config = await item.readHandler.call(this.app[item.ns], f, parserOpts)
+      const _ns = ['.js', '.json'].includes(ext) ? ns : item.ns
+      config = await item.readHandler.call(this.app[_ns], f, parserOpts)
       if (!isEmpty(config)) break
     }
     return await output(config)

@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-06-28
+
+- [2.20.1] Bug fix in ```readConfig()```
+
 ## 2026-06-26
 
 - [2.20.0] Add source ```ns``` to the config handlers
