@@ -107,7 +107,6 @@ describe('Bajo', () => {
     expect(bajo.isValidPlugin(pluginPkg)).to.equal(true)
     expect(bajo.join(['a', 'b', 'c'])).to.equal('a, b and c')
     expect(bajo.numUnit('10mb', 'kb')).to.equal('10mb')
-    expect(await bajo.isEmptyDir(path.join(root, 'empty'))).to.equal(true)
   })
 
   it('reads/writes json helpers', async () => {

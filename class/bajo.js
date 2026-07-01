@@ -4,15 +4,14 @@ import increment from 'add-filename-increment'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
-import emptyDir from 'empty-dir'
 import lodash from 'lodash'
 import { createRequire } from 'module'
-import getGlobalPath from 'get-global-path'
 import fastGlob from 'fast-glob'
 import querystring from 'querystring'
 import importModule from '../lib/import-module.js'
 import logLevels from '../lib/log-levels.js'
 import { types as formatTypes, formats } from '../lib/formats.js'
+import * as yaml from 'js-yaml'
 import aneka from 'aneka'
 import {
   buildBaseConfig,
@@ -30,10 +29,10 @@ const {
   isFunction, map, isObject,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase,
   cloneDeep, isPlainObject, isArray, isString, omit, keys, indexOf,
-  last, get, has, values, dropRight, pick
+  last, get, has, values, pick
 } = lodash
 
-const { resolvePath } = aneka
+const { resolvePath, getGlobalModuleDir } = aneka
 
 /**
  * Name based ```{ns}:{path}``` format.
@@ -78,7 +77,9 @@ class Bajo extends Plugin {
     // by defaualt, only these config formats below are supported.
     app.configHandlers = [
       { ns: 'bajo', ext: '.js', readHandler: this.fromJs },
-      { ns: 'bajo', ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson }
+      { ns: 'bajo', ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson },
+      { ns: 'bajo', ext: '.yaml', readHandler: this.fromYaml, writeHandler: this.toYaml },
+      { ns: 'bajo', ext: '.yml', readHandler: this.fromYml, writeHandler: this.toYml }
     ]
 
     this.hooks = []
@@ -500,34 +501,6 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Get NPM global module directory.
-   *
-   * @method
-   * @param {string} [pkgName] - If provided, return this package global directory. Otherwise the npm global module directory.
-   * @param {boolean} [silent=true] - Set to ```false``` to throw exception in case of error. Otherwise silently returns undefined.
-   * @returns {string}
-   */
-  getGlobalModuleDir = (pkgName, silent = true) => {
-    let nodeModulesDir = process.env.BAJO_GLOBAL_MODULE_DIR
-    if (!nodeModulesDir) {
-      const npmPath = getGlobalPath('npm')
-      if (!npmPath) {
-        if (silent) return
-        throw this.error('cantLocateNpmGlobalDir', { code: 'BAJO_CANT_LOCATE_NPM_GLOBAL_DIR' })
-      }
-      nodeModulesDir = dropRight(resolvePath(npmPath).split('/'), 1).join('/')
-      process.env.BAJO_GLOBAL_MODULE_DIR = nodeModulesDir
-    }
-    if (!pkgName) return nodeModulesDir
-    const dir = `${nodeModulesDir}/${pkgName}`
-    if (!fs.existsSync(dir)) {
-      if (silent) return
-      throw this.error('cantLocateGlobalDir%s', pkgName, { code: 'BAJO_CANT_LOCATE_MODULE_GLOBAL_DIR' })
-    }
-    return dir
-  }
-
-  /**
    * Get class method by name.
    *
    * @method
@@ -543,22 +516,21 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Get module directory, locally and globally.
+   * Get module directory.
    *
    * @method
    * @param {string} pkgName - Package name to find.
-   * @param {string} base - Provide base name if ```pkgName``` is a module under ```base```'s package name.
+   * @param {boolean} [withGlobalDir=true] - Whether to include the global module directory.
    * @returns {string} Return absolute package directory.
    */
-  getModuleDir = (pkgName, base) => {
+  getModuleDir = (pkgName, base, withGlobalDir = true) => {
     const { findDeep } = this.app.lib
     if (pkgName === 'main') return resolvePath(this.app.dir)
     if (base === 'main') base = this.app.dir
     else if (this && this.app && this.app[base]) base = this.app[base].pkgName
     const pkgPath = pkgName + '/package.json'
     const paths = require.resolve.paths(pkgPath)
-    const gdir = this.getGlobalModuleDir()
-    paths.unshift(gdir)
+    if (withGlobalDir) paths.push(getGlobalModuleDir())
     paths.unshift(resolvePath(path.join(this.app.dir, 'node_modules')))
     let dir = findDeep(pkgPath, paths)
     if (base && !dir) dir = findDeep(`${base}/node_modules/${pkgPath}`, paths)
@@ -641,21 +613,6 @@ class Bajo extends Plugin {
     if (opts.asObject) return result
     if (pkgs.length === 1) return result[keys(result)[0]]
     return values(result)
-  }
-
-  /**
-   * Check whether a directory is empty or not. More info please {@link https://github.com/gulpjs/empty-dir|check here}.
-   *
-   * @method
-   * @async
-   * @param {(string|TNsPathPairs)} dir - Directory to check.
-   * @param {function} filterFn - Filter function to filter out files that cause false positives.
-   * @returns {boolean}
-   */
-  isEmptyDir = async (dir, filterFn) => {
-    dir = resolvePath(this.app.getPluginFile(dir))
-    await fs.exists(dir)
-    return await emptyDir(dir, filterFn)
   }
 
   /**
@@ -750,7 +707,7 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Read and parse file as config object. Supported types: ```.js``` and ```.json```.
+   * Read and parse file as config object. Supported types: ```.js```, ```.json``` and ```.yml/.yaml```.
    * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for ```.yml```, ```.yaml``` and ```.toml``` file.
    *
    * If file extension is ```.*```, it will be auto detected and parsed accordingly
@@ -926,6 +883,32 @@ class Bajo extends Plugin {
   }
 
   /**
+   * Parse YAML text
+   *
+   * @method
+   * @param {string} text - Text to be parsed
+   * @param {object} options - Options object
+   * @returns {object} Parsed object
+   */
+  fromYaml = (text, options = {}) => {
+    const { fs } = this.app.lib
+    const content = options.readFromFile ? fs.readFileSync(text, 'utf8') : text
+    return yaml.load(content)
+  }
+
+  /**
+   * Parse YML text. Alias for fromYaml.
+   *
+   * @method
+   * @param {string} text - Text to be parsed
+   * @param {object} options - Options object
+   * @returns {object} Parsed object
+   */
+  fromYml = (text, options = {}) => {
+    return this.fromYaml(text, options)
+  }
+
+  /**
    * Convert data to JSON string.
    *
    * @method
@@ -942,6 +925,37 @@ class Bajo extends Plugin {
       return
     }
     return content
+  }
+
+  /**
+   * Convert object to YAML string
+   *
+   * @method
+   * @param {object} object - Object to be converted
+   * @param {object} options - Options object
+   * @returns {string} YAML string
+   */
+  toYaml = (object, options = {}) => {
+    const { omit } = this.app.lib._
+    const { fs } = this.app.lib
+    const content = yaml.dump(object, omit(options, ['writeToFile']))
+    if (options.writeToFile) {
+      fs.writeFileSync(options.saveAsFile, content, 'utf8')
+      return
+    }
+    return content
+  }
+
+  /**
+   * Convert object to YML string. Alias for toYaml.
+   *
+   * @method
+   * @param {object} object - Object to be converted
+   * @param {object} options - Options object
+   * @returns {string} YML string
+   */
+  toYml = (object, options = {}) => {
+    return this.toYaml(object, options)
   }
 
   /**

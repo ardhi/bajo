@@ -1,5 +1,13 @@
 # Changes
 
+## 2026-07-01
+
+- [2.21.0] Add ```.yml/.yaml``` to the configHandlers core
+- [2.21.0] Remove obsolete packages
+- [2.21.0] Upgrade package dependencies to the latest version
+- [2.21.0] Remove ```emptyDir()```
+- [2.21.0] Remove ```getGlobalModuleDir()```
+
 ## 2026-06-28
 
 - [2.20.1] Bug fix in ```readConfig()```

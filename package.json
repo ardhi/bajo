@@ -1,6 +1,6 @@
 {
   "name": "bajo",
-  "version": "2.20.1",
+  "version": "2.21.0",
   "description": "The ultimate framework for whipping up massive apps in no time",
   "main": "index.js",
   "scripts": {
@@ -26,20 +26,16 @@
   "homepage": "https://github.com/ardhi/bajo#readme",
   "dependencies": {
     "add-filename-increment": "^1.0.0",
-    "aneka": "^0.14.0",
-    "chalk": "^5.6.0",
-    "dayjs": "^1.11.13",
-    "deep-freeze-strict": "^1.1.1",
-    "delay": "^6.0.0",
-    "empty-dir": "^3.0.0",
+    "aneka": "^0.16.0",
+    "chalk": "^5.6.2",
+    "dayjs": "^1.11.21",
     "fast-glob": "^3.3.3",
-    "fs-extra": "^11.3.1",
-    "get-global-path": "^0.0.1",
-    "lodash": "^4.17.21",
-    "omit-deep": "^0.3.0",
-    "ora": "^8.2.0",
+    "fs-extra": "^11.3.6",
+    "js-yaml": "^5.2.0",
+    "lodash": "^4.18.1",
+    "ora": "^9.4.1",
     "outmatch": "^1.0.0",
-    "semver": "^7.7.2"
+    "semver": "^7.8.5"
   },
   "devDependencies": {
     "chai": "^6.2.1",

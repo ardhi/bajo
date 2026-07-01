@@ -17,7 +17,6 @@ import localizedFormat from 'dayjs/plugin/localizedFormat.js'
 import weekOfYear from 'dayjs/plugin/weekOfYear.js'
 import freeze from '../lib/freeze.js'
 import findDeep from '../lib/find-deep.js'
-import omitDeep from 'omit-deep'
 
 /**
  * Internal helpers called by Bajo and other classes. It should remains
@@ -162,8 +161,7 @@ export const lib = {
   dayjs,
   aneka,
   freeze,
-  findDeep,
-  omitDeep
+  findDeep
 }
 
 /**
@@ -266,6 +264,7 @@ export async function collectConfigHandlers () {
     if (!mod) continue
     if (isFunction(mod)) mod = await mod.call(this.app[camelCase(pkg)])
     if (isPlainObject(mod)) mod = [mod]
+    mod.forEach(m => set(m, 'ns', camelCase(pkg)))
     this.app.configHandlers = this.app.configHandlers.concat(mod)
   }
 }
@@ -282,12 +281,12 @@ export async function collectConfigHandlers () {
 export async function buildExtConfig () {
   // config merging
   const { defaultsDeep, includes } = this.app.lib.aneka
-  const { parseObject, omitDeep } = this.app.lib
-  const { isEmpty, get, isString, without } = this.app.lib._
+  const { parseObject } = this.app.lib
+  const { isEmpty, get, isString, without, omit } = this.app.lib._
 
   let resp = get(this, `app.options.config.${this.ns}`, {})
   if (isEmpty(resp)) resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
-  resp = omitDeep(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
+  resp = omit(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
   const envs = this.app.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
   // language

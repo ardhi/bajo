@@ -106,9 +106,9 @@ class App {
     /**
      * Config handlers.
      *
-     * By default, there are two built-in handlers available: ```.js```
-     * and ```.json```. Use plugins to add more, e.g {@link https://github.com/ardhi/bajo-config|bajo-config}
-     * lets you to use ```.yaml/.yml``` and ```.toml```.
+     * By default, there are two built-in handlers available: ```.js```, ```.json```
+     * and ```.yml/.yaml```. Use plugins to add more, e.g {@link https://github.com/ardhi/bajo-config|bajo-config}
+     * lets you to use ```.toml```.
      *
      * @type {TAppConfigHandler[]}
      */

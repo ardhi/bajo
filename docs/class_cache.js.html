@@ -80,6 +80,8 @@ class Cache {
     const { dir, file } = this.prep(name, ttlDur) ?? {}
     if (!file || !item) return
     fs.ensureDirSync(dir)
+    const fileDir = file.split('/').slice(0, -1).join('/')
+    if (fileDir) fs.ensureDirSync(fileDir)
     let content = cloneDeep(item)
     if (isArray(item) || isPlainObject(item)) content = JSON.stringify(content)
     fs.writeFileSync(file, content, 'utf8')
