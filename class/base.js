@@ -1,7 +1,7 @@
 import Plugin from './plugin.js'
 
 /**
- * This is the class that your own plugin suppose to extend. Don't use {@link Plugin} directly
+ * This is the class your own plugin suppose to extend. Don't use {@link Plugin} directly
  * unless you know what you're doing.
  *
  * @class
@@ -9,8 +9,10 @@ import Plugin from './plugin.js'
 
 class Base extends Plugin {
   /**
-   * @param {string} pkgName - Package name (the one you use in package.json).
-   * @param {Object} app - App instance reference. Useful to call app method inside a plugin.
+   * Constructor.
+   *
+   * @param {string} pkgName - Package name (the one in package.json)
+   * @param {Object} app - App instance reference. Useful to call app method inside a plugin
    */
   constructor (pkgName, app) {
     super(pkgName, app)
@@ -20,8 +22,7 @@ class Base extends Plugin {
      *
      * Semver is also supported.
      *
-     * @constant {string[]}
-     * @memberof Base
+     * @type {string[]}
      */
     this.dependencies = []
 
@@ -31,10 +32,11 @@ class Base extends Plugin {
 
   /**
    * Load config from file in data directory, program arguments and environment variables. Level of importance:
-   * ```Env Variables > Program Arguments > Config File```
+   * `Env Variables > Program Arguments > Config File`
    *
    * @method
    * @async
+   * @returns {void}
    */
   loadConfig = async () => {
     const { defaultsDeep } = this.app.lib.aneka
@@ -65,24 +67,33 @@ class Base extends Plugin {
   }
 
   /**
-   * After config is read, plugin will be initialized. You can still change your config here,
-   * because after plugin is initialized, config will be deep frozen.
+   * After config is read, plugin will be initialized.
    *
    * @method
    * @async
+   * @returns {void}
    */
   init = async () => {
   }
 
   /**
-   * This method will be called after plugin's init
+   * This method will be called after plugin's init. You can still change your config here,
+   * because after plugin is started, config will be deep frozen
    *
    * @method
    * @async
+   * @returns {void}
    */
   start = async () => {
   }
 
+  /**
+   * Reserved for future use. This method will be called before plugin is stopped.
+   *
+   * @method
+   * @async
+   * @returns {void}
+   */
   stop = async () => {
   }
 
@@ -92,6 +103,7 @@ class Base extends Plugin {
    *
    * @method
    * @async
+   * @returns {void}
    */
   exit = async () => {
     await this.dispose()
@@ -99,6 +111,10 @@ class Base extends Plugin {
 
   /**
    * Dispose internal references.
+   *
+   * @async
+   * @method
+   * @returns {Promise<void>}
    */
   dispose = async () => {
     await super.dispose()

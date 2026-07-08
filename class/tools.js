@@ -19,9 +19,11 @@ class Tools {
   }
 
   /**
-   * Force bind methods to self (```this```).
+   * Force bind methods to self (`this`).
    *
+   * @method
    * @param {string[]} names - Method's names
+   * @returns {void}
    */
   selfBind (names) {
     for (const name of names) {
@@ -31,6 +33,10 @@ class Tools {
 
   /**
    * Dispose internal references.
+   *
+   * @async
+   * @method
+   * @returns {Promise<void>}
    */
   dispose = async () => {
     this.app = null

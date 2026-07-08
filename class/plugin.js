@@ -15,23 +15,23 @@ const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
  */
 class Plugin {
   /**
-   * @param {string} pkgName Package name (the one you use in package.json).
-   * @param {Object} app App instance reference. Usefull to call app method inside a plugin.
+   * Constructor.
+   *
+   * @param {string} pkgName - Package name (the one in package.json)
+   * @param {Object} app - App instance reference. Usefull to call app method inside a plugin
    */
   constructor (pkgName, app) {
     /**
      * Package name, the one from package.json.
      *
-     * @memberof Plugin
-     * @constant {string}
+     * @type {string}
      */
     this.pkgName = pkgName
 
     /**
-     * Namespace (ns) or plugin's name. Simply the camel cased version of plugin's package name.
+     * Namespace (ns) or plugin's name. It is the camel cased version of plugin's package name.
      *
-     * @memberof Plugin
-     * @constant {string}
+     * @type {string}
      */
     this.ns = camelCase(pkgName)
 
@@ -40,20 +40,18 @@ class Plugin {
      * Bajo will provide this automatically (by using the kebab-cased version of plugin name).
      *
      * @readonly
-     * @memberof Plugin
      * @type {string}
      */
     this.alias = null
 
     /**
-     * Reference to the app instance.
-     *
-     * @type {Object}
+     * Reference to the app instance
+     * @type {App}
      */
     this.app = app
 
     /**
-     * Config object.
+     * Configuration object.
      *
      * @type {Object}
      * @see {@tutorial config}
@@ -80,8 +78,9 @@ class Plugin {
    * Get package info.
    *
    * @method
-   * @param {string} [dir] Package directory. Defaults to the current plugin's package dir.
-   * @param {Array} [keys=['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']] Field keys to be use. Set empty to use all keys.
+   * @param {string} [dir] - Package directory. Defaults to the current plugin's package dir
+   * @param {Array} [keys=['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']] - Field keys to be use. Set empty to use all keys
+   * @returns {Object} Package info object
    */
   getPkgInfo = (dir, keys = ['name', 'version', 'description', 'author', 'license', 'homepage', 'bajo']) => {
     const { pick, isEmpty } = this.app.lib._
@@ -95,12 +94,12 @@ class Plugin {
    * Get plugin's config value.
    *
    * @method
-   * @param {string} [path] dot separated config path (think of lodash's 'get'). If not provided, the full config will be given.
-   * @param {Object} [options={}] Options.
-   * @param {any} [options.defValue={}] Default value to use if returned object is undefined.
-   * @param {string[]} [options.omit=[]] Omit these keys from returned object.
-   * @param {boolean} [options.noClone=false] Set true to NOT clone returned object.
-   * @returns {Object} Returned object. If no path provided, the whole config object is returned.
+   * @param {string} [path] - dot separated config path (think of lodash's 'get'). If not provided, the full config will be given
+   * @param {Object} [options={}] - Options object
+   * @param {any} [options.defValue={}] - Default value to use if returned object is undefined
+   * @param {string[]} [options.omit=[]] - Omit these keys from returned object
+   * @param {boolean} [options.noClone=false] - Set true to NOT clone returned object
+   * @returns {Object} Returned object. If no path provided, the whole config object is returned
    */
   getConfig = (path, options = {}) => {
     let obj = isEmpty(path) ? this.config : get(this.config, path, options.defValue ?? {})
@@ -114,9 +113,9 @@ class Plugin {
    * Create an instance of {@link Err} object.
    *
    * @method
-   * @param {string} msg Error message.
-   * @param  {...any} [args] Argument variables you might want to add to the error object.
-   * @returns {Object} Err instance.
+   * @param {string} msg - Error message
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
+   * @returns {Err} Err instance
    */
   error = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
@@ -126,11 +125,12 @@ class Plugin {
 
   /**
    * Create an instance of Err object, display it on screen and then force
-   * terminate the app process.
+   * terminate the app.
    *
    * @method
-   * @param {string} msg Error message.
-   * @param  {...any} [args] Argument variables you might want to add to the error object.
+   * @param {string} msg - Error message
+   * @param  {...any} [args] - Argument variables you might want to add to the error object
+   * @returns {void}
    */
   fatal = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
@@ -139,12 +139,13 @@ class Plugin {
   }
 
   /**
-   * Translate text and interpolate with given ```args```.
+   * Translate text and interpolate with given `args`.
    *
    * Shortcut to {@link App#t} with ns parameter set to this plugin namespace.
    *
-   * @param {string} text Text to translate.
-   * @param  {...any} params Variables to interpolate to ```text```.
+   * @method
+   * @param {string} text - Text to translate
+   * @param  {...any} params - Variables to interpolate to `text`
    * @returns {string}
    */
   t = (text, ...params) => {
@@ -156,8 +157,9 @@ class Plugin {
    *
    * Shortcut to {@link App#te} with ns parameter set to this plugin namespace.
    *
-   * @param {string} text Text to translate.
-   * @param  {...any} params Variables to interpolate to ```text```.
+   * @method
+   * @param {string} text - Text to translate
+   * @param  {...any} params - Variables to interpolate to `text`
    * @returns {string}
    */
   te = (text, ...params) => {
@@ -165,9 +167,11 @@ class Plugin {
   }
 
   /**
-   * Force bind methods to self (```this```).
+   * Force bind methods to self (`this`).
    *
-   * @param {string[]} names Method's names.
+   * @method
+   * @param {string[]} names - Method's names
+   * @returns {void}
    */
   selfBind (names) {
     if (!Array.isArray(names)) names = [names]
@@ -177,9 +181,11 @@ class Plugin {
   }
 
   /**
-   * Alias to ```this.app.dump()```.
+   * Alias to `this.app.dump()`.
    *
-   * @param {...any} args
+   * @method
+   * @param {...any} args - Arguments
+   * @returns {void}
    */
   dump = (...args) => {
     this.app.dump(...args)
@@ -187,6 +193,10 @@ class Plugin {
 
   /**
    * Dispose internal references.
+   *
+   * @async
+   * @method
+   * @returns {Promise<void>}
    */
   dispose = async () => {
     this.app = null

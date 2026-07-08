@@ -5,16 +5,19 @@
  */
 class Cache {
   /**
-   * @param {object} app - Application container.
+   * Constructor.
+   *
+   * @param {object} app - Application container
    */
   constructor (app) {
     this.app = app
   }
 
   /**
-   * Get root cache directory for this plugin.
+   * Get root directory for this class. It will be used to store all cache files, organized by namespace and TTL.
    *
-   * @returns {string} Absolute cache root directory.
+   * @method
+   * @returns {string} Absolute cache root directory
    */
   getRootDir = () => {
     return `${this.app.getPluginDataDir('bajo')}/cache`
@@ -23,9 +26,10 @@ class Cache {
   /**
    * Prepare cache paths for a namespaced key and TTL.
    *
-   * @param {string} name - Cache key in namespaced path format.
-   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration).
-   * @returns {{dir: string, file: string, cacheDir: string}|undefined} Prepared paths or undefined when not cacheable.
+   * @method
+   * @param {string} name - Cache key in namespaced path format
+   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
+   * @returns {{dir: string, file: string, cacheDir: string}|undefined} Prepared paths or undefined when not cacheable
    */
   prep = (name, ttlDur = 0) => {
     const { breakNsPath } = this.app.bajo
@@ -43,9 +47,10 @@ class Cache {
   /**
    * Load cached content when available and not expired.
    *
-   * @param {string} name - Cache key in namespaced path format.
-   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration).
-   * @returns {Promise<*>} Cached value, or undefined if missing/expired.
+   * @method
+   * @param {string} name - Cache key in namespaced path format
+   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
+   * @returns {Promise<any>} Cached value, or undefined if missing/expired
    */
   load = async (name, ttlDur = 0) => {
     const { fs } = this.app.lib
@@ -67,10 +72,11 @@ class Cache {
   /**
    * Save a value into cache for the given key and TTL directory.
    *
-   * @param {string} name - Cache key in namespaced path format.
-   * @param {*} item - Value to persist.
-   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration).
-   * @returns {Promise<void>} Resolves when the value is written.
+   * @method
+   * @param {string} name - Cache key in namespaced path format
+   * @param {any} item - Value to persist
+   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
+   * @returns {Promise<void>} Resolves when the value is written
    */
   save = async (name, item, ttlDur = 0) => {
     const { fs } = this.app.lib
@@ -88,10 +94,11 @@ class Cache {
   /**
    * Return cached content, and store the fallback value if cache is empty.
    *
-   * @param {string} name - Cache key in namespaced path format.
-   * @param {*} item - Fallback value to save when cache miss happens.
-   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration).
-   * @returns {Promise<*>} Cached content.
+   * @method
+   * @param {string} name - Cache key in namespaced path format
+   * @param {any} item - Fallback value to save when cache miss happens
+   * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
+   * @returns {Promise<any>} Cached content
    */
   sync = async (name, item, ttlDur = 0) => {
     const content = await this.loadCache(name, ttlDur)
@@ -102,7 +109,8 @@ class Cache {
   /**
    * Remove a specific cache namespace or all first-level namespaces.
    *
-   * @param {string} name - Namespace name or "*" for all.
+   * @method
+   * @param {string} name - Namespace name or `*` for all
    * @returns {void}
    */
   _purgeItem = (name) => {
@@ -121,7 +129,8 @@ class Cache {
   /**
    * Purge cache by namespace or remove expired TTL directories.
    *
-   * @param {string} [name] - Optional namespace to remove directly.
+   * @method
+   * @param {string} [name] - Optional namespace to remove directly
    * @returns {void}
    */
   purge = (name) => {
@@ -140,6 +149,10 @@ class Cache {
 
   /**
    * Dispose internal reference.
+   *
+   * @async
+   * @method
+   * @returns {Promise<void>}
    */
   dispose = async () => {
     this.app = null

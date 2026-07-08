@@ -8,7 +8,7 @@ Error.stackTraceLimit = 15
 /**
  * Bajo error class, a thin wrapper of node's Error object.
  *
- * Every Bajo {@link Plugin|plugin} has a built-in method called ```error``` which basically the shortcut to create a new Err instance.
+ * Every Bajo {@link Plugin|plugin} has a built-in method called `error` which basically the shortcut to create a new Err instance.
  * It helps you create this instance anywhere in your code quickly without the hassle of importing & instantiating:
  *
  * ```javascript
@@ -18,30 +18,29 @@ Error.stackTraceLimit = 15
  */
 class Err extends Tools {
   /**
-   * @param {Plugin} plugin Plugin instance.
-   * @param {string} msg Error message.
-   * @param  {...any} [args] Variables to interpolate with error message. Payload object can be pushed at the very last argument
+   * Constructor.
+   *
+   * @param {Plugin} plugin - Plugin instance
+   * @param {string} msg - Error message
+   * @param  {...any} [args] - Variables to interpolate with error message. Payload object can be pushed at the very last argument
    */
   constructor (plugin, msg, ...args) {
     super(plugin)
 
     /**
      * Error payload extracted from the last arguments.
-     *
      * @type {Object}
      */
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
 
     /**
      * Original message before translation.
-     *
      * @type {string}
      */
     this.orgMessage = msg
 
     /**
      * Translated message.
-     *
      * @type {string}
      */
     this.message = this.payload.noTrans ? msg : this.plugin.t(msg, ...args)
@@ -51,7 +50,7 @@ class Err extends Tools {
    * Write message to the console.
    *
    * @method
-   * @returns {Err} Error object, useful for chaining.
+   * @returns {Err} - Error object, useful for chaining
    */
   write = () => {
     let err
@@ -94,8 +93,11 @@ class Err extends Tools {
   /**
    * Pretty format error details.
    *
+   * Formatted error will be applied directly to the value parameter, and a detailsMessage
+   * will be returned for display purpose.
+   *
    * @method
-   * @param {Object} value Value to format.
+   * @param {Object} value - Value to format
    * @returns {Object}
    */
   formatErrorDetails = (value) => {

@@ -25,7 +25,11 @@ shim()
  * await bajo()
  */
 async function boot (options = {}) {
-  if (!options.cwd) options.cwd = process.cwd()
+  if (!options.cwd) {
+    const item = process.argv.find(item => item.startsWith('--cwd='))
+    if (item) options.cwd = item.slice(6)
+    else options.cwd = process.cwd()
+  }
   const pkgFile = `${options.cwd}/package.json`
   const pkg = fs.readJsonSync(pkgFile)
   if (pkg.type !== 'module') {
@@ -33,7 +37,7 @@ async function boot (options = {}) {
     process.exit(1)
   }
   const app = new App(options)
-  return await app.boot()
+  return await app.run()
 }
 
 export default boot

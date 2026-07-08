@@ -7,11 +7,13 @@ import Tools from './tools.js'
 const { isPlainObject } = lodash
 
 /**
- * @typedef TPrintOptions
- * @property {boolean} [showDatetime=false] Show actual date & time.
- * @property {boolean} [showCounter=false] Show as counter.
- * @property {boolean} [silent] Suppress any messages. Defaults to the one set in {@tutorial config}.
- * @property {Object} [ora] {@link https://github.com/sindresorhus/ora#api|Ora's options} object.
+ * @typedef TOptions
+ * @memberof Print
+ * @type {Object}
+ * @property {boolean} [showDatetime=false] - Show actual date & time
+ * @property {boolean} [showCounter=false] - Show as counter
+ * @property {boolean} [silent] - Suppress any messages. Defaults to the one set in {@tutorial config}
+ * @property {Object} [ora] - {@link https://github.com/sindresorhus/ora#api|Ora's options} object
  * @see {@link Print}
  */
 
@@ -26,15 +28,14 @@ const { isPlainObject } = lodash
 class Print extends Tools {
   /**
    * @param {Plugin} plugin Plugin instance.
-   * @param {TPrintOptions} [options={}] Options object.
+   * @param {Print.TOptions} [options={}] Options object.
    */
   constructor (plugin, options = {}) {
     super(plugin)
 
     /**
      * Options object.
-     *
-     * @type {TPrintOptions}
+     * @type {Print.TOptions}
      */
     this.options = options
     if (this.app.applet) {
@@ -43,16 +44,14 @@ class Print extends Tools {
     }
 
     /**
-     * Time when instance is created.
-     *
+     * Start time of the instance, used to calculate elapsed time.
      * @type {Object}
-     * @see {@link https://day.js.org|dayjs} &nbsp;object
+     * @see {@link https://day.js.org|dayjs}
      */
     this.startTime = this.app.lib.dayjs()
 
     /**
      * ora instance
-     *
      * @see {@link https://github.com/sindresorhus/ora|ora}
      */
     this.ora = ora(this.options.ora)
@@ -63,7 +62,8 @@ class Print extends Tools {
    * Setting spinner options; override the one passed at constructor.
    *
    * @method
-   * @param {any[]} [args=[]] Array of options. If the last argument is an object, it will be used to override ora options.
+   * @param {any[]} - [args=[]] Array of options. If the last argument is an object, it will be used to override ora options
+   * @returns {void}
    */
   setOpts = (args = []) => {
     const { silent } = this.app.bajo.config
@@ -74,10 +74,10 @@ class Print extends Tools {
   }
 
   /**
-   * Translate, prefixed with counter and/or datetime etc.
+   * Translate text, prefixed with counter and/or datetime etc.
    *
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options.
+   * @param {string} text - Text to translate
+   * @param {...any} [args] - Any variable to interpolate text translation. If the last argument is an object, it will be used to override ora's options.
    * @returns {string}
    */
   buildText = (text, ...args) => {
@@ -95,9 +95,9 @@ class Print extends Tools {
    * Set spinner's text,
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   setText = (text, ...args) => {
     text = this.buildText(text, ...args)
@@ -109,7 +109,7 @@ class Print extends Tools {
    * Get elapsed time since instance is created.
    *
    * @method
-   * @param {string} [unit=hms] Unit's time. Put 'hms' (default) to get hour, minute, second format or of any format supported by {@link https://day.js.org/docs/en/display/difference|dayjs}.
+   * @param {string} [unit='hms'] - Unit's time. Put 'hms' (default) to get hour, minute, second format or of any format supported by {@link https://day.js.org/docs/en/display/difference|dayjs}
    * @returns {string} Elapsed time since start
    * @see {@link https://day.js.org/docs/en/display/difference|dayjs duration format}
    */
@@ -120,12 +120,12 @@ class Print extends Tools {
   }
 
   /**
-   * Start the spinner,
+   * Start the spinner.
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   start = (text, ...args) => {
     this.setOpts(args)
@@ -138,7 +138,7 @@ class Print extends Tools {
    * Stop the spinner.
    *
    * @method
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   stop = () => {
     this.ora.stop()
@@ -146,12 +146,12 @@ class Print extends Tools {
   }
 
   /**
-   * Print success message, prefixed with a check icon.
+   * Print success message, prefixed with a check icon
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   succeed = (text, ...args) => {
     this.setText(text, ...args)
@@ -163,9 +163,9 @@ class Print extends Tools {
    * Print failed message, prefixed with a cross icon.
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   fail = (text, ...args) => {
     this.setText(text, ...args)
@@ -177,9 +177,9 @@ class Print extends Tools {
    * Print warning message, prefixed with a warn icon.
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   warn = (text, ...args) => {
     this.setText(text, ...args)
@@ -191,9 +191,9 @@ class Print extends Tools {
    * Print information message, prefixed with an info icon.
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   info = (text, ...args) => {
     this.setText(text, ...args)
@@ -205,7 +205,7 @@ class Print extends Tools {
    * Clear spinner text.
    *
    * @method
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   clear = () => {
     this.ora.clear()
@@ -216,7 +216,7 @@ class Print extends Tools {
    * Force render spinner.
    *
    * @method
-   * @returns {Print} Return the instance itself, usefull for method chaining.
+   * @returns {Print} Return the instance itself, usefull for method chaining
    */
   render = () => {
     this.ora.render()
@@ -224,11 +224,12 @@ class Print extends Tools {
   }
 
   /**
-   * Print failed message, prefixed with a cross icon and exit.
+   * Print failed message, prefixed with a cross icon and exit application abruptly.
    *
    * @method
-   * @param {string} text Text to use.
-   * @param {...any} [args] Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
+   * @param {string} text - Text to use
+   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @returns {void}
    */
   fatal = (text, ...args) => {
     if (text instanceof Error) {
@@ -245,7 +246,7 @@ class Print extends Tools {
    * Create a new print instance.
    *
    * @method
-   * @param {TPrintOptions} [options] Options object. If not provided, defaults to the current options.
+   * @param {App.TOptions} [options] Options object. If not provided, defaults to the current options.
    * @returns {Print} Return new print instance.
    */
   spinner = (options) => {

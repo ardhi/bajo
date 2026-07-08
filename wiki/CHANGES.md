@@ -1,5 +1,15 @@
 # Changes
 
+## 2026-07-08
+
+- [2.22.0] Update documentations
+- [2.22.0] Reorganize project files
+- [2.22.0] Bug fix in boot process
+
+## 2026-07-02
+
+- [2.21.1] Bug fix in ```index.js```
+
 ## 2026-07-01
 
 - [2.21.0] Add ```.yml/.yaml``` to the configHandlers core

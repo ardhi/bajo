@@ -8,9 +8,7 @@ import lodash from 'lodash'
 import { createRequire } from 'module'
 import fastGlob from 'fast-glob'
 import querystring from 'querystring'
-import importModule from '../lib/import-module.js'
-import logLevels from '../lib/log-levels.js'
-import { types as formatTypes, formats } from '../lib/formats.js'
+import { logLevels } from './log.js'
 import * as yaml from 'js-yaml'
 import aneka from 'aneka'
 import {
@@ -20,8 +18,11 @@ import {
   collectConfigHandlers,
   bootOrder,
   bootPlugins,
-  exitHandler
-} from './_helper.js'
+  exitHandler,
+  importModule,
+  types as formatTypes,
+  formats
+} from '../lib/helper.js'
 
 const require = createRequire(import.meta.url)
 
@@ -35,9 +36,10 @@ const {
 const { resolvePath, getGlobalModuleDir } = aneka
 
 /**
- * Name based ```{ns}:{path}``` format.
+ * Name based `{ns}:{path}` format.
  *
  * @typedef {string} TNsPathPairs
+ * @memberof Bajo
  * @see TNsPathResult
  * @see Bajo#buildNsPath
  * @see Bajo#breakNsPath
@@ -46,10 +48,26 @@ const { resolvePath, getGlobalModuleDir } = aneka
 /**
  * Object returned by {@link Bajo#getUnitFormat|bajo:getUnitFormat}.
  *
- * @typedef {Object} TBajoFormatResult
+ * @typedef {Object} TFormatResult
+ * @memberof Bajo
  * @property {string} unitSys - Unit system.
  * @property {Object} format - Format object.
  * @see Bajo#getUnitFormat
+ */
+
+/**
+ * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}.
+ *
+ * @typedef {Object} TNsPathResult
+ * @memberof Bajo
+ * @property {string} ns - Namespace
+ * @property {string} [subNs] - Sub namespace
+ * @property {string} [subSubNs] - Sub of sub namespace
+ * @property {string} path - Path without query string or hash
+ * @property {string} fullPath - Full path, including query string and hash
+ * @see TNsPathPairs
+ * @see Bajo#buildNsPath
+ * @see Bajo#breakNsPath
  */
 
 /**
@@ -60,28 +78,38 @@ const { resolvePath, getGlobalModuleDir } = aneka
  */
 class Bajo extends Plugin {
   /**
+   * Constructor.
+   *
    * @param {App} app - App instance. Usefull to call app method inside a plugin.
    */
   constructor (app) {
     super('bajo', app)
+
+    /**
+     * Alias
+     * @type {string}
+     */
     this.alias = 'bajo'
+
+    /**
+     * White space characters
+     * @type {string[]}
+     */
     this.whiteSpace = [' ', '\t', '\n', '\r']
+
     /**
      * Config object.
      *
-     * @type {Object}
+     * @type {Bajo.TObject}
      * @see {@tutorial config}
      */
     this.config = {}
 
-    // by defaualt, only these config formats below are supported.
-    app.configHandlers = [
-      { ns: 'bajo', ext: '.js', readHandler: this.fromJs },
-      { ns: 'bajo', ext: '.json', readHandler: this.fromJson, writeHandler: this.toJson },
-      { ns: 'bajo', ext: '.yaml', readHandler: this.fromYaml, writeHandler: this.toYaml },
-      { ns: 'bajo', ext: '.yml', readHandler: this.fromYml, writeHandler: this.toYml }
-    ]
-
+    /**
+     * Hooks container.
+     *
+     * @type {Array<Bajo.THook>}
+     */
     this.hooks = []
   }
 
@@ -112,7 +140,20 @@ class Bajo extends Plugin {
     }
   }
 
-  breakNsPathFromFile = ({ file = '', dir = '', ns, suffix = '', getType } = {}) => {
+  /**
+   * Break file path to its namespace & path infos.
+   *
+   * @method
+   * @param {Object} options - Options object
+   * @param {string} [options.file] - File path to break
+   * @param {string} [options.dir] - Base directory to remove from file path
+   * @param {string} [options.ns] - Namespace to use. If not provided, will be extracted from file path
+   * @param {string} [options.suffix] - Suffix to remove from file path
+   * @param {boolean} [options.getType] - Whether to extract type from file path
+   * @returns {Object} Namespace and path information
+   */
+  breakNsPathFromFile = (options = {}) => {
+    const { file = '', dir = '', ns, suffix = '', getType } = options
     let item = file.replace(dir + suffix, '')
     let type
     if (getType) {
@@ -136,12 +177,12 @@ class Bajo extends Plugin {
    * Build ns/path pairs.
    *
    * @method
-   * @param {object} [options={}] - Options object.
-   * @param {string} [options.ns=''] - Namespace.
-   * @param {string} [options.subNs] - Sub namespace.
-   * @param {string} [options.subSubNs] - Sub sub namespace.
-   * @param {string} [options.path] - Path.
-   * @returns {TNsPathPairs} Ns/path pairs.
+   * @param {object} [options={}] - Options object
+   * @param {string} [options.ns=''] - Namespace
+   * @param {string} [options.subNs] - Sub namespace
+   * @param {string} [options.subSubNs] - Sub sub namespace
+   * @param {string} [options.path] - Path
+   * @returns {TNsPathPairs} Ns/path pairs
    */
   buildNsPath = ({ ns = '', subNs, subSubNs, path } = {}) => {
     if (subNs) ns += '.' + subNs
@@ -150,25 +191,11 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}.
-   *
-   * @typedef {Object} TNsPathResult
-   * @property {string} ns - Namespace.
-   * @property {string} [subNs] - Sub namespace.
-   * @property {string} [subSubNs] - Sub of sub namespace.
-   * @property {string} path - Path without query string or hash.
-   * @property {string} fullPath - Full path, including query string and hash.
-   * @see TNsPathPairs
-   * @see Bajo#buildNsPath
-   * @see Bajo#breakNsPath
-   */
-
-  /**
-   * Break name to its namespace & path infos.
+   * Break name to its namespace & path infos
    *
    * @method
    * @param {(TNsPathPairs|string)} name - Name to break
-   * @param {boolean} [checkNs=true] - If ```true``` (default), namespace will be checked for its validity
+   * @param {boolean} [checkNs=true] - If `true` (default), namespace will be checked for its validity
    * @returns {TNsPathResult}
    */
   breakNsPath = (name = '', checkNs = true) => {
@@ -222,11 +249,11 @@ class Bajo extends Plugin {
    * @method
    * @async
    * @param {Object} options - Options.
-   * @param {string} [options.ns] - Namespace. If not provided, defaults to ```bajo```
+   * @param {string} [options.ns] - Namespace. If not provided, defaults to `bajo`
    * @param {function} [options.handler] - Handler to call while building the collection item.
    * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates.
    * @param {string} options.container - Key used as container name.
-   * @param {boolean} [options.useDefaultName=true] - If true (default) and ```name``` key is not provided, returned collection will be named ```default```.
+   * @param {boolean} [options.useDefaultName=true] - If true (default) and `name` key is not provided, returned collection will be named `default`.
    * @fires bajo:beforeBuildCollection
    * @fires bajo:afterBuildCollection
    * @returns {Object[]} The collection
@@ -239,16 +266,6 @@ class Bajo extends Plugin {
     let items = get(cfg, container, [])
     if (!isArray(items)) items = [items]
     this.app[ns].log.trace('collecting%s', this.t(container))
-
-    /**
-     * Run before collection is built.
-     *
-     * @global
-     * @event bajo:beforeBuildCollection
-     * @param {string} container
-     * @see {@tutorial hook}
-     * @see Bajo#buildCollections
-     */
     await this.runHook(`${ns}:beforeBuildCollection`, container)
     const deleted = []
     for (const index in items) {
@@ -277,17 +294,6 @@ class Bajo extends Plugin {
     }
 
     if (!noDefault && !items.find(item => item.name === 'default')) this.app[ns].fatal('missing%s%s', 'default', container)
-
-    /**
-     * Run after collection is built
-     *
-     * @global
-     * @event bajo:afterBuildCollection
-     * @param {string} container
-     * @param {Object[]} items
-     * @see {@tutorial hook}
-     * @see Bajo#buildCollections
-     */
     await this.runHook(`${ns}:afterBuildCollection`, container, items)
     this.app[ns].log.debug('collected%s%d', this.t(container), items.length)
     return items
@@ -299,7 +305,7 @@ class Bajo extends Plugin {
    * - If name is a string, the corresponding plugin's method will be called with passed args as its parameters
    * - If name is a plugin instance, this will be used as the scope instead. The first args is now the handler name and the rest are its parameters
    * - If name is a function, this function will be run under scope with the remaining args
-   * - If name is an object and has ```handler``` key in it, this function handler will be instead
+   * - If name is an object and has `handler` key in it, this function handler will be instead
    *
    * @method
    * @async
@@ -339,15 +345,15 @@ class Bajo extends Plugin {
    * This function iterates through all loaded plugins and call the provided handler scoped as the running plugin.
    * And an object with the following key serves as its parameter:
    *
-   * - ```file```: file matched the glob pattern
-   * - ```dir```: plugin's base directory
+   * - `file`: file matched the glob pattern
+   * - `dir`: plugin's base directory
    *
    * @method
    * @async
    * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin.
    * @param {(string|Object)} [options={}] - Options. If a string is provided, it serves as the glob pattern, otherwise:
    * @param {(string|string[])} [options.glob] - Glob pattern. If provided,
-   * @param {boolean} [options.useBajo=false] - If true, add ```bajo``` to the running plugins too.
+   * @param {boolean} [options.useBajo=false] - If true, add `bajo` to the running plugins too.
    * @param {string} [options.prefix=''] - Prepend glob pattern with prefix.
    * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored.
    * @param {any} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys.
@@ -403,7 +409,7 @@ class Bajo extends Plugin {
    * @method
    * @param {Object} [options={}] - Options.
    * @param {string} [options.lang] - Language to use. Defaults to the one you set in config.
-   * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or ```metric``` if unspecified.
+   * @param {string} [options.unitSys] - Unit system to use. Defaults to language's unit system or `metric` if unspecified.
    * @returns {TBajoFormatResult} Returned value.
    */
   getUnitFormat = (options = {}) => {
@@ -423,7 +429,7 @@ class Bajo extends Plugin {
    * @param {Object} [options={}] - Options.
    * @param {boolean} [options.withUnit=true] - Return with its unit appended.
    * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config.
-   * @returns {(Array|string)} Return string if ```withUnit``` is true. Otherwise is an array of ```[value, unit, separator]```.
+   * @returns {(Array|string)} Return string if `withUnit` is true. Otherwise is an array of `[value, unit, separator]`.
    */
   formatByType = (type, value, dataType, options = {}) => {
     const { defaultsDeep } = this.app.lib.aneka
@@ -504,8 +510,8 @@ class Bajo extends Plugin {
    * Get class method by name.
    *
    * @method
-   * @param {string} name - Name in format ```ns:methodName```.
-   * @param {boolean} [thrown=true] - If ```true``` (default), throw exception in case of error.
+   * @param {string} name - Name in format `ns:methodName`.
+   * @param {boolean} [thrown=true] - If `true` (default), throw exception in case of error.
    * @returns {function} Class method.
    */
   getMethod = (name = '', thrown = true) => {
@@ -541,11 +547,11 @@ class Bajo extends Plugin {
   /**
    * Import file/module from any loaded plugins.
    *
-   * Method proxy from {@link module:Lib.importModule}
+   * Method proxy from {@link module:Helper.importModule}
    *
    * @method
    * @async
-   * @see module:Lib.importModule
+   * @see module:Helper.importModule
    */
   importModule = async (file, { asDefaultImport, asHandler, noCache } = {}) => {
     return await importModule.call(this, file, { asDefaultImport, asHandler, noCache })
@@ -555,27 +561,27 @@ class Bajo extends Plugin {
    * Import one or more packages belongs to a plugin.
    *
    * If the last arguments passed is an object, this object serves as options object:
-   * - ```returnDefault```: should return package's default export. Defaults to ```true```
-   * - ```throwNotFound```: should throw if package is not found. Defaults to ```false```
-   * - ```noCache```: always use fresh import. Defaults to ```false```
-   * - ```asObject```: see below. Defaults to ```false```
+   * - `returnDefault`: should return package's default export. Defaults to `true`
+   * - `throwNotFound`: should throw if package is not found. Defaults to `false`
+   * - `noCache`: always use fresh import. Defaults to `false`
+   * - `asObject`: see below. Defaults to `false`
    *
    * Return value:
-   * - if ```options.asObject``` is ```true``` (default ```false```), return as object with package's names as it's keys
+   * - if `options.asObject` is `true` (default `false`), return as object with package's names as it's keys
    * - Otherwise depends on how many parameters are provided, it should return the named package or an array of packages
    *
-   * Example: you want to import ```delay``` and ```chalk``` from ```bajo``` plugin because you want to use it in your code
-   * ```javascript
+   * Example: you want to import `delay` and `chalk` from `bajo` plugin because you want to use it in your code
+   * `javascript
    * const { importPkg } from this.app.bajo
    * const [delay, chalk] = await importPkg('bajo:delay', 'bajo:chalk')
    *
    * await delay(1000)
    * ...
-   * ```
+   * `
    *
    * @method
    * @async
-   * @param {...TNsPathPairs} pkgs - One or more packages in format ```{ns}:{packageName}```.
+   * @param {...TNsPathPairs} pkgs - One or more packages in format `{ns}:{packageName}`.
    * @returns {(Object|Array)} See above.
    */
   importPkg = async (...pkgs) => {
@@ -647,7 +653,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @param {string} dir - Directory to check.
-   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content.
+   * @param {boolean} [returnPkg] - Set `true` to return its package.json content.
    * @returns {(boolean|Object)}
    */
   isValidApp = (dir, returnPkg) => {
@@ -660,7 +666,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @param {string} dir - Directory to check.
-   * @param {boolean} [returnPkg] - Set ```true``` to return its package.json content.
+   * @param {boolean} [returnPkg] - Set `true` to return its package.json content.
    * @returns {(boolean|Object)}
    */
   isValidPlugin = (dir, returnPkg) => {
@@ -707,10 +713,10 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Read and parse file as config object. Supported types: ```.js```, ```.json``` and ```.yml/.yaml```.
-   * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for ```.yml```, ```.yaml``` and ```.toml``` file.
+   * Read and parse file as config object. Supported types: `.js`, `.json` and `.yml/.yaml`.
+   * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for `.yml`, `.yaml` and `.toml` file.
    *
-   * If file extension is ```.*```, it will be auto detected and parsed accordingly
+   * If file extension is `.*`, it will be auto detected and parsed accordingly
    *
    * @method
    * @async
@@ -718,7 +724,7 @@ class Bajo extends Plugin {
    * @param {Object} [options={}] - Options.
    * @param {boolean} [options.ignoreError] - Any exception will be silently discarded.
    * @param {string} [options.ns] - If given, use this as the scope.
-   * @param {string} [options.pattern] - If given and auto detection is on (extension is ```.*```), it will be used for instead the default one.
+   * @param {string} [options.pattern] - If given and auto detection is on (extension is `.*`), it will be used for instead the default one.
    * @param {Object} [options.defValue={}] - Default value to use if value returned empty.
    * @param {Object} [options.parserOpts={}] - Parser setting.
    * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options.
@@ -743,7 +749,7 @@ class Bajo extends Plugin {
     const output = async (obj) => {
       let orig = parseObject(obj)
       if (!baseNs || extend === false) {
-        await this.runHook('bajo:afterReadConfig', file, orig, options)
+        await this.runHook('bajo.default:afterReadConfig', file, orig, options)
         if (cache.name) await this.app.cache.save(cache.name, orig, cache.ttlDur)
         return orig
       }
@@ -839,7 +845,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @param {string} file - File to read.
-   * @param {boolean} [thrownNotFound=false] - If ```true```, silently ignore if file is not found.
+   * @param {boolean} [thrownNotFound=false] - If `true`, silently ignore if file is not found.
    * @returns {Object}
    */
   readJson = (file, thrownNotFound = false) => {
@@ -1043,6 +1049,7 @@ class Bajo extends Plugin {
    * Read config using all registered config handlers. The first handler that returns a
    * valid object or array will be used.
    *
+   * @method
    * @param {string} input - The input string to be processed by the config handlers.
    * @param {string[]} [exts] - Optional array of extensions to filter the config handlers. If provided, only handlers with matching extensions will be used.
    * @param {object} [options={}] - Options to be passed to the config handlers.
