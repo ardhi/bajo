@@ -1022,6 +1022,17 @@ class Bajo extends Plugin {
   }
 
   /**
+   * Get download directory. If doesn't exist, it will be created automatically.
+   * @method
+   * @returns {string} Absolute path to the download directory
+   */
+  getDownloadDir = () => {
+    const dir = `${this.app.getPluginDataDir(this.ns)}/download`
+    fs.ensureDirSync(dir)
+    return dir
+  }
+
+  /**
    * Save item as file in Bajo's download directory. That is a directory inside your
    * Bajo plugin's data directory.
    *
@@ -1037,9 +1048,7 @@ class Bajo extends Plugin {
    */
   saveAsDownload = async (file, item, printSaved = true) => {
     const { print } = this.app.bajo
-    const fname = increment(`${this.app.getPluginDataDir(this.ns)}/download/${trim(file, '/')}`, { fs: true })
-    const dir = path.dirname(fname)
-    if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
+    const fname = increment(`${this.getDownloadDir()}/${trim(file, '/')}`, { fs: true })
     await fs.writeFile(fname, item, 'utf8')
     if (printSaved) print.succeed('savedAs%s', path.resolve(fname), { skipSilence: true })
     return fname

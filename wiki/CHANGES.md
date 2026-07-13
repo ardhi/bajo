@@ -1,5 +1,10 @@
 # Changes
 
+
+## 2026-07-13
+
+- [2.23.0] Add `getDownloadDir()`
+
 ## 2026-07-08
 
 - [2.22.0] Update documentations
