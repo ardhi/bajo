@@ -184,5 +184,6 @@
   "missing%s%s": "%s|upperFirst '%s' tidak ditemukan",
   "processing...": "Memroses...",
   "true": "Benar",
-  "false": "Salah"
+  "false": "Salah",
+  "createOneNow": "Buat sekarang? (y/n) "
 }

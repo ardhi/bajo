@@ -1,21 +1,19 @@
 /**
- * File-system backed cache helper with TTL-based invalidation.
+ * Simple, file-system based cache with TTL-based invalidation for every day use.
  *
  * @class
  */
 class Cache {
   /**
    * Constructor.
-   *
-   * @param {object} app - Application container
+   * @param {App} app - App instance
    */
   constructor (app) {
     this.app = app
   }
 
   /**
-   * Get root directory for this class. It will be used to store all cache files, organized by namespace and TTL.
-   *
+   * Get root directory. It will be used to store all cache files, organized by namespace and TTL.
    * @method
    * @returns {string} Absolute cache root directory
    */
@@ -25,7 +23,6 @@ class Cache {
 
   /**
    * Prepare cache paths for a namespaced key and TTL.
-   *
    * @method
    * @param {string} name - Cache key in namespaced path format
    * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
@@ -46,11 +43,10 @@ class Cache {
 
   /**
    * Load cached content when available and not expired.
-   *
    * @method
    * @param {string} name - Cache key in namespaced path format
    * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
-   * @returns {Promise<any>} Cached value, or undefined if missing/expired
+   * @returns {Promise<*>} Cached value, or undefined if missing/expired
    */
   load = async (name, ttlDur = 0) => {
     const { fs } = this.app.lib
@@ -71,10 +67,9 @@ class Cache {
 
   /**
    * Save a value into cache for the given key and TTL directory.
-   *
    * @method
    * @param {string} name - Cache key in namespaced path format
-   * @param {any} item - Value to persist
+   * @param {*} item - Value to persist
    * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
    * @returns {Promise<void>} Resolves when the value is written
    */
@@ -92,13 +87,12 @@ class Cache {
   }
 
   /**
-   * Return cached content, and store the fallback value if cache is empty.
-   *
+   * Return cached content, and store the fallback value if cache is empty
    * @method
    * @param {string} name - Cache key in namespaced path format
-   * @param {any} item - Fallback value to save when cache miss happens
+   * @param {*} item - Fallback value to save when cache miss happens
    * @param {number|string} [ttlDur=0] - TTL duration (milliseconds or parseable duration)
-   * @returns {Promise<any>} Cached content
+   * @returns {Promise<*>} Cached content
    */
   sync = async (name, item, ttlDur = 0) => {
     const content = await this.loadCache(name, ttlDur)
@@ -108,7 +102,6 @@ class Cache {
 
   /**
    * Remove a specific cache namespace or all first-level namespaces.
-   *
    * @method
    * @param {string} name - Namespace name or `*` for all
    * @returns {void}
@@ -149,7 +142,6 @@ class Cache {
 
   /**
    * Dispose internal reference.
-   *
    * @async
    * @method
    * @returns {Promise<void>}

@@ -23,12 +23,14 @@ const { isPlainObject } = lodash
  * Features many methods to display things on screen/console using {@link https://github.com/sindresorhus/ora|ora}
  * based spinner.
  *
+ * You don't need to instantiate this class directly, since every plugin instance already has a built-in `print` property you can use
+ * to access this class instance.
+ *
  * @class
  */
 class Print extends Tools {
   /**
-   * @param {Plugin} plugin Plugin instance.
-   * @param {Print.TOptions} [options={}] Options object.
+   * Constructor.
    */
   constructor (plugin, options = {}) {
     super(plugin)
@@ -52,6 +54,7 @@ class Print extends Tools {
 
     /**
      * ora instance
+     * @type {object}
      * @see {@link https://github.com/sindresorhus/ora|ora}
      */
     this.ora = ora(this.options.ora)
@@ -62,10 +65,10 @@ class Print extends Tools {
    * Setting spinner options; override the one passed at constructor.
    *
    * @method
-   * @param {any[]} - [args=[]] Array of options. If the last argument is an object, it will be used to override ora options
+   * @param {...*} args - Arguments. If the last argument is an object, it will be used to override the current options.
    * @returns {void}
    */
-  setOpts = (args = []) => {
+  setOpts = (...args) => {
     const { silent } = this.app.bajo.config
     let opts = {}
     if (isPlainObject(args.slice(-1)[0])) opts = args.pop()
@@ -77,12 +80,12 @@ class Print extends Tools {
    * Translate text, prefixed with counter and/or datetime etc.
    *
    * @param {string} text - Text to translate
-   * @param {...any} [args] - Any variable to interpolate text translation. If the last argument is an object, it will be used to override ora's options.
+   * @param {...*} [args] - Arguments to interpolate text translation. If the last argument is an object, it will be used to override ora's options.
    * @returns {string}
    */
   buildText = (text, ...args) => {
     text = this.plugin.t(text, ...args)
-    this.setOpts(args)
+    this.setOpts(...args)
     const prefixes = []
     if (this.options.showDatetime) prefixes.push('[' + this.app.lib.dayjs().toISOString() + ']')
     if (this.options.showCounter) prefixes.push('[' + this.getElapsed() + ']')
@@ -96,7 +99,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora's options
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   setText = (text, ...args) => {
@@ -124,11 +127,11 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora's options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora's options
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   start = (text, ...args) => {
-    this.setOpts(args)
+    this.setOpts(...args)
     this.setText(text, ...args)
     this.ora.start()
     return this
@@ -150,7 +153,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options.
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora options.
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   succeed = (text, ...args) => {
@@ -164,7 +167,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   fail = (text, ...args) => {
@@ -178,7 +181,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   warn = (text, ...args) => {
@@ -192,7 +195,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {Print} Return the instance itself, usefull for method chaining
    */
   info = (text, ...args) => {
@@ -228,7 +231,7 @@ class Print extends Tools {
    *
    * @method
    * @param {string} text - Text to use
-   * @param {...any} [args] - Any variable to interpolate text. If the last argument is an object, it will be used to override ora options
+   * @param {...*} [args] - Arguments to interpolate text. If the last argument is an object, it will be used to override ora options
    * @returns {void}
    */
   fatal = (text, ...args) => {
@@ -243,7 +246,7 @@ class Print extends Tools {
   }
 
   /**
-   * Create a new print instance.
+   * Create a new Print instance.
    *
    * @method
    * @param {App.TOptions} [options] Options object. If not provided, defaults to the current options.

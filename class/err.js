@@ -6,13 +6,27 @@ const { isPlainObject, each, isArray, get, isEmpty, merge } = lodash
 Error.stackTraceLimit = 15
 
 /**
- * Bajo error class, a thin wrapper of node's Error object.
+ * Error details object type definition. This type is used to represent detailed information about an error,
+ * including the field that caused the error, the error message, the value that caused the error, and any additional context.
+ *
+ * This type is particularly useful for validation errors, where you want to provide detailed feedback about what went wrong.
+ * @typedef TErrDetails
+ * @memberof Err
+ * @type {Object}
+ * @property {string} field - Field name
+ * @property {string} error - Error message
+ * @property {*} [value] - The value that caused the error
+ * @property {Object} [ext] - Additional context about the error
+ */
+
+/**
+ * Bajo error class, a thin wrapper around the node's Error object.
  *
  * Every Bajo {@link Plugin|plugin} has a built-in method called `error` which basically the shortcut to create a new Err instance.
  * It helps you create this instance anywhere in your code quickly without the hassle of importing & instantiating:
  *
  * ```javascript
- * ... anywhere inside your code
+ * // anywhere inside your code
  * if (notfound) throw this.error('Sorry, item is nowhere to be found!')
  * ```
  */
@@ -22,32 +36,39 @@ class Err extends Tools {
    *
    * @param {Plugin} plugin - Plugin instance
    * @param {string} msg - Error message
-   * @param  {...any} [args] - Variables to interpolate with error message. Payload object can be pushed at the very last argument
+   * @param  {...*} [args] - Variables to interpolate with error message. Error's payload can be pushed to the very last argument if needed
    */
   constructor (plugin, msg, ...args) {
     super(plugin)
 
     /**
-     * Error payload extracted from the last arguments.
+     * Error payload extracted from the last arguments, if any
      * @type {Object}
      */
     this.payload = args.length > 0 && isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {}
 
     /**
-     * Original message before translation.
+     * Original message before translation
      * @type {string}
      */
     this.orgMessage = msg
 
     /**
-     * Translated message.
+     * Translated message
      * @type {string}
      */
     this.message = this.payload.noTrans ? msg : this.plugin.t(msg, ...args)
   }
 
   /**
-   * Write message to the console.
+   * Write message to the console. Chainable method, returns the Err instance itself.
+   *
+   * If a payload is provided, it will be merged with the existing payload. If `details` is provided in the payload,
+   * it will be formatted and merged to the existing payload and a `detailsMessage` will be generated for display purpose.
+   *
+   * Original message and translated message will be stored in `orgMessage` and `message` properties respectively.
+   *
+   * `ns` property will be set to the plugin's namespace.
    *
    * @method
    * @returns {Err} - Error object, useful for chaining
@@ -91,14 +112,14 @@ class Err extends Tools {
   }
 
   /**
-   * Pretty format error details.
+   * Pretty format error details. Used to format error payloads that contain `details` property, which is an array of error details.
    *
-   * Formatted error will be applied directly to the value parameter, and a detailsMessage
+   * Formatted error will be applied directly to the value parameter, and a `detailsMessage`
    * will be returned for display purpose.
    *
    * @method
    * @param {Object} value - Value to format
-   * @returns {Object}
+   * @returns {{result: TErrDetails[], detailsMessage: string}} - Formatted result and details message
    */
   formatErrorDetails = (value) => {
     const { isString, last } = this.app.lib._

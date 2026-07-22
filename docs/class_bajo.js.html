@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" style="font-size:16px"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Source: class/bajo.js</title><!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]--><script src="scripts/third-party/hljs.js" defer="defer"></script><script src="scripts/third-party/hljs-line-num.js" defer="defer"></script><script src="scripts/third-party/popper.js" defer="defer"></script><script src="scripts/third-party/tippy.js" defer="defer"></script><script src="scripts/third-party/tocbot.min.js"></script><script>var baseURL="/",locationPathname="";baseURL=(locationPathname=document.location.pathname).substr(0,locationPathname.lastIndexOf("/")+1)</script><link rel="stylesheet" href="styles/clean-jsdoc-theme.min.css"><svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none"><defs><symbol id="copy-icon" viewbox="0 0 488.3 488.3"><g><path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/><path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/></g></symbol><symbol id="search-icon" viewBox="0 0 512 512"><g><g><path d="M225.474,0C101.151,0,0,101.151,0,225.474c0,124.33,101.151,225.474,225.474,225.474    c124.33,0,225.474-101.144,225.474-225.474C450.948,101.151,349.804,0,225.474,0z M225.474,409.323    c-101.373,0-183.848-82.475-183.848-183.848S124.101,41.626,225.474,41.626s183.848,82.475,183.848,183.848    S326.847,409.323,225.474,409.323z"/></g></g><g><g><path d="M505.902,476.472L386.574,357.144c-8.131-8.131-21.299-8.131-29.43,0c-8.131,8.124-8.131,21.306,0,29.43l119.328,119.328    c4.065,4.065,9.387,6.098,14.715,6.098c5.321,0,10.649-2.033,14.715-6.098C514.033,497.778,514.033,484.596,505.902,476.472z"/></g></g></symbol><symbol id="font-size-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11.246 15H4.754l-2 5H.6L7 4h2l6.4 16h-2.154l-2-5zm-.8-2L8 6.885 5.554 13h4.892zM21 12.535V12h2v8h-2v-.535a4 4 0 1 1 0-6.93zM19 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></symbol><symbol id="add-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></symbol><symbol id="minus-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M5 11h14v2H5z"/></symbol><symbol id="dark-theme-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></symbol><symbol id="light-theme-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></symbol><symbol id="reset-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18.537 19.567A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10c0 2.136-.67 4.116-1.81 5.74L17 12h3a8 8 0 1 0-2.46 5.772l.997 1.795z"/></symbol><symbol id="down-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7803 6.21967C13.0732 6.51256 13.0732 6.98744 12.7803 7.28033L8.53033 11.5303C8.23744 11.8232 7.76256 11.8232 7.46967 11.5303L3.21967 7.28033C2.92678 6.98744 2.92678 6.51256 3.21967 6.21967C3.51256 5.92678 3.98744 5.92678 4.28033 6.21967L8 9.93934L11.7197 6.21967C12.0126 5.92678 12.4874 5.92678 12.7803 6.21967Z"></path></symbol><symbol id="codepen-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.5 13.202L13 15.535v3.596L19.197 15 16.5 13.202zM14.697 12L12 10.202 9.303 12 12 13.798 14.697 12zM20 10.869L18.303 12 20 13.131V10.87zM19.197 9L13 4.869v3.596l3.5 2.333L19.197 9zM7.5 10.798L11 8.465V4.869L4.803 9 7.5 10.798zM4.803 15L11 19.131v-3.596l-3.5-2.333L4.803 15zM4 13.131L5.697 12 4 10.869v2.262zM2 9a1 1 0 0 1 .445-.832l9-6a1 1 0 0 1 1.11 0l9 6A1 1 0 0 1 22 9v6a1 1 0 0 1-.445.832l-9 6a1 1 0 0 1-1.11 0l-9-6A1 1 0 0 1 2 15V9z"/></symbol><symbol id="close-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></symbol><symbol id="menu-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></symbol></defs></svg></head><body data-theme="light"><div class="sidebar-container"><div class="sidebar" id="sidebar"><a href="/" class="sidebar-title sidebar-title-anchor">Bajo API</a><div class="sidebar-items-container"><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-classes"><div>Classes</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="App.html">App</a></div><div class="sidebar-section-children"><a href="Bajo.html">Bajo</a></div><div class="sidebar-section-children"><a href="Base.html">Base</a></div><div class="sidebar-section-children"><a href="Cache.html">Cache</a></div><div class="sidebar-section-children"><a href="Err.html">Err</a></div><div class="sidebar-section-children"><a href="Log.html">Log</a></div><div class="sidebar-section-children"><a href="Plugin.html">Plugin</a></div><div class="sidebar-section-children"><a href="Print.html">Print</a></div><div class="sidebar-section-children"><a href="Tools.html">Tools</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-modules"><div>Modules</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="module-Helper.html">Helper</a></div><div class="sidebar-section-children"><a href="module-Hook.html">Hook</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-global"><div>Global</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="global.html#boot">boot</a></div></div></div></div></div><div class="navbar-container" id="VuAckcnZhf"><nav class="navbar"><div class="navbar-left-items"><div class="navbar-item"><a id="" href="https://www.npmjs.com/package/bajo" target="">NPM</a></div><div class="navbar-item"><a id="" href="https://github.com/ardhi/bajo" target="">Github</a></div><div class="navbar-item"><a id="" href="https://bajo.app" target="">Bajo</a></div></div><div class="navbar-right-items"><div class="navbar-right-item"><button class="icon-button search-button" aria-label="open-search"><svg><use xlink:href="#search-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button theme-toggle" aria-label="toggle-theme"><svg><use class="theme-svg-use" xlink:href="#dark-theme-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button font-size" aria-label="change-font-size"><svg><use xlink:href="#font-size-icon"></use></svg></button></div></div><nav></nav></nav></div><div class="toc-container"><div class="toc-content"><span class="bold">On this page</span><div id="eed4d2a0bfd64539bb9df78095dec881"></div></div></div><div class="body-wrapper"><div class="main-content"><div class="main-wrapper"><section id="source-page" class="source-page"><header><h1 id="title" class="has-anchor">class_bajo.js</h1></header><article><pre class="prettyprint source lang-js"><code>import Tools from './tools.js'
+    <![endif]--><script src="scripts/third-party/hljs.js" defer="defer"></script><script src="scripts/third-party/hljs-line-num.js" defer="defer"></script><script src="scripts/third-party/popper.js" defer="defer"></script><script src="scripts/third-party/tippy.js" defer="defer"></script><script src="scripts/third-party/tocbot.min.js"></script><script>var baseURL="/",locationPathname="";baseURL=(locationPathname=document.location.pathname).substr(0,locationPathname.lastIndexOf("/")+1)</script><link rel="stylesheet" href="styles/clean-jsdoc-theme.min.css"><svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none"><defs><symbol id="copy-icon" viewbox="0 0 488.3 488.3"><g><path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/><path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/></g></symbol><symbol id="search-icon" viewBox="0 0 512 512"><g><g><path d="M225.474,0C101.151,0,0,101.151,0,225.474c0,124.33,101.151,225.474,225.474,225.474    c124.33,0,225.474-101.144,225.474-225.474C450.948,101.151,349.804,0,225.474,0z M225.474,409.323    c-101.373,0-183.848-82.475-183.848-183.848S124.101,41.626,225.474,41.626s183.848,82.475,183.848,183.848    S326.847,409.323,225.474,409.323z"/></g></g><g><g><path d="M505.902,476.472L386.574,357.144c-8.131-8.131-21.299-8.131-29.43,0c-8.131,8.124-8.131,21.306,0,29.43l119.328,119.328    c4.065,4.065,9.387,6.098,14.715,6.098c5.321,0,10.649-2.033,14.715-6.098C514.033,497.778,514.033,484.596,505.902,476.472z"/></g></g></symbol><symbol id="font-size-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11.246 15H4.754l-2 5H.6L7 4h2l6.4 16h-2.154l-2-5zm-.8-2L8 6.885 5.554 13h4.892zM21 12.535V12h2v8h-2v-.535a4 4 0 1 1 0-6.93zM19 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></symbol><symbol id="add-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></symbol><symbol id="minus-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M5 11h14v2H5z"/></symbol><symbol id="dark-theme-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></symbol><symbol id="light-theme-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></symbol><symbol id="reset-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18.537 19.567A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10c0 2.136-.67 4.116-1.81 5.74L17 12h3a8 8 0 1 0-2.46 5.772l.997 1.795z"/></symbol><symbol id="down-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7803 6.21967C13.0732 6.51256 13.0732 6.98744 12.7803 7.28033L8.53033 11.5303C8.23744 11.8232 7.76256 11.8232 7.46967 11.5303L3.21967 7.28033C2.92678 6.98744 2.92678 6.51256 3.21967 6.21967C3.51256 5.92678 3.98744 5.92678 4.28033 6.21967L8 9.93934L11.7197 6.21967C12.0126 5.92678 12.4874 5.92678 12.7803 6.21967Z"></path></symbol><symbol id="codepen-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.5 13.202L13 15.535v3.596L19.197 15 16.5 13.202zM14.697 12L12 10.202 9.303 12 12 13.798 14.697 12zM20 10.869L18.303 12 20 13.131V10.87zM19.197 9L13 4.869v3.596l3.5 2.333L19.197 9zM7.5 10.798L11 8.465V4.869L4.803 9 7.5 10.798zM4.803 15L11 19.131v-3.596l-3.5-2.333L4.803 15zM4 13.131L5.697 12 4 10.869v2.262zM2 9a1 1 0 0 1 .445-.832l9-6a1 1 0 0 1 1.11 0l9 6A1 1 0 0 1 22 9v6a1 1 0 0 1-.445.832l-9 6a1 1 0 0 1-1.11 0l-9-6A1 1 0 0 1 2 15V9z"/></symbol><symbol id="close-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></symbol><symbol id="menu-icon" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></symbol></defs></svg></head><body data-theme="light"><div class="sidebar-container"><div class="sidebar" id="sidebar"><a href="/" class="sidebar-title sidebar-title-anchor">Bajo API</a><div class="sidebar-items-container"><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-tutorials"><div>Tutorials</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="tutorial-01_WELCOME.html">Welcome</a></div><div class="sidebar-section-children"><a href="tutorial-02_GETTING_STARTED.html">Getting Started</a></div><div class="sidebar-section-children"><a href="tutorial-03_USER_GUIDE.html">User Guide</a></div><div class="sidebar-section-children"><a href="tutorial-04_DEV_GUIDE.html">Developer Guide</a></div><div class="sidebar-section-children"><a href="tutorial-05_ECOSYSTEM.html">Ecosystem</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-classes"><div>Classes</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="App.html">App</a></div><div class="sidebar-section-children"><a href="Bajo.html">Bajo</a></div><div class="sidebar-section-children"><a href="Base.html">Base</a></div><div class="sidebar-section-children"><a href="Cache.html">Cache</a></div><div class="sidebar-section-children"><a href="Err.html">Err</a></div><div class="sidebar-section-children"><a href="Log.html">Log</a></div><div class="sidebar-section-children"><a href="Main.html">Main</a></div><div class="sidebar-section-children"><a href="Plugin.html">Plugin</a></div><div class="sidebar-section-children"><a href="Print.html">Print</a></div><div class="sidebar-section-children"><a href="Tools.html">Tools</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-modules"><div>Modules</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="module-Applet.html">Applet</a></div><div class="sidebar-section-children"><a href="module-Helper.html">Helper</a></div><div class="sidebar-section-children"><a href="module-Hook.html">Hook</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-global"><div>Global</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="global.html#TConfig">TConfig</a></div><div class="sidebar-section-children"><a href="global.html#boot">boot</a></div><div class="sidebar-section-children"><a href="global.html#package%25C2%25B7json">package·json</a></div></div></div></div></div><div class="navbar-container" id="VuAckcnZhf"><nav class="navbar"><div class="navbar-left-items"><div class="navbar-item"><a id="" href="https://www.npmjs.com/package/bajo" target="">NPM</a></div><div class="navbar-item"><a id="" href="https://github.com/ardhi/bajo" target="">Github</a></div><div class="navbar-item"><a id="" href="https://bajo.app" target="">Bajo</a></div></div><div class="navbar-right-items"><div class="navbar-right-item"><button class="icon-button search-button" aria-label="open-search"><svg><use xlink:href="#search-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button theme-toggle" aria-label="toggle-theme"><svg><use class="theme-svg-use" xlink:href="#dark-theme-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button font-size" aria-label="change-font-size"><svg><use xlink:href="#font-size-icon"></use></svg></button></div></div><nav></nav></nav></div><div class="toc-container"><div class="toc-content"><span class="bold">On this page</span><div id="eed4d2a0bfd64539bb9df78095dec881"></div></div></div><div class="body-wrapper"><div class="main-content"><div class="main-wrapper"><section id="source-page" class="source-page"><header><h1 id="title" class="has-anchor">class_bajo.js</h1></header><article><pre class="prettyprint source lang-js"><code>import Tools from './tools.js'
 import Plugin from './plugin.js'
 import increment from 'add-filename-increment'
 import fs from 'fs-extra'
@@ -15,11 +15,14 @@ import * as yaml from 'js-yaml'
 import aneka from 'aneka'
 import {
   buildBaseConfig,
-  buildExtConfig,
+  buildConfig,
   buildPlugins,
   collectConfigHandlers,
   bootOrder,
-  bootPlugins,
+  checkNameAliases,
+  checkDependencies,
+  collectHooks,
+  runPlugins,
   exitHandler,
   importModule,
   types as formatTypes,
@@ -29,20 +32,20 @@ import {
 const require = createRequire(import.meta.url)
 
 const {
-  isFunction, map, isObject,
+  isFunction, map, isObject, findIndex, uniq, merge,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase,
   cloneDeep, isPlainObject, isArray, isString, omit, keys, indexOf,
-  last, get, has, values, pick
+  last, get, has, values, pick, isBoolean
 } = lodash
 
-const { resolvePath, getGlobalModuleDir } = aneka
+const { resolvePath, getGlobalModuleDir, defaultsDeep, isSet, parseObject } = aneka
 
 /**
- * Name based `{ns}:{path}` format.
+ * Name in `{ns}:{path}` format.
  *
  * @typedef {string} TNsPathPairs
  * @memberof Bajo
- * @see TNsPathResult
+ * @see Bajo.TNsPathResult
  * @see Bajo#buildNsPath
  * @see Bajo#breakNsPath
  */
@@ -58,23 +61,30 @@ const { resolvePath, getGlobalModuleDir } = aneka
  */
 
 /**
- * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath}.
+ * Object returned by {@link Bajo#breakNsPath|bajo:breakNsPath()}.
  *
  * @typedef {Object} TNsPathResult
  * @memberof Bajo
- * @property {string} ns - Namespace
+ * @property {string} [ns] - Namespace
  * @property {string} [subNs] - Sub namespace
  * @property {string} [subSubNs] - Sub of sub namespace
+ * @property {string} [fullNs] - Full namespace, including sub namespaces
  * @property {string} path - Path without query string or hash
- * @property {string} fullPath - Full path, including query string and hash
- * @see TNsPathPairs
+ * @property {string} [fullPath] - Full path, including query string and hash
+ * @property {string} [realPath] - Path without query string or hash, but with parameters replaced with their values
+ * @property {string} [realFullPath] - Full path, including query string and hash, but with parameters replaced with their values
+ * @property {Object} [qs] - Query string object
+ * @property {Object} [params] - Parameters object
+ * @see Bajo.TNsPathPairs
  * @see Bajo#buildNsPath
  * @see Bajo#breakNsPath
  */
 
 /**
- * The Core. The main engine. The one and only plugin that control app's boot process and
- * making sure all other plugins working nicely.
+ * The core plugin. The main engine. The special plugin that controls the app's boot process and
+ * makes sure all other plugins work nicely.
+ *
+ * Don't create your own instance of this class or {@link App} class. Instead, use the {@link boot} process.
  *
  * @class
  */
@@ -88,57 +98,61 @@ class Bajo extends Plugin {
     super('bajo', app)
 
     /**
-     * Alias
+     * Alias. Read-only
      * @type {string}
+     * @default 'bajo'
      */
     this.alias = 'bajo'
 
     /**
-     * White space characters
+     * Array of white space characters. Used to trim strings
      * @type {string[]}
      */
     this.whiteSpace = [' ', '\t', '\n', '\r']
 
     /**
-     * Config object.
-     *
-     * @type {Bajo.TObject}
+     * Configuration object
+     * @type {Bajo.TConfig}
      * @see {@tutorial config}
      */
     this.config = {}
 
     /**
-     * Hooks container.
-     *
+     * Hooks container. This is where all hooks definition are stored.
      * @type {Array&lt;Bajo.THook>}
      */
     this.hooks = []
   }
 
   /**
-   * Initialization:
-   *
-   * 1. Building {@link module:Helper/Bajo.buildBaseConfig|base config}
-   * 2. {@link module:Helper/Bajo.buildPlugins|Building plugins}
-   * 3. Collect all {@link module:Helper/Bajo.collectConfigHandlers|config handler}
-   * 4. Building {@link module:Helper/Bajo.buildExtConfig|extra config}
-   * 5. Setup {@link module:Helper/Bajo.bootOrder|boot order}
-   * 6. {@link module:Helper/Bajo.bootPlugins|Boot loaded plugins}
-   * 7. Attach {@link module:Helper/Bajo.exitHandler|exit handlers}
+   * Bajo boot process. This method is called by the {@link App} class during the app's boot process:
+   * 1. Building Bajo's {@link module:Helper.buildBaseConfig|base configuration}
+   * 2. Collect all {@link module:Helper.collectConfigHandlers|config handlers} from all loaded plugins
+   * 3. Build {@link module:Helper.buildConfig|configuration} object
+   * 4. {@link module:Helper.buildPlugins|Building plugins} listed in `package.json` or `.plugins` file
+   * 5. Determining the {@link module:Helper.bootOrder|boot order}
+   * 6. Ensure the {@link module:Helper.checkNameAliases|uniqueness} of all plugins' name and alias
+   * 7. Ensure all plugins {@link module:Helper.checkDependencies|dependencies} are met
+   * 8. Collect all {@link module:Helper.collectHooks|hooks} from all loaded plugins
+   * 9. {@link module:Helper.runPlugins|Run all plugins} according to the boot order
+   * 10. And finally attaching all {@link module:Helper.exitHandler|exit handlers} it could find
    *
    * @method
    * @async
    */
-  init = async () => {
+  bootApp = async () => {
     await buildBaseConfig.call(this)
     await collectConfigHandlers.call(this)
-    await buildExtConfig.call(this)
+    await buildConfig.call(this)
     await buildPlugins.call(this)
     await bootOrder.call(this)
-    await bootPlugins.call(this)
+    await checkNameAliases.call(this)
+    await checkDependencies.call(this)
+    await collectHooks.call(this)
+    await runPlugins.call(this)
     await exitHandler.call(this)
     if (this.app.bajoSpatial) {
-      this.anekaSpatial = await this.importPkg('bajoSpatial:aneka-spatial')
+      this.app.lib.anekaSpatial = await this.importPkg('bajoSpatial:aneka-spatial')
     }
   }
 
@@ -193,12 +207,24 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Break name to its namespace &amp; path infos
+   * Break `name` to their components.
+   *
+   * If path starts with `//`, e.g. name is `https://example.com`, it will be treated as a URL and returned as an
+   * object with only `path` property filled with the original name.
+   *
+   * If query string is present in the path, it will be parsed and returned as an object with `qs`
+   * property containing the parsed query string.
+   *
+   * If path contains parameters in the format of `:key|value` or `{key|value}`, they will be extracted and returned
+   * as an object with `params` property containing the extracted parameters.
+   *
+   * This method is one of the most used method in Bajo. It is because every files, names, resources, and even commands
+   * are all identified by their namespace and path.
    *
    * @method
-   * @param {(TNsPathPairs|string)} name - Name to break
-   * @param {boolean} [checkNs=true] - If `true` (default), namespace will be checked for its validity
-   * @returns {TNsPathResult}
+   * @param {Bajo.TNsPathPairs} name - Name in format `ns:path`
+   * @param {boolean} [checkNs=true] - If `true` (default), check if the namespace exists in the app. If not, throw an error
+   * @returns {Bajo.TNsPathResult}
    */
   breakNsPath = (name = '', checkNs = true) => {
     let [ns, ...path] = name.split(':')
@@ -227,14 +253,17 @@ class Bajo extends Plugin {
     const params = {}
     for (const idx in parts) {
       const part = parts[idx]
-      if (part[0] !== ':' || part.indexOf('|') === -1) {
+      if (part.indexOf('|') === -1 &amp;&amp; ![':', '{'].includes(part[0])) {
         realParts.push(part)
         continue
       }
-      const [key, val] = part.split('|')
-      parts[idx] = key
-      params[key.slice(1)] = val
-      realParts.push(val)
+      let [key, val] = part.split('|')
+      if (!val) val = key[0] === '{' ? '}' : ''
+      key = key.slice(1)
+      val = val[val.length - 1] === '}' ? val.slice(0, val.length - 1) : val
+      // parts[idx] = key
+      params[key] = val
+      realParts.push(isEmpty(val) ? parts[idx] : val)
     }
     path = parts.join('/')
     const realPath = realParts.join('/')
@@ -242,33 +271,39 @@ class Bajo extends Plugin {
     if (!isEmpty(qs)) fullPath += ('?' + querystring.stringify(qs, null, null, { encodeURIComponent: (text) => (text) }))
     let realFullPath = realPath
     if (!isEmpty(qs)) realFullPath += ('?' + querystring.stringify(qs, null, null, { encodeURIComponent: (text) => (text) }))
-    return { ns, path, subNs, subSubNs, qs, fullPath, fullNs, realPath, realFullPath }
+    return { ns, path, subNs, subSubNs, qs, params, fullPath, fullNs, realPath, realFullPath }
   }
 
   /**
-   * Method to transform config's array or object into an array of collection.
+   * Method to transform config's array or object into a collection of objects with uniformed structure. This is useful to build a collection of items
+   * from config's array or object, e.g. a collection of commands, routes, etc.
+   *
+   * You typically also provide a `handler` function to transform each item in the collection. The handler function will be called with an object
+   * containing the following keys:
+   * - `item`: the current item in the collection
+   * - `index`: the index of the current item in the collection
+   * - `cfg`: the entire config object
    *
    * @method
    * @async
-   * @param {Object} options - Options.
-   * @param {string} [options.ns] - Namespace. If not provided, defaults to `bajo`
-   * @param {function} [options.handler] - Handler to call while building the collection item.
-   * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates.
-   * @param {string} options.container - Key used as container name.
-   * @param {boolean} [options.useDefaultName=true] - If true (default) and `name` key is not provided, returned collection will be named `default`.
-   * @fires bajo:beforeBuildCollection
-   * @fires bajo:afterBuildCollection
-   * @returns {Object[]} The collection
+   * @param {Object} [options={}] - Options
+   * @param {string} [options.ns='bajo'] - Namespace. If not provided, defaults to `bajo`
+   * @param {function} [options.handler] - Function to transform each item while building
+   * @param {string[]} [options.dupChecks=[]] - Array of keys to check for duplicates
+   * @param {string} options.container - Key used as container name
+   * @param {boolean} [options.useDefaultName=true] - If true (default) and `name` key is not provided, returned item will be named `default`
+   * @returns {Array&lt;Object>} Returned collection of objects
+   * @see module:Hook.{ns}:beforeBuildCollection
+   * @see module:Hook.{ns}:afterBuildCollection
    */
   buildCollections = async (options = {}) => {
     const { parseObject } = this.app.lib
-    let { ns, handler, dupChecks = [], container, useDefaultName = true, noDefault = true } = options
-    if (!ns) ns = this.ns
+    const { ns = this.ns, handler, dupChecks = [], container, useDefaultName = true, noDefault = true } = options
     const cfg = this.app[ns].getConfig()
     let items = get(cfg, container, [])
     if (!isArray(items)) items = [items]
     this.app[ns].log.trace('collecting%s', this.t(container))
-    await this.runHook(`${ns}:beforeBuildCollection`, container)
+    await this.runHook(`${ns}:beforeBuildCollection`, container, items)
     const deleted = []
     for (const index in items) {
       const item = parseObject(items[index])
@@ -302,8 +337,7 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Calling any plugin's method by its name:
-   *
+   * Calling a function handler in any plugins:
    * - If name is a string, the corresponding plugin's method will be called with passed args as its parameters
    * - If name is a plugin instance, this will be used as the scope instead. The first args is now the handler name and the rest are its parameters
    * - If name is a function, this function will be run under scope with the remaining args
@@ -311,9 +345,9 @@ class Bajo extends Plugin {
    *
    * @method
    * @async
-   * @param {(TNsPathPairs|Object|function)} name - Method's name, function handler, plain object or plugin instance.
-   * @param  {...any} [args] - One or more arguments passed as parameter to the handler.
-   * @returns {any} Returned value.
+   * @param {(TNsPathPairs|Plugin|function|Object)} name - Method's name, plugin instance, function handler or plain object. See above for details
+   * @param  {...*} [args] - One or more arguments passed as parameter to the handler
+   * @returns {Promise&lt;*>} Returned value
    */
   callHandler = async (item, ...args) => {
     let result
@@ -358,8 +392,8 @@ class Bajo extends Plugin {
    * @param {boolean} [options.useBajo=false] - If true, add `bajo` to the running plugins too.
    * @param {string} [options.prefix=''] - Prepend glob pattern with prefix.
    * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored.
-   * @param {any} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys.
-   * @returns {any}
+   * @param {*} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys.
+   * @returns {*}
    */
   eachPlugins = async (handler, options = {}) => {
     if (isString(options)) options = { glob: options }
@@ -426,7 +460,7 @@ class Bajo extends Plugin {
    *
    * @method
    * @param {string} type - Format type. See {@link TBajoFormatType} for acceptable values.
-   * @param {any} value - Value to format.
+   * @param {*} value - Value to format.
    * @param {string} [dataType] - Value's data type. See {@link TBajoDataType} for acceptable values.
    * @param {Object} [options={}] - Options.
    * @param {boolean} [options.withUnit=true] - Return with its unit appended.
@@ -434,7 +468,6 @@ class Bajo extends Plugin {
    * @returns {(Array|string)} Return string if `withUnit` is true. Otherwise is an array of `[value, unit, separator]`.
    */
   formatByType = (type, value, dataType, options = {}) => {
-    const { defaultsDeep } = this.app.lib.aneka
     const { format } = this.getUnitFormat(options)
     const { withUnit = true } = options
     const lang = options.lang ?? this.config.lang
@@ -451,7 +484,7 @@ class Bajo extends Plugin {
    * Format value.
    *
    * @method
-   * @param {any} value - Value to format.
+   * @param {*} value - Value to format.
    * @param {string} [type] - Data type to use. See {@link TBajoDataType} for acceptable values. If not provided, return the untouched value.
    * @param {Object} [options={}] - Options.
    * @param {string} [options.emptyValue=''] - Empty value to use if function resulted empty. Defaults to the one from your config.
@@ -462,7 +495,6 @@ class Bajo extends Plugin {
    * @returns {string} Formatted value.
    */
   format = (value, type, options = {}) => {
-    const { defaultsDeep, isSet } = this.app.lib.aneka
     const { format } = this.config.intl
     const { emptyValue = format.emptyValue } = options
     const lang = options.lang ?? this.config.lang
@@ -587,7 +619,6 @@ class Bajo extends Plugin {
    * @returns {(Object|Array)} See above.
    */
   importPkg = async (...pkgs) => {
-    const { defaultsDeep } = this.app.lib.aneka
     const result = {}
     const notFound = []
     let opts = { returnDefault: true, throwNotFound: false }
@@ -602,7 +633,7 @@ class Bajo extends Plugin {
         notFound.push(pkg)
         continue
       }
-      const p = this.readJson(`${dir}/package.json`, opts.throwNotFound)
+      const p = await this.fromJson(`${dir}/package.json`, { readFromFile: true, throwNotFound: opts.throwNotFound })
       const mainFileOrg = dir + '/' + (p.main ?? get(p, 'exports.default', 'index.js'))
       let mainFile = resolvePath(mainFileOrg, os.platform() === 'win32')
       if (isEmpty(path.extname(mainFile))) {
@@ -677,35 +708,34 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Human friendly join array of items.
+   * Return human friendly joined array of items.
    *
    * @method
-   * @param {any[]} array - Array to join
-   * @param {(string|Object)} options - If provided and is a string, it will be used as separator.
+   * @param {Array&lt;*>} input - Array to join
+   * @param {(string|Object)} [options={}] - If provided and is a string, it will be used as separator.
    * @param {string} [options.separator=', '] - Separator to use.
-   * @param {string} [options.lastSeparator=and] - Text to use as the last separator.
+   * @param {string} [options.lastSeparator='and'] - Text to use as the last separator.
    * @returns {string}
    */
   join = (input = [], options = {}) => {
     const array = [...input]
     if (isString(options)) options = { separator: options }
-    let { separator = ', ', lastSeparator = 'and', lang } = options
+    const { separator = ', ', lastSeparator = 'and', lang } = options
     const translate = (val) => {
       return this.t(val, { lang }).toLowerCase()
     }
     if (array.length === 0) return translate('none')
     if (array.length === 1) return array[0]
-    lastSeparator = translate(lastSeparator)
     const last = (array.pop() ?? '').trim()
-    return array.map(a => (a + '').trim()).join(separator) + ` ${lastSeparator} ${last}`
+    return array.map(a => (a + '').trim()).join(separator) + ` ${translate(lastSeparator)} ${last}`
   }
 
   /**
-   * Return its numeric portion of a value.
+   * Get numeric portion and its unit from a string.
    *
    * @method
-   * @param {string} [value=''] - Value to get its numeric portion.
-   * @param {string} [defUnit=''] - Default unit if value doesn't have one.
+   * @param {string} [value=''] - Value to get its numeric portion
+   * @param {string} [defUnit=''] - Default unit if value doesn't have one
    * @returns {string}
    */
   numUnit = (value = '', defUnit = '') => {
@@ -716,27 +746,31 @@ class Bajo extends Plugin {
 
   /**
    * Read and parse file as config object. Supported types: `.js`, `.json` and `.yml/.yaml`.
-   * More supports can be added using plugin. {@link https://github.com/ardhi/bajo-config|bajo-config} gives you additional supports for `.yml`, `.yaml` and `.toml` file.
+   * More supports can be added using plugin. {@link https://ardhi.github.io/bajo-config|bajo-config} gives you additional supports for `.yml`, `.yaml` and `.toml` file.
    *
    * If file extension is `.*`, it will be auto detected and parsed accordingly
    *
    * @method
    * @async
    * @param {string} file - File to read and parse.
-   * @param {Object} [options={}] - Options.
-   * @param {boolean} [options.ignoreError] - Any exception will be silently discarded.
-   * @param {string} [options.ns] - If given, use this as the scope.
-   * @param {string} [options.pattern] - If given and auto detection is on (extension is `.*`), it will be used for instead the default one.
-   * @param {Object} [options.defValue={}] - Default value to use if value returned empty.
-   * @param {Object} [options.parserOpts={}] - Parser setting.
-   * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options.
+   * @param {Object} [options={}] - Options
+   * @param {boolean} [options.ignoreError] - Any exception will be silently discarded
+   * @param {string} [options.ns] - If provided, scoped to this namespace. Otherwise, the running plugin's namespace will be used
+   * @param {string} [options.baseNs] - If provided, it will be used as the base namespace for extending config from other plugins
+   * @param {string|string[]|boolean} [options.extend] - If provided, it will be used as the base namespace for extending config from other plugins. Set to `false` to disable extending
+   * @param {boolean} [options.checkOverride] - If `true` and `baseNs` is provided or `extend` is not `false`, check for override config in main plugin
+   * @param {boolean} [options.merge] - If `true`, config from other plugins will be merged into the original config. Otherwise, it will perform a deep defaults merge
+   * @param {string} [options.pattern] - If provided and auto detection is on (extension is `.*`), it will be used for instead the auto generated one
+   * @param {Object} [options.defValue={}] - Default value to use if value returned empty
+   * @param {Object} [options.parserOpts={}] - Parser options
+   * @param {Object} [options.globOpts={}] - {@link https://github.com/mrmlnc/fast-glob|fast-glob} options
    * @returns {Object}
    */
   readConfig = async (file, options = {}) => {
-    const { parseObject } = this.app.lib
-    const { defaultsDeep } = this.app.lib.aneka
-    const { uniq, isString, isArray, findIndex, isPlainObject, merge } = this.app.lib._
-    let { ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true, defValue = {}, parserOpts = {}, globOpts = {}, handler, cache = {} } = options
+    let {
+      ns, baseNs, extend, checkOverride, merge: merged, pattern, ignoreError = true,
+      defValue = {}, parserOpts = {}, globOpts = {}, handler, cache = {}
+    } = options
 
     const getParseOptsArgs = (opts, orig) => {
       opts.parserOpts = opts.parserOpts ?? {}
@@ -757,7 +791,7 @@ class Bajo extends Plugin {
       }
       const { suffix = '', keys = [] } = options
       let bases = this.app.getAllNs()
-      if (isString(extend)) extend = extend.split(',').map(i => i.trim)
+      if (isString(extend)) extend = extend.split(',').map(i => i.trim())
       if (isArray(extend)) bases = [...extend, 'main']
       bases = uniq(bases)
       let ext = isArray(orig) ? [] : {}
@@ -802,23 +836,24 @@ class Bajo extends Plugin {
     if (cache.name) result = await this.app.cache.load(cache.name, cache.ttlDur)
     if (result) return result
     await this.runHook('bajo:beforeReadConfig', file, options)
-    parserOpts.readFromFile = true
+    const readOpts = {
+      readFromFile: true,
+      throwNotFound: !ignoreError,
+      defValue,
+      parserOpts
+    }
     if (!ns) ns = this.ns
     file = resolvePath(this.app.getPluginFile(file))
     let ext = path.extname(file)
     const fname = path.dirname(file) + '/' + path.basename(file, ext)
     ext = ext.toLowerCase()
-    if (['.js', '.json'].includes(ext)) {
-      const item = find(this.app.configHandlers, { ext })
-      return await output(await item.readHandler.call(this.app[ns], file, parserOpts))
-    }
     if (!['', '.*'].includes(ext)) {
       const item = find(this.app.configHandlers, { ext })
       if (!item) {
         if (!ignoreError) throw this.error('cantParse%s', file, { code: 'BAJO_CONFIG_NO_PARSER' })
         return await output(defValue)
       }
-      return await output(await item.readHandler.call(this.app[item.ns], file, parserOpts))
+      return await output(await item.readHandler.call(this.app[item.ns], file, readOpts))
     }
     const formats = this.app.getConfigFormats(true)
     const item = pattern ?? `${fname}.{${formats.join(',')}}`
@@ -836,30 +871,10 @@ class Bajo extends Plugin {
         continue
       }
       const _ns = ['.js', '.json'].includes(ext) ? ns : item.ns
-      config = await item.readHandler.call(this.app[_ns], f, parserOpts)
+      config = await item.readHandler.call(this.app[_ns], f, readOpts)
       if (!isEmpty(config)) break
     }
     return await output(config)
-  }
-
-  /**
-   * Read and parse json file.
-   *
-   * @method
-   * @param {string} file - File to read.
-   * @param {boolean} [thrownNotFound=false] - If `true`, silently ignore if file is not found.
-   * @returns {Object}
-   */
-  readJson = (file, thrownNotFound = false) => {
-    const { parseObject } = this.app.lib
-    if (isPlainObject(thrownNotFound)) thrownNotFound = false
-    if (!fs.existsSync(file) &amp;&amp; thrownNotFound) throw this.error('notFound%s%s', this.t('file'), file)
-    let resp
-    try {
-      resp = fs.readFileSync(file, 'utf8')
-    } catch (err) {}
-    if (isEmpty(resp)) return resp
-    return parseObject(JSON.parse(resp))
   }
 
   /**
@@ -867,116 +882,163 @@ class Bajo extends Plugin {
    *
    * @async
    * @method
-   * @param {string} file - File to read and parse.
-   * @param {Object} [options={}] - Options.
-   * @returns {Object} Parsed JavaScript object.
+   * @param {string} file - File to read and parse
+   * @param {boolean} [options.readFromFile=false] - Ignored for this method. Always read from file.
+   * @param {boolean} [options.throwNotFound=false] - If `true`, throw exception if file is not found
+   * @param {object} [options.defValue={}] - Default value to use if value returned empty
+   * @param {object} [options.parserOpts={}] - Options to be passed if file exports a function
+   * @returns {Object} Parsed JavaScript object
    */
   async fromJs (file, options = {}) {
-    const args = options.args ?? []
+    if (isBoolean(options)) options = {}
+    options.defValue = options.defValue ?? {}
+    if (options.throwNotFound &amp;&amp; !fs.existsSync(file)) throw this.error('notFound%s%s', this.t('file'), file)
     let mod = await importModule(file)
-    if (isFunction(mod)) mod = await mod.call(this, ...args)
-    return mod
+    if (isFunction(mod)) mod = await mod.call(this, options.parserOpts)
+    return isEmpty(mod) ? options.defValue : mod
   }
 
   /**
-   * Read and parse JSON string or object.
+   * Parse JSON string or read and parse JSON file.
    *
-   * @param {string} data - Filename to load from or JSON string to parse.
-   * @param {Object} [options={}] - Options.
-   * @returns {Object} Parsed JSON object.
-   */
-  fromJson (data, options = {}) {
-    const content = options.readFromFile ? fs.readFileSync(data, 'utf8') : data
-    return JSON.parse(content)
-  }
-
-  /**
-   * Parse YAML text
-   *
+   * @async
    * @method
-   * @param {string} text - Text to be parsed
-   * @param {object} options - Options object
-   * @returns {object} Parsed object
+   * @param {string} text - Text to be parsed or file path to be read if `options.readFromFile` is `true`
+   * @param {object|boolean} [options={}] - Options object. If a boolean is provided, it will be treated as `options.readFromFile`
+   * @param {boolean} [options.readFromFile=false] - If `true`, `text` is treated as a file path
+   * @param {boolean} [options.throwNotFound=false] - If `true`, throw exception if file is not found
+   * @param {object} [options.defValue={}] - Default value to use if value returned empty
+   * @param {object} [options.parserOpts={}] - Options to be passed to `JSON.parse()`
+   * @returns {Object} Parsed object.
+   * @see Bajo#toJson
    */
-  fromYaml = (text, options = {}) => {
-    const { fs } = this.app.lib
+  async fromJson (text, options = {}) {
+    if (isBoolean(options)) options = { readFromFile: options }
+    options.defValue = options.defValue ?? {}
+    if (options.readFromFile &amp;&amp; !fs.existsSync(text) &amp;&amp; options.throwNotFound) throw this.error('notFound%s%s', this.t('file'), text)
     const content = options.readFromFile ? fs.readFileSync(text, 'utf8') : text
-    return yaml.load(content)
+    const result = JSON.parse(content)
+    return isEmpty(result) ? options.defValue : result
   }
 
   /**
-   * Parse YML text. Alias for fromYaml.
+   * Parse YAML text or read and parse YAML file.
    *
+   * @async
    * @method
-   * @param {string} text - Text to be parsed
-   * @param {object} options - Options object
+   * @param {string} text - Text to be parsed or file path to be read if `options.readFromFile` is `true`
+   * @param {object|boolean} [options={}] - Options object. If a boolean is provided, it will be treated as `options.readFromFile`
+   * @param {boolean} [options.readFromFile=false] - If `true`, `text` is treated as a file path
+   * @param {boolean} [options.throwNotFound=false] - If `true`, throw exception if file is not found
+   * @param {object} [options.parserOpts={}] - Options to be passed to `YAML.load()`
+   * @param {object} [options.defValue={}] - Default value to use if value returned empty
    * @returns {object} Parsed object
+   * @see Bajo#toYaml
    */
-  fromYml = (text, options = {}) => {
+  async fromYaml (text, options = {}) {
+    if (isBoolean(options)) options = { readFromFile: options }
+    options.defValue = options.defValue ?? {}
+    if (options.readFromFile &amp;&amp; !fs.existsSync(text) &amp;&amp; options.throwNotFound) throw this.error('notFound%s%s', this.t('file'), text)
+    const content = options.readFromFile ? fs.readFileSync(text, 'utf8') : text
+    const result = yaml.load(content)
+    return isEmpty(result) ? options.defValue : result
+  }
+
+  /**
+   * Parse YML text or read and parse YML file. Alias for {@link Bajo#fromYaml}.
+   *
+   * @async
+   * @method
+   * @param {string} text - Text to be parsed or file path to be read if `options.readFromFile` is `true`
+   * @param {object|boolean} [options={}] - Options object. If a boolean is provided, it will be treated as `options.readFromFile`
+   * @param {boolean} [options.readFromFile=false] - If `true`, `text` is treated as a file path
+   * @param {boolean} [options.throwNotFound=false] - If `true`, throw exception if file is not found
+   * @param {object} [options.defValue={}] - Default value to use if value returned empty
+   * @param {object} [options.parserOpts={}] - Options to be passed to `YAML.load()`
+   * @returns {object} Parsed object
+   * @see Bajo#toYml
+   */
+  async fromYml (text, options = {}) {
     return this.fromYaml(text, options)
   }
 
   /**
-   * Convert data to JSON string.
+   * Convert data to JSON string, optionally write to file if `options.writeToFile` is provided.
    *
+   * @async
    * @method
-   * @param {Object} data - Data to convert to JSON string.
-   * @param {Object} [options={}] - Options.
-   * @param {boolean} [options.writeToFile=false] - If true, write the JSON string to a file.
-   * @param {string} [options.saveAsFile] - The file path to save the JSON string if writeToFile is true.
-   * @returns {string} JSON string
+   * @param {Object} data - Data to convert to JSON string
+   * @param {Object|string} [options={}] - Options object. If a string is provided, it will be treated as `options.writeToFile`
+   * @param {string} [options.writeToFile] - If not empty, write result to this file path instead of returning it as string
+   * @param {Object} [options.parserOpts={}] - Options for `JSON.stringify()`
+   * @returns {Promise&lt;string|void>} JSON string or void if written to file
+   * @see Bajo#fromJson
    */
-  toJson = (data, options = {}) => {
-    const content = JSON.stringify(data, null, omit(options, ['writeToFile']))
-    if (options.writeToFile) {
-      fs.writeFileSync(options.saveAsFile, content, 'utf8')
+  async toJson (data, options = {}) {
+    if (isString(options)) options = { writeToFile: options }
+    options.parserOpts = options.parserOpts ?? {}
+    options.parserOpts.space = options.parserOpts.space ?? 2
+    const content = JSON.stringify(data, null, options.parserOpts)
+    if (isString(options.writeToFile)) {
+      fs.writeFileSync(options.writeToFile, content, 'utf8')
       return
     }
     return content
   }
 
   /**
-   * Convert object to YAML string
+   * Convert object to YAML string, optionally write to file if `options.writeToFile` is provided.
    *
+   * @async
    * @method
    * @param {object} object - Object to be converted
-   * @param {object} options - Options object
-   * @returns {string} YAML string
+   * @param {object|string} [options] - Options object. If a string is provided, it will be treated as `options.writeToFile`
+   * @param {string} [options.writeToFile] - If not empty, write result to this file path instead of returning it as string
+   * @param {Object} [options.parserOpts={}] - Options for `YAML.dump()`
+   * @returns {Promise&lt;string|void>} YAML string or void if written to file
+   * @see Bajo#fromYaml
    */
-  toYaml = (object, options = {}) => {
-    const { omit } = this.app.lib._
-    const { fs } = this.app.lib
-    const content = yaml.dump(object, omit(options, ['writeToFile']))
+  async toYaml (object, options = {}) {
+    if (isString(options)) options = { writeToFile: options }
+    options.parserOpts = options.parserOpts ?? {}
+    const content = yaml.dump(object, options.parserOpts)
     if (options.writeToFile) {
-      fs.writeFileSync(options.saveAsFile, content, 'utf8')
-      return
+      if (isString(options.writeToFile)) {
+        fs.writeFileSync(options.writeToFile, content, 'utf8')
+        return
+      }
     }
     return content
   }
 
   /**
-   * Convert object to YML string. Alias for toYaml.
-   *
+   * Convert object to YML string, optionally write to file if `options.writeToFile` is provided. Alias for {@link Bajo#toYaml}.
+   * @async
    * @method
    * @param {object} object - Object to be converted
-   * @param {object} options - Options object
-   * @returns {string} YML string
+   * @param {object|string} [options] - Options object. If a string is provided, it will be treated as `options.writeToFile`
+   * @param {string} [options.writeToFile] - If not empty, write result to this file path instead of returning it as string
+   * @param {Object} [options.parserOpts={}] - Options for `YAML.dump()`
+   * @returns {Promise&lt;string|void>} YAML string or void if written to file
+   * @see Bajo#fromYml
    */
-  toYml = (object, options = {}) => {
+  async toYml (object, options = {}) {
     return this.toYaml(object, options)
   }
 
   /**
-   * Read all config files from path.
+   * Read all forms of configuration files from file path.
+   *
+   * Internally, it will call {@link Bajo#readConfig} twice, first for the default config file and
+   * second for the environment based config file. Then it will merge both results using `defaultsDeep`.
    *
    * @method
    * @async
    * @param {string} path - Base path to start looking config files.
-   * @param {Object} [options={}] - Options.
+   * @param {Object} [options={}] - Options. See {@link Bajo#readConfig} for more.
    * @returns {Object} Merged configuration object.
    */
   readAllConfigs = async (path, options) => {
-    const { defaultsDeep } = this.app.lib.aneka
     let cfg = {}
     let ext = {}
     // default config file
@@ -995,7 +1057,14 @@ class Bajo extends Plugin {
   }
 
   /**
-   * Run named hook/event.
+   * Run named {@link module:Hook}.
+   *
+   * If no hook found with the given name, it will return an empty array.
+   * If a hook has `noWait` set to `true`, it will not wait for the hook to finish and will not return its result.
+   *
+   * > **Note**: Even though this method returns a result, it is not recommended to use the result for any purpose.
+   * Use the result only for debugging or logging purposes. Hooks are designed to be fast, lightweight and mutate
+   * arguments given to them so that the next hook can benefit from the changes.
    *
    * @method
    * @async
@@ -1024,6 +1093,18 @@ class Bajo extends Plugin {
   }
 
   /**
+   * Get download directory. If doesn't exist, it will be created automatically.
+   *
+   * @method
+   * @returns {string} Absolute path to the download directory
+   */
+  getDownloadDir = () => {
+    const dir = `${this.app.getPluginDataDir(this.ns)}/download`
+    fs.ensureDirSync(dir)
+    return dir
+  }
+
+  /**
    * Save item as file in Bajo's download directory. That is a directory inside your
    * Bajo plugin's data directory.
    *
@@ -1038,18 +1119,17 @@ class Bajo extends Plugin {
    * @returns {string} Full file path.
    */
   saveAsDownload = async (file, item, printSaved = true) => {
-    const { print } = this.app.bajo
-    const fname = increment(`${this.app.getPluginDataDir(this.ns)}/download/${trim(file, '/')}`, { fs: true })
-    const dir = path.dirname(fname)
-    if (!fs.existsSync(dir)) fs.ensureDirSync(dir)
+    const fname = increment(`${this.getDownloadDir()}/${trim(file, '/')}`, { fs: true })
     await fs.writeFile(fname, item, 'utf8')
-    if (printSaved) print.succeed('savedAs%s', path.resolve(fname), { skipSilence: true })
+    if (printSaved) this.print.succeed('savedAs%s', path.resolve(fname), { skipSilence: true })
     return fname
   }
 
   /**
-   * Read config using all registered config handlers. The first handler that returns a
+   * Parse `input` using all registered config handlers. The first handler that returns a
    * valid object or array will be used.
+   *
+   * Use this method if you want to parse a text `input` that can be in any format supported by the registered config handlers.
    *
    * @method
    * @param {string} input - The input string to be processed by the config handlers.
@@ -1057,8 +1137,9 @@ class Bajo extends Plugin {
    * @param {object} [options={}] - Options to be passed to the config handlers.
    * @returns {Object|Array|null} The result from the first successful config handler, or null if none succeed.
    */
-  readAsConfig = async (input, exts, options = {}) => {
+  parseWithConfig = async (input, exts, options = {}) => {
     let result
+    options.readFromFile = false
     const handlers = exts ? this.app.configHandlers.filter(h => exts.includes(h.ext)) : this.app.configHandlers
     for (const handler of handlers) {
       if (result) break
@@ -1073,4 +1154,4 @@ class Bajo extends Plugin {
 }
 
 export default Bajo
-</code></pre></article></section></div></div></div><div class="search-container" id="PkfLWpAbet" style="display:none"><div class="wrapper" id="iCxFxjkHbP"><button class="icon-button search-close-button" id="VjLlGakifb" aria-label="close search"><svg><use xlink:href="#close-icon"></use></svg></button><div class="search-box-c"><svg><use xlink:href="#search-icon"></use></svg> <input type="text" id="vpcKVYIppa" class="search-input" placeholder="Search..." autofocus></div><div class="search-result-c" id="fWwVHRuDuN"><span class="search-result-c-text">Type anything to view search result</span></div></div></div><div class="mobile-menu-icon-container"><button class="icon-button" id="mobile-menu" data-isopen="false" aria-label="menu"><svg><use xlink:href="#menu-icon"></use></svg></button></div><div id="mobile-sidebar" class="mobile-sidebar-container"><div class="mobile-sidebar-wrapper"><a href="/" class="sidebar-title sidebar-title-anchor">Bajo API</a><div class="mobile-nav-links"><div class="navbar-item"><a id="" href="https://www.npmjs.com/package/bajo" target="">NPM</a></div><div class="navbar-item"><a id="" href="https://github.com/ardhi/bajo" target="">Github</a></div><div class="navbar-item"><a id="" href="https://bajo.app" target="">Bajo</a></div></div><div class="mobile-sidebar-items-c"><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-classes"><div>Classes</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="App.html">App</a></div><div class="sidebar-section-children"><a href="Bajo.html">Bajo</a></div><div class="sidebar-section-children"><a href="Base.html">Base</a></div><div class="sidebar-section-children"><a href="Cache.html">Cache</a></div><div class="sidebar-section-children"><a href="Err.html">Err</a></div><div class="sidebar-section-children"><a href="Log.html">Log</a></div><div class="sidebar-section-children"><a href="Plugin.html">Plugin</a></div><div class="sidebar-section-children"><a href="Print.html">Print</a></div><div class="sidebar-section-children"><a href="Tools.html">Tools</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-modules"><div>Modules</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="module-Helper.html">Helper</a></div><div class="sidebar-section-children"><a href="module-Hook.html">Hook</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-global"><div>Global</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="global.html#boot">boot</a></div></div></div><div class="mobile-navbar-actions"><div class="navbar-right-item"><button class="icon-button search-button" aria-label="open-search"><svg><use xlink:href="#search-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button theme-toggle" aria-label="toggle-theme"><svg><use class="theme-svg-use" xlink:href="#dark-theme-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button font-size" aria-label="change-font-size"><svg><use xlink:href="#font-size-icon"></use></svg></button></div></div></div></div><script type="text/javascript" src="scripts/core.min.js"></script><script src="scripts/search.min.js" defer="defer"></script><script src="scripts/third-party/fuse.js" defer="defer"></script><script type="text/javascript">var tocbotInstance=tocbot.init({tocSelector:"#eed4d2a0bfd64539bb9df78095dec881",contentSelector:".main-content",headingSelector:"h1, h2, h3",hasInnerContainers:!0,scrollContainer:".main-content",headingsOffset:130,onClick:bringLinkToView})</script></body></html>
+</code></pre></article></section></div></div></div><div class="search-container" id="PkfLWpAbet" style="display:none"><div class="wrapper" id="iCxFxjkHbP"><button class="icon-button search-close-button" id="VjLlGakifb" aria-label="close search"><svg><use xlink:href="#close-icon"></use></svg></button><div class="search-box-c"><svg><use xlink:href="#search-icon"></use></svg> <input type="text" id="vpcKVYIppa" class="search-input" placeholder="Search..." autofocus></div><div class="search-result-c" id="fWwVHRuDuN"><span class="search-result-c-text">Type anything to view search result</span></div></div></div><div class="mobile-menu-icon-container"><button class="icon-button" id="mobile-menu" data-isopen="false" aria-label="menu"><svg><use xlink:href="#menu-icon"></use></svg></button></div><div id="mobile-sidebar" class="mobile-sidebar-container"><div class="mobile-sidebar-wrapper"><a href="/" class="sidebar-title sidebar-title-anchor">Bajo API</a><div class="mobile-nav-links"><div class="navbar-item"><a id="" href="https://www.npmjs.com/package/bajo" target="">NPM</a></div><div class="navbar-item"><a id="" href="https://github.com/ardhi/bajo" target="">Github</a></div><div class="navbar-item"><a id="" href="https://bajo.app" target="">Bajo</a></div></div><div class="mobile-sidebar-items-c"><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-tutorials"><div>Tutorials</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="tutorial-01_WELCOME.html">Welcome</a></div><div class="sidebar-section-children"><a href="tutorial-02_GETTING_STARTED.html">Getting Started</a></div><div class="sidebar-section-children"><a href="tutorial-03_USER_GUIDE.html">User Guide</a></div><div class="sidebar-section-children"><a href="tutorial-04_DEV_GUIDE.html">Developer Guide</a></div><div class="sidebar-section-children"><a href="tutorial-05_ECOSYSTEM.html">Ecosystem</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-classes"><div>Classes</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="App.html">App</a></div><div class="sidebar-section-children"><a href="Bajo.html">Bajo</a></div><div class="sidebar-section-children"><a href="Base.html">Base</a></div><div class="sidebar-section-children"><a href="Cache.html">Cache</a></div><div class="sidebar-section-children"><a href="Err.html">Err</a></div><div class="sidebar-section-children"><a href="Log.html">Log</a></div><div class="sidebar-section-children"><a href="Main.html">Main</a></div><div class="sidebar-section-children"><a href="Plugin.html">Plugin</a></div><div class="sidebar-section-children"><a href="Print.html">Print</a></div><div class="sidebar-section-children"><a href="Tools.html">Tools</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-modules"><div>Modules</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="module-Applet.html">Applet</a></div><div class="sidebar-section-children"><a href="module-Helper.html">Helper</a></div><div class="sidebar-section-children"><a href="module-Hook.html">Hook</a></div></div><div class="sidebar-section-title with-arrow" data-isopen="false" id="sidebar-global"><div>Global</div><svg><use xlink:href="#down-icon"></use></svg></div><div class="sidebar-section-children-container"><div class="sidebar-section-children"><a href="global.html#TConfig">TConfig</a></div><div class="sidebar-section-children"><a href="global.html#boot">boot</a></div><div class="sidebar-section-children"><a href="global.html#package%25C2%25B7json">package·json</a></div></div></div><div class="mobile-navbar-actions"><div class="navbar-right-item"><button class="icon-button search-button" aria-label="open-search"><svg><use xlink:href="#search-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button theme-toggle" aria-label="toggle-theme"><svg><use class="theme-svg-use" xlink:href="#dark-theme-icon"></use></svg></button></div><div class="navbar-right-item"><button class="icon-button font-size" aria-label="change-font-size"><svg><use xlink:href="#font-size-icon"></use></svg></button></div></div></div></div><script type="text/javascript" src="scripts/core.min.js"></script><script src="scripts/search.min.js" defer="defer"></script><script src="scripts/third-party/fuse.js" defer="defer"></script><script type="text/javascript">var tocbotInstance=tocbot.init({tocSelector:"#eed4d2a0bfd64539bb9df78095dec881",contentSelector:".main-content",headingSelector:"h1, h2, h3",hasInnerContainers:!0,scrollContainer:".main-content",headingsOffset:130,onClick:bringLinkToView})</script></body></html>

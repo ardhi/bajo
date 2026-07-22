@@ -4,12 +4,14 @@ import Err from './err.js'
 const { get, isEmpty, cloneDeep, omit, isPlainObject, camelCase } = lodash
 
 /**
- * This is the **mother** of all plugin classes. All Bajo plugin classess inherit from this class
- * respectfully.
+ * The **root** plugin class. All Bajo plugin classes inherit from this class respectfully.
  *
- * There are currently only two main plugins available:
- * - {@link Bajo} - Core plugin class, responsible for system wide setup and boot process. You should not touch this obviously.
- * - {@link Base} - Base plugin class your own plugin should inherite from.
+ * This class provides the basic structure and functionality for all plugins in the Bajo framework.
+ * It includes methods for configuration management, error handling, logging, and more.
+ *
+ * Only two direct descendants of this class are allowed:
+ * - {@link Bajo} - Bajo core plugin class, responsible for system wide setup and boot process. You should not touch this obviously
+ * - {@link Base} - Base plugin class **your own plugin should inherit from**
  *
  * @class
  */
@@ -39,7 +41,9 @@ class Plugin {
      * Plugin alias. Derived plugin must provide its own, unique alias. If it left blank,
      * Bajo will provide this automatically (by using the kebab-cased version of plugin name).
      *
-     * @readonly
+     * By convention, plugin alias should be all lower case, alphanumeric, and without any space or special character except `-`.
+     * It should be unique across all plugins in the Bajo framework, as it is used to identify the plugin in the system beside its namespace.
+     *
      * @type {string}
      */
     this.alias = null
@@ -53,7 +57,7 @@ class Plugin {
     /**
      * Configuration object.
      *
-     * @type {Object}
+     * @type {TConfig}
      * @see {@tutorial config}
      */
     this.config = {}
@@ -75,7 +79,7 @@ class Plugin {
   }
 
   /**
-   * Get package info.
+   * Get package info. Basically it reads the package.json file and returns the requested fields
    *
    * @method
    * @param {string} [dir] - Package directory. Defaults to the current plugin's package dir
@@ -91,14 +95,18 @@ class Plugin {
   }
 
   /**
-   * Get plugin's config value.
+   * Get plugin's configuration object's value.
+   *
+   * > **Note**: Configuration object is frozen after boot process, so you can't modify it at runtime.
+   * If you want to change its values, you need to do it in the config file, program options or via environment variables.
+   * Hooks are also available to modify the configuration before the boot process.
    *
    * @method
    * @param {string} [path] - dot separated config path (think of lodash's 'get'). If not provided, the full config will be given
    * @param {Object} [options={}] - Options object
    * @param {any} [options.defValue={}] - Default value to use if returned object is undefined
    * @param {string[]} [options.omit=[]] - Omit these keys from returned object
-   * @param {boolean} [options.noClone=false] - Set true to NOT clone returned object
+   * @param {boolean} [options.noClone=false] - Set true to **NOT clone** returned object
    * @returns {Object} Returned object. If no path provided, the whole config object is returned
    */
   getConfig = (path, options = {}) => {
@@ -110,12 +118,18 @@ class Plugin {
   }
 
   /**
-   * Create an instance of {@link Err} object.
+   * Create an instance of {@link Err} object by providing an error message and optional arguments. Error instance will
+   * then be displayed on console and returned so you can chain it with other methods if you want.
+   *
+   * Typically, you would use this method to throw an error and the framework will handle it gracefully.
+   *
+   * This method is a shortcut to create a new Err instance.
    *
    * @method
    * @param {string} msg - Error message
-   * @param  {...any} [args] - Argument variables you might want to add to the error object
+   * @param  {...*} [args] - Argument variables you might want to add to the error object
    * @returns {Err} Err instance
+   * @see {@link Err#write}
    */
   error = (msg, ...args) => {
     if (!this.print) return new Error(msg, ...args)
@@ -124,12 +138,11 @@ class Plugin {
   }
 
   /**
-   * Create an instance of Err object, display it on screen and then force
-   * terminate the app.
+   * Same as {@link Plugin#error} but will *forcefully* terminate the process after printing the error to console.
    *
    * @method
    * @param {string} msg - Error message
-   * @param  {...any} [args] - Argument variables you might want to add to the error object
+   * @param  {...*} [args] - Argument variables you might want to add to the error object
    * @returns {void}
    */
   fatal = (msg, ...args) => {
@@ -145,35 +158,41 @@ class Plugin {
    *
    * @method
    * @param {string} text - Text to translate
-   * @param  {...any} params - Variables to interpolate to `text`
+   * @param  {...*} args - Arguments to interpolate to `text`
    * @returns {string}
+   * @see {@link App#t}
    */
-  t = (text, ...params) => {
-    return this.app.t(this.ns, text, ...params)
+  t = (text, ...args) => {
+    return this.app.t(this.ns, text, ...args)
   }
 
   /**
-   * Check whether translation text/key exists.
+   * Check whether translation text (key) exists.
    *
    * Shortcut to {@link App#te} with ns parameter set to this plugin namespace.
    *
    * @method
    * @param {string} text - Text to translate
-   * @param  {...any} params - Variables to interpolate to `text`
-   * @returns {string}
+   * @param  {...*} args - Arguments to interpolate to `text`
+   * @returns {boolean}
+   * @see {@link App#te}
    */
-  te = (text, ...params) => {
-    return this.app.te(this.ns, text, ...params)
+  te = (text, ...args) => {
+    return this.app.te(this.ns, text, ...args)
   }
 
   /**
-   * Force bind methods to self (`this`).
+   * Force bind methods to `this` context.
    *
+   * Since JavaScript's `this` is dynamic, this method is useful to ensure
+   * that the methods always refer to the correct instance of the class.
+   *
+   * Typically, you would call this method in the constructor of your plugin class, passing an array of method names that you want to bind.
    * @method
    * @param {string[]} names - Method's names
    * @returns {void}
    */
-  selfBind (names) {
+  bindThis (names) {
     if (!Array.isArray(names)) names = [names]
     for (const name of names) {
       this[name] = this[name].bind(this)
@@ -181,10 +200,10 @@ class Plugin {
   }
 
   /**
-   * Alias to `this.app.dump()`.
+   * Shortcut to `this.app.dump()`.
    *
    * @method
-   * @param {...any} args - Arguments
+   * @param {...*} args - Arguments
    * @returns {void}
    */
   dump = (...args) => {

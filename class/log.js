@@ -57,7 +57,8 @@ export const logLevels = {
 /**
  * A thin & fast logger system.
  *
- * An instance is created by the {@link App|app} and available to use from anywhere inside your code.
+ * You typically don't need to create an instance of this class, since an instance is already created by the {@link App|app}
+ * and available to use from anywhere inside your code.
  *
  * Shortcuts to log's methods are also available on every Bajo {@link Plugin|plugin}. Call on
  * these shortcuts will be prefixed with it's plugin name automatically.
@@ -78,57 +79,62 @@ class Log {
    * @param {App} app - App instance
    */
   constructor (app) {
+    const { fs } = this.app.lib
     /**
      * Last delta time in millisecond since app started. Used for log's time taken feature.
      * @type {number}
      */
     this._lastDelta = 0
     /**
-     * The app instance.
+     * Reference to the app instance
      * @type {App}
      */
     this.app = app
 
-    const { fs } = this.app.lib
+    /**
+     * Directory to save log files. Defaults to `{dataDir}/log`. If log saving is on (see {@link App#config|app.config.log.save})
+     * and directory does not exist, this directory will be created automatically.
+     * @type {string}
+     */
     this.logDir = `${this.app.bajo.dir.data}/log`
     if (this.app.bajo.config.log.save) fs.ensureDirSync(this.logDir)
   }
 
   /**
-   * Display & format message according to one of these rules:
-   * 1. `level` `prefix` `text` `var 1` `var 2` `...var n` - Translate `text` and interpolate with `vars` for level `level`
-   * 2. `level` `prefix` `data` `text` `var 1` `var 2` `...var n` - As above, and append stringified `data`
-   * 3. `level` `prefix` `error` - Format as {@link Err} object. If current log level is _trace_, dump it on screen
+   * Format & display log message according to the current log level with the following syntax:
+   * 1. `level` `prefix` `text` `param 1` `param 2` `...param n` - Translate `text` and interpolate with `params` for level `level`
+   * 2. `level` `prefix` `{data}` `text` `param 1` `param 2` `...param n` - Same as above, but with additional stringified `data` object to be logged
+   * 3. `level` `prefix` `{error}` - Format as {@link Err} object. If current log level is **trace**, dump it on screen
    *
    * In `prod` environment, log will be delivered as JSON stringified object. See {@link Log.TJsonOutput} for more info
    *
    * @method
    * @param {string} level - Log level to use
    * @param {string} prefix - Prefix to the message
-   * @param {...any} params - See format above
+   * @param {...*} params - See format above
    * @see Err
    * @see Log.TJsonOutput
    */
-  formatMsg = (level, prefix, ...params) => {
+  formatMsg = (level, prefix, ...args) => {
     const { dayjs } = this.app.lib
     const { isEmpty, merge, without } = this.app.lib._
 
     if (this.app.bajo.config.log.level === 'silent') return
     if (!this.app.bajo.isLogInRange(level)) return
     const { useUtc, timeTaken, dateFormat, pretty } = this.app.bajo.config.log
-    let [data, msg, ...args] = params
+    let [data, msg, ...params] = args
     if (data instanceof Error) {
       msg = 'error%s'
-      args = [this.getErrorMessage(data)]
+      params = [this.getErrorMessage(data)]
       console.error(data)
     }
     if (typeof data === 'string') {
-      args.unshift(msg)
+      params.unshift(msg)
       msg = data
       data = null
     }
-    args = without(args, undefined)
-    msg = this.app.t(prefix, msg, ...args)
+    params = without(params, undefined)
+    msg = this.app.t(prefix, msg, ...params)
     let text
     const dt = dayjs()
     let diff = null
@@ -161,8 +167,7 @@ class Log {
   }
 
   /**
-   * Get error message from an Error object. If the message is empty, return the code or statusCode instead.
-   *
+   * Get error message from an Error object. If the error message is empty, return the error code or status code instead.
    * @method
    * @param {Error} error - Error object
    * @returns {string} Error message
@@ -174,6 +179,7 @@ class Log {
 
   /**
    * Calculate pattern used for log rotation. Used by {@link Log#save|save} method to determine the log file name.
+   * Rotation pattern is based on the `rotation.cycle` configuration. See {@link App#config|app.config.log.rotation.cycle} for more info.
    *
    * @method
    * @param {boolean} isPrev - If `true`, calculate previous rotation pattern.
@@ -206,7 +212,7 @@ class Log {
   }
 
   /**
-   * Save log to file in `{dataDir}/log`.
+   * Save log to file in {@link Log#logDir|logDir}.
    *
    * @method
    * @param {string} text - Log message to save
@@ -230,10 +236,12 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Argumets to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
+   * @see Err
+   * @see Log.TJsonOutput
    */
-  trace = (prefix, ...params) => {
-    this.formatMsg('trace', prefix, ...params)
+  trace = (prefix, ...args) => {
+    this.formatMsg('trace', prefix, ...args)
   }
 
   /**
@@ -241,10 +249,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  debug = (prefix, ...params) => {
-    this.formatMsg('debug', prefix, ...params)
+  debug = (prefix, ...args) => {
+    this.formatMsg('debug', prefix, ...args)
   }
 
   /**
@@ -252,10 +260,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  info = (prefix, ...params) => {
-    this.formatMsg('info', prefix, ...params)
+  info = (prefix, ...args) => {
+    this.formatMsg('info', prefix, ...args)
   }
 
   /**
@@ -263,10 +271,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  warn = (prefix, ...params) => {
-    this.formatMsg('warn', prefix, ...params)
+  warn = (prefix, ...args) => {
+    this.formatMsg('warn', prefix, ...args)
   }
 
   /**
@@ -274,10 +282,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  error = (prefix, ...params) => {
-    this.formatMsg('error', prefix, ...params)
+  error = (prefix, ...args) => {
+    this.formatMsg('error', prefix, ...args)
   }
 
   /**
@@ -285,10 +293,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  fatal = (prefix, ...params) => {
-    this.formatMsg('fatal', prefix, ...params)
+  fatal = (prefix, ...args) => {
+    this.formatMsg('fatal', prefix, ...args)
   }
 
   /**
@@ -296,10 +304,10 @@ class Log {
    *
    * @method
    * @param {string} prefix - Message prefix
-   * @param {...any} params - Parameters
+   * @param {...*} args - Arguments to be passed to the message. See {@link Log#formatMsg|formatMsg} for details.
    */
-  silent = (prefix, ...params) => {
-    this.formatMsg('silent', prefix, ...params)
+  silent = (prefix, ...args) => {
+    this.formatMsg('silent', prefix, ...args)
   }
 
   /**
