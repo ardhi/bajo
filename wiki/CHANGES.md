@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-07-23
+
+- [2.24.0] Revamped documentations and test cases
+- [2.24.0] `plugin.bindThis()` now accepts rest parameters
 
 ## 2026-07-13
 

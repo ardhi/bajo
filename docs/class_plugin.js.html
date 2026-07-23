@@ -189,15 +189,19 @@ class Plugin {
    * Since JavaScript's `this` is dynamic, this method is useful to ensure
    * that the methods always refer to the correct instance of the class.
    *
-   * Typically, you would call this method in the constructor of your plugin class, passing an array of method names that you want to bind.
+   * Typically, you would call this method in the constructor of your plugin class,
+   * passing an array of method names or imported functions that you want to bind.
    * @method
-   * @param {string[]} names - Method's names
+   * @param {...(string|function)} names - Method's names or function references to bind to `this` context
    * @returns {void}
    */
-  bindThis (names) {
-    if (!Array.isArray(names)) names = [names]
+  bindThis (...names) {
     for (const name of names) {
-      this[name] = this[name].bind(this)
+      if (typeof name === 'string') this[name] = this[name].bind(this)
+      else if (typeof name === 'function') {
+        const methodName = name.name
+        this[methodName] = name.bind(this)
+      }
     }
   }
 

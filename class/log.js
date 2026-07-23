@@ -1,4 +1,5 @@
 import os from 'os'
+import fs from 'fs-extra'
 import chalk from 'chalk'
 import { stripVTControlCharacters } from 'node:util'
 
@@ -79,7 +80,6 @@ class Log {
    * @param {App} app - App instance
    */
   constructor (app) {
-    const { fs } = this.app.lib
     /**
      * Last delta time in millisecond since app started. Used for log's time taken feature.
      * @type {number}

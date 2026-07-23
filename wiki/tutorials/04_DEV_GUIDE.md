@@ -53,7 +53,9 @@ Example:
 
 ## Anatomy of a Plugin
 
-A plugin is a normal JavaScript package with a `package.json` file and an entry point file (usually `index.js`) that exports a factory function. The factory function is called by the Bajo framework when the plugin is loaded, and it receives the package name as an argument. The factory function must return a class that extends the {@link Base} class.
+A plugin is a normal JavaScript package with a `package.json` file and an entry point file (usually `index.js`) that exports a factory function. The factory function acts as a registration mechanism to the framework and is called by the Bajo at boot time.
+
+The factory function must return a class that extends the {@link Base} class.
 
 ### Directory Structure
 
@@ -105,7 +107,7 @@ If the plugin has dependencies on other plugins, they must be listed in the `dep
 
 {@link Base.package·json|Click here} for details.
 
-### Boot file
+### Boot File
 
 Boot file (usually `index.js`) must export a factory function with one single parameter named `pkgName` and returns a class extending the {@link Base} class, e.g.:
 
@@ -133,7 +135,7 @@ async function factory (pkgName) {
 export default factory
 ```
 
-### Other files and directories
+### Other Files and Directories
 
 While the above two files are mandatory, a plugin can also include other files and directories as needed, such as assets, or additional modules. The inner structure of the plugin is flexible and can be organized according to the developer's preferences. Bajo class offers a set of methods, conventions, and best practices for organizing plugin files, which should be followed to ensure consistency and maintainability. Some conventions you could follow are:
   - `asset/` directory: a plugin should have its own transparent png logo. If you have one, place it here with the name `logo.png`. This logo will be used in the Bajo framework's UI to represent your plugin. Other than the logo, you can also include other assets in this directory, such as images, icons, or other media files that your plugin may require.
@@ -183,7 +185,7 @@ This is where you can sanitize the configuration object, validate its values, or
 
 ### _this.start()_
 
-After all plugins have been loaded and initialized, the `start()` method is called. This is to guarantee that all plugins are ready before any plugin starts performing its main tasks.
+After all plugins (including yours) have been loaded and initialized, Bajo begins to start the plugin one by one in the same order determined by the boot process. Your plugin's `start()` method is then called.
 
 This is where you can safely perform your plugin's main tasks, such as starting servers, connecting to databases, etc.
 
@@ -191,11 +193,50 @@ After this method is called, the plugin is considered to be fully loaded and rea
 
 ### _this.exit()_
 
-An asynchronous method that is called when the plugin is exited gracefully. This is where you can perform any tasks that need to be done when the plugin is exiting, such as closing database connections or stopping servers.
+When the app is exiting gracefully (e.g. by pressing `Ctrl+C`), the `exit()` method is called for each plugin in the reverse order of the boot process. This is where you can perform any cleanup tasks for your plugin, such as closing database connections, stopping servers, or releasing resources.
+
+This method won't be called if the app is terminated abruptly (e.g. by calling `this.fatal()` method or `this.app.exit(true)` or by killing the process). In such cases, the app will exit immediately without giving the plugin a chance to clean up.
+
+### Own Members
+
+You can define your own properties and methods in your plugin class as needed. These properties and methods can then be used to implement the functionality of your plugin, and can be accessed by other plugins through the `this.app.{pluginNs}` property.
+
+It is advisable to always use anonymous functions for your methods to avoid issues with `this` binding. This is especially important because `this` may not refer to the plugin instance when the method is called as a callback or event handler. Even if your class becomes big and to overcome this complexity you must import your methods from other files, you should still force bind these functions to `this` to the plugin instance.
+
+You can do this manually by using `bind(this)` or using the inherited `this.bindThis()` method, as shown in the example below:
+
+```javascript
+import { myMethod1, myMethod2, myMethod3 } from './lib/methods.js'
+
+async function factory (pkgName) {
+  const { Base } = this.app.baseClass
+  const me = this
+  return class MyPlugin extends Base {
+    constructor () {
+      super(pkgName, me.app)
+      this.config = {
+        key: {
+          subKey: 'value'
+        }
+      }
+      this.bindThis(myMethod1, myMethod2, myMethod3) // bind all methods to this plugin instance
+    }
+  }
+}
+
+```
+
+> **Note**: It is recommended to always put your methods in the same file as your plugin class, unless the method becomes too big. Putting your methods in the same file as your plugin class will make it easier to read and understand the code, and will also make it easier to maintain and debug. It is also important to note that having too many imported methods from other files can impact the load time and performance.
 
 ## Extending Other Plugins
 
-### Internationalization (i18n)
+The beauty of Bajo is that it allows you to extend other plugins without modifying their code. By convention, this is done by placing your extension files in the `extend/{otherPluginNs}` directory, where `{otherPluginNs}` is the namespace of the plugin you want to extend.
+
+There are no strict rules on how other plugins can be extended because it is up to the plugin developer to decide how they want to expose their plugin's functionality for extension. For this reason, it is important to read the documentation of the plugin you want to extend to understand how to properly extend it.
+
+Core `bajo` itself is a plugin and offers a set of extension points to extend its own functionality. Shown below are some of the most commonly used extension points in Bajo:
+
+### Translation
 
 Your plugin is i18n-ready by default and you should use it extensively by providing translation files in the `extend/bajo/intl` directory. The translation files should be named using the locale code (e.g., `en-US.json`, `id.json`, etc.) and should contain key-value pairs for the translations.
 
@@ -221,10 +262,125 @@ Example:
   const farewell = this.t('goodbye%s', 'John') // returns "Goodbye John, see you later!"
   ```
 
-> **Note**: Even though Bajo supports multiple formats, only JSON format is allowed for translation files. The reason is that JSON parsing is very fast and needs lower overhead compared to other formats. This is important for performance, especially when dealing with large translation files or high-traffic applications.
+Text translation always begins using your own translation file. If the key is not found, it will be looked in all other plugins, including the core Bajo's translation files. If none is found, it will return the key itself; interpolated with the provided arguments if any.
 
-### Hook consumers
+It is advisable to always look for the key in core Bajo or other plugins first before adding your own translation key to minimize duplication and maintain consistency. Unless you intend to override it, in which case you should use the same key as the original translation.
 
+> **Note**: Even though Bajo supports multiple formats, only JSON format is allowed for translation files. The reason is that JSON parsing is very fast and needs lower overhead compared to other formats. This is important for performance, especially when dealing with large translation files.
+
+### Hook
+
+A hook is a way to extend the functionality of a plugin by allowing other plugins to register their own functions to be called at specific points in the plugin's lifecycle. This allows for a high degree of flexibility and customization, as other plugins can modify the behavior of the plugin without modifying its code.
+
+As a plugin developer, you can define your own insertion points in your plugin by using the Bajo's `runHook()` method. And as a plugin user, you can create your own functions to be called at those insertion points as shown below:
+
+- Insertion points within your plugin:
+  ```javascript
+  ...
+  doSomething = async (filter, options = {}) => {
+    const { getModel } = this.app.dobo
+    const model = await getModel('CdbCountry') // get `CdbCountry` model from `bajoCommonDatabase` plugin
+    return await model.findRecord(filter, options) // find records from the model
+  }
+
+  start = async () => {
+    const { runHook } = this.app.bajo
+    await runHook('myPlugin:beforeDoSomething', filter, options) // first insertion point
+    const result = await this.doSomething(filter, options) // your plugin's main function
+    await runHook('myPlugin:afterDoSomething', filter, result, options) // second insertion point
+  }
+  ...
+  ```
+- Hook listeners in other plugins (or even in the same plugin), using one `hook.js` file:
+  ```javascript
+  // create a hook listener in `/extend/myPlugin/hook.js` file
+  const hooks = [
+    {
+      name: 'myPlugin:beforeDoSomething',
+      handler: async (filter, options) => {
+        // do something before the main function is called
+        console.log('Before doing something:', filter, options)
+      }
+    },
+    {
+      name: 'myPlugin:afterDoSomething',
+      handler: async (filter, result, options) => {
+        // do something after the main function is called
+        console.log('After doing something:', filter, result, options)
+      }
+    }
+  ]
+
+  export default hooks
+  ```
+- Hook listeners using multiple files per hook:
+  ```javascript
+  // create the first listener in `/extend/myPlugin/hook/my-plugin@before-do-something.js` file
+  async function beforeDoSomething (param, options) {
+    // do something before the main function is called
+    console.log('Before doing something:', param, options)
+  }
+  export default beforeDoSomething
+
+  // and the second listener in `/extend/myPlugin/hook/my-plugin@after-do-something.js` file
+  async function afterDoSomething (param, result, options) {
+    // do something after the main function is called
+    console.log('After doing something:', param, result, options)
+  }
+  export default afterDoSomething
+
+> **Warning**: Even though hooks are a powerful feature, they should be used sparingly and only when necessary. Overusing hooks can lead to code that is difficult to understand and maintain. It is important to carefully consider whether a hook is the best solution for a given problem before implementing it.
 
 ## Creating Extendable Plugins
 
+There are no clear rules on how to create extendable plugins because it is up to the plugin developer to decide how they want to expose their plugin's functionality for extension. However, there are some best practices that can be followed to make your plugin more extendable and easier to use by other developers.
+
+Let's take an example on how [Dobo](https://ardhi.github.io/dobo) was created.
+
+### Case Study: Dobo Models
+
+As you might already know, Dobo is a plugin that provides a set of tools for working with databases. It is designed to be extendable so that other plugins can add their own functionality to it. And it becomes the sub-framework of its own, which is used by many other plugins to provide database-related functionality.
+
+Dobo grew out of the need to have a common set of tools for working with databases in Bajo. It supposed to be:
+- A plugin that provides a set of tools for working with databases, such as models, queries, and migrations
+- A plugin that supports many adapters for many different databases, be it SQL or NoSQL, relational or non-relational, and even in-memory databases
+- A plugin that provides one common interface for CRUD operations, including database queries, regardless of the underlying database technology
+
+How do we solve this problem?
+
+We could make a whole book about this, but let's dive on one particular problem and make a case study: how do we make Dobo collect and manage database models from other plugins. This is done as follows:
+
+1. Create a directory `extend/dobo/model` in your plugin directory. This is where your table schemas will be placed.
+2. Create a schema file in it with the name `{table-name}.{js|json|yml}` where `{table-name}` is the name of the table. You can use any format supported by App's config handler, but we recommend using JSON format for consistency and performance reasons. This results a model named `{Alias}{TableName}` where `{Alias}` is the alias of the plugin that provides the model, and `{TableName}` is the name of the table in PascalCase format. For example, if your plugin alias is `myplugin` and you create a schema file named `country.json` it will result a model named `MypluginCountry`.
+3. The model schema file should contain the table schema in a specific format. Please refer to the [Dobo documentation](https://ardhi.github.io/dobo) for the more details. In short, it should contain the fields, and their types, as well as any other relevant information such as indexes etc.
+
+Now comes the tricky part: how do we make Dobo collect all those schemas and turned into a database model so that it can be used anywhere? By using Bajo's {@link Bajo#eachPlugins|eachPlugins()} method.
+
+`eachPlugins(callback, options)` method is a powerful method that allows you to iterate over all plugins loaded in the app. It takes a callback function as its first parameter, which will be called for each iteration and an `options` object as its second parameter to control the operation
+
+To make things clear, let's take a look at the code below taken directly from Dobo's source code and reformatted for better readability:
+
+```javascript
+...
+init = async () => {
+  const { eachPlugins } = this.app.bajo
+  const { dobo } = this.app
+  // options parameter
+  const options = {
+    prefix: dobo.ns, // read all files started from `extend/dobo` directory
+    glob: ['model/*.*', 'model.*'] // read all files in `model` directory or its parent that match with `model.*` pattern
+  }
+  // callback function
+  async function callback ({ file }) {
+    // 'this' is always the calling plugin instance, in this case is your plugin instance
+    // `file` is the file name, in absolute path, e.g. `/path/to/your/plugin/extend/dobo/model/country.json`
+    const model = await dobo.createModelFromSchema(file) // fictitious method to create model from schema file
+    dobo.models.push(model) // add the model to the list of models in Dobo
+  }
+
+  // now read all schema files from all plugins and create models from them
+  await eachPlugins(callback, options)
+  // by now all models from all plugins have been collected and added to Dobo's model list, and can be used anywhere
+}
+...
+```

@@ -1,11 +1,14 @@
 {
   "name": "bajo",
-  "version": "2.23.0",
+  "version": "2.24.0",
   "description": "The ultimate framework for whipping up massive apps in no time",
   "main": "index.js",
   "scripts": {
     "build-doc": "jsdoc -c .jsdoc.conf.json",
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "coverage": "c8 --all --include=class/**/*.js --include=lib/**/*.js --include=index.js --reporter=text --reporter=lcov mocha --recursive",
+    "coverage:html": "c8 report --reporter=html",
+    "coverage:check": "c8 --check-coverage --lines 90 --functions 80 --branches 55 --statements 90 mocha --recursive"
   },
   "type": "module",
   "repository": {
@@ -38,6 +41,7 @@
     "semver": "^7.8.5"
   },
   "devDependencies": {
+    "c8": "^12.0.0",
     "chai": "^6.2.1",
     "clean-jsdoc-theme": "^4.3.0",
     "docdash": "^2.0.2",

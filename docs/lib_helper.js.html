@@ -528,15 +528,14 @@ export async function exitHandler () {
   if (!this.config.exitHandler) return
 
   async function exit (signal) {
-    const { eachPlugins } = this
     if (signal) this.log.warn('signalReceived%s', signal)
-    const me = this
-    await eachPlugins(async function ({ ns }) {
+    const allNs = this.app.getAllNs().reverse()
+    for (const ns of allNs) {
       try {
-        await this.exit()
+        await this.app[ns].exit()
       } catch (err) {}
-      me.log.trace('exited%s', this.ns)
-    })
+      this.log.trace('exited%s', ns)
+    }
     this.log.debug('appShutdown')
     process.exit(0)
   }
