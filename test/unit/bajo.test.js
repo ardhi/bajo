@@ -121,7 +121,7 @@ describe('bajo (unit)', () => {
     const saved = await bajo.saveAsDownload('file.txt', 'abc', false)
     expect(fs.existsSync(saved)).to.equal(true)
 
-    const p = await bajo.parseWithConfig('{"x":1}', ['.json'])
+    const p = await bajo.parseConfig('{"x":1}', ['.json'])
     expect(p).to.deep.equal({ x: 1 })
   })
 

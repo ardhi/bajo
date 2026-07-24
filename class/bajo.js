@@ -1143,7 +1143,7 @@ class Bajo extends Plugin {
    * @param {object} [options={}] - Options to be passed to the config handlers.
    * @returns {Object|Array|null} The result from the first successful config handler, or null if none succeed.
    */
-  parseWithConfig = async (input, exts, options = {}) => {
+  parseConfig = async (input, exts, options = {}) => {
     let result
     options.readFromFile = false
     const handlers = exts ? this.app.configHandlers.filter(h => exts.includes(h.ext)) : this.app.configHandlers
