@@ -1151,11 +1151,11 @@ class Bajo extends Plugin {
       if (result) break
       try {
         const resp = await handler.readHandler.call(this.app[handler.ns], input, options)
-        if (isPlainObject(resp) || isArray(resp)) result = resp
+        if (!isEmpty(resp) && (isPlainObject(resp) || isArray(resp))) result = resp
       } catch (err) {
       }
     }
-    return result
+    return result ?? options.defValue ?? {}
   }
 }
 

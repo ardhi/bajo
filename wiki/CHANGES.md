@@ -5,6 +5,7 @@
 - [2.25.0] Add `tools.bindThid()`
 - [2.25.0] Add `tools.selfBind()`
 - [2.25.0] Add `options.merge='concat'` in `readConfig()`
+- [2.25.1] Bug fix in `parseWithConfig()`
 
 ## 2026-07-23
 
