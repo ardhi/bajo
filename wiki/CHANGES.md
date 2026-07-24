@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-07-24
+
+- [2.25.0] Add `tools.bindThid()`
+- [2.25.0] Add `tools.selfBind()`
+- [2.25.0] Add `options.merge='concat'` in `readConfig()`
+
 ## 2026-07-23
 
 - [2.24.0] Revamped documentations and test cases

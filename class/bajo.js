@@ -30,7 +30,7 @@ import {
 const require = createRequire(import.meta.url)
 
 const {
-  isFunction, map, isObject, findIndex, uniq, merge,
+  isFunction, map, isObject, findIndex, uniq, merge, mergeWith,
   trim, filter, isEmpty, orderBy, pullAt, find, camelCase,
   cloneDeep, isPlainObject, isArray, isString, omit, keys, indexOf,
   last, get, has, values, pick, isBoolean
@@ -757,7 +757,7 @@ class Bajo extends Plugin {
    * @param {string} [options.baseNs] - If provided, it will be used as the base namespace for extending config from other plugins
    * @param {string|string[]|boolean} [options.extend] - If provided, it will be used as the base namespace for extending config from other plugins. Set to `false` to disable extending
    * @param {boolean} [options.checkOverride] - If `true` and `baseNs` is provided or `extend` is not `false`, check for override config in main plugin
-   * @param {boolean} [options.merge] - If `true`, config from other plugins will be merged into the original config. Otherwise, it will perform a deep defaults merge
+   * @param {boolean|string} [options.merge] - If `true`, config from other plugins will be merged into the original config. If `concat`, it performs array concatenation if object is an array. Otherwise, it will perform a deep defaults merge
    * @param {string} [options.pattern] - If provided and auto detection is on (extension is `.*`), it will be used for instead the auto generated one
    * @param {Object} [options.defValue={}] - Default value to use if value returned empty
    * @param {Object} [options.parserOpts={}] - Parser options
@@ -778,6 +778,15 @@ class Bajo extends Plugin {
       })
       if (idx > -1) opts.parserOpts.args[idx] = { _orig: orig }
       else opts.parserOpts.args.push({ _orig: orig })
+    }
+
+    const binder = (...args) => {
+      if (merged === 'concat') {
+        return mergeWith(...args, (objValue, srcValue) => {
+          if (isArray(objValue)) return objValue.concat(srcValue)
+        })
+      }
+      return merged ? merge(...args) : defaultsDeep(...args)
     }
 
     const output = async (obj) => {
@@ -810,14 +819,13 @@ class Bajo extends Plugin {
         if (!isEmpty(result)) orig = result
       }
       getParseOptsArgs(opts, orig)
-      const binder = merged ? merge : defaultsDeep
       for (const base of bases) {
         if (!this.app[base]) continue
         options.sourceNs = base
         const fileExt = `${this.app[base].dir.pkg}/extend/${baseNs}/extend/${ns}${suffix}/${_path}`
-        await this.runHook('bajo.extend:beforeReadConfig', fileExt, options)
+        await this.runHook('bajo.extend:beforeReadConfig', fileExt, orig, options)
         const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, merge: false }))
-        await this.runHook('bajo.extend:afterReadConfig', fileExt, result, options)
+        await this.runHook('bajo.extend:afterReadConfig', fileExt, orig, result, options)
         if (isEmpty(result)) continue
         if (isArray(result)) ext = [...result, ...ext]
         else ext = binder({}, result, ext)

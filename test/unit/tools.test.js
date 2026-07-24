@@ -11,11 +11,11 @@ describe('tools (unit)', () => {
     expect(t.app).to.equal(plugin.app)
   })
 
-  it('selfBind binds methods to instance context', () => {
+  it('bindThis binds methods to instance context', () => {
     const t = new Tools({ app: {} })
     t.value = 42
     t.getValue = function () { return this.value }
-    t.selfBind(['getValue'])
+    t.bindThis('getValue')
     const fn = t.getValue
     expect(fn()).to.equal(42)
   })
