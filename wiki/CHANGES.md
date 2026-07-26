@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-07-26
+
+- [2.26.1] Bug fix in `format()`
+
 ## 2026-07-24
 
 - [2.25.0] Add `tools.bindThid()`
@@ -25,26 +29,26 @@
 
 ## 2026-07-02
 
-- [2.21.1] Bug fix in ```index.js```
+- [2.21.1] Bug fix in `index.js`
 
 ## 2026-07-01
 
-- [2.21.0] Add ```.yml/.yaml``` to the configHandlers core
+- [2.21.0] Add `.yml/.yaml` to the configHandlers core
 - [2.21.0] Remove obsolete packages
 - [2.21.0] Upgrade package dependencies to the latest version
-- [2.21.0] Remove ```emptyDir()```
-- [2.21.0] Remove ```getGlobalModuleDir()```
+- [2.21.0] Remove `emptyDir()`
+- [2.21.0] Remove `getGlobalModuleDir()`
 
 ## 2026-06-28
 
-- [2.20.1] Bug fix in ```readConfig()```
+- [2.20.1] Bug fix in `readConfig()`
 
 ## 2026-06-26
 
-- [2.20.0] Add source ```ns``` to the config handlers
-- [2.20.0] Bug fix in ```bajo.readConfig()```
-- [2.20.0] Add ```bajo.readAsConfig()```
-- [2.20.0] Add ```params.noDot``` to the ```app.getConfigFormats()```
+- [2.20.0] Add source `ns` to the config handlers
+- [2.20.0] Bug fix in `bajo.readConfig()`
+- [2.20.0] Add `bajo.readAsConfig()`
+- [2.20.0] Add `params.noDot` to the `app.getConfigFormats()`
 
 ## 2026-06-26
 
@@ -53,93 +57,93 @@
 
 ## 2026-06-12
 
-- [2.18.0] Move plugin related methods to ```app```
-- [2.18.0] Last argument of ```app.dump()``` serves as options if it a plain object with certain keys
+- [2.18.0] Move plugin related methods to `app`
+- [2.18.0] Last argument of `app.dump()` serves as options if it a plain object with certain keys
 
 ## 2026-06-03
 
-- [2.17.0] Combine all helpers to ```_helper.js```
-- [2.17.0] ```callHandler()``` now can accept an instance of ```Tools``` as its scope too
-- [2.17.0] Bug fix in ```app.dump()```
+- [2.17.0] Combine all helpers to `_helper.js`
+- [2.17.0] `callHandler()` now can accept an instance of `Tools` as its scope too
+- [2.17.0] Bug fix in `app.dump()`
 
 ## 2026-06-01
 
-- [2.16.0] Upgrade ```aneka@0.14.0```
-- [2.16.0] Adding caller filename to the ```app.dump()```
-- [2.16.0] Formatting ```app.dump()``` to be more catchy when ```bajoCli``` is loaded
+- [2.16.0] Upgrade `aneka@0.14.0`
+- [2.16.0] Adding caller filename to the `app.dump()`
+- [2.16.0] Formatting `app.dump()` to be more catchy when `bajoCli` is loaded
 
 ## 2026-05-30
 
-- [2.15.1] Bug fix in ```app.boot()```
+- [2.15.1] Bug fix in `app.boot()`
 
 ## 2026-05-28
 
-- [2.15.0] Add built-in cache feature through ```app.cache``` instance
-- [2.15.0] Bug fix in ```eachPlugins()```
-- [2.15.0] Add cache feature to ```readConfig()```
+- [2.15.0] Add built-in cache feature through `app.cache` instance
+- [2.15.0] Bug fix in `eachPlugins()`
+- [2.15.0] Add cache feature to `readConfig()`
 - [2.15.0] Add feature to read many hooks as one file
 
 ## 2026-05-22
 
-- [2.14.1] Bug fix in ```helper.buildBaseConfig()```
-- [2.14.1] Bug fix in ```helper.collectHooks()```
+- [2.14.1] Bug fix in `helper.buildBaseConfig()`
+- [2.14.1] Bug fix in `helper.collectHooks()`
 
 ## 2026-05-16
 
-- [2.14.0] Add ```bajo:beforeReadConfig()``` hook
-- [2.14.0] Add ```bajo.override:beforeReadConfig()``` hook
-- [2.14.0] Add ```bajo.extend:beforeReadConfig()``` hook
-- [2.14.0] Add ```bajo:afterReadConfig()``` hook
-- [2.14.0] Add ```bajo.override:afterReadConfig()``` hook
-- [2.14.0] Add ```bajo.extend:afterReadConfig()``` hook
+- [2.14.0] Add `bajo:beforeReadConfig()` hook
+- [2.14.0] Add `bajo.override:beforeReadConfig()` hook
+- [2.14.0] Add `bajo.extend:beforeReadConfig()` hook
+- [2.14.0] Add `bajo:afterReadConfig()` hook
+- [2.14.0] Add `bajo.override:afterReadConfig()` hook
+- [2.14.0] Add `bajo.extend:afterReadConfig()` hook
 
 ## 2026-05-02
 
-- [2.13.1] Bug fix in ```app.t()```
-- [2.13.1] Bug fix in ```bajo.join()```
+- [2.13.1] Bug fix in `app.t()`
+- [2.13.1] Bug fix in `bajo.join()`
 
 ## 2026-04-28
 
-- [2.13.0] Add ```options.merge``` to ```readConfig()```
-- [2.13.0] Bug fix in ```err.js```
+- [2.13.0] Add `options.merge` to `readConfig()`
+- [2.13.0] Bug fix in `err.js`
 
 ## 2026-04-25
 
-- [2.12.1] Bug fix in ```readConfig()```
+- [2.12.1] Bug fix in `readConfig()`
 
 ## 2026-04-23
 
-- [2.12.0] Remove ```breakNsPathFromFile()```
-- [2.12.0] Add feature to read in extended path ```readConfig()```
+- [2.12.0] Remove `breakNsPathFromFile()`
+- [2.12.0] Add feature to read in extended path `readConfig()`
 
 ## 2026-04-11
 
-- [2.11.1] Bug fix in ```join()```
-- [2.11.1] Bug fix in ```format()```
+- [2.11.1] Bug fix in `join()`
+- [2.11.1] Bug fix in `format()`
 
 ## 2026-04-07
 
-- [2.11.0] Change ```dispose()``` to be an async function
-- [2.11.0] Bug fix in ```_prepTrans()```
+- [2.11.0] Change `dispose()` to be an async function
+- [2.11.0] Bug fix in `_prepTrans()`
 
 ## 2026-03-30
 
-- [2.10.0] Add ability to pass options of ```configHandlers``` with type ```.js```
-- [2.10.0] Freezing config object now occurs ```{ns}:afterStart()```
-- [2.10.0] Bug fix in ```print.fatal()``` when argument is an Error object
-- [2.10.1] Bug fix in ```fromJs()```
+- [2.10.0] Add ability to pass options of `configHandlers` with type `.js`
+- [2.10.0] Freezing config object now occurs `{ns}:afterStart()`
+- [2.10.0] Bug fix in `print.fatal()` when argument is an Error object
+- [2.10.1] Bug fix in `fromJs()`
 
 ## 2026-03-25
 
-- [2.9.0] Add ```dump()``` now available through out plugins
-- [2.9.0] Bug fix in ```buildCollections()```, now items to be collected are parsed with ```aneka.parseObject()```
+- [2.9.0] Add `dump()` now available through out plugins
+- [2.9.0] Bug fix in `buildCollections()`, now items to be collected are parsed with `aneka.parseObject()`
 
 ## 2026-03-22
 
-- [2.8.0] Add ```options.readFromFile``` in ```readConfig()```
-- [2.8.0] Bug fix in ```readConfig()``` while reading ```json``` file
-- [2.8.0] Bug fix in ```fromJson()```
-- [2.8.0] Bug fix in ```toJson()```
+- [2.8.0] Add `options.readFromFile` in `readConfig()`
+- [2.8.0] Bug fix in `readConfig()` while reading `json` file
+- [2.8.0] Bug fix in `fromJson()`
+- [2.8.0] Bug fix in `toJson()`
 
 ## 2026-03-15
 
@@ -148,47 +152,47 @@
 ## 2026-03-11
 
 - [2.7.2] Bug fix in env dependent config building
-- [2.7.2] ```selfBind()``` now also accept string for single method
+- [2.7.2] `selfBind()` now also accept string for single method
 
 ## 2026-03-10
 
-- [2.7.1] Using ```textToArray()``` from ```aneka``` instead of custom function to parse text into array
+- [2.7.1] Using `textToArray()` from `aneka` instead of custom function to parse text into array
 
 ## 2026-03-02
 
-- [2.7.0] Add ```useDefaultName``` parameter to ```buildCollection()```
+- [2.7.0] Add `useDefaultName` parameter to `buildCollection()`
 - [2.7.0] Add some translations
 
 ## 2026-02-26
 
-- [2.6.2] Bug fix in ```getMethod()```
+- [2.6.2] Bug fix in `getMethod()`
 
 ## 2026-02-23
 
-- [2.6.1] Bug fix in ```readConfig()```
-- [2.6.1] Bug fix in ```base.loadConfig()```
+- [2.6.1] Bug fix in `readConfig()`
+- [2.6.1] Bug fix in `base.loadConfig()`
 
 ## 2026-02-20
 
-- [2.6.0] Upgrade to ```aneka@0.12.0```
-- [2.6.0] Add ```te()```
-- [2.6.0] Bug fix in ```formatErrorDetails()``` in ```Err``` class
+- [2.6.0] Upgrade to `aneka@0.12.0`
+- [2.6.0] Add `te()`
+- [2.6.0] Bug fix in `formatErrorDetails()` in `Err` class
 
 ## 2026-02-08
 
-- [2.5.0] Bug fix in handling log for ```error``` level
-- [2.5.0] Add ```log.getErrorMessage()``` to get the right value of error message
-- [2.5.0] Add ```timeZone``` in config for datetime data type
+- [2.5.0] Bug fix in handling log for `error` level
+- [2.5.0] Add `log.getErrorMessage()` to get the right value of error message
+- [2.5.0] Add `timeZone` in config for datetime data type
 
 ## 2026-01-29
 
-- [2.4.0] Hooks can now be added through ```config``` object. This is specially usefull if you provide a custom config object on app boot
-- [2.4.1] Bug fix in ```runHook()``` resolver. Source defaults to ```main``` if not provided. Scope defaults to ```bajo``` if not found/initialized yet
-- [2.4.2] Bug fix in getting wrongly parsed ```env``` value
+- [2.4.0] Hooks can now be added through `config` object. This is specially usefull if you provide a custom config object on app boot
+- [2.4.1] Bug fix in `runHook()` resolver. Source defaults to `main` if not provided. Scope defaults to `bajo` if not found/initialized yet
+- [2.4.2] Bug fix in getting wrongly parsed `env` value
 
 ## 2026-01-24
 
-- [2.3.2] Hook now can be executed without waiting if property ```noWait``` is ```true```
+- [2.3.2] Hook now can be executed without waiting if property `noWait` is `true`
 
 ## 2026-01-21
 
@@ -196,14 +200,14 @@
 
 ## 2026-01-18
 
-- [2.3.0] ```App``` constructor now accept an object as its parameter. For details, please see documentation
-- [2.3.0] Package upgrade to ```aneka@0.11.0```
-- [2.3.0] Bug fix in ```checkDependencies()```
+- [2.3.0] `App` constructor now accept an object as its parameter. For details, please see documentation
+- [2.3.0] Package upgrade to `aneka@0.11.0`
+- [2.3.0] Bug fix in `checkDependencies()`
 
 ## 2026-01-16
 
 - [2.2.1] Bug fix in multiple appearance of loaded plugins info
-- [2.2.1] Bug fix in ```app.lib.parseObject()``` wrapper
+- [2.2.1] Bug fix in `app.lib.parseObject()` wrapper
 
 ## 2026-01-11
 
@@ -211,7 +215,7 @@
 
 ## 2025-12-29
 
-- [2.2.0] Add ```this.selfBind()``` to class ```Plugin```
+- [2.2.0] Add `this.selfBind()` to class `Plugin`
 
 ## 2025-12-27
 
@@ -219,20 +223,20 @@
 
 ## 2025-12-27
 
-- [2.2.0] Add config object ```this.config.runtime``` to adjust some runtime settings
+- [2.2.0] Add config object `this.config.runtime` to adjust some runtime settings
 
 ## 2025-12-24
 
-- [2.2.0] Pass ```true``` to ```this.app.exit()``` to exit abruptly. Defaults to ```SIGINT```
-- [2.2.0] Add ```detailsMessage``` to ```Err``` class if error object has ```details``` in payload
-- [2.2.0] Upgrade ```aneka@0.10.0```
+- [2.2.0] Pass `true` to `this.app.exit()` to exit abruptly. Defaults to `SIGINT`
+- [2.2.0] Add `detailsMessage` to `Err` class if error object has `details` in payload
+- [2.2.0] Upgrade `aneka@0.10.0`
 - [2.2.0] Bugfix: program arguments should not parsed as object
 
 ## 2025-12-21
 
-- [2.2.0] ```runHook()``` now accept both ```alias``` & ```ns``` prefixed name
-- [2.2.0] In case of unknown plugin or plugin isn't loaded, ```runHook``` simply exit silently
-- [2.2.0] ```this.app.pluginClass``` is now ```this.app.baseClass``` and all containing class definition keys are pascal cased to match with their constructor names
+- [2.2.0] `runHook()` now accept both `alias` & `ns` prefixed name
+- [2.2.0] In case of unknown plugin or plugin isn't loaded, `runHook` simply exit silently
+- [2.2.0] `this.app.pluginClass` is now `this.app.baseClass` and all containing class definition keys are pascal cased to match with their constructor names
 
 ## 2025-12-20
 
@@ -240,29 +244,29 @@
 
 ## 2025-12-19
 
-- [2.2.0] Upgrade to ```aneka@0.9.0```
+- [2.2.0] Upgrade to `aneka@0.9.0`
 
 ## 2025-12-13
 
-- [2.2.0] Add ```app.lib.formatText()```
+- [2.2.0] Add `app.lib.formatText()`
 - [2.2.0] Move most bajo methods that doesn't relate to Bajo to app.lib functions
 
 ## 2025-12-11
 
-- [2.1.1] Upgrade to ```aneka@0.5.0```
+- [2.1.1] Upgrade to `aneka@0.5.0`
 
 ## 2025-12-09
 
-- [2.1.1] Upgrade to ```aneka@0.2.3```
+- [2.1.1] Upgrade to `aneka@0.2.3`
 - [2.1.1] Some organizatory file location changes
-- [2.1.1] Typo on class ```Tools```
+- [2.1.1] Typo on class `Tools`
 
 ## 2025-12-05
 
-- [2.1.1] Upgrade to ```aneka@0.2.1```
-- [2.1.1] New class ```Tools```, serves as anchestor for ```Err``` & ```Print```
+- [2.1.1] Upgrade to `aneka@0.2.1`
+- [2.1.1] New class `Tools`, serves as anchestor for `Err` & `Print`
 
 ## 2025-12-03
 
-- [2.1.1] Add method ```getPkgInfo()``` to plugins main class.
-- [2.1.1] Now you can put your plugins either in ```{dataDir}/config/.plugins``` or directly as an array in your app ```package.json``` under the ```bajo.plugins``` tree. The later takes precedence.
+- [2.1.1] Add method `getPkgInfo()` to plugins main class.
+- [2.1.1] Now you can put your plugins either in `{dataDir}/config/.plugins` or directly as an array in your app `package.json` under the `bajo.plugins` tree. The later takes precedence.

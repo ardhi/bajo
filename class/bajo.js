@@ -502,8 +502,8 @@ class Bajo extends Plugin {
     if (type === 'auto') {
       if (value instanceof Date) type = 'datetime'
     }
-    if (['float', 'double'].includes(type) && this.anekaSpatial) {
-      const { latToDms, lngToDms } = this.anekaSpatial
+    if (['float', 'double'].includes(type) && this.app.lib.anekaSpatial) {
+      const { latToDms, lngToDms } = this.app.lib.anekaSpatial
       if (options.latitude) return latToDms(value)
       if (options.longitude) return lngToDms(value)
     }
