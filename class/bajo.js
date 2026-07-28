@@ -12,7 +12,8 @@ import { logLevels } from './log.js'
 import * as yaml from 'js-yaml'
 import aneka from 'aneka'
 import {
-  buildBaseConfig,
+  ensureDirs,
+  collectPlugins,
   buildConfig,
   buildPlugins,
   collectConfigHandlers,
@@ -124,22 +125,24 @@ class Bajo extends Plugin {
 
   /**
    * Bajo boot process. This method is called by the {@link App} class during the app's boot process:
-   * 1. Building Bajo's {@link module:Helper.buildBaseConfig|base configuration}
-   * 2. Collect all {@link module:Helper.collectConfigHandlers|config handlers} from all loaded plugins
-   * 3. Build {@link module:Helper.buildConfig|configuration} object
-   * 4. {@link module:Helper.buildPlugins|Building plugins} listed in `package.json` or `.plugins` file
-   * 5. Determining the {@link module:Helper.bootOrder|boot order}
-   * 6. Ensure the {@link module:Helper.checkNameAliases|uniqueness} of all plugins' name and alias
-   * 7. Ensure all plugins {@link module:Helper.checkDependencies|dependencies} are met
-   * 8. Collect all {@link module:Helper.collectHooks|hooks} from all loaded plugins
-   * 9. {@link module:Helper.runPlugins|Run all plugins} according to the boot order
-   * 10. And finally attaching all {@link module:Helper.exitHandler|exit handlers} it could find
+   * 1. {@link module:Helper.ensureDirs|Ensure directories} are there and exist
+   * 2. Collect all {@link module:Helper.collectPlugins|plugins} available plugins
+   * 3. Collect all {@link module:Helper.collectConfigHandlers|config handlers} from all loaded plugins
+   * 4. Build {@link module:Helper.buildConfig|configuration} object
+   * 5. {@link module:Helper.buildPlugins|Building plugins} listed in `package.json` or `.plugins` file
+   * 6. Determining the {@link module:Helper.bootOrder|boot order}
+   * 7. Ensure the {@link module:Helper.checkNameAliases|uniqueness} of all plugins' name and alias
+   * 8. Ensure all plugins {@link module:Helper.checkDependencies|dependencies} are met
+   * 9. Collect all {@link module:Helper.collectHooks|hooks} from all loaded plugins
+   * 10. {@link module:Helper.runPlugins|Run all plugins} according to the boot order
+   * 11. And finally attaching all {@link module:Helper.exitHandler|exit handlers} it could find
    *
    * @method
    * @async
    */
   bootApp = async () => {
-    await buildBaseConfig.call(this)
+    await ensureDirs.call(this)
+    await collectPlugins.call(this)
     await collectConfigHandlers.call(this)
     await buildConfig.call(this)
     await buildPlugins.call(this)

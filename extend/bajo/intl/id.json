@@ -185,5 +185,7 @@
   "processing...": "Memroses...",
   "true": "Benar",
   "false": "Salah",
-  "createOneNow": "Buat sekarang? (y/n) "
+  "createOneNow": "Buat sekarang? (y/n) ",
+  "nA": "T/T",
+  "unknown": "Tidak Dikenal"
 }

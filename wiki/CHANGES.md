@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-07-28
+
+- [2.27.0] Change and split internal function `helper.buildBaseConfig()` to `helper.ensureDirs()` and `helper.collectPlugins()`
+- [2.27.0] Add some new translations
+
 ## 2026-07-26
 
 - [2.26.1] Bug fix in `format()`

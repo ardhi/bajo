@@ -185,5 +185,7 @@
   "processing...": "Processing...",
   "true": "True",
   "false": "False",
-  "createOneNow": "Create one now? (y/n) "
+  "createOneNow": "Create one now? (y/n) ",
+  "nA": "N/A",
+  "unknown": "Unknown"
 }

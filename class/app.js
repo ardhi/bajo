@@ -465,7 +465,10 @@ class App {
   }
 
   /**
-   * Dumping variable on screen. Like `console.log` with configurable options. Useful for quick debugging and testing. You can also use it to dump variables in production without worrying about performance because it is using Bajo's built-in cache to store the result of util's inspect, so it will only be processed once for each unique variable.
+   * Dumping variable on screen. Like `console.log` with configurable options. Useful for quick debugging and testing.
+   * You can also use it to dump variables in production without worrying about performance because it is
+   * using Bajo's built-in cache to store the result of util's inspect,
+   * so it will only be processed once for each unique variable.
    *
    * Any argument passed to this method will be displayed on screen.
    * If the last argument is a string `\q` or `.q`, app will quit rightaway after dumping.
