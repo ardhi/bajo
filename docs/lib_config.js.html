@@ -73,18 +73,18 @@
  * @property {string[]} [intl.supported=['en-US', 'id']] - Supported languages. Default is `en-US` and `id`. Add more if you want it
  * @property {string} [intl.fallback='en-US'] - Fallback language if the requested language is not supported. Default is `en-US`
  * @property {string[]} [intl.lookupOrder=[]] - Lookup order for languages. Default is empty array
- * @property {Object} [intl.format={}] - Formatting configuration
- * @property {string} [intl.format.emptyValue=''] - Value to use for empty values. Default is empty string
- * @property {Object} [intl.format.datetime] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
- * @property {Object} [intl.format.date] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
- * @property {Object} [intl.format.time] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
- * @property {Object} [intl.format.float] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
- * @property {Object} [intl.format.double] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
- * @property {Object} [intl.format.smallint] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
- * @property {Object} [intl.format.integer] - See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
+ * @property {string} [intl.emptyValue=''] - Value to use for empty values. Default is empty string
+ * @property {Object} [intl.datetime] - Datetime format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
+ * @property {Object} [intl.date] - Date format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
+ * @property {Object} [intl.time] - Time format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat|Intl.DateTimeFormat} for more information
+ * @property {Object} [intl.float] - Float format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
+ * @property {Object} [intl.double] - Double format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
+ * @property {Object} [intl.smallint] - Smallint format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
+ * @property {Object} [intl.integer] - Integer format. See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat|Intl.NumberFormat} for more information
  * @property {Object} [intl.unitSys={}] - Unit system configuration. Object with keys as language codes and values as unit systems. Supported values are `metric`, `imperial` and `nautical`
  * @property {string} [intl.unitSys.en-US='imperial'] - Unit system for `en-US`. Default is `imperial`
  * @property {string} [intl.unitSys.id='metric'] - Unit system for `id`. Default is `metric`
+ * @property {string} [intl.timeZone] - Default timezone for internationalization. If not provided, the system timezone will be used
  * @property {boolean} [exitHandler=true] - Whether to attach exit handlers for graceful shutdown. Default is `true`
  * @property {Object} [cache={}] - Cache configuration
  * @property {string[]} [cache.purge=[]] - List of cache names to purge on startup. Default is empty array
@@ -122,35 +122,31 @@ const config = {
       borderStyle: 'round'
     }
   },
-  lang: Intl.DateTimeFormat().resolvedOptions().lang ?? 'en-US',
+  lang: Intl.DateTimeFormat().resolvedOptions().locale ?? 'en-US', // should we change to 'locale' instead of 'lang'?
   intl: {
     supported: ['en-US', 'id'],
     fallback: 'en-US',
     lookupOrder: [],
-    format: {
-      emptyValue: '',
-      datetime: {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: 'UTC'
-      },
-      date: {
-        dateStyle: 'medium',
-        timeZone: 'UTC'
-      },
-      time: {
-        timeStyle: 'short',
-        timeZone: 'UTC'
-      },
-      float: {
-        maximumFractionDigits: 2
-      },
-      double: {
-        maximumFractionDigits: 5
-      },
-      smallint: {},
-      integer: {}
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    emptyValue: '',
+    datetime: {
+      dateStyle: 'medium',
+      timeStyle: 'short'
     },
+    date: {
+      dateStyle: 'medium'
+    },
+    time: {
+      timeStyle: 'short'
+    },
+    float: {
+      maximumFractionDigits: 2
+    },
+    double: {
+      maximumFractionDigits: 5
+    },
+    smallint: {},
+    integer: {},
     unitSys: {
       'en-US': 'imperial',
       id: 'metric'

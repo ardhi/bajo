@@ -187,5 +187,6 @@
   "false": "False",
   "createOneNow": "Create one now? (y/n) ",
   "nA": "N/A",
-  "unknown": "Unknown"
+  "unknown": "Unknown",
+  "pluginNoAppletSupport%s": "Plugin '%s' doesn't support applet mode"
 }

@@ -1,5 +1,15 @@
 # Changes
 
+## 2026-07-29
+
+- [2.28.0] Change `helper.formats` to `helper.formatter` and `helper.fields` to `helper.formatterFieldMap`
+- [2.28.0] Rename `formatByType()` to `formatByField()`
+- [2.28.0] Bug fix in `eachPlugins()`
+- [2.28.0] Move all properties of `config.intl.format` to their parent `config.intl`
+- [2.28.0] Add `config.intl.unitSys` to hold unit system for each language
+- [2.28.0] Add `config.intl.timeZone` to hold timezone for each language
+- [2.28.0] Bug fix in `helper.runPlugins()`
+
 ## 2026-07-28
 
 - [2.27.0] Change and split internal function `helper.buildBaseConfig()` to `helper.ensureDirs()` and `helper.collectPlugins()`

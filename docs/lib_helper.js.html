@@ -185,18 +185,17 @@ export async function ask (question, ...args) {
 }
 
 /**
- * Build base configuration object for Bajo. This function is called by Bajo during the {@link Bajo#init|initialization process}:
+ * Ensure the existence of necessary directories for Bajo. This function is called by Bajo
+ * during the {@link Bajo#init|initialization process}:
  * - it sets up the base directory,
  * - it checks the validity of the data directory,
  * - it ensures the temporary directory exists,
- * - it reads the list of used plugins from the `package.json`, `.plugins` file or command line options.
  *
  * @async
  * @method
  */
-export async function buildBaseConfig () {
-  const { defaultsDeep, textToArray, currentLoc, resolvePath } = this.app.lib.aneka
-  // dirs
+export async function ensureDirs () {
+  const { defaultsDeep, currentLoc, resolvePath } = this.app.lib.aneka
   this.config = defaultsDeep({}, this.app.envVars._, this.app.argv._)
   set(this, 'dir.base', this.app.dir)
   const path = currentLoc(import.meta).dir + '/..'
@@ -219,9 +218,17 @@ export async function buildBaseConfig () {
     this.dir.tmp = `${resolvePath(os.tmpdir())}/${this.ns}`
     fs.ensureDirSync(this.dir.tmp)
   }
+}
+
+/**
+ * Collect all plugins defined in `package.json` or `.plugins` file, and add them to the
+ * app's plugin list. It will also make sure the `main` plugin is there too, if not, it will be
+ * created with the default template and settings.
+ */
+export async function collectPlugins () {
+  const { textToArray } = this.app.lib.aneka
   this.pkg = await this.getPkgInfo()
   let pluginPkgs = this.app.pluginPkgs
-  // collect list of plugins
   if (isEmpty(pluginPkgs)) {
     const mainPkg = await this.getPkgInfo(this.app.dir)
     pluginPkgs = get(mainPkg, 'bajo.plugins', [])
@@ -506,6 +513,10 @@ export async function runPlugins () {
     await eachPlugins(async function () {
       const { ns } = this
       await runHook(`${ns}:${camelCase(`before ${method}`)}`)
+      if (me.app[ns].pkg.bajo.appletSupport === false &amp;&amp; me.app.applet) {
+        me.log.warn('pluginNoAppletSupport%s', ns)
+        return false
+      }
       await me.app[ns][method]()
       await runHook(`${ns}:${camelCase(`after ${method}`)}`)
       if (method === 'start') freeze(me.app[ns].config)
@@ -676,7 +687,7 @@ export function freeze (obj, options = {}) {
   else deepFreeze(obj, clone)
 }
 
-// take from https://github.com/3imed-jaberi/deepfreeze/blob/master/index.js
+// taken from https://github.com/3imed-jaberi/deepfreeze/blob/master/index.js
 export function deepFreeze (object, clone = false) {
   function _deepFreeze (_object) {
     if (Object.isFrozen(_object)) return _object
@@ -749,19 +760,63 @@ export function findDeep (item, paths) {
  */
 
 /**
- * General format types,
+ * Formatter field mapping.
  *
- * @typedef {Object} TFormatType
+ * @typedef {Object} TFormatterFieldMap
  * @memberof Bajo
- * @type {Array}
- * @property {string} 0 speed
- * @property {string} 1 distance
- * @property {string} 2 area
- * @property {string} 3 degree
+ * @type {Object}
+ * @property {string} [speed='speed']
+ * @property {string} [distance='distance']
+ * @property {string} [area='area']
+ * @property {string} [degree='degree']
+ * @property {string} [heading='degree']
+ * @property {string} [course='degree']
  */
-export const types = ['speed', 'distance', 'area', 'degree']
+export const formatterFieldMap = {
+  speed: 'speed',
+  distance: 'distance',
+  area: 'area',
+  degree: 'degree',
+  heading: 'degree',
+  course: 'degree'
+}
 
-export const formats = {
+/**
+ * @typedef {Object} TFormatter
+ * @memberof Bajo
+ * @type {Object}
+ * @property {Object} metric - Metric formatter
+ * @property {Object} metric.speedFn - Function to format speed in metric
+ * @property {string} metric.speedUnit - Speed unit in metric
+ * @property {Object} metric.distanceFn - Function to format distance in metric
+ * @property {string} metric.distanceUnit - Distance unit in metric
+ * @property {Object} metric.areaFn - Function to format area in metric
+ * @property {string} metric.areaUnit - Area unit in metric
+ * @property {Object} metric.degreeFn - Function to format degree in metric
+ * @property {string} metric.degreeUnit - Degree unit in metric
+ * @property {string} metric.degreeUnitSep - Degree unit separator in metric
+ * @property {Object} imperial - Imperial formatter
+ * @property {Object} imperial.speedFn - Function to format speed in imperial
+ * @property {string} imperial.speedUnit - Speed unit in imperial
+ * @property {Object} imperial.distanceFn - Function to format distance in imperial
+ * @property {string} imperial.distanceUnit - Distance unit in imperial
+ * @property {Object} imperial.areaFn - Function to format area in imperial
+ * @property {string} imperial.areaUnit - Area unit in imperial
+ * @property {Object} imperial.degreeFn - Function to format degree in imperial
+ * @property {string} imperial.degreeUnit - Degree unit in imperial
+ * @property {string} imperial.degreeUnitSep - Degree unit separator in imperial
+ * @property {Object} nautical - Nautical formatter
+ * @property {Object} nautical.speedFn - Function to format speed in nautical
+ * @property {string} nautical.speedUnit - Speed unit in nautical
+ * @property {Object} nautical.distanceFn - Function to format distance in nautical
+ * @property {string} nautical.distanceUnit - Distance unit in nautical
+ * @property {Object} nautical.areaFn - Function to format area in nautical
+ * @property {string} nautical.areaUnit - Area unit in nautical
+ * @property {Object} nautical.degreeFn - Function to format degree in nautical
+ * @property {string} nautical.degreeUnit - Degree unit in nautical
+ * @property {string} nautical.degreeUnitSep - Degree unit separator in nautical
+ */
+export const formatter = {
   metric: {
     speedFn: (val) => val,
     speedUnit: 'kmh',
@@ -786,7 +841,7 @@ export const formats = {
   },
   nautical: {
     speedFn: (val) => val / 1.852,
-    speedUnit: 'knot',
+    speedUnit: 'kn',
     distanceFn: (val) => val / 1.852,
     distanceUnit: 'nm',
     areaFn: (val) => val / 2.92,

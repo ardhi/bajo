@@ -24,8 +24,8 @@ import {
   runPlugins,
   exitHandler,
   importModule,
-  types as formatTypes,
-  formats
+  formatterFieldMap,
+  formatter
 } from '../lib/helper.js'
 
 const require = createRequire(import.meta.url)
@@ -385,16 +385,18 @@ class Bajo extends Plugin {
    * - `file`: file matched the glob pattern
    * - `dir`: plugin's base directory
    *
+   * Inside the handler, return `false` to break the loop, return `undefined` to skip the current item,
+   * or return any value to be saved in the result object.
    * @method
    * @async
-   * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin.
-   * @param {(string|Object)} [options={}] - Options. If a string is provided, it serves as the glob pattern, otherwise:
-   * @param {(string|string[])} [options.glob] - Glob pattern. If provided,
-   * @param {boolean} [options.useBajo=false] - If true, add `bajo` to the running plugins too.
+   * @param {function} handler - Function handler. Can be an async function. Scoped to the running plugin
+   * @param {(string|Object)} [options={}] - Options. If a string is provided, it serves as the glob pattern as described below, otherwise:
+   * @param {(string|string[])} [options.glob] - Glob pattern. If provided, it will be used to find files in the plugin's `extend` directory. If not provided, the handler will be called once for each plugin
+   * @param {boolean} [options.useBajo=false] - If `true`, add `bajo` to the running plugins too
    * @param {string} [options.prefix=''] - Prepend glob pattern with prefix.
-   * @param {boolean} [options.noUnderscore=true] - If true (default), matched file with name starts with underscore is ignored.
-   * @param {*} [options.returnItems] - If true, each value of returned handler call will be saved as an object with running plugin name as its keys.
-   * @returns {*}
+   * @param {boolean} [options.noUnderscore=true] - If `true` (default), matched file with name starts with underscore is ignored.
+   * @param {boolean} [options.returnItems] - If `true`, each value of returned handler call will be saved as an object with running plugin name as its keys.
+   * @returns {Promise<Object>} Object with each plugin's name as its key and the returned value from the handler as its value
    */
   eachPlugins = async (handler, options = {}) => {
     if (isString(options)) options = { glob: options }
@@ -404,6 +406,7 @@ class Bajo extends Plugin {
     const result = {}
     for (const pkgName of pluginPkgs) {
       const ns = camelCase(pkgName)
+      if (!['bajo'].includes(ns) && this.app[ns].pkg.bajo.appletSupport === false && this.app.applet) continue
       let r
       if (globs.length > 0) {
         const base = prefix === '' ? `${this.app[ns].dir.pkg}/extend` : `${this.app[ns].dir.pkg}/extend/${prefix}`
@@ -451,16 +454,16 @@ class Bajo extends Plugin {
    */
   getUnitFormat = (options = {}) => {
     const lang = options.lang ?? this.config.lang
-    let unitSys = options.unitSys ?? this.config.intl.unitSys[lang] ?? 'metric'
-    if (!['imperial', 'nautical', 'metric'].includes(unitSys)) unitSys = 'metric'
-    return { unitSys, format: formats[unitSys] }
+    let unitSys = get(options, `unitSys.${lang}`, get(this, `config.intl.unitSys.${lang}`), 'metric')
+    if (!formatter[unitSys]) unitSys = 'metric'
+    return { unitSys, format: formatter[unitSys] }
   }
 
   /**
-   * Format value by type.
+   * Format value by field name.
    *
    * @method
-   * @param {string} type - Format type. See {@link TBajoFormatType} for acceptable values.
+   * @param {string} field - Format field name. See {@link TBajoFormatField} for acceptable values.
    * @param {*} value - Value to format.
    * @param {string} [dataType] - Value's data type. See {@link TBajoDataType} for acceptable values.
    * @param {Object} [options={}] - Options.
@@ -468,15 +471,15 @@ class Bajo extends Plugin {
    * @param {string} [options.lang] - Format value according to this language. Defaults to the one you set in config.
    * @returns {(Array|string)} Return string if `withUnit` is true. Otherwise is an array of `[value, unit, separator]`.
    */
-  formatByType = (type, value, dataType, options = {}) => {
+  formatByField = (field, value, dataType, options = {}) => {
     const { format } = this.getUnitFormat(options)
     const { withUnit = true } = options
     const lang = options.lang ?? this.config.lang
-    value = format[`${type}Fn`](value)
-    const unit = format[`${type}Unit`]
-    const sep = format[`${type}UnitSep`] ?? ' '
+    value = format[`${field}Fn`](value)
+    const unit = format[`${field}Unit`]
+    const sep = format[`${field}UnitSep`] ?? ' '
     if (!withUnit) return [value, unit, sep]
-    const setting = defaultsDeep(options[dataType], this.config.intl.format[dataType])
+    const setting = defaultsDeep(options[dataType], this.config.intl[dataType])
     value = new Intl.NumberFormat(lang, setting).format(value)
     return `${value}${sep}${unit}`
   }
@@ -496,11 +499,10 @@ class Bajo extends Plugin {
    * @returns {string} Formatted value.
    */
   format = (value, type, options = {}) => {
-    const { format } = this.config.intl
-    const { emptyValue = format.emptyValue } = options
+    const { intl } = cloneDeep(this.config)
+    const { emptyValue = intl.emptyValue } = options
     const lang = options.lang ?? this.config.lang
     options.withUnit = options.withUnit ?? true
-    let valueFormatted
     if ([undefined, null, ''].includes(value)) return emptyValue
     if (type === 'auto') {
       if (value instanceof Date) type = 'datetime'
@@ -511,28 +513,20 @@ class Bajo extends Plugin {
       if (options.longitude) return lngToDms(value)
     }
     if (['integer', 'smallint', 'float', 'double'].includes(type)) {
-      value = ['integer', 'smallint'].includes(type) ? parseInt(value) : parseFloat(value)
+      value = ['integer', 'smallint'].includes(type) ? parseInt(Math.round(value)) : parseFloat(value)
       if (isNaN(value)) return emptyValue
-      for (const u of formatTypes) {
-        if (options[u]) valueFormatted = this.formatByType(u, value, type, options)
-      }
-    }
-    if (['integer', 'smallint'].includes(type)) {
-      const setting = defaultsDeep(options.integer, format.integer)
-      value = new Intl.NumberFormat(lang, setting).format(Math.round(value))
-      return valueFormatted && options.withUnit ? valueFormatted : value
-    }
-    if (['float', 'double'].includes(type)) {
-      const setting = defaultsDeep(options[type], format[type])
-      value = new Intl.NumberFormat(lang, setting).format(value)
-      return valueFormatted && options.withUnit ? valueFormatted : value
+      const setting = defaultsDeep(options[type], intl[type])
+      const field = formatterFieldMap[options.field]
+      return field ? this.formatByField(field, value, type, options) : new Intl.NumberFormat(lang, setting).format(value)
     }
     if (['datetime', 'date'].includes(type)) {
-      const setting = defaultsDeep(options[type], format[type])
+      const setting = defaultsDeep(options[type], intl[type])
+      setting.timeZone = setting.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(value))
     }
     if (['time'].includes(type)) {
-      const setting = defaultsDeep(options.time, format.time)
+      const setting = defaultsDeep(options[type], intl[type])
+      setting.timeZone = setting.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(`1970-01-01T${value}Z`))
     }
     if (['array'].includes(type)) return value.join(', ')

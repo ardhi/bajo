@@ -59,7 +59,7 @@ describe('bajo (unit)', () => {
     expect(b.params.id).to.equal('2')
     const f = bajo.getUnitFormat({ type: 'speed', lang: 'en-US' })
     expect(f.format.speedUnit).to.equal('kmh')
-    expect(bajo.formatByType('speed', 100, 'float', { withUnit: true, lang: 'en-US' })).to.include('kmh')
+    expect(bajo.formatByField('speed', 100, 'float', { withUnit: true, lang: 'en-US' })).to.include('kmh')
     expect(bajo.format('x', 'string')).to.equal('x')
   })
 

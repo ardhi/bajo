@@ -187,5 +187,6 @@
   "false": "Salah",
   "createOneNow": "Buat sekarang? (y/n) ",
   "nA": "T/T",
-  "unknown": "Tidak Dikenal"
+  "unknown": "Tidak Dikenal",
+  "pluginNoAppletSupport%s": "Plugin '%s' tidak mendukung mode applet"
 }
