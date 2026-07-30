@@ -521,12 +521,12 @@ class Bajo extends Plugin {
     }
     if (['datetime', 'date'].includes(type)) {
       const setting = defaultsDeep(options[type], intl[type])
-      setting.timeZone = setting.timeZone ?? intl.timeZone
+      setting.timeZone = setting.timeZone ?? options.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(value))
     }
     if (['time'].includes(type)) {
       const setting = defaultsDeep(options[type], intl[type])
-      setting.timeZone = setting.timeZone ?? intl.timeZone
+      setting.timeZone = setting.timeZone ?? options.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(`1970-01-01T${value}Z`))
     }
     if (['array'].includes(type)) return value.join(', ')

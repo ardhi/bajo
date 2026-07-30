@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-07-30
+
+- [2.28.1] Bug fix in `format()` for `datetime` and `time` data types when timezone is provided in options
+- [2.28.1] Bug fix in `helper.buildConfig()`
+
 ## 2026-07-29
 
 - [2.28.0] Change `helper.formats` to `helper.formatter` and `helper.fields` to `helper.formatterFieldMap`
