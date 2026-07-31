@@ -32,7 +32,10 @@ export const writePlugin = async (root, pluginName, className = 'IntegrationPlug
     name: pluginName,
     version: '1.0.0',
     type: 'module',
-    main: 'index.js'
+    main: 'index.js',
+    bajo: {
+      appletSupport: true
+    }
   })
 
   const code = `

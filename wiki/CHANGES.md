@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-07-31
+
+- [2.29.0] Change `app.loadIntl()` to async method and use `bajo.readConfig()` to read files
+- [2.29.0] Change `config.intl.<dataTypes>` to `config.intl.formatter` for dataTypes
+- [2.29.0] Default language format now is `yml` instead of `json`
+- [2.29.0] Bug fix in `bajo.formatByField()`
+
 ## 2026-07-30
 
 - [2.28.1] Bug fix in `format()` for `datetime` and `time` data types when timezone is provided in options

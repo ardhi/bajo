@@ -134,21 +134,25 @@ function getCallerFilename () {
  * A typical Bajo app should follow the following structure:
  * ```
  * my-app
- * |-- package.json
- * |-- index.js
- * |-- main
- * |   |-- extend
- * |   |   |-- bajo
- * |   |   |   |-- hook
- * |   |   |   |   |   |-- myPlugin:beforeAction.js
- * |   |   |   |   |   |-- myOtherPlugin:afterAction.js
- * |   |   |   |-- intl
- * |   |-- index.js
- * |-- data
- * |   |-- config
- * |   |   |-- .plugins
- * |   |   |-- bajo.yml
- * |   |   |-- myPlugin.yml
+ * ├── package.json
+ * ├── index.js
+ * ├── main
+ * │   ├── extend
+ * │   │   ├── bajo
+ * │   │   │   ├── hook
+ * │   │   │   │   ├── my-plugin@before-action.js
+ * │   │   │   │   └── my-other-plugin.domain@after-action.js
+ * │   │   │   └── intl
+ * │   │   │       ├── en-US.yml
+ * │   │   │       └── id.yml
+ * │   │   └── myPlugin
+ * │   ├── index.js
+ * ├── data
+ * │   ├── config
+ * │   │   ├── .plugins
+ * │   │   ├── bajo.yml
+ * │   │   ├── myPlugin.yml
+ * •   •   •   •
  * ```
  *
  * @class
@@ -578,18 +582,12 @@ class App {
    * @method
    * @param {string} ns - Plugin namespace
    */
-  loadIntl = (ns) => {
-    const { fs } = this.lib
-
+  loadIntl = async (ns) => {
     this[ns].intl = {}
-    for (const l of this.bajo.config.intl.supported) {
-      this[ns].intl[l] = {}
-      const path = `${this[ns].dir.pkg}/extend/bajo/intl/${l}.json`
-      if (!fs.existsSync(path)) continue
-      const trans = fs.readFileSync(path, 'utf8')
-      try {
-        this[ns].intl[l] = JSON.parse(trans)
-      } catch (err) {}
+    for (const lang of this.bajo.config.intl.supported) {
+      this[ns].intl[lang] = {}
+      const path = `${this[ns].dir.pkg}/extend/bajo/intl/${lang}.*`
+      this[ns].intl[lang] = await this.bajo.readConfig(path, { throwNotFound: false })
     }
   }
 

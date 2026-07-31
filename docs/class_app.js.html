@@ -136,21 +136,23 @@ function getCallerFilename () {
  * A typical Bajo app should follow the following structure:
  * ```
  * my-app
- * |-- package.json
- * |-- index.js
- * |-- main
- * |   |-- extend
- * |   |   |-- bajo
- * |   |   |   |-- hook
- * |   |   |   |   |   |-- myPlugin:beforeAction.js
- * |   |   |   |   |   |-- myOtherPlugin:afterAction.js
- * |   |   |   |-- intl
- * |   |-- index.js
- * |-- data
- * |   |-- config
- * |   |   |-- .plugins
- * |   |   |-- bajo.yml
- * |   |   |-- myPlugin.yml
+ * ├── package.json
+ * ├── index.js
+ * ├── main
+ * │   ├── extend
+ * │   │   ├── bajo
+ * │   │   │   ├── hook
+ * │   │   │   │   ├── myPlugin:beforeAction.js
+ * │   │   │   │   └── myOtherPlugin:afterAction.js
+ * │   │   │   └── intl
+ * │   │   └── myPlugin
+ * │   ├── index.js
+ * ├── data
+ * │   ├── config
+ * │   │   ├── .plugins
+ * │   │   ├── bajo.yml
+ * │   │   ├── myPlugin.yml
+ * •   •   •
  * ```
  *
  * @class

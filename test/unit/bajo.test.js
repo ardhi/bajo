@@ -25,7 +25,7 @@ describe('bajo (unit)', () => {
     bajo.config = {
       env: 'dev',
       lang: 'en-US',
-      intl: { supported: ['en-US'], fallback: 'en-US', unitSys: { 'en-US': 'metric' }, format: { emptyValue: '', integer: {}, float: {}, double: {}, datetime: {}, date: {}, time: {} } },
+      intl: { supported: ['en-US'], fallback: 'en-US', unitSys: { 'en-US': 'metric' }, formatter: { string: {}, integer: {}, smallint: {}, float: {}, double: {}, datetime: {}, date: {}, time: {}, array: {}, object: {} }, emptyValue: '' },
       log: { level: 'trace', save: false, pretty: false, useUtc: false, timeTaken: false, dateFormat: 'YYYY-MM-DD', rotation: { cycle: 'none', byPlugin: false } },
       cache: { purgeIntvDur: '1h', purge: [] },
       exitHandler: false
@@ -59,7 +59,7 @@ describe('bajo (unit)', () => {
     expect(b.params.id).to.equal('2')
     const f = bajo.getUnitFormat({ type: 'speed', lang: 'en-US' })
     expect(f.format.speedUnit).to.equal('kmh')
-    expect(bajo.formatByField('speed', 100, 'float', { withUnit: true, lang: 'en-US' })).to.include('kmh')
+    expect(bajo.formatByField('speed', 100, 'float', { withUnit: true, lang: 'en-US', formatter: {} })).to.include('kmh')
     expect(bajo.format('x', 'string')).to.equal('x')
   })
 
@@ -145,6 +145,7 @@ describe('bajo (unit)', () => {
     app.pluginPkgs = ['fake-plugin']
     app.fakePlugin = new Base('fake-plugin', app)
     app.fakePlugin.dir = { pkg: pdir }
+    app.fakePlugin.pkg = { bajo: { appletSupport: true } }
     const e = await bajo.eachPlugins(async ({ file }) => file, { glob: 'hook/*.js', returnItems: true })
     expect(e).to.be.an('array')
   })

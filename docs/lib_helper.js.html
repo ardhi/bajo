@@ -132,6 +132,25 @@ dayjs.extend(localizedFormat)
 dayjs.extend(weekOfYear)
 
 /**
+ * Supported data types.
+ *
+ * @typedef {Object} TDataType
+ * @memberof Bajo
+ * @type {Array}
+ * @property {string} 0 string
+ * @property {string} 1 float
+ * @property {string} 2 double
+ * @property {string} 3 integer
+ * @property {string} 4 smallint
+ * @property {string} 5 date
+ * @property {string} 6 time
+ * @property {string} 7 datetime
+ * @property {string} 8 array
+ * @property {string} 9 object
+ */
+const dataTypes = Object.keys(defConfig.intl.formatter)
+
+/**
  * Most commonly used libraries by Bajo and its plugins. They are already imported and ready to use,
  * so you don't have to import them again in your plugin.
  *
@@ -155,6 +174,7 @@ dayjs.extend(weekOfYear)
  * @property {Object} outmatchNs Like outmatch, but support scoped source &amp; pattern. See {@link module:Helper.outmatchNs|outmatchNs} for more details.
  * @property {Object} parseObject Parse object and normalize their values. Also support translation. See {@link module:Helper.parseObject|parseObject} for more details.
  * @property {Object} [anekaSpatial] Access to {@link https://ardhi.github.io/bajo-spatial|aneka-spatial} helpers if `bajoSpatial` plugin is loaded.
+ * @property {Array} dataTypes Supported data types. See {@link Bajo.TDataType|TDataType} for more details.
  * @see App
  */
 export const lib = {
@@ -168,7 +188,8 @@ export const lib = {
   freeze,
   findDeep,
   outmatchNs,
-  parseObject
+  parseObject,
+  dataTypes
 }
 
 export async function ask (question, ...args) {
@@ -326,7 +347,7 @@ export async function buildConfig () {
 
   let resp = get(this, `app.options.config.${this.ns}`, {})
   if (isEmpty(resp)) resp = await this.readAllConfigs(`${this.dir.data}/config/${this.ns}`)
-  resp = omit(pick(resp, ['log', 'exitHandler', 'env', 'runtime']), omitted)
+  resp = omit(resp, omitted)
   const envs = this.app.envs
   this.config = defaultsDeep({}, this.config, resp, defConfig)
   // language
@@ -739,25 +760,6 @@ export function findDeep (item, paths) {
   }
   return dir
 }
-
-/**
- * Supported data types.
- *
- * @typedef {Object} TDataType
- * @memberof Bajo
- * @type {Array}
- * @property {string} 0 string
- * @property {string} 1 float
- * @property {string} 2 double
- * @property {string} 3 integer
- * @property {string} 4 smallint
- * @property {string} 5 date
- * @property {string} 6 time
- * @property {string} 7 datetime
- * @property {string} 8 array
- * @property {string} 9 object
- * @property {string} 10 auto
- */
 
 /**
  * Formatter field mapping.

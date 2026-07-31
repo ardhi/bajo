@@ -481,7 +481,7 @@ class Bajo extends Plugin {
     const unit = format[`${field}Unit`]
     const sep = format[`${field}UnitSep`] ?? ' '
     if (!withUnit) return [value, unit, sep]
-    const setting = defaultsDeep(options[dataType], this.config.intl[dataType])
+    const setting = defaultsDeep(options.formatter[dataType], this.config.intl.formatter[dataType])
     value = new Intl.NumberFormat(lang, setting).format(value)
     return `${value}${sep}${unit}`
   }
@@ -504,6 +504,7 @@ class Bajo extends Plugin {
     const { intl } = cloneDeep(this.config)
     const { emptyValue = intl.emptyValue } = options
     const lang = options.lang ?? this.config.lang
+    options.formatter = options.formatter ?? {}
     options.withUnit = options.withUnit ?? true
     if ([undefined, null, ''].includes(value)) return emptyValue
     if (type === 'auto') {
@@ -517,18 +518,18 @@ class Bajo extends Plugin {
     if (['integer', 'smallint', 'float', 'double'].includes(type)) {
       value = ['integer', 'smallint'].includes(type) ? parseInt(Math.round(value)) : parseFloat(value)
       if (isNaN(value)) return emptyValue
-      const setting = defaultsDeep(options[type], intl[type])
+      const setting = defaultsDeep(options.formatter[type], intl.formatter[type])
       const field = formatterFieldMap[options.field]
       return field ? this.formatByField(field, value, type, options) : new Intl.NumberFormat(lang, setting).format(value)
     }
     if (['datetime', 'date'].includes(type)) {
-      const setting = defaultsDeep(options[type], intl[type])
-      setting.timeZone = setting.timeZone ?? intl.timeZone
+      const setting = defaultsDeep(options.formatter[type], intl.formatter[type])
+      setting.timeZone = setting.timeZone ?? options.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(value))
     }
     if (['time'].includes(type)) {
-      const setting = defaultsDeep(options[type], intl[type])
-      setting.timeZone = setting.timeZone ?? intl.timeZone
+      const setting = defaultsDeep(options.formatter[type], intl.formatter[type])
+      setting.timeZone = setting.timeZone ?? options.timeZone ?? intl.timeZone
       return new Intl.DateTimeFormat(lang, setting).format(new Date(`1970-01-01T${value}Z`))
     }
     if (['array'].includes(type)) return value.join(', ')

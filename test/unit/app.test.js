@@ -90,19 +90,18 @@ describe('app (unit)', () => {
   it('loadIntl/t/te/getConfigFormats/startPlugin/stopPlugin work', async () => {
     const p = new Plugin('x-plugin', app)
     p.dir = { pkg: path.join(root, 'plugins', 'x-plugin') }
-    await fs.ensureDir(path.join(p.dir.pkg, 'extend', 'bajo', 'intl'))
-    await fs.writeJson(path.join(p.dir.pkg, 'extend', 'bajo', 'intl', 'en.json'), { hi: 'Hi %s' })
     p.start = () => {}
     app.addPlugin(p)
     app.pluginPkgs = ['x-plugin']
     app.bajo = {
       config: { lang: 'en', intl: { supported: ['en'], fallback: 'en' }, log: { level: 'silent' } },
       join: (a) => a.join(', '),
-      log: { warn: () => {} }
+      log: { warn: () => {} },
+      readConfig: async () => ({ hi: 'Hi %s' })
     }
     app.configHandlers = [{ ext: '.json' }, { ext: '.yml' }]
 
-    app.loadIntl('xPlugin')
+    await app.loadIntl('xPlugin')
     expect(app.xPlugin.intl.en.hi).to.equal('Hi %s')
     expect(app.t('xPlugin', 'hi', 'Joe')).to.equal('Hi Joe')
     expect(app.te('xPlugin', 'hi')).to.equal(true)

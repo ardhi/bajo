@@ -5,13 +5,13 @@ import fs from 'fs-extra'
 import { expect } from 'chai'
 import App from '../../class/app.js'
 import Bajo from '../../class/bajo.js'
-import Base from '../../class/base.js'
 import {
   outmatchNs,
   parseObject,
   lib,
   ask,
-  buildBaseConfig,
+  ensureDirs,
+  collectPlugins,
   buildPlugins,
   collectConfigHandlers,
   buildConfig,
@@ -25,8 +25,7 @@ import {
   freeze,
   deepFreeze,
   findDeep,
-  types,
-  formats
+  formatter
 } from '../../lib/helper.js'
 
 describe('helper module (unit)', () => {
@@ -40,7 +39,7 @@ describe('helper module (unit)', () => {
     if (root) fs.rmSync(root, { recursive: true, force: true })
   })
 
-  it('outmatchNs, parseObject, lib, importModule, freeze/deepFreeze/findDeep/types/formats', async () => {
+  it('outmatchNs, parseObject, lib, importModule, freeze/deepFreeze/findDeep/dataTypes/formatter', async () => {
     const ctx = { bajo: { breakNsPath: (v) => { const [fullNs, p] = v.split(':'); return { fullNs, path: p } } } }
     expect(outmatchNs.call(ctx, 'a:x/y', 'a:x/*')).to.equal(true)
 
@@ -66,8 +65,8 @@ describe('helper module (unit)', () => {
     await fs.writeFile(path.join(d, 'needle.txt'), 'x', 'utf8')
     expect(findDeep('needle.txt', [d])).to.equal(path.join(d, 'needle.txt'))
 
-    expect(types).to.include('speed')
-    expect(formats.metric.speedUnit).to.equal('kmh')
+    expect(lib.dataTypes).to.include('float')
+    expect(formatter.metric.speedUnit).to.equal('kmh')
   })
 
   it('ask export is available', () => {
@@ -83,11 +82,6 @@ describe('helper module (unit)', () => {
     const app = new App({ cwd: root })
     const bajo = new Bajo(app)
     app.bajo = bajo
-    app.main = new Base('main', app)
-    app.main.config = {}
-    app.main.dir = { pkg: path.join(root, 'main') }
-    app.main.intl = { 'en-US': { or: 'or' } }
-    app.getAllNs = () => []
     app.pluginPkgs = []
     app.configHandlers = [
       { ns: 'bajo', ext: '.js', readHandler: bajo.fromJs },
@@ -100,17 +94,16 @@ describe('helper module (unit)', () => {
     bajo.print = { info: () => {}, fatal: () => {} }
     bajo.hooks = []
 
-    await buildBaseConfig.call(bajo)
+    await ensureDirs.call(bajo)
+    await collectPlugins.call(bajo)
     await collectConfigHandlers.call(bajo)
     await buildConfig.call(bajo)
+    await buildPlugins.call(bajo)
     await bootOrder.call(bajo)
     await checkNameAliases.call(bajo)
     await checkDependencies.call(bajo)
     await collectHooks.call(bajo)
     await runPlugins.call(bajo)
     await exitHandler.call(bajo)
-
-    delete app.main
-    await buildPlugins.call(bajo)
   })
 })

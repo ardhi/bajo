@@ -26,7 +26,7 @@ describe('e2e boot process', () => {
 
     await fs.ensureDir(pdir)
     await fs.writeJson(path.join(root, 'package.json'), { name: 'e2e-app', type: 'module', bajo: { plugins: [pluginName] } })
-    await fs.writeJson(path.join(pdir, 'package.json'), { name: pluginName, version: '1.0.0', type: 'module', main: 'index.js' })
+    await fs.writeJson(path.join(pdir, 'package.json'), { name: pluginName, version: '1.0.0', type: 'module', main: 'index.js', bajo: { appletSupport: true } })
     await fs.writeFile(path.join(pdir, 'index.js'), `
 async function factory (pkgName) {
   const me = this
