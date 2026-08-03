@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-08-03
+
+- [2.29.1] Bug fix in `helper.runApplet()`
+
 ## 2026-07-31
 
 - [2.29.0] Change `app.loadIntl()` to async method and use `bajo.readConfig()` to read files
