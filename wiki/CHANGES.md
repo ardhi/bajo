@@ -5,6 +5,7 @@
 - [2.30.0] Add `helper.lockFile()`
 - [2.30.0] Add `helper.unlockFile()`
 - [2.30.0] Add `helper.setInterval()`
+- [2.30.1] Bug fix in `helper.ensureDirs()`
 
 ## 2026-08-03
 
