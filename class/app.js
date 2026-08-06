@@ -231,6 +231,9 @@ class App {
     this.lib = lib
     this.lib.outmatchNs = this.lib.outmatchNs.bind(this)
     this.lib.parseObject = this.lib.parseObject.bind(this)
+    this.lib.lockFile = this.lib.lockFile.bind(this)
+    this.lib.unlockFile = this.lib.unlockFile.bind(this)
+    this.lib.setInterval = this.lib.setInterval.bind(this)
 
     /**
      * Instance of the system log. This will automatically be instantiated early during boot process. See {@link Log} for details.
@@ -552,7 +555,7 @@ class App {
     if (this.bajoCli) this.boxen = await this.bajo.importPkg('bajoCli:boxen')
     // cache
     this.cache.purge()
-    setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur)
+    await this.lib.setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur, { lockFile: 'cachePurge', scope: this })
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.debug('bootCompleted%s', secToHms(elapsed, true))

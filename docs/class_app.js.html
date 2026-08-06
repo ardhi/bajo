@@ -142,9 +142,11 @@ function getCallerFilename () {
  * │   ├── extend
  * │   │   ├── bajo
  * │   │   │   ├── hook
- * │   │   │   │   ├── myPlugin:beforeAction.js
- * │   │   │   │   └── myOtherPlugin:afterAction.js
+ * │   │   │   │   ├── my-plugin@before-action.js
+ * │   │   │   │   └── my-other-plugin.domain@after-action.js
  * │   │   │   └── intl
+ * │   │   │       ├── en-US.yml
+ * │   │   │       └── id.yml
  * │   │   └── myPlugin
  * │   ├── index.js
  * ├── data
@@ -152,7 +154,7 @@ function getCallerFilename () {
  * │   │   ├── .plugins
  * │   │   ├── bajo.yml
  * │   │   ├── myPlugin.yml
- * •   •   •
+ * •   •   •   •
  * ```
  *
  * @class
@@ -231,6 +233,9 @@ class App {
     this.lib = lib
     this.lib.outmatchNs = this.lib.outmatchNs.bind(this)
     this.lib.parseObject = this.lib.parseObject.bind(this)
+    this.lib.lockFile = this.lib.lockFile.bind(this)
+    this.lib.unlockFile = this.lib.unlockFile.bind(this)
+    this.lib.setInterval = this.lib.setInterval.bind(this)
 
     /**
      * Instance of the system log. This will automatically be instantiated early during boot process. See {@link Log} for details.
@@ -552,7 +557,7 @@ class App {
     if (this.bajoCli) this.boxen = await this.bajo.importPkg('bajoCli:boxen')
     // cache
     this.cache.purge()
-    setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur)
+    await this.lib.setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur, { lockFile: 'cachePurge', scope: this })
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.debug('bootCompleted%s', secToHms(elapsed, true))
@@ -582,18 +587,12 @@ class App {
    * @method
    * @param {string} ns - Plugin namespace
    */
-  loadIntl = (ns) => {
-    const { fs } = this.lib
-
+  loadIntl = async (ns) => {
     this[ns].intl = {}
-    for (const l of this.bajo.config.intl.supported) {
-      this[ns].intl[l] = {}
-      const path = `${this[ns].dir.pkg}/extend/bajo/intl/${l}.json`
-      if (!fs.existsSync(path)) continue
-      const trans = fs.readFileSync(path, 'utf8')
-      try {
-        this[ns].intl[l] = JSON.parse(trans)
-      } catch (err) {}
+    for (const lang of this.bajo.config.intl.supported) {
+      this[ns].intl[lang] = {}
+      const path = `${this[ns].dir.pkg}/extend/bajo/intl/${lang}.*`
+      this[ns].intl[lang] = await this.bajo.readConfig(path, { throwNotFound: false })
     }
   }
 

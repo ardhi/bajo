@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-08-06
+
+- [2.30.0] Add `helper.lockFile()`
+- [2.30.0] Add `helper.unlockFile()`
+- [2.30.0] Add `helper.setInterval()`
+
 ## 2026-08-03
 
 - [2.29.1] Bug fix in `helper.runApplet()`
