@@ -13,11 +13,11 @@ class Cache {
   }
 
   /**
-   * Get root directory. It will be used to store all cache files, organized by namespace and TTL.
+   * Get cache directory. It will be used to store all cache files, organized by namespace and TTL.
    * @method
    * @returns {string} Absolute cache root directory
    */
-  getRootDir = () => {
+  getCacheDir = () => {
     return `${this.app.getPluginDataDir('bajo')}/cache`
   }
 
@@ -34,7 +34,7 @@ class Cache {
     const { ns, subNs, path } = breakNsPath(name)
     ttlDur = aneka.parseDuration(ttlDur)
     if (ttlDur === 0 || !subNs) return
-    const cacheDir = `${this.getRootDir()}/${ns}/${subNs}`
+    const cacheDir = `${this.getCacheDir()}/${ns}/${subNs}`
     const dir = `${cacheDir}/${ttlDur}`
     fs.ensureDirSync(dir)
     const file = `${dir}/${path}`
@@ -111,11 +111,11 @@ class Cache {
     const { fs, fastGlob } = this.app.lib
     try {
       if (name === '*') {
-        const dirs = fastGlob.globSync(`${this.getRootDir()}/*`, { onlyDirectories: true })
+        const dirs = fastGlob.globSync(`${this.getCacheDir()}/*`, { onlyDirectories: true })
         for (const dir of dirs) {
           fs.removeSync(dir)
         }
-      } else fs.removeSync(`${this.getRootDir()}/${name}`)
+      } else fs.removeSync(`${this.getCacheDir()}/${name}`)
     } catch (err) {}
   }
 
@@ -130,7 +130,7 @@ class Cache {
     if (!this.app.bajo) return
     if (name) return this._purgeItem(name)
     const { fastGlob, fs } = this.app.lib
-    const dirs = fastGlob.globSync(`${this.getRootDir()}/*/*/*`, { onlyDirectories: true })
+    const dirs = fastGlob.globSync(`${this.getCacheDir()}/*/*/*`, { onlyDirectories: true })
     for (const dir of dirs) {
       try {
         const ttlDur = Number(dir.split('/').pop())

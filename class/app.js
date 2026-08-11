@@ -554,8 +554,9 @@ class App {
     await this.bajo.bootApp()
     if (this.bajoCli) this.boxen = await this.bajo.importPkg('bajoCli:boxen')
     // cache
-    this.cache.purge()
-    await this.lib.setInterval(this.cache.purge, this.bajo.config.cache.purgeIntvDur, { lockFile: 'cachePurge', scope: this })
+    const dur = this.bajo.config.cache.purgeIntvDur
+    if (dur > 0) await this.lib.setInterval(this.cache.purge, dur, { lockFile: 'cachePurge', scope: this })
+    else await this.cache.purge()
     // boot complete
     const elapsed = new Date() - this.runAt
     this.bajo.log.debug('bootCompleted%s', secToHms(elapsed, true))

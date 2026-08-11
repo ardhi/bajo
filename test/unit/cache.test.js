@@ -27,8 +27,8 @@ describe('cache (unit)', () => {
     if (root) fs.rmSync(root, { recursive: true, force: true })
   })
 
-  it('getRootDir returns bajo cache root', () => {
-    expect(cache.getRootDir()).to.include('/plugins/bajo/cache')
+  it('getCacheDir returns bajo cache root', () => {
+    expect(cache.getCacheDir()).to.include('/plugins/bajo/cache')
   })
 
   it('prep creates directories for valid namespaced key', () => {
@@ -75,11 +75,11 @@ describe('cache (unit)', () => {
     await cache.save('bajo.mod:path/three', 'c', 60000)
 
     cache._purgeItem('bajo')
-    expect(fs.existsSync(path.join(cache.getRootDir(), 'bajo'))).to.equal(false)
+    expect(fs.existsSync(path.join(cache.getCacheDir(), 'bajo'))).to.equal(false)
 
     await cache.save('bajo.api:path/four', 'd', 60000)
     cache.purge('*')
-    expect(fs.existsSync(cache.getRootDir())).to.equal(true)
+    expect(fs.existsSync(cache.getCacheDir())).to.equal(true)
   })
 
   it('dispose clears app reference', async () => {

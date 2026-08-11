@@ -2,6 +2,10 @@
 
 ## 2026-08-06
 
+- [2.30.3] Bug fix in `app.run()` to ensure cache purge interval is set correctly
+
+## 2026-08-06
+
 - [2.30.0] Add `helper.lockFile()`
 - [2.30.0] Add `helper.unlockFile()`
 - [2.30.0] Add `helper.setInterval()`
