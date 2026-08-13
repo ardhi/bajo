@@ -242,7 +242,7 @@ class Print extends Tools {
     }
     this.setText(text, ...args)
     this.ora.fail()
-    this.app.exit()
+    this.app.exit(true)
   }
 
   /**

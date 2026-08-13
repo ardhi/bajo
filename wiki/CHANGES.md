@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-08-13
+
+- [2.30.4] Bug fix in `print.fatal()` to force quit app
+
 ## 2026-08-06
 
 - [2.30.3] Bug fix in `app.run()` to ensure cache purge interval is set correctly
