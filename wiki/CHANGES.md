@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-08-20
+
+- [2.31.0] Upgrade to `aneka@0.17.6`
+
 ## 2026-08-13
 
 - [2.30.4] Bug fix in `print.fatal()` to force quit app
