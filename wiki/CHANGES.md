@@ -4,6 +4,7 @@
 
 - [2.32.0] Replace `setInterval()` with custom `startInterval()` to avoid confusion
 - [2.32.1] Bug fix in `startInterval()` to ensure lockFile is released properly
+- [2.32.2] Bug fix in `startInterval()` to NOT execute handler if lockFile is not acquired
 
 ## 2026-08-20
 
