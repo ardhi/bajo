@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-08-24
+
+- [2.32.0] Replace `setInterval()` with custom `startInterval()` to avoid confusion
+
 ## 2026-08-20
 
 - [2.31.0] Upgrade to `aneka@0.17.6`
