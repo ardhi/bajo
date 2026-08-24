@@ -3,6 +3,7 @@
 ## 2026-08-24
 
 - [2.32.0] Replace `setInterval()` with custom `startInterval()` to avoid confusion
+- [2.32.1] Bug fix in `startInterval()` to ensure lockFile is released properly
 
 ## 2026-08-20
 
