@@ -5,7 +5,7 @@ import Cache from './cache.js'
 import Tools from './tools.js'
 import Plugin from './plugin.js'
 import { lib, runAsApplet } from '../lib/helper.js'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 const { camelCase, isPlainObject, get, reverse, map, last, without, set } = lib._
 const { pascalCase } = lib.aneka
@@ -449,16 +449,17 @@ class App {
    *
    * @method
    * @param {string} file - File path, see above for supported types
+   * @param {boolean} [asFileUrl] - If `true`, return the file path as a file URL
    * @returns {string} Resolved file path
    */
-  getPluginFile = (file) => {
+  getPluginFile = (file, asFileUrl) => {
     const { currentLoc } = this.lib.aneka
     const { fs } = this.lib
     const { trim } = this.lib._
     if (!this) return file
     if (file[0] === '.') file = `${currentLoc(import.meta).dir}/${trim(file.slice(1), '/')}`
     if (file.includes(':')) {
-      if (file.slice(1, 2) === ':') return file // windows fs
+      if (file.slice(1, 2) === ':') return asFileUrl ? pathToFileURL(file).href : file // windows fs
       const { ns, path } = this.bajo.breakNsPath(file, false)
       if (ns !== 'file' && this && this[ns] && ns.length > 1) {
         file = `${this[ns].dir.pkg}${path}`
@@ -468,7 +469,7 @@ class App {
         }
       }
     }
-    return file
+    return asFileUrl ? pathToFileURL(file).href : file
   }
 
   /**

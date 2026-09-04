@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-09-04
+
+- [2.33.0] Add parameter `asFileUrl` in `app.getPluginFile()`
+
 ## 2026-08-24
 
 - [2.32.0] Replace `setInterval()` with custom `startInterval()` to avoid confusion
