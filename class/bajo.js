@@ -789,6 +789,7 @@ class Bajo extends Plugin {
 
     const output = async (obj) => {
       let orig = parseObject(obj)
+      const origType = isArray(orig) ? 'array' : 'object'
       if (!baseNs || extend === false) {
         await this.runHook('bajo.default:afterReadConfig', file, orig, options)
         if (cache.name) await this.app.cache.save(cache.name, orig, cache.ttlDur)
@@ -799,7 +800,7 @@ class Bajo extends Plugin {
       if (isString(extend)) extend = extend.split(',').map(i => i.trim())
       if (isArray(extend)) bases = [...extend, 'main']
       bases = uniq(bases)
-      let ext = isArray(orig) ? [] : {}
+      let ext = origType === 'array' ? [] : {}
       const dir = this.app[ns].dir.pkg
       let [names, _path] = file.split(':')
       if (file.slice(0, names.length + 1) !== `${ns}:`) _path = file.slice(dir.length + 1)
@@ -814,7 +815,8 @@ class Bajo extends Plugin {
         await this.runHook('bajo.override:beforeReadConfig', fileExt, options)
         const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, checkOverride: false, merge: false }))
         await this.runHook('bajo.override:afterReadConfig', fileExt, result, options)
-        if (!isEmpty(result)) orig = result
+        const resultType = isArray(result) ? 'array' : 'object'
+        if (!isEmpty(result) && (resultType === origType)) orig = result
       }
       getParseOptsArgs(opts, orig)
       for (const base of bases) {
@@ -825,11 +827,13 @@ class Bajo extends Plugin {
         const result = parseObject(await this.readConfig(fileExt, { ...opts, extend: false, merge: false }))
         await this.runHook('bajo.extend:afterReadConfig', fileExt, orig, result, options)
         if (isEmpty(result)) continue
-        if (isArray(result)) ext = [...result, ...ext]
+        const resultType = isArray(result) ? 'array' : 'object'
+        if (resultType !== origType) continue
+        if (resultType === 'array') ext = [...result, ...ext]
         else ext = binder({}, result, ext)
       }
       delete options.sourceNs
-      let result = isArray(orig) ? [...orig, ...ext] : binder({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
+      let result = origType === 'array' ? [...orig, ...ext] : binder({}, keys.length > 0 ? pick(ext, keys) : ext, orig)
       if (handler) result = await this.callHandler(this.app[ns], handler, result)
       await this.runHook('bajo:afterReadConfig', file, result, options)
       if (cache.name) await this.app.cache.save(cache.name, result, cache.ttlDur)

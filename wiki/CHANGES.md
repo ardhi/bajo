@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-11-13
+
+- [2.33.1] Bug fix in `bajo.readConfig()`
+
 ## 2026-09-04
 
 - [2.33.0] Add parameter `asFileUrl` in `app.getPluginFile()`
