@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-11-19
+
+- [2.34.0] Upgrade to `aneka@0.18.0`
+
 ## 2026-11-13
 
 - [2.33.1] Bug fix in `bajo.readConfig()`
