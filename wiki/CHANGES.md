@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-11-20
+
+- [2.35.0] Add `lib.mimeTypes` to the library
+
 ## 2026-11-19
 
 - [2.34.0] Upgrade to `aneka@0.18.0`
